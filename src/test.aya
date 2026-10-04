@@ -1,19 +1,20 @@
-// 标准库测试框架：`#[test]` / `#[should_panic]` 标注 + 断言宏
+// 标准库测试框架：`#[test]` / `#[should_panic]` 标注 + assert 系列宏
 //
 // 用法（配合仓库 scripts/test.sh）：
 //   import "test"
 //
 //   #[test]
 //   fn test_add() -> int {
-//       #assert(1 + 1 == 2)
-//       #assert_eq(2 + 2, 4)
+//       #assert_eq(1 + 1, 2)
+//       #assert_lt(1, 2)
 //       return 0
 //   }
 //
 // 约定：
 // - 一个用例函数只写一个标注：`#[test]`（应通过）或 `#[should_panic]`（应 panic，退出码 101）。
-// - 用例函数写成 `-> int` 并在末尾 `return 0`：规避“void 函数尾语句丢弃”编译器缺陷
-//   （ayanami1ei/Ayanami-language#70），修复后可简化为 void。
+// - 用例函数写成 `-> int` 并在末尾 `return 0`：规避“块尾表达式语句丢失”编译器缺陷
+//   （ayanami1ei/Ayanami-language#85），修复后可简化为 void。
+// - 语句块级 `#[should_panic] { ... }` 尚不支持（见 issue #88）。
 import "string"
 import "panic"
 
@@ -25,6 +26,8 @@ pub fn test(String input) -> String { return input }
 #[macro]
 pub fn should_panic(String input) -> String { return input }
 
+// ── 断言入口 ──
+
 /// 断言失败入口：`failed == true` 时按调用点 panic
 pub fn check(bool failed, int line, int col, String file, String msg) -> int {
     if failed {
@@ -34,13 +37,61 @@ pub fn check(bool failed, int line, int col, String file, String msg) -> int {
     return 0
 }
 
+/// 浮点近似断言入口：|a - b| > eps 时 panic
+pub fn check_close(float a, float b, float eps, int line, int col, String file, String msg) -> int {
+    d = a - b
+    if d < 0.0 {
+        d = 0.0 - d
+    }
+    if d > eps {
+        panic_at(line, col, file, msg)
+        return 1
+    }
+    return 0
+}
+
+// ── 宏辅助（编译期执行） ──
+
+/// "line, col" 文本
+#[alloc]
+#[state]
+fn loc(int line, int col) -> String {
+    return line.to_string() + ", " + col.to_string()
+}
+
+/// 把源码文本转义进生成代码的字符串字面量
+#[alloc]
+#[state]
+fn escape_from(String s, int i) -> String {
+    if i >= s.len() {
+        return ""
+    }
+    c = s.index(i)
+    rest = escape_from(s, i + 1)
+    if c == '"' {
+        return "\\\"" + rest
+    }
+    if c == '\\' {
+        return "\\\\" + rest
+    }
+    return c.to_string() + rest
+}
+
+#[alloc]
+#[state]
+fn escape(String s) -> String {
+    return escape_from(s, 0)
+}
+
+// ── assert 系列宏 ──
+
 /// `#assert(cond)`：条件为假时抛断言
 #[alloc]
 #[state]
 #[macro]
 pub fn assert(String input, String cond, int __line, int __col, String __file) -> String {
-    return "check(!(" + cond + "), " + __line.to_string() + ", " + __col.to_string()
-        + ", \"" + __file + "\", \"assertion failed\")"
+    return "check(!(" + cond + "), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assertion failed: " + escape(cond) + "\")"
 }
 
 /// `#assert_eq(a, b)`：`a == b` 不成立时抛断言
@@ -48,8 +99,8 @@ pub fn assert(String input, String cond, int __line, int __col, String __file) -
 #[state]
 #[macro]
 pub fn assert_eq(String input, String a, String b, int __line, int __col, String __file) -> String {
-    return "check(!((" + a + ") == (" + b + ")), " + __line.to_string() + ", " + __col.to_string()
-        + ", \"" + __file + "\", \"assert_eq failed\")"
+    return "check(!((" + a + ") == (" + b + ")), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assert_eq failed: " + escape(a) + " == " + escape(b) + "\")"
 }
 
 /// `#assert_ne(a, b)`：`a != b` 不成立时抛断言
@@ -57,6 +108,82 @@ pub fn assert_eq(String input, String a, String b, int __line, int __col, String
 #[state]
 #[macro]
 pub fn assert_ne(String input, String a, String b, int __line, int __col, String __file) -> String {
-    return "check(!((" + a + ") != (" + b + ")), " + __line.to_string() + ", " + __col.to_string()
-        + ", \"" + __file + "\", \"assert_ne failed\")"
+    return "check(!((" + a + ") != (" + b + ")), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assert_ne failed: " + escape(a) + " != " + escape(b) + "\")"
+}
+
+/// `#assert_lt(a, b)`：`a < b` 不成立时抛断言（le/gt/ge 同理）
+#[alloc]
+#[state]
+#[macro]
+pub fn assert_lt(String input, String a, String b, int __line, int __col, String __file) -> String {
+    return "check(!((" + a + ") < (" + b + ")), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assert_lt failed: " + escape(a) + " < " + escape(b) + "\")"
+}
+
+#[alloc]
+#[state]
+#[macro]
+pub fn assert_le(String input, String a, String b, int __line, int __col, String __file) -> String {
+    return "check(!((" + a + ") <= (" + b + ")), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assert_le failed: " + escape(a) + " <= " + escape(b) + "\")"
+}
+
+#[alloc]
+#[state]
+#[macro]
+pub fn assert_gt(String input, String a, String b, int __line, int __col, String __file) -> String {
+    return "check(!((" + a + ") > (" + b + ")), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assert_gt failed: " + escape(a) + " > " + escape(b) + "\")"
+}
+
+#[alloc]
+#[state]
+#[macro]
+pub fn assert_ge(String input, String a, String b, int __line, int __col, String __file) -> String {
+    return "check(!((" + a + ") >= (" + b + ")), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assert_ge failed: " + escape(a) + " >= " + escape(b) + "\")"
+}
+
+/// `#assert_contains(s, sub)`：字符串不包含子串时抛断言
+#[alloc]
+#[state]
+#[macro]
+pub fn assert_contains(String input, String s, String sub, int __line, int __col, String __file) -> String {
+    return "check(!((" + s + ").contains(" + sub + ")), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assert_contains failed: " + escape(s) + " contains " + escape(sub) + "\")"
+}
+
+/// `#assert_some(opt)` / `#assert_none(opt)`：Option 期望（消费该值一次）
+#[alloc]
+#[state]
+#[macro]
+pub fn assert_some(String input, String opt, int __line, int __col, String __file) -> String {
+    return "check(!((" + opt + ").is_some()), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assert_some failed: " + escape(opt) + "\")"
+}
+
+#[alloc]
+#[state]
+#[macro]
+pub fn assert_none(String input, String opt, int __line, int __col, String __file) -> String {
+    return "check((" + opt + ").is_some(), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assert_none failed: " + escape(opt) + "\")"
+}
+
+/// `#assert_close(a, b, eps)`：浮点近似相等（|a-b| <= eps）
+#[alloc]
+#[state]
+#[macro]
+pub fn assert_close(String input, String a, String b, String eps, int __line, int __col, String __file) -> String {
+    return "check_close((" + a + "), (" + b + "), (" + eps + "), " + loc(__line, __col) + ", \"" + __file
+        + "\", \"assert_close failed: " + escape(a) + " ~ " + escape(b) + "\")"
+}
+
+/// `#fail(msg)`：无条件失败（msg 为字符串表达式）
+#[alloc]
+#[state]
+#[macro]
+pub fn fail(String input, String msg, int __line, int __col, String __file) -> String {
+    return "panic_at(" + loc(__line, __col) + ", \"" + __file + "\", " + msg + ")"
 }

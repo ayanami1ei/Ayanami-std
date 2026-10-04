@@ -48,8 +48,27 @@ fn test_oob() -> int {
 - 用例函数暂写 `-> int` 且末尾 `return 0`：规避编译器“块尾表达式语句丢失”缺陷
   （ayanami1ei/Ayanami-language#85）；修复后可写成 `fn test_add()`。
 - 断言失败会 panic，并打印 `文件名:行:列` + 消息；`should_panic` 用例只要退出码 101 即通过。
-- 可用断言：`#assert(cond)` / `#assert_eq(a, b)` / `#assert_ne(a, b)`。
+- 可用断言（失败消息带源码文本，并含调用点文件:行:列）：
+
+  | 宏 | 说明 |
+  |---|---|
+  | `#assert(cond)` | `cond` 为假即失败 |
+  | `#assert_eq(a, b)` / `#assert_ne(a, b)` | 相等 / 不等 |
+  | `#assert_lt(a, b)` / `#assert_le` / `#assert_gt` / `#assert_ge` | 比较 |
+  | `#assert_contains(s, sub)` | 字符串包含 |
+  | `#assert_some(opt)` / `#assert_none(opt)` | Option 期望（消费该值一次） |
+  | `#assert_close(a, b, eps)` | 浮点近似：`|a-b| <= eps` |
+  | `#fail(msg)` | 无条件失败，`msg` 为字符串表达式 |
+
   复杂条件可先赋值到局部变量，再 `#assert`。
+
+## 语句 / 语句块级标注
+
+- 语句级 `#[should_panic] stmt` 目前能被解析，但**没有运行时语义**（panic 即退出 101，
+  同一进程无法继续），只有函数级 `#[should_panic]` 有效。
+- 语句块形式 `#[should_panic] { ... }` 尚不能解析（语法无块语句）；已提
+  issue [#88](https://github.com/ayanami1ei/Ayanami-language/issues/88)
+  （含“runtime 捕获 + 宏展开”方案）。
 
 ## 已知限制（编译器侧）
 

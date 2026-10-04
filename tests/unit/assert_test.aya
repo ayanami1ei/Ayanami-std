@@ -1,0 +1,28 @@
+import "std"
+import "test"
+
+fn some3() -> Option[int] {
+    return Option::Some(3)
+}
+
+fn none_opt() -> Option[int] {
+    return Option::None()
+}
+
+#[test]
+fn test_compare_asserts() -> int {
+    #assert_lt(1, 2)
+    #assert_le(2, 2)
+    #assert_gt(3, 2)
+    #assert_ge(3, 3)
+    return 0
+}
+
+#[test]
+fn test_other_asserts() -> int {
+    #assert_contains("hello", "ell")
+    #assert_some(some3())
+    #assert_none(none_opt())
+    #assert_close(0.1 + 0.2, 0.3, 0.0001)
+    return 0
+}
