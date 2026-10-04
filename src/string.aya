@@ -29,24 +29,6 @@ interface ToString {
     fn to_string(self) -> String;
 }
 
-interface Error {
-    fn what(ref self) -> String;
-}
-
-pub enum Result[T, E] {
-    Ok(T),
-    Err(E),
-}
-
-impl[T, E] Result[T, E] {
-    pub fn try_unwrap(self) -> T {
-        match self {
-            Ok(v) => v,
-            Err(_) => 0,
-        }
-    }
-}
-
 impl int {
     #[alloc]
     #[state]
