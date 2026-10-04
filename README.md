@@ -162,12 +162,17 @@ fn main() -> int {
 
 ## 开发
 
-本仓库是 [Ayanami-language](https://github.com/ayanami1ei/Ayanami-language) 的 `std/` 子模块，
-标准库源码在 `src/`，构建产物（`*.lcl`）不入库。
+本仓库是 [Ayanami-language](https://github.com/ayanami1ei/Ayanami-language) 的 `std/` 子模块。
+标准库源码在 `src/`；根目录 `*.aya` 是指向 `src/*.aya` 的符号链接（按短名 import 时回溯源码用），
+构建产物（`*.lcl`）不入库。
 
-主仓的 `./scripts/package_release.sh` 会用编译器逐模块构建并组装 `install/`；
-单独构建一个模块：
+开发态编译器（`cargo run` / `target/debug/ayanami`）读取的是**二进制同目录的 `std/*.lcl`**
+（即主仓 `target/debug/std/`）。改完 `src/` 后用脚本重建并安装：
 
 ```bash
-ayanami package std/src/io.aya   # 生成 std/src/io.lcl
+# 在主仓根目录构建编译器后
+AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/build.sh --install <主仓>/target/debug/std
 ```
+
+之后运行任意 `import` 标准库的程序即可看到改动；`./scripts/build.sh` 不带 `--install`
+只生成 `src/*.lcl`。发布时主仓 `./scripts/package_release.sh` 会逐模块构建并组装 `install/std/`。
