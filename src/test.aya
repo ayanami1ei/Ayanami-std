@@ -1,0 +1,62 @@
+// 标准库测试框架：`#[test]` / `#[should_panic]` 标注 + 断言宏
+//
+// 用法（配合仓库 scripts/test.sh）：
+//   import "test"
+//
+//   #[test]
+//   fn test_add() -> int {
+//       #assert(1 + 1 == 2)
+//       #assert_eq(2 + 2, 4)
+//       return 0
+//   }
+//
+// 约定：
+// - 一个用例函数只写一个标注：`#[test]`（应通过）或 `#[should_panic]`（应 panic，退出码 101）。
+// - 用例函数写成 `-> int` 并在末尾 `return 0`：规避“void 函数尾语句丢弃”编译器缺陷
+//   （ayanami1ei/Ayanami-language#70），修复后可简化为 void。
+import "string"
+import "panic"
+
+/// 标记一个应通过的测试函数（identity 宏；运行器按标注发现用例）
+#[macro]
+pub fn test(String input) -> String { return input }
+
+/// 标记一个应当 panic 的测试函数（运行器期望退出码 101）
+#[macro]
+pub fn should_panic(String input) -> String { return input }
+
+/// 断言失败入口：`failed == true` 时按调用点 panic
+pub fn check(bool failed, int line, int col, String file, String msg) -> int {
+    if failed {
+        panic_at(line, col, file, msg)
+        return 1
+    }
+    return 0
+}
+
+/// `#assert(cond)`：条件为假时抛断言
+#[alloc]
+#[state]
+#[macro]
+pub fn assert(String input, String cond, int __line, int __col, String __file) -> String {
+    return "check(!(" + cond + "), " + __line.to_string() + ", " + __col.to_string()
+        + ", \"" + __file + "\", \"assertion failed\")"
+}
+
+/// `#assert_eq(a, b)`：`a == b` 不成立时抛断言
+#[alloc]
+#[state]
+#[macro]
+pub fn assert_eq(String input, String a, String b, int __line, int __col, String __file) -> String {
+    return "check(!((" + a + ") == (" + b + ")), " + __line.to_string() + ", " + __col.to_string()
+        + ", \"" + __file + "\", \"assert_eq failed\")"
+}
+
+/// `#assert_ne(a, b)`：`a != b` 不成立时抛断言
+#[alloc]
+#[state]
+#[macro]
+pub fn assert_ne(String input, String a, String b, int __line, int __col, String __file) -> String {
+    return "check(!((" + a + ") != (" + b + ")), " + __line.to_string() + ", " + __col.to_string()
+        + ", \"" + __file + "\", \"assert_ne failed\")"
+}

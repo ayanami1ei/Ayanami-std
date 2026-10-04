@@ -1,0 +1,26 @@
+import "std"
+import "test"
+
+fn mk_some() -> Option[int] {
+    return Option::Some(3)
+}
+
+fn mk_none() -> Option[int] {
+    return Option::None()
+}
+
+#[test]
+fn test_aggregate() -> int {
+    #assert_eq(abs(-5), 5)
+    #assert_eq("abc".len(), 3)
+    return 0
+}
+
+#[test]
+fn test_option() -> int {
+    #assert(mk_some().is_some())
+    #assert(!mk_none().is_some())
+    #assert_eq(mk_some().unwrap_or(0), 3)
+    #assert_eq(mk_none().unwrap_or(42), 42)
+    return 0
+}

@@ -1,4 +1,0 @@
-# 运行时 panic：<文件> <期望退出码> <输出子串>
-test_panic_bounds.aya 101 index out of bounds
-test_panic_empty.aya 101 pop from empty ArrayList
-test_panic_macro.aya 101 boom

@@ -164,14 +164,16 @@ fn main() -> int {
 
 ## 测试
 
+用例用 `#[test]` / `#[should_panic]` 标注 + `#assert` 断言宏（`import "test"`），
+详见 [docs/testing.md](docs/testing.md)：
+
 ```bash
 AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
 ```
 
-- 正例 `tests/*.aya`（退出码 0）；运行时 panic `tests/panic_exit.txt`（101 + 输出子串）；
-  编译期负例 `tests/compile_fail/`（`.expected` 子串匹配）。
-- 脚本先经 `scripts/build.sh --install` 重建并安装 `.lcl` 到编译器同目录 `std/`。
-- 已知编译器 bug 暂不覆盖：泛型枚举 `Result` 的方法与 `match`（#68 / #69）。
+脚本先重建并安装 `.lcl`，再运行 `tests/unit`（标注用例）、`tests/compile_fail`（负例）与
+`tests/golden`（stdout 黄金输出）。已知编译器 bug：泛型枚举 `Result` 方法与 `match`（#68/#69）、
+块尾表达式语句丢失（[#85](https://github.com/ayanami1ei/Ayanami-language/issues/85)）。
 
 ## 开发
 

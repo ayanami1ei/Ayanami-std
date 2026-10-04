@@ -1,70 +1,79 @@
-# 测试框架（scripts/test.sh）
+# 测试框架
 
-标准库自带三类回归：正例、运行时 panic、编译期负例。全部用真实编译器执行。
+标准库用例写在 `tests/unit/*_test.aya`，使用 `import "test"` 提供的标注与断言宏；
+`scripts/test.sh` 负责构建、安装并运行全部测试。
 
 ## 运行
 
 ```bash
-# 在主仓构建编译器后（默认读取 ../target/debug/ayanami）
+# 重建并安装 .lcl 后运行（默认编译器 ../target/debug/ayanami）
 AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
-
-# 已安装过 .lcl、不想重建
-./scripts/test.sh --no-install
+./scripts/test.sh --no-install        # 跳过重建
+./scripts/test.sh --filter string     # 只跑名字含 string 的用例
 ```
 
-脚本先调用 `scripts/build.sh --install` 把 `src/*.aya` 重新打包安装到
-**编译器二进制同目录的 `std/`**（`cargo` 开发态为 `target/debug/std/`），再依次执行：
+输出示例：
 
-| 类别 | 来源 | 判定 |
-|---|---|---|
-| 正例 | `tests/positive_exit.txt`（`<文件> <退出码>`） | 运行退出码一致 |
-| panic | `tests/panic_exit.txt`（`<文件> <退出码> <输出子串>`） | 退出码一致，且输出含子串 |
-| 负例 | `tests/compile_fail/*.aya` + 同名 `.expected` | `check` 输出命中任一子串行 |
+```
+running 17 unit tests
+  ok   string_test::test_basic
+  ...
+running 1 compile-fail tests
+  ok   compile_fail/missing_import.aya
+test result: ok. 18/18 passed
+```
 
-最后打印 `std tests: positive=N panic=N negative=N failures=N`；有失败时退出码非 0。
-
-## 新增用例
-
-### 正例
-
-1. 新建 `tests/test_xxx.aya`：`fn main() -> int`，每个检查失败返回**不同的非 0 码**，全过 `return 0`。
-2. 在 `tests/positive_exit.txt` 加一行 `test_xxx.aya 0`。
+## 写用例（类似 Rust 的 `#[test]`）
 
 ```ayanami
-import "math"
+import "test"
 
-fn main() -> int {
-    if abs(-5) != 5 { return 1 }
-    if pow(2, 10) != 1024 { return 2 }
+#[test]
+fn test_add() -> int {
+    #assert(1 + 1 == 2)
+    #assert_eq(2 + 2, 4)
+    #assert_ne(1, 2)
     return 0
 }
-```
 
-### 运行时 panic
-
-1. 新建用例触发 panic（如越界）；语言没有 `try/catch`，不需要处理。
-2. 在 `tests/panic_exit.txt` 加 `test_xxx.aya 101 <输出子串>`。
-
-```ayanami
-import "arraylist"
-
-fn main() -> int {
+#[should_panic]
+fn test_oob() -> int {
     a = ArrayList::new[int]()
-    a.push(1)
-    x = a.index(5)      // panic：index out of bounds...
+    x = a.index(5)      // 期望 panic（退出码 101）
     return 0
 }
 ```
 
-### 编译期负例
+- 一个函数只写一个标注：`#[test]`（应通过）或 `#[should_panic]`（应 panic）。
+- 用例函数暂写 `-> int` 且末尾 `return 0`：规避编译器“块尾表达式语句丢失”缺陷
+  （ayanami1ei/Ayanami-language#85）；修复后可写成 `fn test_add()`。
+- 断言失败会 panic，并打印 `文件名:行:列` + 消息；`should_panic` 用例只要退出码 101 即通过。
+- 可用断言：`#assert(cond)` / `#assert_eq(a, b)` / `#assert_ne(a, b)`。
+  复杂条件可先赋值到局部变量，再 `#assert`。
 
-1. `tests/compile_fail/<名>.aya` 写必然报错的代码。
-2. `<名>.expected` 每行一个候选子串，命中任意一行即通过。
+## 已知限制（编译器侧）
 
-## 约定与提示
+- 带标注的用例中，断言报出的行列可能偏移（源文本宏的卫生性问题）；以文件与消息为准。
+- 用例文件只 `import "test"` 加本用例直接使用的模块：同一模块“直接 + 经 test 传递”重复导入
+  可能触发重复符号链接错误。
+- 宏名在多重导入下可能歧义（如 `#panic` 经 test 与 panic 两条路径可见）；
+  标准库自身测试用 `panic_at` 直接调用，避免歧义。
 
-- 正例不要 `print`（只看退出码）；要验证输出内容用 panic 类别的子串匹配。
-- 失败码从 1 递增，便于定位失败检查点；每个用例 ≤ 60 行，不依赖交互输入。
-- 改动 `src/` 后必须跑本脚本；符号地图用 `./scripts/gen_symbols.sh --check` 校验。
-- 已知编译器 bug（暂不覆盖）：泛型枚举 `Result` 的方法与 `match`
- （主仓 issue #68 / #69）。
+## 目录约定
+
+| 路径 | 说明 |
+|---|---|
+| `tests/unit/*_test.aya` | 单元用例（`#[test]` / `#[should_panic]`） |
+| `tests/compile_fail/*.aya` + `.expected` | 编译期负例：`.expected` 每行一个候选子串，命中任意一行即通过 |
+| `tests/golden/*.aya` + `.out` | stdout 黄金输出（精确对比；启用受 #85 阻塞） |
+
+## 运行器实现
+
+`scripts/run_tests.py`：
+
+1. 扫描 `tests/unit/*_test.aya`，按标注发现用例函数；
+2. 为每个用例生成最小 driver（`import "<模块>"` 后调用该函数），独立进程运行（panic 隔离）；
+3. 按退出码判定（`0` 通过；`should_panic` 期望 `101`），失败打印首行错误；
+4. 再运行编译期负例与黄金输出对比。
+
+`scripts/test.sh` 负责 `build.sh --install` 与参数转发。

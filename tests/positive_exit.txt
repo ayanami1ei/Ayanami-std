@@ -1,7 +1,0 @@
-# 标准库正例：<文件> <期望退出码>
-test_math.aya 0
-test_string.aya 0
-test_char.aya 0
-test_arraylist.aya 0
-test_linkedlist.aya 0
-test_std.aya 0

@@ -1,6 +1,0 @@
-import "panic"
-
-fn main() -> int {
-    #panic("boom");
-    return 0
-}
