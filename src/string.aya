@@ -17,7 +17,7 @@ pub fn panic_bounds_at(int line, int col, String file, usize index, usize len) -
 
 
 pub fn char_code(char c) -> int {
-    return c;
+    return c as int;
 }
 
 pub struct String {
