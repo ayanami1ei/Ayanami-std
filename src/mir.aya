@@ -141,6 +141,11 @@ pub fn op_is_eq(int op) -> bool { return op == 6 }
 pub fn op_is_neq(int op) -> bool { return op == 7 }
 pub fn op_is_lt(int op) -> bool { return op == 8 }
 pub fn op_is_gt(int op) -> bool { return op == 9 }
+pub fn op_is_band(int op) -> bool { return op == 14 }
+pub fn op_is_bor(int op) -> bool { return op == 15 }
+pub fn op_is_bxor(int op) -> bool { return op == 16 }
+pub fn op_is_shl(int op) -> bool { return op == 17 }
+pub fn op_is_shr(int op) -> bool { return op == 18 }
 
 // ── 常量折叠辅助 ──
 
