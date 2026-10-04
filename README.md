@@ -4,6 +4,8 @@
 
 使用 `import "模块名"` 自动搜索并链接。
 
+> 分模块教程式文档：[`docs/`](docs/README.md)。
+
 内存模型（v0.5+）：默认所有权（非 Copy 值赋值即移动）、`[T]`/`[T; n]` 拥有堆数组、
 `ref` / `ref mut` 借用；不再有 `unique` / `shared` / `weak` / 引用计数。
 
