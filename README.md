@@ -159,3 +159,15 @@ fn main() -> int {
 - 集合越界/空表 `pop` 会在运行时 panic，并指向**你的调用行**：
   `thread 'main' panicked at main.aya:6:13: index out of bounds: the len is 1 but the index is 5`
 - panic 输出 stderr，程序退出码 **101**
+
+## 开发
+
+本仓库是 [Ayanami-language](https://github.com/ayanami1ei/Ayanami-language) 的 `std/` 子模块，
+标准库源码在 `src/`，构建产物（`*.lcl`）不入库。
+
+主仓的 `./scripts/package_release.sh` 会用编译器逐模块构建并组装 `install/`；
+单独构建一个模块：
+
+```bash
+ayanami package std/src/io.aya   # 生成 std/src/io.lcl
+```
