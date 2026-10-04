@@ -11,6 +11,7 @@
 | [collections.md](collections.md) | 集合：`List` 接口、`ArrayList`、`LinkedList` |
 | [option-result.md](option-result.md) | `std` 聚合：`Option`、`Result`、`Error` 接口 |
 | [panic.md](panic.md) | 运行时 panic：`#panic`、越界与空表行为 |
+| [runtime.md](runtime.md) | C 运行时：ABI、约定与扩展步骤 |
 | [testing.md](testing.md) | 测试框架：运行方式与新增用例 |
 
 ## 引入与运行
