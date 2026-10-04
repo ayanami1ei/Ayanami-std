@@ -160,11 +160,23 @@ fn main() -> int {
   `thread 'main' panicked at main.aya:6:13: index out of bounds: the len is 1 but the index is 5`
 - panic 输出 stderr，程序退出码 **101**
 
+## 测试
+
+```bash
+AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
+```
+
+- 正例 `tests/*.aya`（退出码 0）；运行时 panic `tests/panic_exit.txt`（101 + 输出子串）；
+  编译期负例 `tests/compile_fail/`（`.expected` 子串匹配）。
+- 脚本先经 `scripts/build.sh --install` 重建并安装 `.lcl` 到编译器同目录 `std/`。
+- 已知编译器 bug 暂不覆盖：泛型枚举 `Result` 的方法与 `match`（#68 / #69）。
+
 ## 开发
 
 本仓库是 [Ayanami-language](https://github.com/ayanami1ei/Ayanami-language) 的 `std/` 子模块。
 标准库源码在 `src/`；根目录 `*.aya` 是指向 `src/*.aya` 的符号链接（按短名 import 时回溯源码用），
-构建产物（`*.lcl`）不入库。
+构建产物（`*.lcl`）不入库。符号地图：`SYMBOLS.md`（`rg "关键词" SYMBOLS.md`）；改完源码跑
+`./scripts/gen_symbols.sh` 刷新，提交前 `./scripts/gen_symbols.sh --check` 需通过。
 
 开发态编译器（`cargo run` / `target/debug/ayanami`）读取的是**二进制同目录的 `std/*.lcl`**
 （即主仓 `target/debug/std/`）。改完 `src/` 后用脚本重建并安装：
