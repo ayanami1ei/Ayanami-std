@@ -71,8 +71,8 @@ struct String {
 
 | 方法 | 说明 |
 |------|------|
-| `s.len() -> int` | 长度 |
-| `s.index(int i) -> char` | 按索引访问字符（也可写 `s.data[i]`） |
+| `s.len() -> usize` | 长度 |
+| `s.index(usize i) -> char` | 按索引访问字符（也可写 `s.data[i]`） |
 | `s.add(ref String other) -> String` | 拼接（`+` 运算符） |
 | `s.eq(ref String other) -> bool` | 相等比较（`==`） |
 | `s.copy() -> String` | 深拷贝 |
@@ -82,10 +82,10 @@ struct String {
 | `s.contains(ref String) -> bool` | 是否包含子串 |
 | `s.index_of(ref String) -> int` | 子串位置（未找到 -1） |
 | `s.starts_with(ref String) -> bool` / `s.ends_with(ref String) -> bool` | 前缀/后缀 |
-| `s.substring(int start, int end) -> String` | 区间子串（越界自动夹取） |
+| `s.substring(usize start, usize end) -> String` | 区间子串（越界自动夹取） |
 | `s.trim() -> String` | 去首尾空白 |
 | `s.to_upper() -> String` / `s.to_lower() -> String` | 大小写转换 |
-| `s.repeat(int n) -> String` | 重复拼接 |
+| `s.repeat(usize n) -> String` | 重复拼接 |
 | `s.parse_int() -> int` | 十进制解析（非法输入返回 0） |
 | `s.is_int() -> bool` | 是否为合法十进制整数 |
 
@@ -129,7 +129,7 @@ s = String::new(['h', 'i'], 2)
 
 | 模块 | 说明 |
 |------|------|
-| `list` | `List[T]` 接口（元素无约束）：`push(ref mut self, T)` / `index(ref self, int) -> T` / `len(ref self) -> int` / `iter(ref self, fn(T))` |
+| `list` | `List[T]` 接口（元素无约束）：`push(ref mut self, T)` / `index(ref self, usize) -> T` / `len(ref self) -> usize` / `iter(ref self, fn(T))` |
 | `arraylist` | `ArrayList[T]` 顺序表：`[T]` 缓冲，自动扩容；`set(i, v)` / `pop()` / `is_empty()` / `clear()` |
 | `linkedlist` | `LinkedList[T]`：新所有权模型下改为数组缓冲实现，接口与 `List` 一致 |
 

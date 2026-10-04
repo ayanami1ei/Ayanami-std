@@ -15,8 +15,8 @@ import "arraylist"
 ```ayanami
 pub interface List[T] {
     fn push(ref mut self, T val);
-    fn index(ref self, int index) -> T;
-    fn len(ref self) -> int;
+    fn index(ref self, usize index) -> T;
+    fn len(ref self) -> usize;
     fn iter(ref self, fn(T) f);
 }
 ```
@@ -29,7 +29,7 @@ pub interface List[T] {
 | 构造 / 方法 | 说明 |
 |---|---|
 | `ArrayList::new[T]()` | 空表 |
-| `ArrayList::with_capacity[T](n)` | 预分配容量（`n <= 0` 等价 `new`） |
+| `ArrayList::with_capacity[T](usize n)` | 预分配容量（`n == 0` 等价 `new`） |
 | `a.push(v)` | 追加，自动扩容 |
 | `a.index(i) -> T`（或 `a[i]`） | 取元素；越界 panic 101 |
 | `a.len()` / `a.is_empty()` | 长度 / 是否为空 |
@@ -80,6 +80,7 @@ fn main() -> int {
 
 ## 注意
 
+- 索引与长度统一为 `usize`（`index` / `len` / `set` / `pop` / `with_capacity`）；字面量会自动适配（`a.index(1)` 可直接写）。
 - 越界 / 空表 `pop` 通过函数级 track_caller 指向**调用行**（`a.index(5)` 与 `a[5]` 均可）。
 - `to_string` 只对实现了 `ToString` 的元素类型提供。
 - 集合本身是拥有所有权的值：赋值 / 传参会移动；`ref` / `ref mut` 方法不消费。

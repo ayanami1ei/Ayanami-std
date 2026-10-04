@@ -20,7 +20,7 @@ pub fn putchar(int c) {
 #[alloc]
 #[io]
 pub fn print(ref String n) { 
-    __ayanami_print_str(n.data, n.len); 
+    __ayanami_print_str(n.data, n.len as int); 
 }
 #[alloc]
 #[io]

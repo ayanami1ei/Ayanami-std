@@ -6,8 +6,8 @@ import "list"
 // 因此改为数组缓冲实现，保持相同的 List 接口（行为等价：顺序表）。
 pub struct LinkedList[T] {
     [T] data
-    int len
-    int capability
+    usize len
+    usize capability
 }
 
 pub namespace LinkedList{
@@ -25,7 +25,7 @@ impl[T] LinkedList[T] {
             self.data = [T; 1]
         } else {
             tmp = [T; self.capability * 2]
-            for i in (0, self.len) { tmp[i] = self.data[i] }
+            for i in (0, self.len as int) { tmp[i] = self.data[i as usize] }
             self.data = tmp
             self.capability = self.capability * 2
         }
@@ -39,16 +39,16 @@ impl[T] LinkedList[T] {
         self.len = self.len + 1
     }
 
-    pub fn index(ref self, int index, int __line, int __col, String __file)->T{
-        if index < 0 || index >= self.len { panic_bounds_at(__line, __col, __file, index, self.len) }
+    pub fn index(ref self, usize index, int __line, int __col, String __file)->T{
+        if index >= self.len { panic_bounds_at(__line, __col, __file, index, self.len) }
         return self.data[index]
     }
 
-    pub fn len(ref self)->int{ return self.len }
+    pub fn len(ref self)->usize{ return self.len }
 
     pub fn iter(ref self, fn(T) f) {
-        for i in (0, self.len) {
-            f(self.data[i])
+        for i in (0, self.len as int) {
+            f(self.data[i as usize])
         }
     }
 
@@ -60,9 +60,9 @@ impl[T:ToString] LinkedList[T] {
 #[state]
     pub fn to_string(ref self) -> String {
         res = "["
-        for i in (0, self.len){
-            res = res + self.data[i]
-            if i != self.len-1 { res = res + ", " }
+        for i in (0, self.len as int){
+            res = res + self.data[i as usize]
+            if i != self.len as int - 1 { res = res + ", " }
         }
         res = res + "]"
         return res

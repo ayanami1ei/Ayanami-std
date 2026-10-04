@@ -62,7 +62,7 @@ fn loc(int line, int col) -> String {
 /// 把源码文本转义进生成代码的字符串字面量
 #[alloc]
 #[state]
-fn escape_from(String s, int i) -> String {
+fn escape_from(String s, usize i) -> String {
     if i >= s.len() {
         return ""
     }

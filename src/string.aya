@@ -10,8 +10,8 @@ extern "C" fn __ayanami_panic_bounds_at(int line, int col, String file, int inde
 
 #[pure]
 #[noreturn]
-pub fn panic_bounds_at(int line, int col, String file, int index, int len) -> void {
-    __ayanami_panic_bounds_at(line, col, file, index, len);
+pub fn panic_bounds_at(int line, int col, String file, usize index, usize len) -> void {
+    __ayanami_panic_bounds_at(line, col, file, index as int, len as int);
 }
 
 
@@ -22,7 +22,7 @@ pub fn char_code(char c) -> int {
 
 pub struct String {
     [char] data
-    int len
+    usize len
 }
 
 interface ToString {
@@ -37,9 +37,9 @@ impl int {
             return String { data = ['0'], len = 1 };
         }
         n = self;
-        digit_count = 0;
+        digit_count = 0usize;
         if n < 0 {
-            digit_count = 1;
+            digit_count = 1usize;
             n = -n;
         }
         temp = n;
@@ -57,9 +57,11 @@ impl int {
             n = self;
         }
         while n > 0 {
-            buf[i] = digits[n % 10];
+            buf[i as int] = digits[n % 10];
             n = n / 10;
-            i = i - 1;
+            if i > 0 {
+                i = i - 1;
+            }
         }
         return String { data = buf, len = digit_count };
     }
@@ -71,9 +73,9 @@ extern "C" fn __ayanami_float_str(float n, int len) -> [char];
 
 impl float {
     pub fn to_string(self) -> String {
-        len = __ayanami_float_len(self);
-        data = __ayanami_float_str(self, len);
-        return String { data = data, len = len };
+        n = __ayanami_float_len(self);
+        data = __ayanami_float_str(self, n);
+        return String { data = data, len = n as usize };
     }
 }
 
@@ -277,7 +279,7 @@ pub namespace String {
         return String { data = null, len = 0 }
     }
     /// 从拥有所有权的 [char] 缓冲与长度构造
-    pub fn new([char] data, int len) -> String {
+    pub fn new([char] data, usize len) -> String {
         return String { data = data, len = len }
     }
 }
@@ -286,11 +288,11 @@ impl String {
     pub fn to_string(self) -> String {
         return self;
     }
-    pub fn index(ref self, int i, int __line, int __col, String __file) -> char {
-        if i < 0 || i >= self.len { panic_bounds_at(__line, __col, __file, i, self.len) }
+    pub fn index(ref self, usize i, int __line, int __col, String __file) -> char {
+        if i >= self.len { panic_bounds_at(__line, __col, __file, i, self.len) }
         return self.data[i];
     }
-    pub fn len(ref self) -> int {
+    pub fn len(ref self) -> usize {
         return self.len;
     }
     #[alloc]
@@ -298,11 +300,11 @@ impl String {
     pub fn add(ref self, ref String other) -> String {
         new_len = self.len + other.len;
         new_str_inner = [char; new_len];
-        for i in (0, self.len) {
-            new_str_inner[i] = self.data[i];
+        for i in (0, self.len as int) {
+            new_str_inner[i] = self.data[i as usize];
         }
-        for i in (0, other.len) {
-            new_str_inner[i + self.len] = other.data[i];
+        for i in (0, other.len as int) {
+            new_str_inner[i + (self.len as int)] = other.data[i as usize];
         }
         return String { data = new_str_inner, len = new_len };
     }
@@ -316,8 +318,8 @@ impl String {
         if self.len != other.len {
             return false;
         }
-        for i in (0, self.len) {
-            if self.data[i] != other.data[i] {
+        for i in (0, self.len as int) {
+            if self.data[i as usize] != other.data[i as usize] {
                 return false;
             }
         }
@@ -351,13 +353,13 @@ impl String {
         for i in (0, last + 1) {
             ok = true;
             for j in (0, needle.len) {
-                if self.data[i + j] != needle.data[j] {
+                if self.data[(i + j) as usize] != needle.data[j as usize] {
                     ok = false;
                     break;
                 }
             }
             if ok {
-                return i;
+                return i as int;
             }
         }
         return -1;
@@ -374,8 +376,8 @@ impl String {
         if prefix.len > self.len {
             return false;
         }
-        for i in (0, prefix.len) {
-            if self.data[i] != prefix.data[i] {
+        for i in (0, prefix.len as int) {
+            if self.data[i as usize] != prefix.data[i as usize] {
                 return false;
             }
         }
@@ -386,9 +388,9 @@ impl String {
         if suffix.len > self.len {
             return false;
         }
-        off = self.len - suffix.len;
-        for i in (0, suffix.len) {
-            if self.data[off + i] != suffix.data[i] {
+        off = (self.len - suffix.len) as int;
+        for i in (0, suffix.len as int) {
+            if self.data[(off + i) as usize] != suffix.data[i as usize] {
                 return false;
             }
         }
@@ -396,12 +398,9 @@ impl String {
     }
     #[alloc]
     #[state]
-    pub fn substring(ref self, int start, int end) -> String {
+    pub fn substring(ref self, usize start, usize end) -> String {
         s = start;
         e = end;
-        if s < 0 {
-            s = 0;
-        }
         if e > self.len {
             e = self.len;
         }
@@ -411,7 +410,7 @@ impl String {
         n = e - s;
         buf = [char; n];
         for i in (0, n) {
-            buf[i] = self.data[s + i];
+            buf[i as int] = self.data[s + (i as usize)];
         }
         return String { data = buf, len = n };
     }
@@ -419,29 +418,29 @@ impl String {
     #[state]
     pub fn trim(ref self) -> String {
         s = 0;
-        e = self.len;
+        e = self.len as int;
         while s < e {
-            c = self.data[s];
+            c = self.data[s as usize];
             if !c.is_space() {
                 break;
             }
             s = s + 1;
         }
         while e > s {
-            c = self.data[e - 1];
+            c = self.data[(e - 1) as usize];
             if !c.is_space() {
                 break;
             }
             e = e - 1;
         }
-        return self.substring(s, e);
+        return self.substring(s as usize, e as usize);
     }
     #[alloc]
     #[state]
     pub fn to_upper(ref self) -> String {
         buf = [char; self.len];
-        for i in (0, self.len) {
-            buf[i] = self.data[i].to_upper();
+        for i in (0, self.len as int) {
+            buf[i] = self.data[i as usize].to_upper();
         }
         return String { data = buf, len = self.len };
     }
@@ -449,26 +448,26 @@ impl String {
     #[state]
     pub fn to_lower(ref self) -> String {
         buf = [char; self.len];
-        for i in (0, self.len) {
-            buf[i] = self.data[i].to_lower();
+        for i in (0, self.len as int) {
+            buf[i] = self.data[i as usize].to_lower();
         }
         return String { data = buf, len = self.len };
     }
     #[alloc]
     #[state]
-    pub fn repeat(ref self, int times) -> String {
+    pub fn repeat(ref self, usize times) -> String {
         n = self.len * times;
         buf = [char; n];
         for t in (0, times) {
             for i in (0, self.len) {
-                buf[t * self.len + i] = self.data[i];
+                buf[t * (self.len as int) + i] = self.data[i as usize];
             }
         }
         return String { data = buf, len = n };
     }
     #[pure]
     pub fn parse_int(ref self) -> int {
-        i = 0;
+        i = 0usize;
         while i < self.len {
             c = self.data[i];
             if !c.is_space() {
@@ -504,7 +503,7 @@ impl String {
     }
     #[pure]
     pub fn is_int(ref self) -> bool {
-        i = 0;
+        i = 0usize;
         while i < self.len {
             if !self.data[i].is_space() {
                 break;
