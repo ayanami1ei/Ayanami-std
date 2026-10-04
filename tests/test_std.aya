@@ -1,0 +1,19 @@
+import "std"
+
+fn mk_some() -> Option[int] {
+    return Option::Some(3)
+}
+
+fn mk_none() -> Option[int] {
+    return Option::None()
+}
+
+fn main() -> int {
+    if abs(-5) != 5 { return 1 }
+    if "abc".len() != 3 { return 2 }
+    if !mk_some().is_some() { return 3 }
+    if mk_none().is_some() { return 4 }
+    if mk_some().unwrap_or(0) != 3 { return 5 }
+    if mk_none().unwrap_or(42) != 42 { return 6 }
+    return 0
+}

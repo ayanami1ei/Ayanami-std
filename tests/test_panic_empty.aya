@@ -1,0 +1,7 @@
+import "arraylist"
+
+fn main() -> int {
+    a = ArrayList::new[int]()
+    x = a.pop()
+    return 0
+}

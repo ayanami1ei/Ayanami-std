@@ -1,0 +1,8 @@
+import "arraylist"
+
+fn main() -> int {
+    a = ArrayList::new[int]()
+    a.push(1)
+    x = a.index(5)
+    return 0
+}
