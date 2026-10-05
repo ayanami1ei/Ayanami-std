@@ -44,3 +44,11 @@
 
 > 规划中的运行时扩展（随教程需要排期）：文件 IO、时间、随机熵源、命令行参数 / 环境变量。
 > 这些属于标准库自身的演进，不再需要编译器仓改动。
+
+## 项目结构（2026-10）
+
+- `runtime.c`：**聚合入口**（编译器链接此文件）；`runtime/abi.h`：ABI 唯一真源；
+  `runtime/sys.c`：系统扩展（熵源 / 时间）；`runtime/build.sh`：构建 `libruntime.a` 与 C 自检。
+- 替换：把实现同名 ABI 的 `runtime.c` 放到**可执行文件同目录**（编译器查找优先级最高）；
+  用 `__ayanami_runtime_abi()` 校验版本（当前 `1`）。
+- 系统扩展：`__ayanami_random_u64()`、`__ayanami_time_millis()`、`__ayanami_time_unix()`。

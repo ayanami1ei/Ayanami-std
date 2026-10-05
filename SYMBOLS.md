@@ -129,12 +129,13 @@ src/option.aya:37: pub fn try_unwrap(self) -> T
 src/panic.aya:11: pub fn panic_at(int line, int col, String file, String msg) -> void
 src/panic.aya:20: pub fn panic(String input, String msg, int __line, int __col, String __file) -> String
 src/panic.aya:36: pub fn panic_bounds(String input, String index, String len, int __line, int __col, String __file) -> String
-src/rand.aya:6: pub struct Rng
-src/rand.aya:10: pub namespace Rng
-src/rand.aya:12: pub fn new(int seed) -> Rng
-src/rand.aya:24: impl Rng
-src/rand.aya:27: pub fn next_int(ref mut self) -> int
-src/rand.aya:34: pub fn next_range(ref mut self, int lo, int hi) -> int
+src/rand.aya:8: pub struct Rng
+src/rand.aya:12: pub namespace Rng
+src/rand.aya:15: pub fn from_entropy() -> Rng
+src/rand.aya:20: pub fn new(int seed) -> Rng
+src/rand.aya:32: impl Rng
+src/rand.aya:35: pub fn next_int(ref mut self) -> int
+src/rand.aya:42: pub fn next_range(ref mut self, int lo, int hi) -> int
 src/string.aya:13: pub fn panic_bounds_at(int line, int col, String file, usize index, usize len) -> void
 src/string.aya:19: pub fn char_code(char c) -> int
 src/string.aya:23: pub struct String
@@ -236,6 +237,8 @@ src/test.aya:161: pub fn assert_some(String input, String opt, int __line, int _
 src/test.aya:169: pub fn assert_none(String input, String opt, int __line, int __col, String __file) -> String
 src/test.aya:178: pub fn assert_close(String input, String a, String b, String eps, int __line, int __col, String __file) -> String
 src/test.aya:187: pub fn fail(String input, String msg, int __line, int __col, String __file) -> String
+src/time.aya:10: pub fn now_millis() -> int
+src/time.aya:16: pub fn now_unix() -> int
 tests/compile_fail/missing_import.aya:3: fn main() -> int
 tests/unit/arraylist_test.aya:5: fn test_basic() -> int
 tests/unit/arraylist_test.aya:25: fn test_capacity() -> int
@@ -267,6 +270,7 @@ tests/unit/rand_test.aya:5: fn test_range() -> int
 tests/unit/rand_test.aya:19: fn test_deterministic() -> int
 tests/unit/rand_test.aya:29: fn test_seed_variation() -> int
 tests/unit/rand_test.aya:37: fn test_negative_seed() -> int
+tests/unit/rand_test.aya:45: fn test_entropy() -> int
 tests/unit/std_test.aya:4: fn mk_some() -> Option[int]
 tests/unit/std_test.aya:8: fn mk_none() -> Option[int]
 tests/unit/std_test.aya:13: fn test_aggregate() -> int
@@ -276,3 +280,4 @@ tests/unit/string_test.aya:16: fn test_search() -> int
 tests/unit/string_test.aya:26: fn test_transform() -> int
 tests/unit/string_test.aya:36: fn test_parse() -> int
 tests/unit/string_test.aya:44: fn test_tostring() -> int
+tests/unit/time_test.aya:5: fn test_time() -> int

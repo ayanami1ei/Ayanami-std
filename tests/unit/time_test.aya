@@ -1,0 +1,11 @@
+import "test"
+import "time"
+
+#[test]
+fn test_time() -> int {
+    t1 = now_millis()
+    t2 = now_millis()
+    #assert(t2 >= t1)
+    #assert(now_unix() > 0)
+    return 0
+}

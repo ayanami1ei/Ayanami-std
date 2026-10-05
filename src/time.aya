@@ -1,0 +1,18 @@
+// time — 时间（运行时提供）
+//
+// - `now_millis()`：单调毫秒（CLOCK_MONOTONIC），适合计时/差值；
+// - `now_unix()`：Unix 秒（墙上时钟）。
+extern "C" fn __ayanami_time_millis() -> int;
+extern "C" fn __ayanami_time_unix() -> int;
+
+/// 单调毫秒（计时用）
+#[io]
+pub fn now_millis() -> int {
+    return __ayanami_time_millis()
+}
+
+/// Unix 秒
+#[io]
+pub fn now_unix() -> int {
+    return __ayanami_time_unix()
+}

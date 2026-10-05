@@ -8,6 +8,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "runtime/abi.h"
+
 #define RC_HEADER(ptr)  (((int64_t *)(ptr)) - 1)
 
 // ──────────────────────────────────────────────
@@ -15,6 +17,8 @@
 // ──────────────────────────────────────────────
 
 static int64_t live_allocs = 0;
+
+int64_t __ayanami_runtime_abi(void) { return AYANAMI_RUNTIME_ABI; }
 
 /* A6：标准库辅助 —— int→char 与数学函数 */
 char __ayanami_int_to_char(long long c) {
@@ -25,7 +29,6 @@ double __ayanami_floor(double x) { return floor(x); }
 double __ayanami_ceil(double x) { return ceil(x); }
 
 /* A5d-3b：诊断通道弱符号（可执行文件里为 no-op；插件 shim 提供强定义） */
-typedef struct { char* data; long len; } __ayanami_diag_buf;
 __attribute__((weak)) void __ayanami_diag_emit(long long level, __ayanami_diag_buf msg) {
     (void)level;
     (void)msg;
@@ -51,8 +54,6 @@ int64_t __ayanami_live_allocs(void) {
 //  A5c-2：运行时 panic（退出码 101，Rust 风格输出）
 // ──────────────────────────────────────────────
 
-typedef struct { const char* data; long len; } __ayanami_str_view;
-
 static void __ayanami_print_view(const char* data, long len) {
     if (data && len > 0) fwrite(data, 1, (size_t)len, stderr);
 }
@@ -65,7 +66,7 @@ static int __ayanami_color_stderr(void) {
 }
 
 /// Rust 风格 panic：`thread 'main' panicked at file:line:col:`（红色）+ 消息，退出 101
-static void __ayanami_panic_print(long long line, long long col,
+void __ayanami_panic_print_msg(long long line, long long col,
                                   const char* file, long file_len,
                                   const char* msg, long msg_len) {
     fflush(stdout);
@@ -90,14 +91,14 @@ static void __ayanami_panic_print(long long line, long long col,
 }
 
 void __ayanami_panic_at(long long line, long long col, __ayanami_str_view file, __ayanami_str_view msg) {
-    __ayanami_panic_print(line, col, file.data, file.len, msg.data, msg.len);
+    __ayanami_panic_print_msg(line, col, file.data, file.len, msg.data, msg.len);
 }
 
 void __ayanami_panic_bounds_at(long long line, long long col, __ayanami_str_view file,
                                long long index, long long len) {
     char buf[160];
     snprintf(buf, sizeof buf, "index out of bounds: the len is %lld but the index is %lld", len, index);
-    __ayanami_panic_print(line, col, file.data, file.len, buf, (long)strlen(buf));
+    __ayanami_panic_print_msg(line, col, file.data, file.len, buf, (long)strlen(buf));
 }
 
 // ──────────────────────────────────────────────
@@ -108,7 +109,7 @@ void __ayanami_panic_bounds_at(long long line, long long col, __ayanami_str_view
     T __ayanami_ovf_##name(T a, T b, long long line, long long col, __ayanami_str_view file) { \
         T r; \
         if (__builtin_##op##_overflow(a, b, &r)) { \
-            __ayanami_panic_print(line, col, file.data, file.len, msg, (long)strlen(msg)); \
+            __ayanami_panic_print_msg(line, col, file.data, file.len, msg, (long)strlen(msg)); \
         } \
         __ayanami_unique_free((void*)file.data); \
         return r; \
@@ -207,3 +208,5 @@ char *__ayanami_float_str(double n, int64_t out_len) {
     snprintf(buf, (size_t)(out_len + 1), "%g", n);
     return buf;
 }
+
+#include "runtime/sys.c"

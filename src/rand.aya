@@ -3,11 +3,19 @@
 // - 确定性：相同种子产生相同序列；非加密用途。
 // - 无系统熵源（后续 runtime 扩展可加）；教程可用固定种子或用户输入作种子。
 // - 状态保持在 [1, 2^31)，乘法不溢出 i64（无需 wrapping API）。
+extern "C" fn __ayanami_random_u64() -> int;
+
 pub struct Rng {
     int state
 }
 
 pub namespace Rng {
+    /// 用系统熵源创建（非确定性；getrandom / /dev/urandom）
+    #[io]
+    pub fn from_entropy() -> Rng {
+        return Rng::new(__ayanami_random_u64())
+    }
+
     /// 以种子创建（归一化到 [1, 2^31)）
     pub fn new(int seed) -> Rng {
         s = seed % 2147483648

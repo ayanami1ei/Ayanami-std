@@ -40,3 +40,12 @@ fn test_negative_seed() -> int {
     #assert_eq(r1.next_int(), r2.next_int())
     return 0
 }
+
+#[test]
+fn test_entropy() -> int {
+    r = Rng::from_entropy()
+    a = r.next_range(0, 10)
+    #assert(a >= 0)
+    #assert(a < 10)
+    return 0
+}
