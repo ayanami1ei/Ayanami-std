@@ -8,38 +8,41 @@ fn as_float[U: Into[float]](U x) -> float {
 
 #[test]
 fn test_parse_int() -> int {
+    #assert_eq("123".try_parse_int().unwrap_or(0), 123)
+    #assert_eq("-45".try_parse_int().unwrap_or(0), -45)
+    #assert_eq("+7".try_parse_int().unwrap_or(0), 7)
+    #assert(" 1".try_parse_int().is_none())
+    #assert("1 ".try_parse_int().is_none())
+    #assert("12a".try_parse_int().is_none())
+    #assert("".try_parse_int().is_none())
+    #assert("+".try_parse_int().is_none())
+    #assert("99999999999999999999".try_parse_int().is_none())
     #assert_eq(parse_int_or("123", 0), 123)
-    #assert_eq(parse_int_or("-45", 0), -45)
-    #assert_eq(parse_int_or("+7", 0), 7)
-    #assert_eq(parse_int_or(" 1", -1), -1)
-    #assert_eq(parse_int_or("1 ", -1), -1)
-    #assert_eq(parse_int_or("12a", -1), -1)
-    #assert_eq(parse_int_or("", -1), -1)
-    #assert_eq(parse_int_or("+", -1), -1)
-    #assert_eq(parse_int_or("99999999999999999999", -1), -1)
     return 0
 }
 
 #[test]
 fn test_parse_float() -> int {
-    #assert_eq(parse_float_or("1.5", 0.0), 1.5)
-    #assert_eq(parse_float_or("-0.25", 0.0), 0.0 - 0.25)
-    #assert_eq(parse_float_or("2", 0.0), 2.0)
-    #assert_eq(parse_float_or(".5", 0.0), 0.5)
-    #assert_eq(parse_float_or("1.", 0.0), 1.0)
-    #assert_eq(parse_float_or("x", 0.0 - 1.0), 0.0 - 1.0)
-    #assert_eq(parse_float_or("1.2.3", 0.0 - 1.0), 0.0 - 1.0)
+    #assert_eq("1.5".try_parse_float().unwrap_or(0.0), 1.5)
+    #assert_eq("-0.25".try_parse_float().unwrap_or(0.0), 0.0 - 0.25)
+    #assert_eq("2".try_parse_float().unwrap_or(0.0), 2.0)
+    #assert_eq(".5".try_parse_float().unwrap_or(0.0), 0.5)
+    #assert_eq("1.".try_parse_float().unwrap_or(0.0), 1.0)
+    #assert("x".try_parse_float().is_none())
+    #assert("1.2.3".try_parse_float().is_none())
     #assert_eq("2.5".parse_float(), 2.5)
     #assert_eq("x".parse_float(), 0.0)
+    #assert_eq(parse_float_or("1.5", 0.0), 1.5)
     return 0
 }
 
 #[test]
 fn test_parse_bool() -> int {
+    #assert_eq("true".try_parse_bool().unwrap_or(true), true)
+    #assert_eq("false".try_parse_bool().unwrap_or(true), false)
+    #assert("yes".try_parse_bool().is_none())
+    #assert("TRUE".try_parse_bool().is_none())
     #assert_eq(parse_bool_or("true", false), true)
-    #assert_eq(parse_bool_or("false", true), false)
-    #assert_eq(parse_bool_or("yes", true), true)
-    #assert_eq(parse_bool_or("TRUE", true), true)
     return 0
 }
 

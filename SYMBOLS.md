@@ -244,9 +244,9 @@ tests/unit/char_test.aya:4: fn test_classify() -> int
 tests/unit/char_test.aya:18: fn test_convert() -> int
 tests/unit/convert_test.aya:5: fn as_float[U: Into[float]](U x) -> float
 tests/unit/convert_test.aya:10: fn test_parse_int() -> int
-tests/unit/convert_test.aya:24: fn test_parse_float() -> int
-tests/unit/convert_test.aya:38: fn test_parse_bool() -> int
-tests/unit/convert_test.aya:47: fn test_convert() -> int
+tests/unit/convert_test.aya:25: fn test_parse_float() -> int
+tests/unit/convert_test.aya:40: fn test_parse_bool() -> int
+tests/unit/convert_test.aya:50: fn test_convert() -> int
 tests/unit/linkedlist_test.aya:5: fn test_basic() -> int
 tests/unit/math_test.aya:5: fn test_int_ops() -> int
 tests/unit/math_test.aya:17: fn test_float_ops() -> int
