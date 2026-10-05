@@ -1,0 +1,125 @@
+// text — 文本处理（split / join / replace / pad）
+//
+// 依赖 string + arraylist；内部过程式实现，对外声明式一行调用。
+import "string"
+import "arraylist"
+
+/// 按分隔符切分（`sep` 为空时返回只含原串的列表）
+#[alloc]
+#[state]
+pub fn split(ref String s, ref String sep) -> ArrayList[String] {
+    res = ArrayList::new[String]()
+    if sep.len == 0 {
+        res.push(s.copy())
+    } else {
+        start = 0usize
+        i = 0usize
+        while i + sep.len <= s.len {
+            matched = true
+            j = 0usize
+            while j < sep.len {
+                if s.index(i + j) != sep.index(j) {
+                    matched = false
+                    break
+                }
+                j = j + 1
+            }
+            if matched {
+                res.push(s.substring(start, i))
+                i = i + sep.len
+                start = i
+            } else {
+                i = i + 1
+            }
+        }
+        res.push(s.substring(start, s.len))
+    }
+    return res
+}
+
+/// 用分隔符连接列表元素（空列表 → 空串）
+#[alloc]
+#[state]
+pub fn join(ref ArrayList[String] list, ref String sep) -> String {
+    if list.len() == 0 {
+        return String::empty()
+    }
+    res = list.index(0).copy()
+    i = 1usize
+    while i < list.len() {
+        res = res.add(sep)
+        res = res.add(list.index(i).copy())
+        i = i + 1
+    }
+    return res
+}
+
+/// 替换所有 `old` 为 `new`（`old` 为空时返回原串拷贝）
+#[alloc]
+#[state]
+pub fn replace(ref String s, ref String old, ref String new) -> String {
+    if old.len == 0 {
+        return s.copy()
+    }
+    res = String::empty()
+    i = 0usize
+    while i < s.len {
+        if i + old.len <= s.len {
+            matched = true
+            j = 0usize
+            while j < old.len {
+                if s.index(i + j) != old.index(j) {
+                    matched = false
+                    break
+                }
+                j = j + 1
+            }
+            if matched {
+                res = res.add(new)
+                i = i + old.len
+            } else {
+                res = res.add(s.substring(i, i + 1))
+                i = i + 1
+            }
+        } else {
+            res = res.add(s.substring(i, i + 1))
+            i = i + 1
+        }
+    }
+    return res
+}
+
+/// 左侧填充到 `width`（已足够宽则返回拷贝）
+#[alloc]
+#[state]
+pub fn pad_left(ref String s, usize width, char fill) -> String {
+    if s.len >= width {
+        return s.copy()
+    }
+    res = String::empty()
+    pad = width - s.len
+    k = 0usize
+    while k < pad {
+        res = res.add(fill.to_string())
+        k = k + 1
+    }
+    res = res.add(s)
+    return res
+}
+
+/// 右侧填充到 `width`
+#[alloc]
+#[state]
+pub fn pad_right(ref String s, usize width, char fill) -> String {
+    if s.len >= width {
+        return s.copy()
+    }
+    res = s.copy()
+    pad = width - s.len
+    k = 0usize
+    while k < pad {
+        res = res.add(fill.to_string())
+        k = k + 1
+    }
+    return res
+}

@@ -35,6 +35,11 @@ src/collections/list.aya:3: fn push(ref mut self, T val);
 src/collections/list.aya:4: fn index(ref self, usize index)->T;
 src/collections/list.aya:5: fn len(ref self)->usize;
 src/collections/list.aya:6: fn iter(ref self, fn(T) f);
+src/collections/text.aya:10: pub fn split(ref String s, ref String sep) -> ArrayList[String]
+src/collections/text.aya:43: pub fn join(ref ArrayList[String] list, ref String sep) -> String
+src/collections/text.aya:60: pub fn replace(ref String s, ref String old, ref String new) -> String
+src/collections/text.aya:95: pub fn pad_left(ref String s, usize width, char fill) -> String
+src/collections/text.aya:113: pub fn pad_right(ref String s, usize width, char fill) -> String
 src/core/convert.aya:12: pub enum ParseError
 src/core/convert.aya:18: impl String
 src/core/convert.aya:21: pub fn try_parse_int(ref self) -> Option[int]
@@ -290,4 +295,8 @@ tests/unit/string_test.aya:16: fn test_search() -> int
 tests/unit/string_test.aya:26: fn test_transform() -> int
 tests/unit/string_test.aya:36: fn test_parse() -> int
 tests/unit/string_test.aya:44: fn test_tostring() -> int
+tests/unit/text_test.aya:5: fn test_split() -> int
+tests/unit/text_test.aya:20: fn test_join() -> int
+tests/unit/text_test.aya:32: fn test_replace() -> int
+tests/unit/text_test.aya:41: fn test_pad() -> int
 tests/unit/time_test.aya:5: fn test_time() -> int

@@ -17,6 +17,7 @@
 | [fs.md](modules/fs.md) | 文件读写：`exists` / `read_file` / `write_file` |
 | [env.md](modules/env.md) | 命令行参数与环境变量 |
 | [collections.md](modules/collections.md) | 集合：`List` 接口、`ArrayList`、`LinkedList` |
+| [text.md](modules/text.md) | 文本处理：`split` / `join` / `replace` / `pad_*` |
 | [option-result.md](modules/option-result.md) | `std` 聚合：`Option`、`Result`、`Error` 接口 |
 | [panic.md](modules/panic.md) | 运行时 panic：`#panic`、越界与空表行为 |
 | [runtime.md](dev/runtime.md) | C 运行时：ABI、约定与扩展步骤 |
