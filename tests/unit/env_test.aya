@@ -1,0 +1,18 @@
+import "env"
+import "test"
+
+#[test]
+fn test_args() -> int {
+    #assert(arg_count() >= 1)
+    #assert(!arg(0).is_empty())
+    #assert(arg(9999).is_empty())
+    return 0
+}
+
+#[test]
+fn test_env() -> int {
+    #assert(get_env("AYANAMI_NO_SUCH_ENV_XYZ").is_none())
+    p = get_env("PATH").unwrap_or("")
+    #assert(!p.is_empty())
+    return 0
+}

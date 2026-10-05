@@ -1,0 +1,33 @@
+// fs — 文件读写（运行时提供）
+import "string"
+import "option"
+
+extern "C" fn __ayanami_fs_size(String path) -> int;
+extern "C" fn __ayanami_fs_read(String path) -> [char];
+extern "C" fn __ayanami_fs_write(String path, String data) -> int;
+
+/// 文件是否存在
+#[io]
+pub fn exists(String path) -> bool {
+    return __ayanami_fs_size(path) >= 0
+}
+
+/// 读取整个文件（失败 None）
+#[io]
+pub fn read_file(String path) -> Option[String] {
+    n = __ayanami_fs_size(path)
+    if n < 0 {
+        return Option::None()
+    }
+    data = __ayanami_fs_read(path)
+    if data == null {
+        return Option::None()
+    }
+    return Option::Some(String::new(data, n as usize))
+}
+
+/// 写入整个文件（成功 true）
+#[io]
+pub fn write_file(String path, String data) -> bool {
+    return __ayanami_fs_write(path, data) == 0
+}

@@ -14,6 +14,8 @@
 | [convert.md](convert.md) | 解析与转换：`try_parse_*`、`parse_*_or`、`to_*`、`Into[T]` |
 | [rand.md](rand.md) | 伪随机数：`Rng`（LCG，确定性） |
 | [time.md](time.md) | 时间：`now_millis`（单调）/ `now_unix` |
+| [fs.md](fs.md) | 文件读写：`exists` / `read_file` / `write_file` |
+| [env.md](env.md) | 命令行参数与环境变量 |
 | [collections.md](collections.md) | 集合：`List` 接口、`ArrayList`、`LinkedList` |
 | [option-result.md](option-result.md) | `std` 聚合：`Option`、`Result`、`Error` 接口 |
 | [panic.md](panic.md) | 运行时 panic：`#panic`、越界与空表行为 |

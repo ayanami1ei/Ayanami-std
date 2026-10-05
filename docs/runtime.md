@@ -51,4 +51,5 @@
   `runtime/sys.c`：系统扩展（熵源 / 时间）；`runtime/build.sh`：构建 `libruntime.a` 与 C 自检。
 - 替换：把实现同名 ABI 的 `runtime.c` 放到**可执行文件同目录**（编译器查找优先级最高）；
   用 `__ayanami_runtime_abi()` 校验版本（当前 `1`）。
-- 系统扩展：`__ayanami_random_u64()`、`__ayanami_time_millis()`、`__ayanami_time_unix()`。
+- 系统扩展：`__ayanami_random_u64()`、`__ayanami_time_millis()`、`__ayanami_time_unix()`；
+  文件 `__ayanami_fs_size/read/write`；参数与环境 `__ayanami_arg_count/arg_len/arg_data`、`__ayanami_env_len/env_data`。

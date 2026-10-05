@@ -45,6 +45,12 @@ src/convert.aya:206: impl char
 src/convert.aya:208: pub fn into(self) -> int { return self as int }
 src/convert.aya:211: impl bool
 src/convert.aya:213: pub fn into(self) -> int
+src/env.aya:13: pub fn arg_count() -> int
+src/env.aya:19: pub fn arg(int i) -> String
+src/env.aya:33: pub fn get_env(String name) -> Option[String]
+src/fs.aya:11: pub fn exists(String path) -> bool
+src/fs.aya:17: pub fn read_file(String path) -> Option[String]
+src/fs.aya:31: pub fn write_file(String path, String data) -> bool
 src/io.aya:15: pub fn getchar() -> int
 src/io.aya:19: pub fn putchar(int c)
 src/io.aya:24: pub fn print(ref String n)
@@ -259,6 +265,10 @@ tests/unit/convert_test.aya:10: fn test_parse_int() -> int
 tests/unit/convert_test.aya:25: fn test_parse_float() -> int
 tests/unit/convert_test.aya:40: fn test_parse_bool() -> int
 tests/unit/convert_test.aya:50: fn test_convert() -> int
+tests/unit/env_test.aya:5: fn test_args() -> int
+tests/unit/env_test.aya:13: fn test_env() -> int
+tests/unit/fs_test.aya:5: fn test_roundtrip() -> int
+tests/unit/fs_test.aya:15: fn test_missing() -> int
 tests/unit/io_test.aya:5: fn test_input() -> int
 tests/unit/linkedlist_test.aya:5: fn test_basic() -> int
 tests/unit/math_test.aya:5: fn test_int_ops() -> int
