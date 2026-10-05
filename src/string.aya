@@ -460,7 +460,7 @@ impl String {
         buf = [char; n];
         for t in (0, times) {
             for i in (0, self.len) {
-                buf[t * (self.len as int) + i] = self.data[i];
+                buf[t * self.len + i] = self.data[i];
             }
         }
         return String { data = buf, len = n };

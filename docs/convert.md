@@ -23,8 +23,7 @@ import "convert";
 | `parse_float_or(ref String, float fallback) -> float` | 同上 |
 | `parse_bool_or(ref String, bool fallback) -> bool` | 同上 |
 
-> 在**源模块**里直接调用 `try_parse_*.unwrap_or(...)` 等泛型方法，可能触发编译器重复单态化
-> 链接错误（源模块 + `.lcl` 泛型方法）；用这些包装（或只在入口文件调用）可规避。
+> 包装只是常用形态的快捷方式；也可以直接 `s.try_parse_int().unwrap_or(fallback)`。
 
 ## 转换（`to_*` 与 `into`）
 
@@ -45,7 +44,14 @@ pub interface Into[T] {
 ```
 
 自然转换：`int -> float`、`char -> int`、`bool -> int`（每类型至多一个目标；显式目标用 `to_*`）。
-**限制**：泛型约束 `[U: Into[float]]` 暂不支持（编译器），接口目前用于动态分发与文档；
+泛型约束已可用：
+
+```ayanami
+fn as_float[U: Into[float]](U x) -> float {
+    return x.into()
+}
+```
+
 `Result` 版解析（`ParseError`）待编译器 #68/#69 修复后追加。
 
 ## 示例

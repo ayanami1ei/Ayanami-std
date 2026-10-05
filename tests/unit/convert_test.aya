@@ -1,5 +1,10 @@
 import "convert"
+import "std"
 import "test"
+
+fn as_float[U: Into[float]](U x) -> float {
+    return x.into()
+}
 
 #[test]
 fn test_parse_int() -> int {
@@ -52,5 +57,6 @@ fn test_convert() -> int {
     #assert_eq(f, 3.0)
     #assert_eq('A'.into(), 65)
     #assert_eq(true.into(), 1)
+    #assert_eq(as_float(3), 3.0)
     return 0
 }
