@@ -61,12 +61,16 @@ def run_case(binary, stem, fn_name, timeout=120):
     driver = os.path.join(UNIT, ".driver.aya")
     with open(driver, "w", encoding="utf-8") as f:
         f.write(f'import "{stem}"\n\nfn main() -> int {{\n    {fn_name}()\n    return 0\n}}\n')
+    stdin_path = os.path.join(UNIT, f"{stem}.stdin")
+    stdin = open(stdin_path, "rb") if os.path.exists(stdin_path) else None
     try:
         p = subprocess.run(
             [binary, "run", os.path.relpath(driver, ROOT)],
-            cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout,
+            cwd=ROOT, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout,
         )
     finally:
+        if stdin is not None:
+            stdin.close()
         try:
             os.remove(driver)
         except OSError:

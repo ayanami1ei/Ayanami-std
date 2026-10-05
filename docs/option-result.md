@@ -5,7 +5,8 @@ import "std";
 ```
 
 `std` 等价于同时导入 `io`、`string`、`math`、`list`、`linkedlist`、`arraylist`、`panic`，
-并额外提供 `Option[T]`、`Result[T, E]` 与 `Error` 接口。
+并额外提供 `Option[T]`、`Result[T, E]` 与 `Error` 接口（定义在 `option` 模块，也可单独
+`import "option"`）。
 
 ## Option[T]
 

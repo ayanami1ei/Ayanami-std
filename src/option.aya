@@ -1,0 +1,43 @@
+// option — Option / Result / Error 基础类型
+// 独立成模块以打破依赖环：std 与 convert 等共享，不反向依赖 io/std。
+import "string"
+
+pub interface Error {
+    fn what(ref self) -> String;
+}
+
+pub enum Result[T, E] {
+    Ok(T),
+    Err(E),
+}
+
+pub enum Option[T] {
+    Some(T),
+    None,
+}
+
+impl[T] Option[T] {
+    pub fn unwrap_or(self, T default) -> T {
+        if self._tag == 0 {
+            return self._data_Some._0
+        }
+        return default
+    }
+
+    pub fn is_some(self) -> bool {
+        return self._tag == 0
+    }
+
+    pub fn is_none(self) -> bool {
+        return self._tag != 0
+    }
+}
+
+impl[T, E] Result[T, E] {
+    pub fn try_unwrap(self) -> T {
+        match self {
+            Ok(v) => v,
+            Err(_) => 0,
+        }
+    }
+}

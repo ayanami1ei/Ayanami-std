@@ -45,19 +45,22 @@ src/convert.aya:206: impl char
 src/convert.aya:208: pub fn into(self) -> int { return self as int }
 src/convert.aya:211: impl bool
 src/convert.aya:213: pub fn into(self) -> int
-src/io.aya:13: pub fn getchar() -> int
-src/io.aya:17: pub fn putchar(int c)
-src/io.aya:22: pub fn print(ref String n)
-src/io.aya:27: pub fn println()
-src/io.aya:32: pub fn println(ref String s)
-src/io.aya:48: pub fn print(int n)
-src/io.aya:54: pub fn print(float f)
-src/io.aya:62: pub fn print(bool b)
-src/io.aya:72: pub fn print(char c)
-src/io.aya:79: pub fn println(int n)
-src/io.aya:86: pub fn println(float f)
-src/io.aya:93: pub fn println(bool b)
-src/io.aya:100: pub fn println(char c)
+src/io.aya:15: pub fn getchar() -> int
+src/io.aya:19: pub fn putchar(int c)
+src/io.aya:24: pub fn print(ref String n)
+src/io.aya:29: pub fn println()
+src/io.aya:34: pub fn println(ref String s)
+src/io.aya:50: pub fn print(int n)
+src/io.aya:56: pub fn print(float f)
+src/io.aya:64: pub fn print(bool b)
+src/io.aya:74: pub fn print(char c)
+src/io.aya:81: pub fn println(int n)
+src/io.aya:88: pub fn println(float f)
+src/io.aya:95: pub fn println(bool b)
+src/io.aya:102: pub fn println(char c)
+src/io.aya:112: pub fn read_line() -> String
+src/io.aya:129: pub fn read_int() -> int
+src/io.aya:136: pub fn try_read_int() -> Option[int]
 src/linkedlist.aya:7: pub struct LinkedList[T]
 src/linkedlist.aya:13: pub namespace LinkedList
 src/linkedlist.aya:14: pub fn new[T]()->LinkedList[T]
@@ -113,19 +116,19 @@ src/mir.aya:142: pub fn op_is_lt(int op) -> bool { return op == 8 }
 src/mir.aya:143: pub fn op_is_gt(int op) -> bool { return op == 9 }
 src/mir.aya:148: pub fn is_int_literal(ref MirFunction f, int idx) -> bool
 src/mir.aya:154: pub fn folded_int(ref MirFunction f, int idx) -> int
+src/option.aya:5: pub interface Error
+src/option.aya:6: fn what(ref self) -> String;
+src/option.aya:9: pub enum Result[T, E]
+src/option.aya:14: pub enum Option[T]
+src/option.aya:19: impl[T] Option[T]
+src/option.aya:20: pub fn unwrap_or(self, T default) -> T
+src/option.aya:27: pub fn is_some(self) -> bool
+src/option.aya:31: pub fn is_none(self) -> bool
+src/option.aya:36: impl[T, E] Result[T, E]
+src/option.aya:37: pub fn try_unwrap(self) -> T
 src/panic.aya:11: pub fn panic_at(int line, int col, String file, String msg) -> void
 src/panic.aya:20: pub fn panic(String input, String msg, int __line, int __col, String __file) -> String
 src/panic.aya:36: pub fn panic_bounds(String input, String index, String len, int __line, int __col, String __file) -> String
-src/std.aya:10: pub interface Error
-src/std.aya:11: fn what(ref self) -> String;
-src/std.aya:14: pub enum Result[T, E]
-src/std.aya:19: pub enum Option[T]
-src/std.aya:24: impl[T] Option[T]
-src/std.aya:25: pub fn unwrap_or(self, T default) -> T
-src/std.aya:32: pub fn is_some(self) -> bool
-src/std.aya:36: pub fn is_none(self) -> bool
-src/std.aya:41: impl[T, E] Result[T, E]
-src/std.aya:42: pub fn try_unwrap(self) -> T
 src/string.aya:13: pub fn panic_bounds_at(int line, int col, String file, usize index, usize len) -> void
 src/string.aya:19: pub fn char_code(char c) -> int
 src/string.aya:23: pub struct String
@@ -247,6 +250,7 @@ tests/unit/convert_test.aya:10: fn test_parse_int() -> int
 tests/unit/convert_test.aya:25: fn test_parse_float() -> int
 tests/unit/convert_test.aya:40: fn test_parse_bool() -> int
 tests/unit/convert_test.aya:50: fn test_convert() -> int
+tests/unit/io_test.aya:5: fn test_input() -> int
 tests/unit/linkedlist_test.aya:5: fn test_basic() -> int
 tests/unit/math_test.aya:5: fn test_int_ops() -> int
 tests/unit/math_test.aya:17: fn test_float_ops() -> int

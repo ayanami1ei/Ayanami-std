@@ -11,6 +11,9 @@ import "io";
 | `println(...)` | 同上并追加换行；`println()` 只输出换行 |
 | `putchar(int c)` | 输出一个字符 |
 | `getchar() -> int` | 读取一个字符的编码（`int`） |
+| `read_line() -> String` | 读取一行（不含换行；EOF 返回空串） |
+| `read_int() -> int` | 读取一行并宽松解析（`trim` + `parse_int`，失败 `0`） |
+| `try_read_int() -> Option[int]` | 读取一行并严格解析（失败 `None`） |
 
 ## 示例（输出即注释）
 
@@ -31,6 +34,22 @@ fn main() -> int {
     return 0
 }
 ```
+
+## 行输入
+
+```ayanami
+import "io"
+
+fn main() -> int {
+    n = read_int()        // 读一行并解析（失败 0）
+    println(n)
+    return 0
+}
+```
+
+- `read_line` 为纯 Ayanami 实现（`[char]` 缓冲倍增，不依赖 runtime 扩展）；EOF 返回空串，
+  行尾 `\r\n` 会去掉 `\r`。
+- `read_int` = `read_line().trim().parse_int()`（宽松）；严格版 `try_read_int()` 返回 `Option[int]`。
 
 ## 注意
 

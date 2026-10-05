@@ -6,7 +6,7 @@
 // - 泛型约束 `[U: Into[float]]` 暂不支持（编译器限制），接口先供动态分发与文档使用。
 // - `Result` 版解析（parse_int_result -> Result[int, ParseError]）待编译器 #68/#69 修复后追加。
 import "string"
-import "std"
+import "option"
 
 /// 解析错误类别（为 Result 版解析预留）
 pub enum ParseError {
