@@ -142,6 +142,48 @@ impl String {
     }
 }
 
+// ── Result 版解析（错误分类；非法/溢出归为 Invalid） ──
+
+/// 严格解析整数（Result 版）
+#[pure]
+pub fn parse_int_result(ref String s) -> Result[int, ParseError] {
+    if s.len == 0 {
+        return Result::Err(ParseError::Empty)
+    }
+    v = s.try_parse_int()
+    if v._tag == 0 {
+        return Result::Ok(v._data_Some._0)
+    }
+    return Result::Err(ParseError::Invalid)
+}
+
+/// 严格解析浮点（Result 版）
+#[pure]
+pub fn parse_float_result(ref String s) -> Result[float, ParseError] {
+    if s.len == 0 {
+        return Result::Err(ParseError::Empty)
+    }
+    v = s.try_parse_float()
+    if v._tag == 0 {
+        return Result::Ok(v._data_Some._0)
+    }
+    return Result::Err(ParseError::Invalid)
+}
+
+/// 严格解析布尔（Result 版；内部有字面量分配）
+#[alloc]
+#[state]
+pub fn parse_bool_result(ref String s) -> Result[bool, ParseError] {
+    if s.len == 0 {
+        return Result::Err(ParseError::Empty)
+    }
+    v = s.try_parse_bool()
+    if v._tag == 0 {
+        return Result::Ok(v._data_Some._0)
+    }
+    return Result::Err(ParseError::Invalid)
+}
+
 // ── 便捷包装（返回 int/float/bool，避免调用方重复单态化泛型方法） ──
 
 /// 严格解析整数，失败用 fallback

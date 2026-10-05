@@ -59,3 +59,15 @@ fn test_convert() {
     #assert_eq(true.into(), 1)
     #assert_eq(as_float(3), 3.0)
 }
+
+#[test]
+fn test_result_parse() {
+    #assert(parse_int_result("123").is_ok())
+    #assert_eq(parse_int_result("123").unwrap_or(0), 123)
+    #assert(parse_int_result("x").is_err())
+    #assert(parse_int_result("").is_err())
+    #assert_eq(parse_float_result("1.5").unwrap_or(0.0), 1.5)
+    #assert(parse_float_result("x").is_err())
+    #assert_eq(parse_bool_result("true").unwrap_or(false), true)
+    #assert(parse_bool_result("yes").is_err())
+}

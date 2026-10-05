@@ -19,6 +19,7 @@ import "std";
 |---|---|
 | `o.is_some() -> bool` | 是否有值（消费 `self`） |
 | `o.unwrap_or(default) -> T` | 有值取值，否则返回默认值（消费 `self`） |
+| `o.or(other) -> Option[T]` | `Some` 返回自身，`None` 返回 `other` |
 
 泛型实参由上下文推导，通常写在带返回类型的辅助函数里：
 
@@ -43,6 +44,13 @@ fn main() -> int {
 > 方法会消费 `Option`：同一值不要连续调用；每次用新的函数调用。
 
 ## Result[T, E]
+
+| 方法 | 说明 |
+|---|---|
+| `r.is_ok()` / `r.is_err()` | 判断 |
+| `r.unwrap_or(default) -> T` | `Ok` 取值，`Err` 返回默认值 |
+| `r.ok() -> Option[T]` | `Ok(v)` → `Some(v)`，`Err` → `None` |
+| `r.try_unwrap() -> T` | 兼容旧行为（`Err` → `0`） |
 
 ```ayanami
 fn parse(int x) -> Result[int, int] {

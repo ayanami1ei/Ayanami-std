@@ -31,9 +31,41 @@ impl[T] Option[T] {
     pub fn is_none(self) -> bool {
         return self._tag != 0
     }
+
+    /// 或：Some 返回自身，None 返回 other
+    pub fn or(self, Option[T] other) -> Option[T] {
+        if self._tag == 0 {
+            return self
+        }
+        return other
+    }
 }
 
 impl[T, E] Result[T, E] {
+    pub fn is_ok(self) -> bool {
+        return self._tag == 0
+    }
+
+    pub fn is_err(self) -> bool {
+        return self._tag != 0
+    }
+
+    /// Ok 取值，Err 用默认值
+    pub fn unwrap_or(self, T default) -> T {
+        if self._tag == 0 {
+            return self._data_Ok._0
+        }
+        return default
+    }
+
+    /// Ok → Some(v)，Err → None
+    pub fn ok(self) -> Option[T] {
+        if self._tag == 0 {
+            return Option::Some(self._data_Ok._0)
+        }
+        return Option::None()
+    }
+
     pub fn try_unwrap(self) -> T {
         match self {
             Ok(v) => v,

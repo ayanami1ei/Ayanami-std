@@ -9,6 +9,14 @@ fn mk_none() -> Option[int] {
     return Option::None()
 }
 
+fn mk_ok() -> Result[int, int] {
+    return Result::Ok(7)
+}
+
+fn mk_err() -> Result[int, int] {
+    return Result::Err(9)
+}
+
 #[test]
 fn test_aggregate() {
     #assert_eq(abs(-5), 5)
@@ -23,4 +31,15 @@ fn test_option() {
     #assert(!mk_some().is_none())
     #assert_eq(mk_some().unwrap_or(0), 3)
     #assert_eq(mk_none().unwrap_or(42), 42)
+}
+
+#[test]
+fn test_combinators() {
+    #assert_eq(mk_none().or(mk_some()).unwrap_or(0), 3)
+    #assert_eq(mk_some().or(mk_none()).unwrap_or(0), 3)
+    #assert(mk_err().is_err())
+    #assert(mk_ok().is_ok())
+    #assert(mk_ok().ok().is_some())
+    #assert_eq(mk_err().unwrap_or(0), 0)
+    #assert_eq(mk_ok().unwrap_or(0), 7)
 }

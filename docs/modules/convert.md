@@ -15,6 +15,14 @@ import "convert";
 
 严格版**不允许首尾空白**（与 Rust 一致）；需要容忍空白时先 `.trim()`。
 
+## Result 版解析
+
+| 函数 | 说明 |
+|---|---|
+| `parse_int_result(ref String) -> Result[int, ParseError]` | 严格；空串 → `Empty`，非法/溢出 → `Invalid` |
+| `parse_float_result(ref String) -> Result[float, ParseError]` | 同上 |
+| `parse_bool_result(ref String) -> Result[bool, ParseError]` | 同上 |
+
 ## 便捷包装
 
 | 函数 | 说明 |

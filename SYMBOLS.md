@@ -46,26 +46,29 @@ src/core/convert.aya:21: pub fn try_parse_int(ref self) -> Option[int]
 src/core/convert.aya:65: pub fn try_parse_float(ref self) -> Option[float]
 src/core/convert.aya:126: pub fn try_parse_bool(ref self) -> Option[bool]
 src/core/convert.aya:140: pub fn parse_float(ref self) -> float
-src/core/convert.aya:149: pub fn parse_int_or(ref String s, int fallback) -> int
-src/core/convert.aya:155: pub fn parse_float_or(ref String s, float fallback) -> float
-src/core/convert.aya:162: pub fn parse_bool_or(ref String s, bool fallback) -> bool
-src/core/convert.aya:168: impl int
-src/core/convert.aya:170: pub fn to_float(self) -> float { return self as float }
-src/core/convert.aya:173: pub fn to_char(self) -> char { return self as char }
-src/core/convert.aya:176: impl float
-src/core/convert.aya:179: pub fn to_int(self) -> int { return self as int }
-src/core/convert.aya:182: impl char
-src/core/convert.aya:184: pub fn to_int(self) -> int { return self as int }
-src/core/convert.aya:187: impl bool
-src/core/convert.aya:189: pub fn to_int(self) -> int
-src/core/convert.aya:199: pub interface Into[T]
-src/core/convert.aya:200: fn into(self) -> T;
-src/core/convert.aya:203: impl int
-src/core/convert.aya:205: pub fn into(self) -> float { return self as float }
-src/core/convert.aya:208: impl char
-src/core/convert.aya:210: pub fn into(self) -> int { return self as int }
-src/core/convert.aya:213: impl bool
-src/core/convert.aya:215: pub fn into(self) -> int
+src/core/convert.aya:149: pub fn parse_int_result(ref String s) -> Result[int, ParseError]
+src/core/convert.aya:162: pub fn parse_float_result(ref String s) -> Result[float, ParseError]
+src/core/convert.aya:176: pub fn parse_bool_result(ref String s) -> Result[bool, ParseError]
+src/core/convert.aya:191: pub fn parse_int_or(ref String s, int fallback) -> int
+src/core/convert.aya:197: pub fn parse_float_or(ref String s, float fallback) -> float
+src/core/convert.aya:204: pub fn parse_bool_or(ref String s, bool fallback) -> bool
+src/core/convert.aya:210: impl int
+src/core/convert.aya:212: pub fn to_float(self) -> float { return self as float }
+src/core/convert.aya:215: pub fn to_char(self) -> char { return self as char }
+src/core/convert.aya:218: impl float
+src/core/convert.aya:221: pub fn to_int(self) -> int { return self as int }
+src/core/convert.aya:224: impl char
+src/core/convert.aya:226: pub fn to_int(self) -> int { return self as int }
+src/core/convert.aya:229: impl bool
+src/core/convert.aya:231: pub fn to_int(self) -> int
+src/core/convert.aya:241: pub interface Into[T]
+src/core/convert.aya:242: fn into(self) -> T;
+src/core/convert.aya:245: impl int
+src/core/convert.aya:247: pub fn into(self) -> float { return self as float }
+src/core/convert.aya:250: impl char
+src/core/convert.aya:252: pub fn into(self) -> int { return self as int }
+src/core/convert.aya:255: impl bool
+src/core/convert.aya:257: pub fn into(self) -> int
 src/core/math.aya:5: pub fn abs(int x) -> int
 src/core/math.aya:11: pub fn min(int a, int b) -> int
 src/core/math.aya:17: pub fn max(int a, int b) -> int
@@ -87,8 +90,13 @@ src/core/option.aya:19: impl[T] Option[T]
 src/core/option.aya:20: pub fn unwrap_or(self, T default) -> T
 src/core/option.aya:27: pub fn is_some(self) -> bool
 src/core/option.aya:31: pub fn is_none(self) -> bool
-src/core/option.aya:36: impl[T, E] Result[T, E]
-src/core/option.aya:37: pub fn try_unwrap(self) -> T
+src/core/option.aya:36: pub fn or(self, Option[T] other) -> Option[T]
+src/core/option.aya:44: impl[T, E] Result[T, E]
+src/core/option.aya:45: pub fn is_ok(self) -> bool
+src/core/option.aya:49: pub fn is_err(self) -> bool
+src/core/option.aya:54: pub fn unwrap_or(self, T default) -> T
+src/core/option.aya:62: pub fn ok(self) -> Option[T]
+src/core/option.aya:69: pub fn try_unwrap(self) -> T
 src/core/panic.aya:11: pub fn panic_at(int line, int col, String file, String msg) -> void
 src/core/panic.aya:20: pub fn panic(String input, String msg, int __line, int __col, String __file) -> String
 src/core/panic.aya:36: pub fn panic_bounds(String input, String index, String len, int __line, int __col, String __file) -> String
@@ -274,6 +282,7 @@ tests/unit/convert_test.aya:10: fn test_parse_int()
 tests/unit/convert_test.aya:24: fn test_parse_float()
 tests/unit/convert_test.aya:38: fn test_parse_bool()
 tests/unit/convert_test.aya:47: fn test_convert()
+tests/unit/convert_test.aya:64: fn test_result_parse()
 tests/unit/env_test.aya:5: fn test_args()
 tests/unit/env_test.aya:12: fn test_env()
 tests/unit/fs_test.aya:5: fn test_roundtrip()
@@ -292,8 +301,11 @@ tests/unit/rand_test.aya:34: fn test_negative_seed()
 tests/unit/rand_test.aya:41: fn test_entropy()
 tests/unit/std_test.aya:4: fn mk_some() -> Option[int]
 tests/unit/std_test.aya:8: fn mk_none() -> Option[int]
-tests/unit/std_test.aya:13: fn test_aggregate()
-tests/unit/std_test.aya:19: fn test_option()
+tests/unit/std_test.aya:12: fn mk_ok() -> Result[int, int]
+tests/unit/std_test.aya:16: fn mk_err() -> Result[int, int]
+tests/unit/std_test.aya:21: fn test_aggregate()
+tests/unit/std_test.aya:27: fn test_option()
+tests/unit/std_test.aya:37: fn test_combinators()
 tests/unit/string_test.aya:4: fn test_basic()
 tests/unit/string_test.aya:15: fn test_search()
 tests/unit/string_test.aya:24: fn test_transform()
