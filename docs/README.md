@@ -3,8 +3,11 @@
 面向使用者的分模块教程式文档（语言语法见主仓教程）。符号定位：根目录 `SYMBOLS.md`
 （`rg "关键词" SYMBOLS.md`）。
 
+设计标准：[design.md](design.md)（对外声明式、对内过程式、整体面向对象）。
+
 | 文档 | 内容 |
 |---|---|
+| [design.md](design.md) | 设计标准：对外声明式、对内过程式、整体面向对象 |
 | [io.md](io.md) | 输入输出：`print` / `println` / `putchar` / `getchar` |
 | [math.md](math.md) | 数学函数：整型与浮点重载 |
 | [string.md](string.md) | 字符串与字符：`String` 方法、`char` 工具、`ToString` |
