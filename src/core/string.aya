@@ -328,6 +328,36 @@ impl String {
     pub fn ne(ref self, ref String other) -> bool {
         return !self.eq(other);
     }
+    /// 字典序小于
+    #[pure]
+    pub fn lt(ref self, ref String other) -> bool {
+        n = self.len
+        if other.len < n {
+            n = other.len
+        }
+        i = 0usize
+        while i < n {
+            a = self.data[i]
+            b = other.data[i]
+            if a != b {
+                return a < b
+            }
+            i = i + 1
+        }
+        return self.len < other.len
+    }
+    #[pure]
+    pub fn gt(ref self, ref String other) -> bool {
+        return other.lt(self)
+    }
+    #[pure]
+    pub fn le(ref self, ref String other) -> bool {
+        return !self.gt(other)
+    }
+    #[pure]
+    pub fn ge(ref self, ref String other) -> bool {
+        return !self.lt(other)
+    }
     #[alloc]
     #[state]
     pub fn copy(ref self) -> String {

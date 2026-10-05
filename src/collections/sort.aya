@@ -1,0 +1,49 @@
+// sort — 具体类型排序（int / String；插入排序，稳定）
+//
+// 泛型排序待 Ord 型接口/约束能力就绪后再提供。
+import "string"
+import "arraylist"
+
+/// 升序排序（int）
+#[state]
+pub fn sort_int(ref mut ArrayList[int] a) {
+    i = 1usize
+    while i < a.len {
+        v = a.data[i]
+        j = i
+        while j > 0 {
+            prev = a.data[j - 1]
+            if prev > v {
+                a.data[j] = prev
+                j = j - 1
+            } else {
+                a.data[j - 1] = prev
+                break
+            }
+        }
+        a.data[j] = v
+        i = i + 1
+    }
+}
+
+/// 升序排序（String，字典序）
+#[state]
+pub fn sort_string(ref mut ArrayList[String] a) {
+    i = 1usize
+    while i < a.len {
+        v = a.data[i]
+        j = i
+        while j > 0 {
+            prev = a.data[j - 1]
+            if prev > v {
+                a.data[j] = prev
+                j = j - 1
+            } else {
+                a.data[j - 1] = prev
+                break
+            }
+        }
+        a.data[j] = v
+        i = i + 1
+    }
+}

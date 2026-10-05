@@ -35,6 +35,8 @@ src/collections/list.aya:3: fn push(ref mut self, T val);
 src/collections/list.aya:4: fn index(ref self, usize index)->T;
 src/collections/list.aya:5: fn len(ref self)->usize;
 src/collections/list.aya:6: fn iter(ref self, fn(T) f);
+src/collections/sort.aya:9: pub fn sort_int(ref mut ArrayList[int] a)
+src/collections/sort.aya:31: pub fn sort_string(ref mut ArrayList[String] a)
 src/collections/text.aya:10: pub fn split(ref String s, ref String sep) -> ArrayList[String]
 src/collections/text.aya:45: pub fn join(ref ArrayList[String] list, ref String sep) -> String
 src/collections/text.aya:62: pub fn replace(ref String s, ref String old, ref String new) -> String
@@ -169,19 +171,23 @@ src/core/string.aya:300: pub fn add(ref self, ref String other) -> String
 src/core/string.aya:313: pub fn add[T: ToString](ref self, T a) -> String
 src/core/string.aya:317: pub fn eq(ref self, ref String other) -> bool
 src/core/string.aya:328: pub fn ne(ref self, ref String other) -> bool
-src/core/string.aya:333: pub fn copy(ref self) -> String
-src/core/string.aya:341: pub fn is_empty(ref self) -> bool
-src/core/string.aya:345: pub fn index_of(ref self, ref String needle) -> int
-src/core/string.aya:368: pub fn contains(ref self, ref String needle) -> bool
-src/core/string.aya:375: pub fn starts_with(ref self, ref String prefix) -> bool
-src/core/string.aya:387: pub fn ends_with(ref self, ref String suffix) -> bool
-src/core/string.aya:401: pub fn substring(ref self, usize start, usize end) -> String
-src/core/string.aya:419: pub fn trim(ref self) -> String
-src/core/string.aya:440: pub fn to_upper(ref self) -> String
-src/core/string.aya:449: pub fn to_lower(ref self) -> String
-src/core/string.aya:458: pub fn repeat(ref self, usize times) -> String
-src/core/string.aya:469: pub fn parse_int(ref self) -> int
-src/core/string.aya:505: pub fn is_int(ref self) -> bool
+src/core/string.aya:333: pub fn lt(ref self, ref String other) -> bool
+src/core/string.aya:350: pub fn gt(ref self, ref String other) -> bool
+src/core/string.aya:354: pub fn le(ref self, ref String other) -> bool
+src/core/string.aya:358: pub fn ge(ref self, ref String other) -> bool
+src/core/string.aya:363: pub fn copy(ref self) -> String
+src/core/string.aya:371: pub fn is_empty(ref self) -> bool
+src/core/string.aya:375: pub fn index_of(ref self, ref String needle) -> int
+src/core/string.aya:398: pub fn contains(ref self, ref String needle) -> bool
+src/core/string.aya:405: pub fn starts_with(ref self, ref String prefix) -> bool
+src/core/string.aya:417: pub fn ends_with(ref self, ref String suffix) -> bool
+src/core/string.aya:431: pub fn substring(ref self, usize start, usize end) -> String
+src/core/string.aya:449: pub fn trim(ref self) -> String
+src/core/string.aya:470: pub fn to_upper(ref self) -> String
+src/core/string.aya:479: pub fn to_lower(ref self) -> String
+src/core/string.aya:488: pub fn repeat(ref self, usize times) -> String
+src/core/string.aya:499: pub fn parse_int(ref self) -> int
+src/core/string.aya:535: pub fn is_int(ref self) -> bool
 src/dev/test.aya:23: pub fn test(String input) -> String { return input }
 src/dev/test.aya:27: pub fn should_panic(String input) -> String { return input }
 src/dev/test.aya:32: pub fn check(bool failed, int line, int col, String file, String msg) -> int
@@ -299,6 +305,10 @@ tests/unit/rand_test.aya:18: fn test_deterministic()
 tests/unit/rand_test.aya:27: fn test_seed_variation()
 tests/unit/rand_test.aya:34: fn test_negative_seed()
 tests/unit/rand_test.aya:41: fn test_entropy()
+tests/unit/sort_test.aya:5: fn test_sort_int()
+tests/unit/sort_test.aya:17: fn test_sort_string()
+tests/unit/sort_test.aya:29: fn test_sort_edge()
+tests/unit/sort_test.aya:40: fn test_string_cmp()
 tests/unit/std_test.aya:4: fn mk_some() -> Option[int]
 tests/unit/std_test.aya:8: fn mk_none() -> Option[int]
 tests/unit/std_test.aya:12: fn mk_ok() -> Result[int, int]

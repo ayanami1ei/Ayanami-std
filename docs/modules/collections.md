@@ -78,6 +78,25 @@ fn main() -> int {
 }
 ```
 
+## 排序（`import "sort"`）
+
+| 函数 | 说明 |
+|---|---|
+| `sort_int(ref mut ArrayList[int])` | 升序（插入排序，稳定） |
+| `sort_string(ref mut ArrayList[String])` | 字典序升序 |
+
+```ayanami
+import "sort"
+
+a = ArrayList::new[int]()
+a.push(3)
+a.push(1)
+a.push(2)
+sort_int(a)                  // [1, 2, 3]
+```
+
+> 泛型 `sort[T]` 待 Ord 型接口/约束能力就绪后提供。
+
 ## 注意
 
 - 索引与长度统一为 `usize`（`index` / `len` / `set` / `pop` / `with_capacity`）；字面量会自动适配（`a.index(1)` 可直接写）。

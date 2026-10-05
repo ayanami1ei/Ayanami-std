@@ -21,6 +21,7 @@ import "string";
 | `s.index(usize i) -> char`（或 `s[i]`） | 取字符；越界 panic 101，指向调用行 |
 | `s.add(ref String other) -> String` | 拼接；运算符 `+` 等价 |
 | `s.eq / s.ne(ref String) -> bool` | 比较；`==` / `!=` 等价 |
+| `s.lt / s.gt / s.le / s.ge(ref String) -> bool` | 字典序比较；`<` `>` `<=` `>=` 等价 |
 | `s.copy() -> String` | 深拷贝 |
 | `s.to_string() -> String` | 返回自身（实现 `ToString`） |
 | `s.is_empty() -> bool` | 是否空串 |

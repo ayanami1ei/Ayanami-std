@@ -1,0 +1,46 @@
+import "sort"
+import "test"
+
+#[test]
+fn test_sort_int() {
+    a = ArrayList::new[int]()
+    a.push(3)
+    a.push(1)
+    a.push(2)
+    sort_int(a)
+    #assert_eq(a.index(0), 1)
+    #assert_eq(a.index(1), 2)
+    #assert_eq(a.index(2), 3)
+}
+
+#[test]
+fn test_sort_string() {
+    l = ArrayList::new[String]()
+    l.push("banana")
+    l.push("apple")
+    l.push("cherry")
+    sort_string(l)
+    #assert_eq(l.index(0), "apple")
+    #assert_eq(l.index(1), "banana")
+    #assert_eq(l.index(2), "cherry")
+}
+
+#[test]
+fn test_sort_edge() {
+    e = ArrayList::new[int]()
+    sort_int(e)
+    #assert_eq(e.len(), 0)
+    s = ArrayList::new[int]()
+    s.push(7)
+    sort_int(s)
+    #assert_eq(s.index(0), 7)
+}
+
+#[test]
+fn test_string_cmp() {
+    #assert("apple" < "banana")
+    #assert("b" > "a")
+    #assert("a" <= "a")
+    #assert("b" >= "a")
+    #assert(!("b" < "a"))
+}
