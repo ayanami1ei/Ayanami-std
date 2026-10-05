@@ -8,3 +8,11 @@ fn test_time() {
     #assert(t2 >= t1)
     #assert(now_unix() > 0)
 }
+
+#[test]
+fn test_sleep() {
+    t1 = now_millis()
+    sleep_ms(30)
+    t2 = now_millis()
+    #assert(t2 - t1 >= 25)
+}

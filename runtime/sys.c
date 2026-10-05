@@ -4,6 +4,7 @@
 #define AYANAMI_RUNTIME_SYS_C
 
 #include <time.h>
+#include <errno.h>
 #include <sys/stat.h>
 #if defined(__linux__)
 #include <sys/random.h>
@@ -39,6 +40,17 @@ int64_t __ayanami_time_millis(void) {
 // Unix 秒
 int64_t __ayanami_time_unix(void) {
     return (int64_t)time(NULL);
+}
+
+// 睡眠毫秒（nanosleep；被信号打断时按剩余时间继续）
+int64_t __ayanami_time_sleep_ms(int64_t ms) {
+    if (ms <= 0) return 0;
+    struct timespec ts;
+    ts.tv_sec = ms / 1000;
+    ts.tv_nsec = (ms % 1000) * 1000000;
+    while (nanosleep(&ts, &ts) != 0 && errno == EINTR) {
+    }
+    return 0;
 }
 
 // ── 文件 ──

@@ -4,6 +4,7 @@
 // - `now_unix()`：Unix 秒（墙上时钟）。
 extern "C" fn __ayanami_time_millis() -> int;
 extern "C" fn __ayanami_time_unix() -> int;
+extern "C" fn __ayanami_time_sleep_ms(int ms);
 
 /// 单调毫秒（计时用）
 #[io]
@@ -15,4 +16,13 @@ pub fn now_millis() -> int {
 #[io]
 pub fn now_unix() -> int {
     return __ayanami_time_unix()
+}
+
+/// 睡眠 `ms` 毫秒（`<= 0` 直接返回）
+#[io]
+pub fn sleep_ms(int ms) {
+    if ms <= 0 {
+        return
+    }
+    __ayanami_time_sleep_ms(ms)
 }

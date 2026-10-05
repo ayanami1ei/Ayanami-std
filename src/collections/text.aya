@@ -4,6 +4,13 @@
 import "string"
 import "arraylist"
 
+/// split_once 的结果：`found` 为是否找到分隔符
+pub struct Split {
+    bool found
+    String before
+    String after
+}
+
 /// 按分隔符切分（`sep` 为空时返回只含原串的列表）
 #[alloc]
 #[state]
@@ -150,4 +157,18 @@ pub fn lines(ref String s) -> ArrayList[String] {
         res.push(s.substring(start, s.len))
     }
     return res
+}
+
+/// 在首个 `sep` 处切分为两段；未找到时 `found=false`、`before` 为原串拷贝、`after` 为空串
+#[alloc]
+#[state]
+pub fn split_once(ref String s, ref String sep) -> Split {
+    pos = s.index_of(sep)
+    if pos < 0 {
+        return Split { found = false, before = s.copy(), after = "" }
+    }
+    p = pos as usize
+    before = s.substring(0, p)
+    after = s.substring(p + sep.len, s.len)
+    return Split { found = true, before = before, after = after }
 }

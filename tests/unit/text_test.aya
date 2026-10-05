@@ -57,3 +57,19 @@ fn test_lines() {
     #assert_eq(one.len(), 1)
     #assert_eq(one.index(0), "x")
 }
+
+#[test]
+fn test_split_once() {
+    r = split_once("a=b=c", "=")
+    #assert(r.found)
+    #assert_eq(r.before, "a")
+    #assert_eq(r.after, "b=c")
+    r2 = split_once("abc", ",")
+    #assert(!r2.found)
+    #assert_eq(r2.before, "abc")
+    #assert(r2.after.is_empty())
+    r3 = split_once("=x", "=")
+    #assert(r3.found)
+    #assert(r3.before.is_empty())
+    #assert_eq(r3.after, "x")
+}

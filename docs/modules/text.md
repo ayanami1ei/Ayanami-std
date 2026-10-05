@@ -12,6 +12,7 @@ import "text";
 | `pad_left(ref String s, usize width, char fill) -> String` | 左侧填充到 `width` |
 | `pad_right(ref String s, usize width, char fill) -> String` | 右侧填充到 `width` |
 | `lines(ref String s) -> ArrayList[String]` | 按行拆分（`\n`，兼容 `\r\n`；末尾换行不产生空行） |
+| `split_once(ref String s, ref String sep) -> Split` | 在首个分隔符处切分；`Split { found, before, after }` |
 
 ## 示例
 

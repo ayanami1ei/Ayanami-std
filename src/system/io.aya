@@ -155,3 +155,21 @@ pub fn read_float() -> float {
 pub fn try_read_float() -> Option[float] {
     return read_line().trim().try_parse_float()
 }
+
+/// 读取一行并宽松解析为 bool（失败 false）
+///
+/// 用 convert 的 `parse_bool_or`，避免在本模块实例化 `Option[bool].unwrap_or`（#129）。
+#[alloc]
+#[state]
+#[io]
+pub fn read_bool() -> bool {
+    return parse_bool_or(read_line().trim(), false)
+}
+
+/// 读取一行并严格解析为 bool（失败 None）
+#[alloc]
+#[state]
+#[io]
+pub fn try_read_bool() -> Option[bool] {
+    return read_line().trim().try_parse_bool()
+}
