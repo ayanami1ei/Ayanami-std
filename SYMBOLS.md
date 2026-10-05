@@ -19,6 +19,32 @@ src/arraylist.aya:76: pub fn clear(ref mut self)
 src/arraylist.aya:80: pub fn iter(ref self, fn(T) f)
 src/arraylist.aya:88: impl[T:ToString] ArrayList[T]
 src/arraylist.aya:91: pub fn to_string(ref self)->String
+src/convert.aya:12: pub enum ParseError
+src/convert.aya:18: impl String
+src/convert.aya:21: pub fn try_parse_int(ref self) -> Option[int]
+src/convert.aya:65: pub fn try_parse_float(ref self) -> Option[float]
+src/convert.aya:125: pub fn try_parse_bool(ref self) -> Option[bool]
+src/convert.aya:139: pub fn parse_float(ref self) -> float
+src/convert.aya:148: pub fn parse_int_or(ref String s, int fallback) -> int
+src/convert.aya:154: pub fn parse_float_or(ref String s, float fallback) -> float
+src/convert.aya:160: pub fn parse_bool_or(ref String s, bool fallback) -> bool
+src/convert.aya:166: impl int
+src/convert.aya:168: pub fn to_float(self) -> float { return self as float }
+src/convert.aya:171: pub fn to_char(self) -> char { return self as char }
+src/convert.aya:174: impl float
+src/convert.aya:177: pub fn to_int(self) -> int { return self as int }
+src/convert.aya:180: impl char
+src/convert.aya:182: pub fn to_int(self) -> int { return self as int }
+src/convert.aya:185: impl bool
+src/convert.aya:187: pub fn to_int(self) -> int
+src/convert.aya:197: pub interface Into[T]
+src/convert.aya:198: fn into(self) -> T;
+src/convert.aya:201: impl int
+src/convert.aya:203: pub fn into(self) -> float { return self as float }
+src/convert.aya:206: impl char
+src/convert.aya:208: pub fn into(self) -> int { return self as int }
+src/convert.aya:211: impl bool
+src/convert.aya:213: pub fn into(self) -> int
 src/io.aya:13: pub fn getchar() -> int
 src/io.aya:17: pub fn putchar(int c)
 src/io.aya:22: pub fn print(ref String n)
@@ -97,8 +123,9 @@ src/std.aya:19: pub enum Option[T]
 src/std.aya:24: impl[T] Option[T]
 src/std.aya:25: pub fn unwrap_or(self, T default) -> T
 src/std.aya:32: pub fn is_some(self) -> bool
-src/std.aya:37: impl[T, E] Result[T, E]
-src/std.aya:38: pub fn try_unwrap(self) -> T
+src/std.aya:36: pub fn is_none(self) -> bool
+src/std.aya:41: impl[T, E] Result[T, E]
+src/std.aya:42: pub fn try_unwrap(self) -> T
 src/string.aya:13: pub fn panic_bounds_at(int line, int col, String file, usize index, usize len) -> void
 src/string.aya:19: pub fn char_code(char c) -> int
 src/string.aya:23: pub struct String
@@ -215,6 +242,10 @@ tests/unit/assert_test.aya:13: fn test_compare_asserts() -> int
 tests/unit/assert_test.aya:22: fn test_other_asserts() -> int
 tests/unit/char_test.aya:4: fn test_classify() -> int
 tests/unit/char_test.aya:18: fn test_convert() -> int
+tests/unit/convert_test.aya:5: fn test_parse_int() -> int
+tests/unit/convert_test.aya:19: fn test_parse_float() -> int
+tests/unit/convert_test.aya:33: fn test_parse_bool() -> int
+tests/unit/convert_test.aya:42: fn test_convert() -> int
 tests/unit/linkedlist_test.aya:5: fn test_basic() -> int
 tests/unit/math_test.aya:5: fn test_int_ops() -> int
 tests/unit/math_test.aya:17: fn test_float_ops() -> int

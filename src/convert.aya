@@ -1,0 +1,219 @@
+// convert — 解析与转换基础设施（Rust 风格 parse/into 的当前可行形态）
+//
+// 说明：
+// - 严格解析（try_parse_*）要求整串合法、不允许首尾空白；宽松版（parse_float）失败返回 0.0。
+// - `Into[T]` 接口按“自然转换”提供（每个类型至多一个目标）；显式目标用 `to_*` 方法。
+// - 泛型约束 `[U: Into[float]]` 暂不支持（编译器限制），接口先供动态分发与文档使用。
+// - `Result` 版解析（parse_int_result -> Result[int, ParseError]）待编译器 #68/#69 修复后追加。
+import "string"
+import "std"
+
+/// 解析错误类别（为 Result 版解析预留）
+pub enum ParseError {
+    Empty,
+    Invalid,
+    Overflow,
+}
+
+impl String {
+    /// 严格解析整数：可选 +/-，全部为数字；空白、非法字符、溢出返回 None
+    #[pure]
+    pub fn try_parse_int(ref self) -> Option[int] {
+        n = self.len
+        if n == 0 {
+            return Option::None()
+        }
+        i = 0usize
+        neg = false
+        c = self.data[0]
+        if c == '-' {
+            neg = true
+            i = 1
+        } else {
+            if c == '+' {
+                i = 1
+            }
+        }
+        if i >= n {
+            return Option::None()
+        }
+        v = 0
+        while i < n {
+            c = self.data[i]
+            if !c.is_digit() {
+                return Option::None()
+            }
+            d = c.to_digit()
+            if v > 922337203685477580 {
+                return Option::None()
+            }
+            v = v * 10
+            if v > 9223372036854775807 - d {
+                return Option::None()
+            }
+            v = v + d
+            i = i + 1
+        }
+        if neg {
+            return Option::Some(0 - v)
+        }
+        return Option::Some(v)
+    }
+
+    /// 严格解析浮点：可选 +/-，digits [. digits]（无指数）；非法输入返回 None
+    #[pure]
+    pub fn try_parse_float(ref self) -> Option[float] {
+        n = self.len
+        if n == 0 {
+            return Option::None()
+        }
+        i = 0usize
+        neg = false
+        c = self.data[0]
+        if c == '-' {
+            neg = true
+            i = 1
+        } else {
+            if c == '+' {
+                i = 1
+            }
+        }
+        if i >= n {
+            return Option::None()
+        }
+        v = 0.0
+        digits = 0
+        while i < n {
+            c = self.data[i]
+            if c == '.' {
+                break
+            }
+            if !c.is_digit() {
+                return Option::None()
+            }
+            v = v * 10.0 + (c.to_digit() as float)
+            digits = digits + 1
+            i = i + 1
+        }
+        if i < n {
+            if c == '.' {
+                i = i + 1
+                scale = 0.1
+                while i < n {
+                    c = self.data[i]
+                    if !c.is_digit() {
+                        return Option::None()
+                    }
+                    v = v + (c.to_digit() as float) * scale
+                    scale = scale * 0.1
+                    digits = digits + 1
+                    i = i + 1
+                }
+            }
+        }
+        if digits == 0 {
+            return Option::None()
+        }
+        if neg {
+            return Option::Some(0.0 - v)
+        }
+        return Option::Some(v)
+    }
+
+    /// 严格解析布尔：仅 "true" / "false"
+    #[pure]
+    pub fn try_parse_bool(ref self) -> Option[bool] {
+        t = "true"
+        f = "false"
+        if self.eq(t) {
+            return Option::Some(true)
+        }
+        if self.eq(f) {
+            return Option::Some(false)
+        }
+        return Option::None()
+    }
+
+    /// 宽松浮点解析：失败返回 0.0（对齐 parse_int）
+    #[pure]
+    pub fn parse_float(ref self) -> float {
+        return self.try_parse_float().unwrap_or(0.0)
+    }
+}
+
+// ── 便捷包装（返回 int/float/bool，避免调用方重复单态化泛型方法） ──
+
+/// 严格解析整数，失败用 fallback
+#[pure]
+pub fn parse_int_or(ref String s, int fallback) -> int {
+    return s.try_parse_int().unwrap_or(fallback)
+}
+
+/// 严格解析浮点，失败用 fallback
+#[pure]
+pub fn parse_float_or(ref String s, float fallback) -> float {
+    return s.try_parse_float().unwrap_or(fallback)
+}
+
+/// 严格解析布尔，失败用 fallback
+#[pure]
+pub fn parse_bool_or(ref String s, bool fallback) -> bool {
+    return s.try_parse_bool().unwrap_or(fallback)
+}
+
+// ── 显式目标转换（to_*） ──
+
+impl int {
+    #[pure]
+    pub fn to_float(self) -> float { return self as float }
+
+    #[pure]
+    pub fn to_char(self) -> char { return self as char }
+}
+
+impl float {
+    /// 截断取整（向零）
+    #[pure]
+    pub fn to_int(self) -> int { return self as int }
+}
+
+impl char {
+    #[pure]
+    pub fn to_int(self) -> int { return self as int }
+}
+
+impl bool {
+    #[pure]
+    pub fn to_int(self) -> int {
+        if self {
+            return 1
+        }
+        return 0
+    }
+}
+
+// ── Into[T]：自然转换（每类型至多一个目标） ──
+
+pub interface Into[T] {
+    fn into(self) -> T;
+}
+
+impl int {
+    #[pure]
+    pub fn into(self) -> float { return self as float }
+}
+
+impl char {
+    #[pure]
+    pub fn into(self) -> int { return self as int }
+}
+
+impl bool {
+    #[pure]
+    pub fn into(self) -> int {
+        if self {
+            return 1
+        }
+        return 0
+    }
+}

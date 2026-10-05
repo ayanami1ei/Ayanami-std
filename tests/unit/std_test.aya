@@ -20,6 +20,8 @@ fn test_aggregate() -> int {
 fn test_option() -> int {
     #assert(mk_some().is_some())
     #assert(!mk_none().is_some())
+    #assert(mk_none().is_none())
+    #assert(!mk_some().is_none())
     #assert_eq(mk_some().unwrap_or(0), 3)
     #assert_eq(mk_none().unwrap_or(42), 42)
     return 0

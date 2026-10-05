@@ -8,6 +8,7 @@
 | [io.md](io.md) | 输入输出：`print` / `println` / `putchar` / `getchar` |
 | [math.md](math.md) | 数学函数：整型与浮点重载 |
 | [string.md](string.md) | 字符串与字符：`String` 方法、`char` 工具、`ToString` |
+| [convert.md](convert.md) | 解析与转换：`try_parse_*`、`parse_*_or`、`to_*`、`Into[T]` |
 | [collections.md](collections.md) | 集合：`List` 接口、`ArrayList`、`LinkedList` |
 | [option-result.md](option-result.md) | `std` 聚合：`Option`、`Result`、`Error` 接口 |
 | [panic.md](panic.md) | 运行时 panic：`#panic`、越界与空表行为 |
