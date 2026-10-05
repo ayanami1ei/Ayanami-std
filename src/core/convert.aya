@@ -120,8 +120,9 @@ impl String {
         return Option::Some(v)
     }
 
-    /// 严格解析布尔：仅 "true" / "false"
-    #[pure]
+    /// 严格解析布尔：仅 "true" / "false"（内部有字符串字面量分配）
+    #[alloc]
+    #[state]
     pub fn try_parse_bool(ref self) -> Option[bool] {
         t = "true"
         f = "false"
