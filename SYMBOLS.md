@@ -36,10 +36,10 @@ src/collections/list.aya:4: fn index(ref self, usize index)->T;
 src/collections/list.aya:5: fn len(ref self)->usize;
 src/collections/list.aya:6: fn iter(ref self, fn(T) f);
 src/collections/text.aya:10: pub fn split(ref String s, ref String sep) -> ArrayList[String]
-src/collections/text.aya:43: pub fn join(ref ArrayList[String] list, ref String sep) -> String
-src/collections/text.aya:60: pub fn replace(ref String s, ref String old, ref String new) -> String
-src/collections/text.aya:95: pub fn pad_left(ref String s, usize width, char fill) -> String
-src/collections/text.aya:113: pub fn pad_right(ref String s, usize width, char fill) -> String
+src/collections/text.aya:45: pub fn join(ref ArrayList[String] list, ref String sep) -> String
+src/collections/text.aya:62: pub fn replace(ref String s, ref String old, ref String new) -> String
+src/collections/text.aya:97: pub fn pad_left(ref String s, usize width, char fill) -> String
+src/collections/text.aya:115: pub fn pad_right(ref String s, usize width, char fill) -> String
 src/core/convert.aya:12: pub enum ParseError
 src/core/convert.aya:18: impl String
 src/core/convert.aya:21: pub fn try_parse_int(ref self) -> Option[int]
@@ -251,6 +251,10 @@ src/system/rand.aya:42: pub fn next_range(ref mut self, int lo, int hi) -> int
 src/system/time.aya:10: pub fn now_millis() -> int
 src/system/time.aya:16: pub fn now_unix() -> int
 tests/compile_fail/missing_import.aya:3: fn main() -> int
+tests/golden/io_print.aya:3: fn main() -> int
+tests/golden/math_ops.aya:4: fn main() -> int
+tests/golden/string_ops.aya:4: fn main() -> int
+tests/golden/text_ops.aya:4: fn main() -> int
 tests/unit/arraylist_test.aya:5: fn test_basic() -> int
 tests/unit/arraylist_test.aya:25: fn test_capacity() -> int
 tests/unit/assert_fail_test.aya:4: fn some3() -> Option[int]

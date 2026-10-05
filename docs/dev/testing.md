@@ -85,7 +85,7 @@ fn test_oob() -> int {
 | `tests/unit/*_test.aya` | 单元用例（`#[test]` / `#[should_panic]`） |
 | `tests/unit/<模块>.stdin` | 为该模块用例提供标准输入（每个用例独立进程，从头读取） |
 | `tests/compile_fail/*.aya` + `.expected` | 编译期负例：`.expected` 每行一个候选子串，命中任意一行即通过 |
-| `tests/golden/*.aya` + `.out` | stdout 黄金输出（精确对比；启用受 #85 阻塞） |
+| `tests/golden/*.aya` + `.out` | stdout 黄金输出（精确对比） |
 
 ## 运行器实现
 

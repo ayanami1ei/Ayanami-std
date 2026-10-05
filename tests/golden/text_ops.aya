@@ -1,0 +1,10 @@
+import "io"
+import "text"
+
+fn main() -> int {
+    parts = split("a,b,c", ",")
+    println(join(parts, "-"))
+    println(replace("a-b-c", "-", "+"))
+    println(pad_left("42", 5, '0'))
+    return 0
+}
