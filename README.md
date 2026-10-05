@@ -165,7 +165,7 @@ fn main() -> int {
 ## 测试
 
 用例用 `#[test]` / `#[should_panic]` 标注 + `#assert` 断言宏（`import "test"`），
-详见 [docs/testing.md](docs/testing.md)：
+详见 [docs/dev/testing.md](docs/dev/testing.md)：
 
 ```bash
 AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
@@ -180,7 +180,7 @@ AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
 本仓库是 [Ayanami-language](https://github.com/ayanami1ei/Ayanami-language) 的 `std/` 子模块。
 标准库源码在 `src/`；根目录 `*.aya` 是指向 `src/*.aya` 的符号链接（按短名 import 时回溯源码用），
 构建产物（`*.lcl`）不入库。`runtime.c` 是标准库的 C 运行时（编译器链接程序时编译），
-见 [docs/runtime.md](docs/runtime.md)。符号地图：`SYMBOLS.md`（`rg "关键词" SYMBOLS.md`）；改完源码跑
+见 [docs/dev/runtime.md](docs/dev/runtime.md)。符号地图：`SYMBOLS.md`（`rg "关键词" SYMBOLS.md`）；改完源码跑
 `./scripts/gen_symbols.sh` 刷新，提交前 `./scripts/gen_symbols.sh --check` 需通过。
 
 开发态编译器（`cargo run` / `target/debug/ayanami`）读取的是**二进制同目录的 `std/*.lcl`**

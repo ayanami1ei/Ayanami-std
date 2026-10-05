@@ -42,4 +42,4 @@ fn main() -> int {
 
 - 语言没有 `try/catch`：panic 即终止进程，不能捕获。
 - 手动调用 `panic_at` 时行 / 列 / 文件由调用方提供；一般直接用 `#panic` 宏。
-- 测试里用 `tests/panic_exit.txt` 校验 `101` + 消息子串（见 [testing.md](testing.md)）。
+- 测试里用 `tests/panic_exit.txt` 校验 `101` + 消息子串（见 [testing.md](../dev/testing.md)）。

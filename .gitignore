@@ -2,3 +2,5 @@
 *.o
 /build
 .driver.aya
+runtime/*.o
+runtime/*.a

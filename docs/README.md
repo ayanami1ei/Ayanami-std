@@ -3,24 +3,24 @@
 面向使用者的分模块教程式文档（语言语法见主仓教程）。符号定位：根目录 `SYMBOLS.md`
 （`rg "关键词" SYMBOLS.md`）。
 
-设计标准：[design.md](design.md)（对外声明式、对内过程式、整体面向对象）。
+设计标准：[design.md](dev/design.md)（对外声明式、对内过程式、整体面向对象）。
 
 | 文档 | 内容 |
 |---|---|
-| [design.md](design.md) | 设计标准：对外声明式、对内过程式、整体面向对象 |
-| [io.md](io.md) | 输入输出：`print` / `println` / `putchar` / `getchar` |
-| [math.md](math.md) | 数学函数：整型与浮点重载 |
-| [string.md](string.md) | 字符串与字符：`String` 方法、`char` 工具、`ToString` |
-| [convert.md](convert.md) | 解析与转换：`try_parse_*`、`parse_*_or`、`to_*`、`Into[T]` |
-| [rand.md](rand.md) | 伪随机数：`Rng`（LCG，确定性） |
-| [time.md](time.md) | 时间：`now_millis`（单调）/ `now_unix` |
-| [fs.md](fs.md) | 文件读写：`exists` / `read_file` / `write_file` |
-| [env.md](env.md) | 命令行参数与环境变量 |
-| [collections.md](collections.md) | 集合：`List` 接口、`ArrayList`、`LinkedList` |
-| [option-result.md](option-result.md) | `std` 聚合：`Option`、`Result`、`Error` 接口 |
-| [panic.md](panic.md) | 运行时 panic：`#panic`、越界与空表行为 |
-| [runtime.md](runtime.md) | C 运行时：ABI、约定与扩展步骤 |
-| [testing.md](testing.md) | 测试框架：运行方式与新增用例 |
+| [design.md](dev/design.md) | 设计标准：对外声明式、对内过程式、整体面向对象 |
+| [io.md](modules/io.md) | 输入输出：`print` / `println` / `putchar` / `getchar` |
+| [math.md](modules/math.md) | 数学函数：整型与浮点重载 |
+| [string.md](modules/string.md) | 字符串与字符：`String` 方法、`char` 工具、`ToString` |
+| [convert.md](modules/convert.md) | 解析与转换：`try_parse_*`、`parse_*_or`、`to_*`、`Into[T]` |
+| [rand.md](modules/rand.md) | 伪随机数：`Rng`（LCG，确定性） |
+| [time.md](modules/time.md) | 时间：`now_millis`（单调）/ `now_unix` |
+| [fs.md](modules/fs.md) | 文件读写：`exists` / `read_file` / `write_file` |
+| [env.md](modules/env.md) | 命令行参数与环境变量 |
+| [collections.md](modules/collections.md) | 集合：`List` 接口、`ArrayList`、`LinkedList` |
+| [option-result.md](modules/option-result.md) | `std` 聚合：`Option`、`Result`、`Error` 接口 |
+| [panic.md](modules/panic.md) | 运行时 panic：`#panic`、越界与空表行为 |
+| [runtime.md](dev/runtime.md) | C 运行时：ABI、约定与扩展步骤 |
+| [testing.md](dev/testing.md) | 测试框架：运行方式与新增用例 |
 
 ## 引入与运行
 
@@ -50,4 +50,4 @@ AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
 
 - 源码在 `src/`；根目录 `*.aya` 是指向 `src/*.aya` 的符号链接
 - 构建产物 `.lcl` 不入库；`SYMBOLS.md` 由 `./scripts/gen_symbols.sh` 生成
-- 越界/空表等运行时错误的退出码为 **101**（见 [panic.md](panic.md)）
+- 越界/空表等运行时错误的退出码为 **101**（见 [panic.md](modules/panic.md)）
