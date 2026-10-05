@@ -1,0 +1,162 @@
+// hashmap — 泛型哈希表（开放寻址 + 线性探测）
+//
+// 值读取为浅拷贝（与 ArrayList.index 一致）；需要深拷贝时对结果调用 .copy()。
+// 装填因子与墓碑策略同 HashSet。
+import "hash"
+import "option"
+
+pub struct HashMap[K: Hash, V] {
+    [K] keys
+    [V] vals
+    [int] state
+    usize len
+    usize filled
+    usize cap
+}
+
+pub namespace HashMap {
+    pub fn new[K: Hash, V]() -> HashMap[K, V] {
+        return HashMap[K, V] { keys = null, vals = null, state = null, len = 0, filled = 0, cap = 0 }
+    }
+}
+
+impl[K: Hash, V] HashMap[K, V] {
+    #[alloc]
+    #[state]
+    fn grow(ref mut self) {
+        new_cap = 8usize
+        if self.cap > 0 {
+            new_cap = self.cap * 2
+        }
+        nk = [K; new_cap]
+        nv = [V; new_cap]
+        ns = [int; new_cap]
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                k = self.keys[i]
+                v = self.vals[i]
+                nc = new_cap as int
+                h = k.hash() % nc
+                j = h as usize
+                while ns[j] != 0 {
+                    j = (j + 1) % new_cap
+                }
+                nk[j] = k
+                nv[j] = v
+                ns[j] = 1
+            }
+            i = i + 1
+        }
+        self.keys = nk
+        self.vals = nv
+        self.state = ns
+        self.cap = new_cap
+        self.filled = self.len
+    }
+
+    /// 插入或更新；新增返回 true，覆盖旧值返回 false
+    #[alloc]
+    #[state]
+    pub fn insert(ref mut self, K k, V v) -> bool {
+        if self.cap == 0 {
+            self.grow()
+        }
+        if (self.filled + 1) * 2 >= self.cap {
+            self.grow()
+        }
+        i = (k.hash() % self.cap as int) as usize
+        while true {
+            if self.state[i] == 0 {
+                self.keys[i] = k
+                self.vals[i] = v
+                self.state[i] = 1
+                self.len = self.len + 1
+                self.filled = self.filled + 1
+                return true
+            }
+            if self.state[i] == 1 {
+                if self.keys[i].hash_eq(ref k) {
+                    self.vals[i] = v
+                    return false
+                }
+            }
+            i = (i + 1) % self.cap
+        }
+        return false
+    }
+
+    /// 取值（浅拷贝）；不存在返回 None
+    pub fn get(ref self, ref K k) -> Option[V] {
+        if self.cap == 0 {
+            return Option::None()
+        }
+        i = (k.hash() % self.cap as int) as usize
+        while true {
+            s = self.state[i]
+            if s == 0 {
+                return Option::None()
+            }
+            if s == 1 {
+                if self.keys[i].hash_eq(k) {
+                    return Option::Some(self.vals[i])
+                }
+            }
+            i = (i + 1) % self.cap
+        }
+        return Option::None()
+    }
+
+    /// 是否包含键
+    pub fn contains_key(ref self, ref K k) -> bool {
+        if self.cap == 0 {
+            return false
+        }
+        i = (k.hash() % self.cap as int) as usize
+        while true {
+            s = self.state[i]
+            if s == 0 {
+                return false
+            }
+            if s == 1 {
+                if self.keys[i].hash_eq(k) {
+                    return true
+                }
+            }
+            i = (i + 1) % self.cap
+        }
+        return false
+    }
+
+    /// 删除（墓碑）；不存在返回 false
+    #[state]
+    pub fn remove(ref mut self, ref K k) -> bool {
+        if self.cap == 0 {
+            return false
+        }
+        i = (k.hash() % self.cap as int) as usize
+        while true {
+            s = self.state[i]
+            if s == 0 {
+                return false
+            }
+            if s == 1 {
+                if self.keys[i].hash_eq(k) {
+                    self.state[i] = 2
+                    self.len = self.len - 1
+                    return true
+                }
+            }
+            i = (i + 1) % self.cap
+        }
+        return false
+    }
+
+    pub fn len(ref self) -> usize {
+        return self.len
+    }
+
+    pub fn is_empty(ref self) -> bool {
+        return self.len == 0
+    }
+}

@@ -1,0 +1,42 @@
+import "hashmap"
+import "test"
+
+#[test]
+fn test_map_basic() {
+    m = HashMap::new[String, int]()
+    #assert(m.insert("a", 1))
+    #assert(!m.insert("a", 2))
+    #assert_eq(m.get("a").unwrap_or(0), 2)
+    #assert_eq(m.len(), 1)
+    #assert(m.contains_key("a"))
+    #assert(!m.contains_key("b"))
+    #assert(m.remove("a"))
+    #assert(!m.contains_key("a"))
+    #assert_eq(m.get("a").unwrap_or(9), 9)
+}
+
+#[test]
+fn test_map_grow() {
+    m = HashMap::new[int, int]()
+    i = 0
+    while i < 200 {
+        j = i * 3
+        m.insert(j, i)
+        i = i + 1
+    }
+    #assert_eq(m.len(), 200)
+    #assert_eq(m.get(0).unwrap_or(-1), 0)
+    #assert_eq(m.get(597).unwrap_or(-1), 199)
+    #assert_eq(m.get(1).unwrap_or(-1), -1)
+}
+
+#[test]
+fn test_map_string_value() {
+    m = HashMap::new[String, String]()
+    m.insert("name", "ayanami")
+    v = m.get("name").unwrap_or("none")
+    #assert(v.eq("ayanami"))
+    m.insert("name", "ayanami2")
+    v2 = m.get("name").unwrap_or("none")
+    #assert(v2.eq("ayanami2"))
+}

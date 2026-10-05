@@ -1,0 +1,66 @@
+import "hashset"
+import "test"
+
+#[test]
+fn test_set_basic() {
+    s = HashSet::new[String]()
+    #assert(s.insert("apple"))
+    #assert(!s.insert("apple"))
+    #assert_eq(s.len(), 1)
+    #assert(s.contains("apple"))
+    #assert(!s.contains("banana"))
+    s.insert("banana")
+    #assert_eq(s.len(), 2)
+    #assert(s.remove("apple"))
+    #assert(!s.contains("apple"))
+    #assert_eq(s.len(), 1)
+    #assert(!s.remove("nope"))
+}
+
+#[test]
+fn test_set_grow() {
+    s = HashSet::new[String]()
+    i = 0
+    while i < 200 {
+        j = i * 7
+        s.insert(j.to_string())
+        i = i + 1
+    }
+    #assert_eq(s.len(), 200)
+    #assert(s.contains("0"))
+    #assert(s.contains("1393"))
+    #assert(!s.contains("999"))
+}
+
+#[test]
+fn test_set_tombstone() {
+    s = HashSet::new[int]()
+    i = 0
+    while i < 8 {
+        s.insert(i)
+        i = i + 1
+    }
+    i = 0
+    while i < 8 {
+        s.remove(i)
+        i = i + 2
+    }
+    #assert_eq(s.len(), 4)
+    i = 0
+    while i < 8 {
+        if i % 2 == 0 {
+            #assert(!s.contains(i))
+        } else {
+            #assert(s.contains(i))
+        }
+        i = i + 1
+    }
+    i = 8
+    while i < 20 {
+        s.insert(i)
+        i = i + 1
+    }
+    #assert_eq(s.len(), 16)
+    #assert(s.contains(19))
+    #assert(!s.contains(0))
+}

@@ -1,0 +1,133 @@
+// hashset — 泛型哈希集合（开放寻址 + 线性探测）
+//
+// state：0=空、1=占用、2=墓碑；filled 为占用+墓碑槽数，
+// 装填因子超过 0.5 时扩容（grow 顺带清墓碑），保证探测必然终止。
+import "hash"
+
+pub struct HashSet[K: Hash] {
+    [K] keys
+    [int] state
+    usize len
+    usize filled
+    usize cap
+}
+
+pub namespace HashSet {
+    pub fn new[K: Hash]() -> HashSet[K] {
+        return HashSet[K] { keys = null, state = null, len = 0, filled = 0, cap = 0 }
+    }
+}
+
+impl[K: Hash] HashSet[K] {
+    #[alloc]
+    #[state]
+    fn grow(ref mut self) {
+        new_cap = 8usize
+        if self.cap > 0 {
+            new_cap = self.cap * 2
+        }
+        nk = [K; new_cap]
+        ns = [int; new_cap]
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                k = self.keys[i]
+                nc = new_cap as int
+                h = k.hash() % nc
+                j = h as usize
+                while ns[j] != 0 {
+                    j = (j + 1) % new_cap
+                }
+                nk[j] = k
+                ns[j] = 1
+            }
+            i = i + 1
+        }
+        self.keys = nk
+        self.state = ns
+        self.cap = new_cap
+        self.filled = self.len
+    }
+
+    /// 插入；已存在返回 false
+    #[alloc]
+    #[state]
+    pub fn insert(ref mut self, K k) -> bool {
+        if self.cap == 0 {
+            self.grow()
+        }
+        if (self.filled + 1) * 2 >= self.cap {
+            self.grow()
+        }
+        i = (k.hash() % self.cap as int) as usize
+        while true {
+            if self.state[i] == 0 {
+                self.keys[i] = k
+                self.state[i] = 1
+                self.len = self.len + 1
+                self.filled = self.filled + 1
+                return true
+            }
+            if self.state[i] == 1 {
+                if self.keys[i].hash_eq(ref k) {
+                    return false
+                }
+            }
+            i = (i + 1) % self.cap
+        }
+        return false
+    }
+
+    /// 是否包含
+    pub fn contains(ref self, ref K k) -> bool {
+        if self.cap == 0 {
+            return false
+        }
+        i = (k.hash() % self.cap as int) as usize
+        while true {
+            s = self.state[i]
+            if s == 0 {
+                return false
+            }
+            if s == 1 {
+                if self.keys[i].hash_eq(k) {
+                    return true
+                }
+            }
+            i = (i + 1) % self.cap
+        }
+        return false
+    }
+
+    /// 删除（墓碑）；不存在返回 false
+    #[state]
+    pub fn remove(ref mut self, ref K k) -> bool {
+        if self.cap == 0 {
+            return false
+        }
+        i = (k.hash() % self.cap as int) as usize
+        while true {
+            s = self.state[i]
+            if s == 0 {
+                return false
+            }
+            if s == 1 {
+                if self.keys[i].hash_eq(k) {
+                    self.state[i] = 2
+                    self.len = self.len - 1
+                    return true
+                }
+            }
+            i = (i + 1) % self.cap
+        }
+        return false
+    }
+
+    pub fn len(ref self) -> usize {
+        return self.len
+    }
+
+    pub fn is_empty(ref self) -> bool {
+        return self.len == 0
+    }
+}

@@ -5,6 +5,9 @@
 | `list` | `List[T]` 接口 | 元素无约束 |
 | `arraylist` | `ArrayList[T]` | 顺序表（`[T]` 缓冲，自动扩容） |
 | `linkedlist` | `LinkedList[T]` | 与 `ArrayList` 同接口；当前为数组缓冲实现（行为等价顺序表） |
+| `hash` | `Hash` 接口 | `int` / `String` 哈希与键相等 |
+| `hashset` | `HashSet[K: Hash]` | 哈希集合（开放寻址） |
+| `hashmap` | `HashMap[K: Hash, V]` | 哈希表（开放寻址） |
 
 ```ayanami
 import "arraylist"
@@ -96,6 +99,53 @@ sort_int(a)                  // [1, 2, 3]
 ```
 
 > 泛型 `sort[T]` 待 Ord 型接口/约束能力就绪后提供。
+
+## 哈希集合 / 哈希表（`import "hashset"` / `"hashmap"`）
+
+开放寻址 + 线性探测；装填因子超过 0.5 自动扩容（扩容顺带清理墓碑），探测必然终止。
+键类型需实现 `Hash` 接口（内置 `String` 与 `int`）：
+
+```ayanami
+pub interface Hash {
+    fn hash(ref self) -> int;                    // 确定性、非负
+    fn hash_eq(ref self, ref Self other) -> bool;
+}
+```
+
+| 方法 | 说明 |
+|---|---|
+| `HashSet::new[K]()` | 空集合 |
+| `s.insert(k) -> bool` | 插入；已存在返回 false |
+| `s.contains(k) -> bool` | 是否包含 |
+| `s.remove(k) -> bool` | 删除；不存在返回 false |
+| `s.len()` / `s.is_empty()` | 长度 / 是否为空 |
+
+| 方法 | 说明 |
+|---|---|
+| `HashMap::new[K, V]()` | 空表 |
+| `m.insert(k, v) -> bool` | 插入；新增返回 true，覆盖旧值返回 false |
+| `m.get(k) -> Option[V]` | 取值（浅拷贝，与 `ArrayList.index` 一致） |
+| `m.contains_key(k) -> bool` | 是否包含键 |
+| `m.remove(k) -> bool` | 删除；不存在返回 false |
+| `m.len()` / `m.is_empty()` | 长度 / 是否为空 |
+
+```ayanami
+import "hashmap"
+import "hashset"
+
+s = HashSet::new[String]()
+s.insert("a")             // true
+s.contains("a")           // true
+s.remove("a")             // true
+
+m = HashMap::new[String, int]()
+m.insert("x", 1)
+m.insert("x", 2)          // false（覆盖）
+m.get("x").unwrap_or(0)   // 2
+```
+
+> 值读取为浅拷贝；需要深拷贝时对结果调用 `.copy()`。
+> 扩展键类型：为新类型提供 `hash` + `hash_eq` 两个方法即满足 `Hash`。
 
 ## 注意
 

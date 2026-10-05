@@ -1,10 +1,12 @@
 // hash — 哈希基础（Hash 接口 + int/String 实现）
 //
 // 算法：31 进制折叠取模（模 2147483647），结果非负、乘法不溢出 i64。
+// hash_eq 供泛型集合做键相等判断（接口带 Self）。
 import "string"
 
 pub interface Hash {
     fn hash(ref self) -> int;
+    fn hash_eq(ref self, ref Self other) -> bool;
 }
 
 impl String {
@@ -19,6 +21,11 @@ impl String {
         }
         return h
     }
+
+    #[pure]
+    pub fn hash_eq(ref self, ref String other) -> bool {
+        return self.eq(other)
+    }
 }
 
 impl int {
@@ -30,5 +37,10 @@ impl int {
             h = 0 - h
         }
         return h
+    }
+
+    #[pure]
+    pub fn hash_eq(ref self, ref int other) -> bool {
+        return self == other
     }
 }
