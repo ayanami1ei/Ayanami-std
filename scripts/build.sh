@@ -2,12 +2,9 @@
 # build.sh — 构建标准库为 .lcl，并可选安装到编译器 std 目录
 #
 # 用法：
-#   ./scripts/build.sh                        # 构建到 src/*.lcl
-#   ./scripts/build.sh --install <DIR>        # 重建并复制到 <DIR>
+#   ./scripts/build.sh                        # 构建到 src/**/*.lcl
+#   ./scripts/build.sh --install <DIR>        # 每模块构建后立即安装（支持冷构建）
 #   AYANAMI_BIN=/path/to/ayanami ./scripts/build.sh --install /path/target/debug/std
-#
-# 说明：cargo 构建的编译器在开发态读取 <exe_dir>/std/*.lcl
-# （即 target/debug/std），单测/回归前先把本仓库构建结果安装过去。
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -20,16 +17,37 @@ fi
 INSTALL=""
 if [[ "${1:-}" == "--install" ]]; then
     INSTALL="${2:?用法: $0 --install <std 目录>}"
+    mkdir -p "$INSTALL"
 fi
 
-for f in src/*.aya; do
-    "$BIN" package "$f" >/dev/null
+# 依赖顺序：被依赖者在前；每模块构建后立即安装，支持冷构建
+MODULES=(
+    core/string core/option core/math core/panic
+    collections/list collections/arraylist collections/linkedlist
+    core/convert dev/test
+    system/io system/fs system/env system/time system/rand
+    meta/mir
+    std
+)
+
+# 扁平暂存：模块间用短名互相导入，编译器按同级目录解析；
+# 构建产物回写到 src/ 原目录并可选安装。
+STAGE=$(mktemp -d)
+trap 'rm -rf "$STAGE"' EXIT
+find src -name '*.aya' -exec cp {} "$STAGE/" \;
+
+n=0
+for m in "${MODULES[@]}"; do
+    stem=$(basename "$m")
+    "$BIN" package "$STAGE/$stem.aya" >/dev/null
+    cp "$STAGE/$stem.lcl" "src/$m.lcl"
+    if [[ -n "$INSTALL" ]]; then
+        cp "$STAGE/$stem.lcl" "$INSTALL/"
+    fi
+    n=$((n + 1))
 done
-n=$(ls src/*.lcl | wc -l)
 if [[ -n "$INSTALL" ]]; then
-    mkdir -p "$INSTALL"
-    cp src/*.lcl "$INSTALL/"
     echo "built $n modules -> $INSTALL"
 else
-    echo "built $n modules (src/*.lcl)"
+    echo "built $n modules (src/**/*.lcl)"
 fi

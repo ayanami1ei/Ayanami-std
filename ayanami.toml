@@ -6,5 +6,4 @@ version = "0.6.5"
 #target = "static-lib"
 #target = "executable"
 
-[dependencies]
-string = "src/string.aya"
+# 模块别名：任意 base_dir 向上都能在 std/ 找到本文件，从而解析短名导入
