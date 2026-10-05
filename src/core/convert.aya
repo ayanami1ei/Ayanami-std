@@ -157,7 +157,8 @@ pub fn parse_float_or(ref String s, float fallback) -> float {
 }
 
 /// 严格解析布尔，失败用 fallback
-#[pure]
+#[alloc]
+#[state]
 pub fn parse_bool_or(ref String s, bool fallback) -> bool {
     return s.try_parse_bool().unwrap_or(fallback)
 }

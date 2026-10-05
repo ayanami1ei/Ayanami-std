@@ -44,28 +44,28 @@ src/core/convert.aya:12: pub enum ParseError
 src/core/convert.aya:18: impl String
 src/core/convert.aya:21: pub fn try_parse_int(ref self) -> Option[int]
 src/core/convert.aya:65: pub fn try_parse_float(ref self) -> Option[float]
-src/core/convert.aya:125: pub fn try_parse_bool(ref self) -> Option[bool]
-src/core/convert.aya:139: pub fn parse_float(ref self) -> float
-src/core/convert.aya:148: pub fn parse_int_or(ref String s, int fallback) -> int
-src/core/convert.aya:154: pub fn parse_float_or(ref String s, float fallback) -> float
-src/core/convert.aya:160: pub fn parse_bool_or(ref String s, bool fallback) -> bool
-src/core/convert.aya:166: impl int
-src/core/convert.aya:168: pub fn to_float(self) -> float { return self as float }
-src/core/convert.aya:171: pub fn to_char(self) -> char { return self as char }
-src/core/convert.aya:174: impl float
-src/core/convert.aya:177: pub fn to_int(self) -> int { return self as int }
-src/core/convert.aya:180: impl char
-src/core/convert.aya:182: pub fn to_int(self) -> int { return self as int }
-src/core/convert.aya:185: impl bool
-src/core/convert.aya:187: pub fn to_int(self) -> int
-src/core/convert.aya:197: pub interface Into[T]
-src/core/convert.aya:198: fn into(self) -> T;
-src/core/convert.aya:201: impl int
-src/core/convert.aya:203: pub fn into(self) -> float { return self as float }
-src/core/convert.aya:206: impl char
-src/core/convert.aya:208: pub fn into(self) -> int { return self as int }
-src/core/convert.aya:211: impl bool
-src/core/convert.aya:213: pub fn into(self) -> int
+src/core/convert.aya:126: pub fn try_parse_bool(ref self) -> Option[bool]
+src/core/convert.aya:140: pub fn parse_float(ref self) -> float
+src/core/convert.aya:149: pub fn parse_int_or(ref String s, int fallback) -> int
+src/core/convert.aya:155: pub fn parse_float_or(ref String s, float fallback) -> float
+src/core/convert.aya:162: pub fn parse_bool_or(ref String s, bool fallback) -> bool
+src/core/convert.aya:168: impl int
+src/core/convert.aya:170: pub fn to_float(self) -> float { return self as float }
+src/core/convert.aya:173: pub fn to_char(self) -> char { return self as char }
+src/core/convert.aya:176: impl float
+src/core/convert.aya:179: pub fn to_int(self) -> int { return self as int }
+src/core/convert.aya:182: impl char
+src/core/convert.aya:184: pub fn to_int(self) -> int { return self as int }
+src/core/convert.aya:187: impl bool
+src/core/convert.aya:189: pub fn to_int(self) -> int
+src/core/convert.aya:199: pub interface Into[T]
+src/core/convert.aya:200: fn into(self) -> T;
+src/core/convert.aya:203: impl int
+src/core/convert.aya:205: pub fn into(self) -> float { return self as float }
+src/core/convert.aya:208: impl char
+src/core/convert.aya:210: pub fn into(self) -> int { return self as int }
+src/core/convert.aya:213: impl bool
+src/core/convert.aya:215: pub fn into(self) -> int
 src/core/math.aya:5: pub fn abs(int x) -> int
 src/core/math.aya:11: pub fn min(int a, int b) -> int
 src/core/math.aya:17: pub fn max(int a, int b) -> int
@@ -238,9 +238,9 @@ src/system/io.aya:81: pub fn println(int n)
 src/system/io.aya:88: pub fn println(float f)
 src/system/io.aya:95: pub fn println(bool b)
 src/system/io.aya:102: pub fn println(char c)
-src/system/io.aya:112: pub fn read_line() -> String
-src/system/io.aya:129: pub fn read_int() -> int
-src/system/io.aya:136: pub fn try_read_int() -> Option[int]
+src/system/io.aya:113: pub fn read_line() -> String
+src/system/io.aya:131: pub fn read_int() -> int
+src/system/io.aya:139: pub fn try_read_int() -> Option[int]
 src/system/rand.aya:8: pub struct Rng
 src/system/rand.aya:12: pub namespace Rng
 src/system/rand.aya:15: pub fn from_entropy() -> Rng
@@ -255,52 +255,52 @@ tests/golden/io_print.aya:3: fn main() -> int
 tests/golden/math_ops.aya:4: fn main() -> int
 tests/golden/string_ops.aya:4: fn main() -> int
 tests/golden/text_ops.aya:4: fn main() -> int
-tests/unit/arraylist_test.aya:5: fn test_basic() -> int
-tests/unit/arraylist_test.aya:25: fn test_capacity() -> int
+tests/unit/arraylist_test.aya:5: fn test_basic()
+tests/unit/arraylist_test.aya:24: fn test_capacity()
 tests/unit/assert_fail_test.aya:4: fn some3() -> Option[int]
-tests/unit/assert_fail_test.aya:9: fn test_lt_fail() -> int
-tests/unit/assert_fail_test.aya:15: fn test_contains_fail() -> int
-tests/unit/assert_fail_test.aya:21: fn test_none_fail() -> int
-tests/unit/assert_fail_test.aya:27: fn test_close_fail() -> int
-tests/unit/assert_fail_test.aya:33: fn test_fail_macro() -> int
+tests/unit/assert_fail_test.aya:9: fn test_lt_fail()
+tests/unit/assert_fail_test.aya:14: fn test_contains_fail()
+tests/unit/assert_fail_test.aya:19: fn test_none_fail()
+tests/unit/assert_fail_test.aya:24: fn test_close_fail()
+tests/unit/assert_fail_test.aya:29: fn test_fail_macro()
 tests/unit/assert_test.aya:4: fn some3() -> Option[int]
 tests/unit/assert_test.aya:8: fn none_opt() -> Option[int]
-tests/unit/assert_test.aya:13: fn test_compare_asserts() -> int
-tests/unit/assert_test.aya:22: fn test_other_asserts() -> int
-tests/unit/char_test.aya:4: fn test_classify() -> int
-tests/unit/char_test.aya:18: fn test_convert() -> int
+tests/unit/assert_test.aya:13: fn test_compare_asserts()
+tests/unit/assert_test.aya:21: fn test_other_asserts()
+tests/unit/char_test.aya:4: fn test_classify()
+tests/unit/char_test.aya:17: fn test_convert()
 tests/unit/convert_test.aya:5: fn as_float[U: Into[float]](U x) -> float
-tests/unit/convert_test.aya:10: fn test_parse_int() -> int
-tests/unit/convert_test.aya:25: fn test_parse_float() -> int
-tests/unit/convert_test.aya:40: fn test_parse_bool() -> int
-tests/unit/convert_test.aya:50: fn test_convert() -> int
-tests/unit/env_test.aya:5: fn test_args() -> int
-tests/unit/env_test.aya:13: fn test_env() -> int
-tests/unit/fs_test.aya:5: fn test_roundtrip() -> int
-tests/unit/fs_test.aya:15: fn test_missing() -> int
-tests/unit/io_test.aya:5: fn test_input() -> int
-tests/unit/linkedlist_test.aya:5: fn test_basic() -> int
-tests/unit/math_test.aya:5: fn test_int_ops() -> int
-tests/unit/math_test.aya:17: fn test_float_ops() -> int
-tests/unit/panic_test.aya:5: fn test_index_oob() -> int
-tests/unit/panic_test.aya:13: fn test_pop_empty() -> int
-tests/unit/panic_test.aya:20: fn test_panic_macro() -> int
-tests/unit/rand_test.aya:5: fn test_range() -> int
-tests/unit/rand_test.aya:19: fn test_deterministic() -> int
-tests/unit/rand_test.aya:29: fn test_seed_variation() -> int
-tests/unit/rand_test.aya:37: fn test_negative_seed() -> int
-tests/unit/rand_test.aya:45: fn test_entropy() -> int
+tests/unit/convert_test.aya:10: fn test_parse_int()
+tests/unit/convert_test.aya:24: fn test_parse_float()
+tests/unit/convert_test.aya:38: fn test_parse_bool()
+tests/unit/convert_test.aya:47: fn test_convert()
+tests/unit/env_test.aya:5: fn test_args()
+tests/unit/env_test.aya:12: fn test_env()
+tests/unit/fs_test.aya:5: fn test_roundtrip()
+tests/unit/fs_test.aya:14: fn test_missing()
+tests/unit/io_test.aya:5: fn test_input()
+tests/unit/linkedlist_test.aya:5: fn test_basic()
+tests/unit/math_test.aya:5: fn test_int_ops()
+tests/unit/math_test.aya:16: fn test_float_ops()
+tests/unit/panic_test.aya:5: fn test_index_oob()
+tests/unit/panic_test.aya:12: fn test_pop_empty()
+tests/unit/panic_test.aya:18: fn test_panic_macro()
+tests/unit/rand_test.aya:5: fn test_range()
+tests/unit/rand_test.aya:18: fn test_deterministic()
+tests/unit/rand_test.aya:27: fn test_seed_variation()
+tests/unit/rand_test.aya:34: fn test_negative_seed()
+tests/unit/rand_test.aya:41: fn test_entropy()
 tests/unit/std_test.aya:4: fn mk_some() -> Option[int]
 tests/unit/std_test.aya:8: fn mk_none() -> Option[int]
-tests/unit/std_test.aya:13: fn test_aggregate() -> int
-tests/unit/std_test.aya:20: fn test_option() -> int
-tests/unit/string_test.aya:4: fn test_basic() -> int
-tests/unit/string_test.aya:16: fn test_search() -> int
-tests/unit/string_test.aya:26: fn test_transform() -> int
-tests/unit/string_test.aya:36: fn test_parse() -> int
-tests/unit/string_test.aya:44: fn test_tostring() -> int
-tests/unit/text_test.aya:5: fn test_split() -> int
-tests/unit/text_test.aya:20: fn test_join() -> int
-tests/unit/text_test.aya:32: fn test_replace() -> int
-tests/unit/text_test.aya:41: fn test_pad() -> int
-tests/unit/time_test.aya:5: fn test_time() -> int
+tests/unit/std_test.aya:13: fn test_aggregate()
+tests/unit/std_test.aya:19: fn test_option()
+tests/unit/string_test.aya:4: fn test_basic()
+tests/unit/string_test.aya:15: fn test_search()
+tests/unit/string_test.aya:24: fn test_transform()
+tests/unit/string_test.aya:33: fn test_parse()
+tests/unit/string_test.aya:40: fn test_tostring()
+tests/unit/text_test.aya:5: fn test_split()
+tests/unit/text_test.aya:19: fn test_join()
+tests/unit/text_test.aya:30: fn test_replace()
+tests/unit/text_test.aya:38: fn test_pad()
+tests/unit/time_test.aya:5: fn test_time()
