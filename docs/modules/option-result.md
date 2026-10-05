@@ -20,6 +20,9 @@ import "std";
 | `o.is_some() -> bool` | 是否有值（消费 `self`） |
 | `o.unwrap_or(default) -> T` | 有值取值，否则返回默认值（消费 `self`） |
 | `o.or(other) -> Option[T]` | `Some` 返回自身，`None` 返回 `other` |
+| `o.map[U](fn(T) -> U)` | `Some(v)` → `Some(f(v))`，`None` 不变 |
+| `o.and_then[U](fn(T) -> Option[U])` | `Some(v)` → `f(v)`（链式），`None` 不变 |
+| `o.filter(fn(T) -> bool)` | 谓词为假时变 `None` |
 
 泛型实参由上下文推导，通常写在带返回类型的辅助函数里：
 
@@ -60,9 +63,32 @@ fn parse(int x) -> Result[int, int] {
 ```
 
 - 构造 `Result::Ok(v)` / `Result::Err(e)` 可用（泛型实参由返回类型推导）。
-- **当前限制**：`Result` 的 `try_unwrap` 方法与 `match` 观测因编译器 bug 暂不可用
-  （主仓 issue [#68](https://github.com/ayanami1ei/Ayanami-language/issues/68)、
-  [#69](https://github.com/ayanami1ei/Ayanami-language/issues/69)）；修复前不要在示例里依赖。
+- `try_unwrap` 用 `match` 实现，`match` 观测可用。
+- `Result.map` / `map_err` 待编译器修复后提供（主仓
+  [#135](https://github.com/ayanami1ei/Ayanami-language/issues/135)）。
+
+## 组合子示例
+
+```ayanami
+import "std"
+
+fn find(int x) -> Option[int] {
+    if x > 0 { return Option::Some(x) }
+    return Option::None()
+}
+
+fn main() -> int {
+    a = find(5).map((int x) { return x * 2 })            // Some(10)
+    b = find(5).filter((int x) { return x > 2 })          // Some(5)
+    c = find(5).and_then((int x) { return find(x + 1) })  // Some(6)
+    if a.unwrap_or(0) != 10 { return 1 }
+    if b.unwrap_or(0) != 5 { return 2 }
+    if c.unwrap_or(0) != 6 { return 3 }
+    return 0
+}
+```
+
+> lambda 目前**不能捕获外部变量**（闭包捕获属主仓 M2）；组合子里只能使用参数与全局函数。
 
 ## Error 接口
 

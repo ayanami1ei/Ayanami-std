@@ -1,0 +1,39 @@
+import "option"
+import "test"
+
+fn some_int(int v) -> Option[int] {
+    return Option::Some(v)
+}
+
+fn none_int() -> Option[int] {
+    return Option::None()
+}
+
+#[test]
+fn test_option_map() {
+    a = some_int(3)
+    b = a.map((int x) { return x + 1 })
+    #assert_eq(b.unwrap_or(0), 4)
+    c = none_int()
+    d = c.map((int x) { return x + 1 })
+    #assert(d.is_none())
+}
+
+#[test]
+fn test_option_chain() {
+    a = some_int(3)
+    b = a.and_then((int x) { return some_int(x * 2) })
+    #assert_eq(b.unwrap_or(0), 6)
+    c = some_int(3)
+    d = c.filter((int x) { return x > 5 })
+    #assert(d.is_none())
+    e = some_int(3)
+    f = e.filter((int x) { return x > 2 })
+    #assert_eq(f.unwrap_or(0), 3)
+}
+
+#[test]
+fn test_option_chained() {
+    r = some_int(3).map((int x) { return x + 1 }).filter((int x) { return x > 3 })
+    #assert_eq(r.unwrap_or(0), 4)
+}

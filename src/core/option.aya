@@ -39,6 +39,30 @@ impl[T] Option[T] {
         }
         return other
     }
+
+    /// 映射：`Some(v) → Some(f(v))`
+    pub fn map[U](self, fn(T) -> U f) -> Option[U] {
+        match self {
+            Some(v) => Option::Some(f(v)),
+            None => Option::None(),
+        }
+    }
+
+    /// 链式：`Some(v) → f(v)`（`f` 返回 `Option[U]`）
+    pub fn and_then[U](self, fn(T) -> Option[U] f) -> Option[U] {
+        match self {
+            Some(v) => f(v),
+            None => Option::None(),
+        }
+    }
+
+    /// 过滤：谓词为假时变 `None`
+    pub fn filter(self, fn(T) -> bool f) -> Option[T] {
+        match self {
+            Some(v) => if f(v) { Option::Some(v) } else { Option::None() },
+            None => Option::None(),
+        }
+    }
 }
 
 impl[T, E] Result[T, E] {
@@ -65,6 +89,7 @@ impl[T, E] Result[T, E] {
         }
         return Option::None()
     }
+
 
     pub fn try_unwrap(self) -> T {
         match self {
