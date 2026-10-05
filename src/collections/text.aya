@@ -9,6 +9,8 @@ import "arraylist"
 #[state]
 pub fn split(ref String s, ref String sep) -> ArrayList[String] {
     res = ArrayList::new[String]()
+    // 注意：此处用 else 单出口——若写成 `if sep.len == 0 { ...; return res }` 再在后续使用 res，
+    // 当前 move 检查对分支 return 路径不敏感会误报 moved value（issue #116）。
     if sep.len == 0 {
         res.push(s.copy())
     } else {
