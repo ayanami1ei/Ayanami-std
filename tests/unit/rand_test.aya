@@ -1,0 +1,42 @@
+import "rand"
+import "test"
+
+#[test]
+fn test_range() -> int {
+    r = Rng::new(12345)
+    a = r.next_range(0, 100)
+    #assert(a >= 0)
+    #assert(a < 100)
+    b = r.next_range(10, 20)
+    #assert(b >= 10)
+    #assert(b < 20)
+    c = r.next_range(5, 5)
+    #assert_eq(c, 5)
+    return 0
+}
+
+#[test]
+fn test_deterministic() -> int {
+    r1 = Rng::new(42)
+    r2 = Rng::new(42)
+    #assert_eq(r1.next_int(), r2.next_int())
+    #assert_eq(r1.next_int(), r2.next_int())
+    #assert_eq(r1.next_int(), r2.next_int())
+    return 0
+}
+
+#[test]
+fn test_seed_variation() -> int {
+    r1 = Rng::new(1)
+    r2 = Rng::new(2)
+    #assert(r1.next_int() != r2.next_int())
+    return 0
+}
+
+#[test]
+fn test_negative_seed() -> int {
+    r1 = Rng::new(0 - 5)
+    r2 = Rng::new(5)
+    #assert_eq(r1.next_int(), r2.next_int())
+    return 0
+}
