@@ -2,11 +2,10 @@ import "io"
 import "test"
 
 #[test]
-fn test_input() -> int {
+fn test_input() {
     #assert_eq(read_line(), "hello")
     #assert_eq(read_int(), 42)
     #assert_eq(try_read_int().unwrap_or(0), -7)
     #assert(try_read_int().is_none())
     #assert(read_line().is_empty())
-    return 0
 }

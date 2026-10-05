@@ -2,22 +2,19 @@ import "arraylist"
 import "test"
 
 #[should_panic]
-fn test_index_oob() -> int {
+fn test_index_oob() {
     a = ArrayList::new[int]()
     a.push(1)
     x = a.index(5)
-    return 0
 }
 
 #[should_panic]
-fn test_pop_empty() -> int {
+fn test_pop_empty() {
     a = ArrayList::new[int]()
     x = a.pop()
-    return 0
 }
 
 #[should_panic]
-fn test_panic_macro() -> int {
+fn test_panic_macro() {
     panic_at(1, 1, "panic_test.aya", "boom")
-    return 0
 }

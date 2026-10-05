@@ -2,7 +2,7 @@ import "test"
 import "text"
 
 #[test]
-fn test_split() -> int {
+fn test_split() {
     parts = split("a,b,c", ",")
     #assert_eq(parts.len(), 3)
     #assert_eq(parts.index(0), "a")
@@ -13,11 +13,10 @@ fn test_split() -> int {
     p3 = split("abc", ",")
     #assert_eq(p3.len(), 1)
     #assert_eq(p3.index(0), "abc")
-    return 0
 }
 
 #[test]
-fn test_join() -> int {
+fn test_join() {
     l = ArrayList::new[String]()
     l.push("a")
     l.push("b")
@@ -25,22 +24,19 @@ fn test_join() -> int {
     #assert_eq(join(l, "-"), "a-b-c")
     empty = ArrayList::new[String]()
     #assert_eq(join(empty, ","), "")
-    return 0
 }
 
 #[test]
-fn test_replace() -> int {
+fn test_replace() {
     #assert_eq(replace("a-b-c", "-", "+"), "a+b+c")
     #assert_eq(replace("abc", "x", "y"), "abc")
     #assert_eq(replace("aXXbXXc", "XX", "-"), "a-b-c")
     #assert_eq(replace("abc", "", "-"), "abc")
-    return 0
 }
 
 #[test]
-fn test_pad() -> int {
+fn test_pad() {
     #assert_eq(pad_left("42", 5, '0'), "00042")
     #assert_eq(pad_right("42", 5, '.'), "42...")
     #assert_eq(pad_left("abcdef", 3, '0'), "abcdef")
-    return 0
 }

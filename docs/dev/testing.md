@@ -29,11 +29,10 @@ test result: ok. 18/18 passed
 import "test"
 
 #[test]
-fn test_add() -> int {
+fn test_add() {
     #assert(1 + 1 == 2)
     #assert_eq(2 + 2, 4)
     #assert_ne(1, 2)
-    return 0
 }
 
 #[should_panic]
@@ -45,8 +44,7 @@ fn test_oob() -> int {
 ```
 
 - 一个函数只写一个标注：`#[test]`（应通过）或 `#[should_panic]`（应 panic）。
-- 用例函数暂写 `-> int` 且末尾 `return 0`：规避编译器“块尾表达式语句丢失”缺陷
-  （ayanami1ei/Ayanami-language#85）；修复后可写成 `fn test_add()`。
+- 用例函数写成 void 形式（`fn test_add() { ... }`）；断言失败即 panic。
 - 断言失败会 panic，并打印 `文件名:行:列` + 消息；`should_panic` 用例只要退出码 101 即通过。
 - 可用断言（失败消息带源码文本，并含调用点文件:行:列）：
 

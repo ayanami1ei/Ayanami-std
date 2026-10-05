@@ -2,7 +2,7 @@ import "arraylist"
 import "test"
 
 #[test]
-fn test_basic() -> int {
+fn test_basic() {
     a = ArrayList::new[int]()
     #assert(a.is_empty())
     #assert_eq(a.len(), 0)
@@ -18,14 +18,12 @@ fn test_basic() -> int {
     #assert_eq(a.to_string(), "[1, 9]")
     a.clear()
     #assert(a.is_empty())
-    return 0
 }
 
 #[test]
-fn test_capacity() -> int {
+fn test_capacity() {
     b = ArrayList::with_capacity[int](4)
     b.push(5)
     #assert_eq(b.index(0), 5)
     #assert_eq(b.len(), 1)
-    return 0
 }

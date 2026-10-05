@@ -6,31 +6,26 @@ fn some3() -> Option[int] {
 }
 
 #[should_panic]
-fn test_lt_fail() -> int {
+fn test_lt_fail() {
     #assert_lt(2, 1)
-    return 0
 }
 
 #[should_panic]
-fn test_contains_fail() -> int {
+fn test_contains_fail() {
     #assert_contains("hello", "xyz")
-    return 0
 }
 
 #[should_panic]
-fn test_none_fail() -> int {
+fn test_none_fail() {
     #assert_none(some3())
-    return 0
 }
 
 #[should_panic]
-fn test_close_fail() -> int {
+fn test_close_fail() {
     #assert_close(1.0, 2.0, 0.1)
-    return 0
 }
 
 #[should_panic]
-fn test_fail_macro() -> int {
+fn test_fail_macro() {
     #fail("custom failure")
-    return 0
 }

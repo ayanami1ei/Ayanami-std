@@ -2,18 +2,16 @@ import "fs"
 import "test"
 
 #[test]
-fn test_roundtrip() -> int {
+fn test_roundtrip() {
     path = "/tmp/ayanami_fs_test.txt"
     #assert(write_file(path, "hello fs"))
     #assert(exists(path))
     s = read_file(path).unwrap_or("")
     #assert_eq(s, "hello fs")
-    return 0
 }
 
 #[test]
-fn test_missing() -> int {
+fn test_missing() {
     #assert(!exists("/tmp/ayanami_no_such_file_xyz"))
     #assert(read_file("/tmp/ayanami_no_such_file_xyz").is_none())
-    return 0
 }

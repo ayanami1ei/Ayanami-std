@@ -2,7 +2,7 @@ import "linkedlist"
 import "test"
 
 #[test]
-fn test_basic() -> int {
+fn test_basic() {
     l = LinkedList::new[int]()
     #assert_eq(l.len(), 0)
     l.push(1)
@@ -11,5 +11,4 @@ fn test_basic() -> int {
     #assert_eq(l.len(), 3)
     #assert_eq(l.index(0), 1)
     #assert_eq(l.index(2), 3)
-    return 0
 }

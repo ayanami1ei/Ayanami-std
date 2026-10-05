@@ -172,13 +172,12 @@ AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
 ```
 
 脚本先重建并安装 `.lcl`，再运行 `tests/unit`（标注用例）、`tests/compile_fail`（负例）与
-`tests/golden`（stdout 黄金输出）。已知编译器 bug：泛型枚举 `Result` 方法与 `match`（#68/#69）、
-块尾表达式语句丢失（[#85](https://github.com/ayanami1ei/Ayanami-language/issues/85)）。
+`tests/golden`（stdout 黄金输出）。已知编译器 bug：泛型枚举 `Result` 方法与 `match`（#68/#69）。
 
 ## 开发
 
 本仓库是 [Ayanami-language](https://github.com/ayanami1ei/Ayanami-language) 的 `std/` 子模块。
-标准库源码在 `src/`；根目录 `*.aya` 是指向 `src/*.aya` 的符号链接（按短名 import 时回溯源码用），
+标准库源码在 `src/`（按领域分目录：`core/` `collections/` `system/` `meta/` `dev/`）；
 构建产物（`*.lcl`）不入库。`runtime.c` 是标准库的 C 运行时（编译器链接程序时编译），
 见 [docs/dev/runtime.md](docs/dev/runtime.md)。符号地图：`SYMBOLS.md`（`rg "关键词" SYMBOLS.md`）；改完源码跑
 `./scripts/gen_symbols.sh` 刷新，提交前 `./scripts/gen_symbols.sh --check` 需通过。
