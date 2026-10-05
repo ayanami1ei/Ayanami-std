@@ -42,3 +42,29 @@ fn test_tostring() {
     #assert_eq(true.to_string(), "true")
     #assert_eq('x'.to_string(), "x")
 }
+
+#[test]
+fn test_bases() {
+    a = 255
+    #assert_eq(a.to_hex(), "ff")
+    #assert_eq(a.to_hex_upper(), "FF")
+    #assert_eq(a.to_oct(), "377")
+    #assert_eq(a.to_bin(), "11111111")
+    z = 0
+    #assert_eq(z.to_hex(), "0")
+    n = 0 - 255
+    #assert_eq(n.to_hex(), "-ff")
+    big = 2147483647
+    #assert_eq(big.to_hex(), "7fffffff")
+}
+
+#[test]
+fn test_trim_edges() {
+    s = "  hi  "
+    #assert_eq(s.trim_start(), "hi  ")
+    #assert_eq(s.trim_end(), "  hi")
+    #assert_eq(s.trim(), "hi")
+    blank = "   "
+    #assert(blank.trim_start().is_empty())
+    #assert(blank.trim_end().is_empty())
+}

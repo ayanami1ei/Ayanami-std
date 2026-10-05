@@ -7,5 +7,8 @@ fn test_input() {
     #assert_eq(read_int(), 42)
     #assert_eq(try_read_int().unwrap_or(0), -7)
     #assert(try_read_int().is_none())
+    #assert_eq(read_float(), 2.5)
+    #assert_eq(try_read_float().unwrap_or(0.0), 3.5)
+    #assert(try_read_float().is_none())
     #assert(read_line().is_empty())
 }

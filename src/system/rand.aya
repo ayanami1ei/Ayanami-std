@@ -47,4 +47,19 @@ impl Rng {
         v = self.next_int()
         return lo + (v % n)
     }
+
+    /// 随机布尔（近似均匀）
+    #[state]
+    pub fn next_bool(ref mut self) -> bool {
+        v = self.next_int()
+        return v % 2 == 0
+    }
+
+    /// [0.0, 1.0) 内的浮点
+    #[state]
+    pub fn next_float01(ref mut self) -> float {
+        v = self.next_int() % 1000000
+        f = v as float
+        return f / 1000000.0
+    }
 }

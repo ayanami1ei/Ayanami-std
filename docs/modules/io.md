@@ -14,6 +14,8 @@ import "io";
 | `read_line() -> String` | 读取一行（不含换行；EOF 返回空串） |
 | `read_int() -> int` | 读取一行并宽松解析（`trim` + `parse_int`，失败 `0`） |
 | `try_read_int() -> Option[int]` | 读取一行并严格解析（失败 `None`） |
+| `read_float() -> float` | 读取一行并宽松解析（`trim` + `parse_float`，失败 `0.0`） |
+| `try_read_float() -> Option[float]` | 读取一行并严格解析（失败 `None`） |
 
 ## 示例（输出即注释）
 

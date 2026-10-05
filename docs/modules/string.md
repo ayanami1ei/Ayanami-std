@@ -29,6 +29,7 @@ import "string";
 | `s.contains / starts_with / ends_with(ref String) -> bool` | 子串 / 前缀 / 后缀 |
 | `s.substring(usize start, usize end) -> String` | 区间 `[start, end)`，越界自动夹取 |
 | `s.trim() -> String` | 去掉首尾空白 |
+| `s.trim_start() / s.trim_end() -> String` | 去掉首部 / 尾部空白 |
 | `s.to_upper() / s.to_lower() -> String` | 大小写转换 |
 | `s.repeat(usize n) -> String` | 重复 `n` 次 |
 | `s.parse_int() -> int` | 解析整数（前缀式，见下） |
@@ -43,6 +44,14 @@ import "string";
 | `true.to_string()` | `"true"` |
 | `'x'.to_string()` | `"x"` |
 | `s.to_string()` | `s` 自身 |
+
+## 整数进制格式化
+
+| 表达式 | 结果 |
+|---|---|
+| `255.to_hex()` / `255.to_hex_upper()` | `"ff"` / `"FF"` |
+| `255.to_bin()` / `255.to_oct()` | `"11111111"` / `"377"` |
+| 负数 | 带 `-` 号、无前缀（如 `-ff`） |
 
 ## char 工具
 

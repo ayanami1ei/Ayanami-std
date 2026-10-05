@@ -1,4 +1,5 @@
 import "fs"
+import "arraylist"
 import "test"
 
 #[test]
@@ -14,4 +15,16 @@ fn test_roundtrip() {
 fn test_missing() {
     #assert(!exists("/tmp/ayanami_no_such_file_xyz"))
     #assert(read_file("/tmp/ayanami_no_such_file_xyz").is_none())
+}
+
+#[test]
+fn test_read_lines() {
+    path = "/tmp/ayanami_fs_lines_test.txt"
+    #assert(write_file(path, "a\r\nb\nc"))
+    ls = read_lines(path)
+    #assert_eq(ls.len(), 3)
+    #assert_eq(ls.index(0), "a")
+    #assert_eq(ls.index(1), "b")
+    #assert_eq(ls.index(2), "c")
+    #assert(read_lines("/tmp/ayanami_no_such_file_xyz").is_empty())
 }

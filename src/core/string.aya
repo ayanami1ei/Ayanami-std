@@ -65,6 +65,70 @@ impl int {
         }
         return String { data = buf, len = digit_count };
     }
+
+    /// 按进制格式化（digits 为数字表；负数带 - 号）
+    #[alloc]
+    #[state]
+    fn to_base(self, int base, ref String digits) -> String {
+        if self == 0 {
+            return "0"
+        }
+        n = self
+        neg = false
+        if n < 0 {
+            neg = true
+            n = 0 - n
+        }
+        buf = [char; 66]
+        i = 66usize
+        while n > 0 {
+            d = n % base
+            du = d as usize
+            i = i - 1
+            buf[i] = digits.data[du]
+            n = n / base
+        }
+        if neg {
+            i = i - 1
+            buf[i] = '-'
+        }
+        len = 66usize - i
+        res = [char; len]
+        j = 0usize
+        while j < len {
+            res[j] = buf[i + j]
+            j = j + 1
+        }
+        return String { data = res, len = len }
+    }
+
+    /// 十六进制（小写，无前缀；负数带 - 号）
+    #[alloc]
+    #[state]
+    pub fn to_hex(self) -> String {
+        return self.to_base(16, "0123456789abcdef")
+    }
+
+    /// 十六进制（大写，无前缀；负数带 - 号）
+    #[alloc]
+    #[state]
+    pub fn to_hex_upper(self) -> String {
+        return self.to_base(16, "0123456789ABCDEF")
+    }
+
+    /// 二进制（无前缀；负数带 - 号）
+    #[alloc]
+    #[state]
+    pub fn to_bin(self) -> String {
+        return self.to_base(2, "01")
+    }
+
+    /// 八进制（无前缀；负数带 - 号）
+    #[alloc]
+    #[state]
+    pub fn to_oct(self) -> String {
+        return self.to_base(8, "01234567")
+    }
 }
 
 extern "C" fn __ayanami_float_len(float n) -> int;
@@ -464,6 +528,34 @@ impl String {
             e = e - 1;
         }
         return self.substring(s as usize, e as usize);
+    }
+    /// 去除首部空白
+    #[alloc]
+    #[state]
+    pub fn trim_start(ref self) -> String {
+        i = 0usize
+        while i < self.len {
+            c = self.data[i]
+            if !c.is_space() {
+                return self.substring(i, self.len)
+            }
+            i = i + 1
+        }
+        return String::empty()
+    }
+    /// 去除尾部空白
+    #[alloc]
+    #[state]
+    pub fn trim_end(ref self) -> String {
+        i = self.len
+        while i > 0 {
+            c = self.data[i - 1]
+            if !c.is_space() {
+                return self.substring(0, i)
+            }
+            i = i - 1
+        }
+        return String::empty()
     }
     #[alloc]
     #[state]

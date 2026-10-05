@@ -11,6 +11,7 @@ import "text";
 | `replace(ref String s, ref String old, ref String new) -> String` | 替换全部出现；`old` 为空时返回原串拷贝 |
 | `pad_left(ref String s, usize width, char fill) -> String` | 左侧填充到 `width` |
 | `pad_right(ref String s, usize width, char fill) -> String` | 右侧填充到 `width` |
+| `lines(ref String s) -> ArrayList[String]` | 按行拆分（`\n`，兼容 `\r\n`；末尾换行不产生空行） |
 
 ## 示例
 

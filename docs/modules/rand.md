@@ -12,6 +12,8 @@ import "rand";
 | `Rng::from_entropy()` | 用系统熵源创建（非确定性） |
 | `r.next_int() -> int` | 步进并返回新状态（`[0, 2^31)`） |
 | `r.next_range(int lo, int hi) -> int` | `[lo, hi)` 内的整数；`hi <= lo` 时返回 `lo` |
+| `r.next_bool() -> bool` | 随机布尔 |
+| `r.next_float01() -> float` | `[0.0, 1.0)` 内的浮点 |
 
 ## 示例（猜数字）
 

@@ -44,3 +44,21 @@ fn test_entropy() {
     #assert(a >= 0)
     #assert(a < 10)
 }
+
+#[test]
+fn test_next_bool_float() {
+    r = Rng::new(7)
+    n_true = 0
+    i = 0
+    while i < 100 {
+        if r.next_bool() {
+            n_true = n_true + 1
+        }
+        i = i + 1
+    }
+    #assert(n_true > 20)
+    #assert(n_true < 80)
+    f = r.next_float01()
+    #assert(f >= 0.0)
+    #assert(f < 1.0)
+}

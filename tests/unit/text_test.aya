@@ -40,3 +40,20 @@ fn test_pad() {
     #assert_eq(pad_right("42", 5, '.'), "42...")
     #assert_eq(pad_left("abcdef", 3, '0'), "abcdef")
 }
+
+#[test]
+fn test_lines() {
+    ls = lines("a\nb\nc")
+    #assert_eq(ls.len(), 3)
+    #assert_eq(ls.index(0), "a")
+    #assert_eq(ls.index(2), "c")
+    crlf = lines("a\r\nb\r\n")
+    #assert_eq(crlf.len(), 2)
+    #assert_eq(crlf.index(0), "a")
+    #assert_eq(crlf.index(1), "b")
+    empty = lines("")
+    #assert_eq(empty.len(), 0)
+    one = lines("x")
+    #assert_eq(one.len(), 1)
+    #assert_eq(one.index(0), "x")
+}
