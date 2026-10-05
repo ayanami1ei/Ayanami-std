@@ -210,4 +210,33 @@ char *__ayanami_float_str(double n, int64_t out_len) {
     return buf;
 }
 
+// Fixed-point ("%.*f") / scientific ("%.*e")；digits 夹取到 [0, 17]。
+static int clamp_digits(int64_t digits) {
+    if (digits < 0) return 0;
+    if (digits > 17) return 17;
+    return (int)digits;
+}
+
+int64_t __ayanami_float_fixed_len(double n, int64_t digits) {
+    return (int64_t)snprintf(NULL, 0, "%.*f", clamp_digits(digits), n);
+}
+
+char *__ayanami_float_fixed_str(double n, int64_t digits, int64_t out_len) {
+    char *buf = (char *)malloc((size_t)(out_len + 1));
+    if (!buf) return NULL;
+    snprintf(buf, (size_t)(out_len + 1), "%.*f", clamp_digits(digits), n);
+    return buf;
+}
+
+int64_t __ayanami_float_sci_len(double n, int64_t digits) {
+    return (int64_t)snprintf(NULL, 0, "%.*e", clamp_digits(digits), n);
+}
+
+char *__ayanami_float_sci_str(double n, int64_t digits, int64_t out_len) {
+    char *buf = (char *)malloc((size_t)(out_len + 1));
+    if (!buf) return NULL;
+    snprintf(buf, (size_t)(out_len + 1), "%.*e", clamp_digits(digits), n);
+    return buf;
+}
+
 #include "runtime/sys.c"

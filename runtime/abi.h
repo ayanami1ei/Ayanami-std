@@ -43,6 +43,10 @@ void __ayanami_print_str(const char *s, int64_t len);
 void __ayanami_print_ln(void);
 int64_t __ayanami_float_len(double n);
 char *__ayanami_float_str(double n, int64_t out_len);
+int64_t __ayanami_float_fixed_len(double n, int64_t digits);
+char *__ayanami_float_fixed_str(double n, int64_t digits, int64_t out_len);
+int64_t __ayanami_float_sci_len(double n, int64_t digits);
+char *__ayanami_float_sci_str(double n, int64_t digits, int64_t out_len);
 
 // ── 数学 ──
 char __ayanami_int_to_char(long long c);

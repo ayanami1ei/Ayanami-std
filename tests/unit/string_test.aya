@@ -68,3 +68,17 @@ fn test_trim_edges() {
     #assert(blank.trim_start().is_empty())
     #assert(blank.trim_end().is_empty())
 }
+
+#[test]
+fn test_float_format() {
+    x = 3.14159
+    #assert_eq(x.to_fixed(2), "3.14")
+    #assert_eq(x.to_fixed(0), "3")
+    y = 1234.5
+    #assert_eq(y.to_sci(2), "1.23e+03")
+    #assert_eq(y.to_sci(0), "1e+03")
+    z = 0 - 1.5
+    #assert_eq(z.to_fixed(1), "-1.5")
+    w = 1000000.0
+    #assert_eq(w.to_fixed(0), "1000000")
+}

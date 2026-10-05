@@ -41,6 +41,8 @@ import "string";
 |---|---|
 | `42.to_string()` | `"42"` |
 | `3.5.to_string()` | `"3.5"` |
+| `3.14159.to_fixed(2)` | `"3.14"`（定点，digits 位小数） |
+| `1234.5.to_sci(2)` | `"1.23e+03"`（科学计数法） |
 | `true.to_string()` | `"true"` |
 | `'x'.to_string()` | `"x"` |
 | `s.to_string()` | `s` 自身 |

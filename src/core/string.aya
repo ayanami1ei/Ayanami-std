@@ -134,12 +134,34 @@ impl int {
 extern "C" fn __ayanami_float_len(float n) -> int;
 
 extern "C" fn __ayanami_float_str(float n, int len) -> [char];
+extern "C" fn __ayanami_float_fixed_len(float n, int digits) -> int;
+extern "C" fn __ayanami_float_fixed_str(float n, int digits, int len) -> [char];
+extern "C" fn __ayanami_float_sci_len(float n, int digits) -> int;
+extern "C" fn __ayanami_float_sci_str(float n, int digits, int len) -> [char];
 
 impl float {
     pub fn to_string(self) -> String {
         n = __ayanami_float_len(self);
         data = __ayanami_float_str(self, n);
         return String { data = data, len = n as usize };
+    }
+
+    /// 定点格式化（保留 digits 位小数，digits 夹取到 [0, 17]）
+    #[alloc]
+    #[state]
+    pub fn to_fixed(self, int digits) -> String {
+        n = __ayanami_float_fixed_len(self, digits)
+        data = __ayanami_float_fixed_str(self, digits, n)
+        return String { data = data, len = n as usize }
+    }
+
+    /// 科学计数法（保留 digits 位小数，如 `1.23e+03`）
+    #[alloc]
+    #[state]
+    pub fn to_sci(self, int digits) -> String {
+        n = __ayanami_float_sci_len(self, digits)
+        data = __ayanami_float_sci_str(self, digits, n)
+        return String { data = data, len = n as usize }
     }
 }
 
