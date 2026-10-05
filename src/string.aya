@@ -57,7 +57,7 @@ impl int {
             n = self;
         }
         while n > 0 {
-            buf[i as int] = digits[n % 10];
+            buf[i] = digits[n % 10];
             n = n / 10;
             if i > 0 {
                 i = i - 1;
@@ -301,10 +301,10 @@ impl String {
         new_len = self.len + other.len;
         new_str_inner = [char; new_len];
         for i in (0, self.len as int) {
-            new_str_inner[i] = self.data[i as usize];
+            new_str_inner[i] = self.data[i];
         }
         for i in (0, other.len as int) {
-            new_str_inner[i + (self.len as int)] = other.data[i as usize];
+            new_str_inner[i + (self.len as int)] = other.data[i];
         }
         return String { data = new_str_inner, len = new_len };
     }
@@ -319,7 +319,7 @@ impl String {
             return false;
         }
         for i in (0, self.len as int) {
-            if self.data[i as usize] != other.data[i as usize] {
+            if self.data[i] != other.data[i] {
                 return false;
             }
         }
@@ -353,7 +353,7 @@ impl String {
         for i in (0, last + 1) {
             ok = true;
             for j in (0, needle.len) {
-                if self.data[(i + j) as usize] != needle.data[j as usize] {
+                if self.data[i + j] != needle.data[j] {
                     ok = false;
                     break;
                 }
@@ -377,7 +377,7 @@ impl String {
             return false;
         }
         for i in (0, prefix.len as int) {
-            if self.data[i as usize] != prefix.data[i as usize] {
+            if self.data[i] != prefix.data[i] {
                 return false;
             }
         }
@@ -390,7 +390,7 @@ impl String {
         }
         off = (self.len - suffix.len) as int;
         for i in (0, suffix.len as int) {
-            if self.data[(off + i) as usize] != suffix.data[i as usize] {
+            if self.data[off + i] != suffix.data[i] {
                 return false;
             }
         }
@@ -410,7 +410,7 @@ impl String {
         n = e - s;
         buf = [char; n];
         for i in (0, n) {
-            buf[i as int] = self.data[s + (i as usize)];
+            buf[i] = self.data[s + (i as usize)];
         }
         return String { data = buf, len = n };
     }
@@ -420,14 +420,14 @@ impl String {
         s = 0;
         e = self.len as int;
         while s < e {
-            c = self.data[s as usize];
+            c = self.data[s];
             if !c.is_space() {
                 break;
             }
             s = s + 1;
         }
         while e > s {
-            c = self.data[(e - 1) as usize];
+            c = self.data[e - 1];
             if !c.is_space() {
                 break;
             }
@@ -440,7 +440,7 @@ impl String {
     pub fn to_upper(ref self) -> String {
         buf = [char; self.len];
         for i in (0, self.len as int) {
-            buf[i] = self.data[i as usize].to_upper();
+            buf[i] = self.data[i].to_upper();
         }
         return String { data = buf, len = self.len };
     }
@@ -449,7 +449,7 @@ impl String {
     pub fn to_lower(ref self) -> String {
         buf = [char; self.len];
         for i in (0, self.len as int) {
-            buf[i] = self.data[i as usize].to_lower();
+            buf[i] = self.data[i].to_lower();
         }
         return String { data = buf, len = self.len };
     }
@@ -460,7 +460,7 @@ impl String {
         buf = [char; n];
         for t in (0, times) {
             for i in (0, self.len) {
-                buf[t * (self.len as int) + i] = self.data[i as usize];
+                buf[t * (self.len as int) + i] = self.data[i];
             }
         }
         return String { data = buf, len = n };

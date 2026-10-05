@@ -32,7 +32,7 @@ impl[T] ArrayList[T]{
             self.data = [T; 1]
         } else {
             tmp = [T; self.capability * 2]
-            for i in (0, self.len as int) { tmp[i] = self.data[i as usize] }
+            for i in (0, self.len as int) { tmp[i] = self.data[i] }
             self.data = tmp
             self.capability = self.capability * 2
         }
@@ -79,7 +79,7 @@ impl[T] ArrayList[T]{
 
     pub fn iter(ref self, fn(T) f) {
         for i in (0, self.len as int) {
-            f(self.data[i as usize])
+            f(self.data[i])
         }
     }
 }
@@ -91,7 +91,7 @@ impl[T:ToString] ArrayList[T] {
     pub fn to_string(ref self)->String{
         res = "["
         for i in (0, self.len as int){
-            res = res + self.data[i as usize]
+            res = res + self.data[i]
             if i != self.len as int - 1 { res = res + ", " }
         }
         res = res + "]"
