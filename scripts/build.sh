@@ -23,7 +23,7 @@ fi
 # 依赖顺序：被依赖者在前；每模块构建后立即安装，支持冷构建
 MODULES=(
     core/string core/option core/math core/panic
-    collections/list collections/arraylist collections/linkedlist collections/text collections/sort
+    collections/list collections/arraylist collections/linkedlist collections/text collections/sort collections/hash
     core/convert dev/test
     system/io system/fs system/env system/time system/rand
     meta/mir

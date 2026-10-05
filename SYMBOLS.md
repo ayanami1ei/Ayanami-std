@@ -19,6 +19,12 @@ src/collections/arraylist.aya:76: pub fn clear(ref mut self)
 src/collections/arraylist.aya:80: pub fn iter(ref self, fn(T) f)
 src/collections/arraylist.aya:88: impl[T:ToString] ArrayList[T]
 src/collections/arraylist.aya:91: pub fn to_string(ref self)->String
+src/collections/hash.aya:6: pub interface Hash
+src/collections/hash.aya:7: fn hash(ref self) -> int;
+src/collections/hash.aya:10: impl String
+src/collections/hash.aya:13: pub fn hash(ref self) -> int
+src/collections/hash.aya:24: impl int
+src/collections/hash.aya:27: pub fn hash(ref self) -> int
 src/collections/linkedlist.aya:7: pub struct LinkedList[T]
 src/collections/linkedlist.aya:13: pub namespace LinkedList
 src/collections/linkedlist.aya:14: pub fn new[T]()->LinkedList[T]
@@ -293,6 +299,7 @@ tests/unit/env_test.aya:5: fn test_args()
 tests/unit/env_test.aya:12: fn test_env()
 tests/unit/fs_test.aya:5: fn test_roundtrip()
 tests/unit/fs_test.aya:14: fn test_missing()
+tests/unit/hash_test.aya:5: fn test_hash()
 tests/unit/io_test.aya:5: fn test_input()
 tests/unit/linkedlist_test.aya:5: fn test_basic()
 tests/unit/math_test.aya:5: fn test_int_ops()
