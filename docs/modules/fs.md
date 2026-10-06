@@ -9,7 +9,7 @@ import "fs";
 | `exists(String path) -> bool` | 文件是否存在 |
 | `read_file(String path) -> Option[String]` | 读取整个文件（失败 `None`） |
 | `write_file(String path, String data) -> bool` | 覆盖写入（成功 `true`） |
-| `read_lines(String path) -> ArrayList[String]` | 按行拆分（`\r\n` 兼容；失败返回空表） |
+| `read_lines(String path) -> Option[ArrayList[String]]` | 按行拆分（`\r\n` 兼容；失败 `None`） |
 
 ## 示例
 

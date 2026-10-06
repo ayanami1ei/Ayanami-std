@@ -21,10 +21,11 @@ fn test_missing() {
 fn test_read_lines() {
     path = "/tmp/ayanami_fs_lines_test.txt"
     #assert(write_file(path, "a\r\nb\nc"))
-    ls = read_lines(path)
+    empty = ArrayList::new[String]()
+    ls = read_lines(path).unwrap_or(empty)
     #assert_eq(ls.len(), 3)
     #assert_eq(ls.index(0), "a")
     #assert_eq(ls.index(1), "b")
     #assert_eq(ls.index(2), "c")
-    #assert(read_lines("/tmp/ayanami_no_such_file_xyz").is_empty())
+    #assert(read_lines("/tmp/ayanami_no_such_file_xyz").is_none())
 }
