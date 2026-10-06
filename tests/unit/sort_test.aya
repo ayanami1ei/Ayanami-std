@@ -44,3 +44,78 @@ fn test_string_cmp() {
     #assert("b" >= "a")
     #assert(!("b" < "a"))
 }
+
+struct Item {
+    int key
+    String name
+}
+
+impl Item {
+    #[pure]
+    pub fn cmp(ref self, ref Item other) -> int {
+        if self.key < other.key {
+            return 0 - 1
+        }
+        if self.key > other.key {
+            return 1
+        }
+        return 0
+    }
+}
+
+#[test]
+fn test_cmp() {
+    a = 1
+    b = 2
+    #assert(a.cmp(ref b) < 0)
+    #assert(b.cmp(ref a) > 0)
+    #assert(a.cmp(ref a) == 0)
+    s = "apple"
+    t = "banana"
+    #assert(s.cmp(ref t) < 0)
+    #assert(t.cmp(ref s) > 0)
+}
+
+#[test]
+fn test_sort_generic_int() {
+    a = ArrayList::new[int]()
+    a.push(5)
+    a.push(1)
+    a.push(4)
+    a.push(2)
+    a.push(3)
+    a.sort()
+    i = 0usize
+    want = 1
+    while i < a.len {
+        #assert_eq(a.index(i), want)
+        i = i + 1
+        want = want + 1
+    }
+}
+
+#[test]
+fn test_sort_generic_string() {
+    l = ArrayList::new[String]()
+    l.push("banana")
+    l.push("apple")
+    l.push("cherry")
+    l.sort()
+    #assert_eq(l.index(0), "apple")
+    #assert_eq(l.index(1), "banana")
+    #assert_eq(l.index(2), "cherry")
+}
+
+#[test]
+fn test_sort_custom_ord_stable() {
+    l = ArrayList::new[Item]()
+    l.push(Item { key = 2, name = "b1" })
+    l.push(Item { key = 1, name = "a1" })
+    l.push(Item { key = 1, name = "a2" })
+    l.push(Item { key = 3, name = "c1" })
+    l.sort()
+    #assert_eq(l.index(0).name, "a1")
+    #assert_eq(l.index(1).name, "a2")
+    #assert_eq(l.index(2).name, "b1")
+    #assert_eq(l.index(3).name, "c1")
+}

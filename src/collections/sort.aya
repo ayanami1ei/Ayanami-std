@@ -1,49 +1,43 @@
-// sort — 具体类型排序（int / String；插入排序，稳定）
+// sort — 泛型排序（Ord 约束；插入排序，稳定）
 //
-// 泛型排序待 Ord 型接口/约束能力就绪后再提供。
+// 泛型入口为方法 `a.sort()`（`impl[T: Ord] ArrayList[T]`）；
+// `sort_int` / `sort_string` 为兼容包装（旧调用点无需改动）。
 import "string"
+import "ord"
 import "arraylist"
 
-/// 升序排序（int）
-#[state]
-pub fn sort_int(ref mut ArrayList[int] a) {
-    i = 1usize
-    while i < a.len {
-        v = a.data[i]
-        j = i
-        while j > 0 {
-            prev = a.data[j - 1]
-            if prev > v {
-                a.data[j] = prev
-                j = j - 1
-            } else {
-                a.data[j - 1] = prev
-                break
+impl[T: Ord] ArrayList[T] {
+    /// 升序排序（插入排序，稳定）
+    #[state]
+    pub fn sort(ref mut self) {
+        i = 1usize
+        while i < self.len {
+            v = self.data[i]
+            j = i
+            while j > 0 {
+                prev = self.data[j - 1]
+                if prev.cmp(ref v) > 0 {
+                    self.data[j] = prev
+                    j = j - 1
+                } else {
+                    self.data[j - 1] = prev
+                    break
+                }
             }
+            self.data[j] = v
+            i = i + 1
         }
-        a.data[j] = v
-        i = i + 1
     }
 }
 
-/// 升序排序（String，字典序）
+/// 升序排序（int；`a.sort()` 的兼容包装）
+#[state]
+pub fn sort_int(ref mut ArrayList[int] a) {
+    a.sort()
+}
+
+/// 升序排序（String，字典序；`a.sort()` 的兼容包装）
 #[state]
 pub fn sort_string(ref mut ArrayList[String] a) {
-    i = 1usize
-    while i < a.len {
-        v = a.data[i]
-        j = i
-        while j > 0 {
-            prev = a.data[j - 1]
-            if prev > v {
-                a.data[j] = prev
-                j = j - 1
-            } else {
-                a.data[j - 1] = prev
-                break
-            }
-        }
-        a.data[j] = v
-        i = i + 1
-    }
+    a.sort()
 }

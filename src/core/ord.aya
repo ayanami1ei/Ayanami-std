@@ -1,0 +1,37 @@
+// ord — 全序接口（三态比较）
+//
+// `cmp` 返回负数 / 0 / 正数；泛型算法按 `[T: Ord]` 约束。
+// 内置实现：int、String（字典序）。
+import "string"
+
+pub interface Ord {
+    fn cmp(ref self, ref Self other) -> int;
+}
+
+impl int {
+    /// 三态比较：self < other 为负、相等 0、大于为正
+    #[pure]
+    pub fn cmp(ref self, ref int other) -> int {
+        if self < other {
+            return 0 - 1
+        }
+        if self > other {
+            return 1
+        }
+        return 0
+    }
+}
+
+impl String {
+    /// 三态比较：字典序
+    #[pure]
+    pub fn cmp(ref self, ref String other) -> int {
+        if self < other {
+            return 0 - 1
+        }
+        if self > other {
+            return 1
+        }
+        return 0
+    }
+}

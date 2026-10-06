@@ -83,22 +83,45 @@ fn main() -> int {
 
 ## 排序（`import "sort"`）
 
-| 函数 | 说明 |
+排序按 `Ord` 接口（三态比较）约束：
+
+```ayanami
+pub interface Ord {
+    fn cmp(ref self, ref Self other) -> int;   // <0 / 0 / >0
+}
+```
+
+| 入口 | 说明 |
 |---|---|
-| `sort_int(ref mut ArrayList[int])` | 升序（插入排序，稳定） |
-| `sort_string(ref mut ArrayList[String])` | 字典序升序 |
+| `a.sort()`（`impl[T: Ord] ArrayList[T]`） | 泛型升序（插入排序，稳定） |
+| `sort_int(a)` / `sort_string(a)` | `a.sort()` 的兼容包装 |
+
+内置 `Ord`：`int`、`String`（字典序）。自定义类型提供
+`cmp(ref self, ref Self other) -> int` 即满足约束：
 
 ```ayanami
 import "sort"
+
+struct Item {
+    int key
+}
+
+impl Item {
+    pub fn cmp(ref self, ref Item other) -> int {
+        if self.key < other.key { return 0 - 1 }
+        if self.key > other.key { return 1 }
+        return 0
+    }
+}
 
 a = ArrayList::new[int]()
 a.push(3)
 a.push(1)
 a.push(2)
-sort_int(a)                  // [1, 2, 3]
+a.sort()                     // [1, 2, 3]
 ```
 
-> 泛型 `sort[T]` 待 Ord 型接口/约束能力就绪后提供。
+> 插入排序在相等元素上不交换，**稳定**。
 
 ## 哈希集合 / 哈希表（`import "hashset"` / `"hashmap"`）
 
