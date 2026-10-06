@@ -113,6 +113,9 @@ pub interface Ord {
 | `a.sort()`（`impl[T: Ord] ArrayList[T]`） | 泛型升序（插入排序，稳定） |
 | `sort(a)` | `a.sort()` 的自由函数形式 |
 | `sort_int(a)` / `sort_string(a)` | `a.sort()` 的兼容包装 |
+| `a.min()` / `a.max() -> Option[T]` | 最小 / 最大元素（空表 `None`） |
+| `a.is_sorted() -> bool` | 是否已升序 |
+| `a.binary_search(v) -> int` | 二分查找（要求已升序）；未找到 `-1` |
 
 内置 `Ord`：`int`、`String`（字典序）。自定义类型提供
 `cmp(ref self, ref Self other) -> int` 即满足约束：

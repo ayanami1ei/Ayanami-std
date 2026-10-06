@@ -4,9 +4,77 @@
 // `sort_int` / `sort_string` 为兼容包装（旧调用点无需改动）。
 import "string"
 import "ord"
+import "option"
 import "arraylist"
 
 impl[T: Ord] ArrayList[T] {
+    /// 最小元素（空表 None）
+    pub fn min(ref self) -> Option[T] {
+        if self.len == 0 {
+            return Option::None()
+        }
+        best = self.data[0]
+        i = 1usize
+        while i < self.len {
+            v = self.data[i]
+            if v.cmp(ref best) < 0 {
+                best = v
+            }
+            i = i + 1
+        }
+        return Option::Some(best)
+    }
+
+    /// 最大元素（空表 None）
+    pub fn max(ref self) -> Option[T] {
+        if self.len == 0 {
+            return Option::None()
+        }
+        best = self.data[0]
+        i = 1usize
+        while i < self.len {
+            v = self.data[i]
+            if v.cmp(ref best) > 0 {
+                best = v
+            }
+            i = i + 1
+        }
+        return Option::Some(best)
+    }
+
+    /// 是否按 `cmp` 升序（非严格：允许相等）
+    pub fn is_sorted(ref self) -> bool {
+        i = 1usize
+        while i < self.len {
+            prev = self.data[i - 1]
+            cur = self.data[i]
+            if prev.cmp(ref cur) > 0 {
+                return false
+            }
+            i = i + 1
+        }
+        return true
+    }
+
+    /// 二分查找（要求已升序）；返回下标，未找到 -1
+    pub fn binary_search(ref self, ref T v) -> int {
+        lo = 0usize
+        hi = self.len
+        while lo < hi {
+            mid = lo + (hi - lo) / 2
+            c = self.data[mid].cmp(v)
+            if c == 0 {
+                return mid as int
+            }
+            if c < 0 {
+                lo = mid + 1
+            } else {
+                hi = mid
+            }
+        }
+        return 0 - 1
+    }
+
     /// 升序排序（插入排序，稳定）
     #[state]
     pub fn sort(ref mut self) {

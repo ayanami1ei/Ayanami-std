@@ -119,3 +119,41 @@ fn test_sort_custom_ord_stable() {
     #assert_eq(l.index(2).name, "b1")
     #assert_eq(l.index(3).name, "c1")
 }
+
+#[test]
+fn test_min_max() {
+    a = ArrayList::new[int]()
+    a.push(3)
+    a.push(1)
+    a.push(2)
+    #assert_eq(a.min().unwrap_or(0), 1)
+    #assert_eq(a.max().unwrap_or(0), 3)
+    e = ArrayList::new[int]()
+    #assert(e.min().is_none())
+    #assert(e.max().is_none())
+}
+
+#[test]
+fn test_is_sorted() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    #assert(a.is_sorted())
+    b = ArrayList::new[int]()
+    b.push(2)
+    b.push(1)
+    #assert(!b.is_sorted())
+}
+
+#[test]
+fn test_binary_search() {
+    a = ArrayList::new[int]()
+    a.push(10)
+    a.push(20)
+    a.push(30)
+    #assert_eq(a.binary_search(10), 0)
+    #assert_eq(a.binary_search(20), 1)
+    #assert_eq(a.binary_search(30), 2)
+    #assert_eq(a.binary_search(25), -1)
+}
