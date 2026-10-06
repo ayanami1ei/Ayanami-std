@@ -37,15 +37,14 @@ pub fn write_file(String path, String data) -> bool {
 /// 读取文件并按行拆分（`\r\n` 兼容；失败返回空表）
 ///
 /// 需要区分「失败」与「空文件」时用 `read_file` + `lines`。
-/// （`Option[ArrayList[String]]` 版本待 `.unwrap_or` 单态化修复后提供，见 #134；
-///   这里不直接调 `ArrayList::new`，规避 .lcl 泛型符号重复定义 #129。）
+/// （`Option[ArrayList[String]]` 版本待 `.unwrap_or` 单态化修复后提供，见 #134。）
 #[alloc]
 #[state]
 #[io]
 pub fn read_lines(String path) -> ArrayList[String] {
     data = read_file(path)
     if data._tag != 0 {
-        return lines("")
+        return ArrayList::new[String]()
     }
     return lines(data._data_Some._0)
 }
