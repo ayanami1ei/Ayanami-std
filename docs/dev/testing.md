@@ -15,12 +15,14 @@ AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
 输出示例：
 
 ```
-running 17 unit tests
+running 75 unit tests
   ok   string_test::test_basic
   ...
 running 1 compile-fail tests
   ok   compile_fail/missing_import.aya
-test result: ok. 18/18 passed
+running 6 golden-output tests
+  ok   golden/word_count.aya
+test result: ok. 82/82 passed
 ```
 
 ## 写用例（类似 Rust 的 `#[test]`）

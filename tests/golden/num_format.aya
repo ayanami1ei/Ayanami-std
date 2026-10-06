@@ -1,0 +1,17 @@
+import "io"
+import "string"
+
+fn main() -> int {
+    a = 255
+    println(a.to_hex())
+    println(a.to_hex_upper())
+    println(a.to_bin())
+    println(a.to_oct())
+    n = 0 - 255
+    println(n.to_hex())
+    x = 3.14159
+    println(x.to_fixed(2))
+    y = 1234.5
+    println(y.to_sci(2))
+    return 0
+}

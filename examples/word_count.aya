@@ -1,0 +1,29 @@
+// word_count — HashMap 词频统计示例
+//
+// 演示：lines + split + HashMap[String, int] 组合使用。
+import "hashmap"
+import "text"
+import "io"
+
+fn main() -> int {
+    poem = "roses are red\nviolets are blue\nsugar is sweet\nand so are you"
+    ls = lines(poem)
+    counts = HashMap::new[String, int]()
+    li = 0usize
+    while li < ls.len {
+        words = split(ls.index(li), " ")
+        wi = 0usize
+        while wi < words.len {
+            w = words.index(wi)
+            old = counts.get(w).unwrap_or(0)
+            counts.insert(w, old + 1)
+            wi = wi + 1
+        }
+        li = li + 1
+    }
+    n = counts.len() as int
+    println("distinct words: " + n)
+    println("are: " + counts.get("are").unwrap_or(0))
+    println("you: " + counts.get("you").unwrap_or(0))
+    return 0
+}
