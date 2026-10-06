@@ -30,6 +30,12 @@ impl[T: Ord] ArrayList[T] {
     }
 }
 
+/// 泛型升序（`a.sort()` 的自由函数形式）
+#[state]
+pub fn sort[T: Ord](ref mut ArrayList[T] a) {
+    a.sort()
+}
+
 /// 升序排序（int；`a.sort()` 的兼容包装）
 #[state]
 pub fn sort_int(ref mut ArrayList[int] a) {

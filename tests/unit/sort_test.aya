@@ -84,7 +84,7 @@ fn test_sort_generic_int() {
     a.push(4)
     a.push(2)
     a.push(3)
-    a.sort()
+    sort(a)
     i = 0usize
     want = 1
     while i < a.len {

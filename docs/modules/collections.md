@@ -94,6 +94,7 @@ pub interface Ord {
 | 入口 | 说明 |
 |---|---|
 | `a.sort()`（`impl[T: Ord] ArrayList[T]`） | 泛型升序（插入排序，稳定） |
+| `sort(a)` | `a.sort()` 的自由函数形式 |
 | `sort_int(a)` / `sort_string(a)` | `a.sort()` 的兼容包装 |
 
 内置 `Ord`：`int`、`String`（字典序）。自定义类型提供

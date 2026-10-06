@@ -107,13 +107,21 @@ pub fn println(char c) {
 // ── 行输入（纯 Ayanami；不依赖 runtime 扩展） ──
 
 /// 读取一行（不含换行；EOF 返回空串）
+///
+/// 注：循环条件避开 `while ... && ...`（主仓 #148：while 条件短路误编译）。
 #[alloc]
 #[state]
 #[io]
 pub fn read_line() -> String {
     s = String::empty()
     c = getchar()
-    while c >= 0 && c != 10 {
+    while true {
+        if c < 0 {
+            break
+        }
+        if c == 10 {
+            break
+        }
         if c != 13 {
             ch = c as char
             s = s.add(ch.to_string())
