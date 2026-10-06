@@ -37,7 +37,7 @@ pub fn write_file(String path, String data) -> bool {
 /// 读取文件并按行拆分（`\r\n` 兼容；失败返回空表）
 ///
 /// 需要区分「失败」与「空文件」时用 `read_file` + `lines`。
-/// （`Option[ArrayList[String]]` 版本待 `.unwrap_or` 单态化修复后提供，见 #134。）
+/// （`Option[ArrayList[String]]` 版本待跨 .lcl 嵌套泛型修复后提供，见 #144。）
 #[alloc]
 #[state]
 #[io]

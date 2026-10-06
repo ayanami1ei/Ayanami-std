@@ -90,6 +90,22 @@ impl[T, E] Result[T, E] {
         return Option::None()
     }
 
+    /// 映射 Ok 值
+    pub fn map[U](self, fn(T) -> U f) -> Result[U, E] {
+        match self {
+            Ok(v) => Result::Ok(f(v)),
+            Err(e) => Result::Err(e),
+        }
+    }
+
+    /// 映射 Err 值
+    pub fn map_err[F](self, fn(E) -> F f) -> Result[T, F] {
+        match self {
+            Ok(v) => Result::Ok(v),
+            Err(e) => Result::Err(f(e)),
+        }
+    }
+
 
     pub fn try_unwrap(self) -> T {
         match self {

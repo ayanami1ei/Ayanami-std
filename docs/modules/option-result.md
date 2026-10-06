@@ -54,6 +54,8 @@ fn main() -> int {
 | `r.unwrap_or(default) -> T` | `Ok` 取值，`Err` 返回默认值 |
 | `r.ok() -> Option[T]` | `Ok(v)` → `Some(v)`，`Err` → `None` |
 | `r.try_unwrap() -> T` | 兼容旧行为（`Err` → `0`） |
+| `r.map[U](fn(T) -> U)` | 映射 `Ok` 值，`Err` 原样 |
+| `r.map_err[F](fn(E) -> F)` | 映射 `Err` 值，`Ok` 原样 |
 
 ```ayanami
 fn parse(int x) -> Result[int, int] {
@@ -64,8 +66,6 @@ fn parse(int x) -> Result[int, int] {
 
 - 构造 `Result::Ok(v)` / `Result::Err(e)` 可用（泛型实参由返回类型推导）。
 - `try_unwrap` 用 `match` 实现，`match` 观测可用。
-- `Result.map` / `map_err` 待编译器修复后提供（主仓
-  [#135](https://github.com/ayanami1ei/Ayanami-language/issues/135)）。
 
 ## 组合子示例
 

@@ -37,3 +37,24 @@ fn test_option_chained() {
     r = some_int(3).map((int x) { return x + 1 }).filter((int x) { return x > 3 })
     #assert_eq(r.unwrap_or(0), 4)
 }
+
+fn ok_int(int v) -> Result[int, int] {
+    return Result::Ok(v)
+}
+
+fn err_int(int v) -> Result[int, int] {
+    return Result::Err(v)
+}
+
+#[test]
+fn test_result_map() {
+    r = ok_int(2)
+    s = r.map((int x) { return x * 10 })
+    #assert_eq(s.unwrap_or(0), 20)
+    e = ok_int(2)
+    f = e.map_err((int x) { return x + 1 })
+    #assert_eq(f.unwrap_or(0), 2)
+    g = err_int(5)
+    h = g.map((int x) { return x * 10 })
+    #assert(h.is_err())
+}
