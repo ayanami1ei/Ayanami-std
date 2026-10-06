@@ -1,0 +1,37 @@
+// eq — 相等接口（泛型容器查找/删除的约束）
+//
+// 与 Hash 同风格：`same` 以 `ref self` / `ref Self` 形式提供，避免与既有
+// `eq`（原语按值 self）签名冲突。内置实现：int、String、bool、char。
+import "string"
+
+pub interface Eq {
+    fn same(ref self, ref Self other) -> bool;
+}
+
+impl int {
+    #[pure]
+    pub fn same(ref self, ref int other) -> bool {
+        return self == other
+    }
+}
+
+impl String {
+    #[pure]
+    pub fn same(ref self, ref String other) -> bool {
+        return self == other
+    }
+}
+
+impl bool {
+    #[pure]
+    pub fn same(ref self, ref bool other) -> bool {
+        return self == other
+    }
+}
+
+impl char {
+    #[pure]
+    pub fn same(ref self, ref char other) -> bool {
+        return self == other
+    }
+}

@@ -13,6 +13,17 @@
 import "arraylist"
 ```
 
+`contains` / `index_of` / `remove` 要求元素实现 `Eq`：
+
+```ayanami
+pub interface Eq {
+    fn same(ref self, ref Self other) -> bool;
+}
+```
+
+内置 `Eq`：`int`、`String`、`bool`、`char`；自定义类型提供
+`same(ref self, ref Self other) -> bool` 即满足约束。
+
 ## List[T] 接口
 
 ```ayanami
@@ -39,6 +50,12 @@ pub interface List[T] {
 | `a.set(i, v)` | 改写；越界 panic 101 |
 | `a.pop() -> T` | 弹出末元素；空表 panic 101 |
 | `a.clear()` | 清空（保留底层缓冲） |
+| `a.contains(v)`（`T: Eq`） | 是否包含（线性查找） |
+| `a.index_of(v) -> int`（`T: Eq`） | 首次出现下标；未找到 `-1` |
+| `a.remove(v) -> bool`（`T: Eq`） | 删除首个等于 `v` 的元素 |
+| `a.reverse()` | 原地反转 |
+| `a.insert_at(i, v)` / `a.remove_at(i)` | 指定位置插入 / 删除；越界 panic 101 |
+| `a.first()` / `a.last() -> T` | 首 / 末元素；空表 panic 101 |
 | `a.iter(f)` | 遍历（回调无捕获，见下） |
 | `a.to_string()` | 形如 `"[1, 2]"`（要求 `T: ToString`） |
 
