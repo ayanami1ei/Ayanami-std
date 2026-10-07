@@ -20,6 +20,9 @@ fn next(ref mut self) -> Option[T]
 |---|---|
 | `a.into_iter() -> ArrayListIter[T]` | 拥有型迭代器（消费 `a`） |
 | `l.into_iter() -> LinkedListIter[T]` | 同上（LinkedList） |
+| `m.into_iter() -> HashMapIter[K, V]` | 产出 `Pair[K, V]`（HashMap） |
+| `s.into_iter() -> HashSetIter[K]` | 产出元素（HashSet） |
+| `s.lines_iter()` / `s.split_whitespace_iter()` | 文本惰性迭代器（见 [text.md](text.md)） |
 | `Iterator[T]` 接口 | `fn next(ref mut self) -> Option[T]`；接口形参走虚调用 |
 
 ```ayanami

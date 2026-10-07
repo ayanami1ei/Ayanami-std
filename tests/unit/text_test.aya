@@ -93,3 +93,22 @@ fn test_count() {
     #assert_eq(count("abc", "x"), 0)
     #assert_eq(count("abc", ""), 0)
 }
+
+#[test]
+fn test_text_iters() {
+    n = 0
+    for ln in "a\nb\nc".lines_iter() {
+        n = n + ln.len as int
+    }
+    #assert_eq(n, 3)
+    e = 0
+    for ln in "".lines_iter() {
+        e = e + 1
+    }
+    #assert_eq(e, 0)
+    w = 0
+    for word in " a  bb c ".split_whitespace_iter() {
+        w = w + word.len as int
+    }
+    #assert_eq(w, 4)
+}

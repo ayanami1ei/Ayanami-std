@@ -95,3 +95,15 @@ fn test_map_retain() {
     #assert(m.contains_key("b"))
     #assert(m.contains_key("c"))
 }
+
+#[test]
+fn test_map_into_iter() {
+    m = HashMap::new[String, int]()
+    m.insert("a", 1)
+    m.insert("b", 2)
+    n = 0
+    for p in m.into_iter() {
+        n = n + p.second
+    }
+    #assert_eq(n, 3)
+}

@@ -3,6 +3,7 @@
 // 依赖 string + arraylist；内部过程式实现，对外声明式一行调用。
 import "string"
 import "arraylist"
+import "option"
 
 /// split_once 的结果：`found` 为是否找到分隔符
 pub struct Split {
@@ -10,6 +11,82 @@ pub struct Split {
     String before
     String after
 }
+
+/// 惰性按行迭代器（消费原串）
+pub struct LinesIter {
+    String s
+    usize i
+}
+
+impl LinesIter {
+    #[state]
+    pub fn next(ref mut self) -> Option[String] {
+        if self.i >= self.s.len {
+            return Option::None()
+        }
+        start = self.i
+        j = self.i
+        while j < self.s.len {
+            if self.s.data[j] == '\n' {
+                end = j
+                if end > start {
+                    if self.s.data[end - 1] == '\r' {
+                        end = end - 1
+                    }
+                }
+                self.i = j + 1
+                return Option::Some(self.s.substring(start, end))
+            }
+            j = j + 1
+        }
+        self.i = self.s.len
+        return Option::Some(self.s.substring(start, self.s.len))
+    }
+}
+
+impl String {
+    /// 惰性按行迭代（消费 self；`\r\n` 兼容、末尾换行不产生空行）
+    pub fn lines_iter(self) -> LinesIter {
+        return LinesIter { s = self, i = 0 }
+    }
+}
+
+/// 惰性按空白拆分迭代器（消费原串）
+pub struct SplitWhitespaceIter {
+    String s
+    usize i
+}
+
+impl SplitWhitespaceIter {
+    #[state]
+    pub fn next(ref mut self) -> Option[String] {
+        while self.i < self.s.len {
+            if !self.s.data[self.i].is_space() {
+                break
+            }
+            self.i = self.i + 1
+        }
+        if self.i >= self.s.len {
+            return Option::None()
+        }
+        start = self.i
+        while self.i < self.s.len {
+            if self.s.data[self.i].is_space() {
+                break
+            }
+            self.i = self.i + 1
+        }
+        return Option::Some(self.s.substring(start, self.i))
+    }
+}
+
+impl String {
+    /// 惰性按空白拆分（消费 self；连续空白视为一个分隔，忽略首尾）
+    pub fn split_whitespace_iter(self) -> SplitWhitespaceIter {
+        return SplitWhitespaceIter { s = self, i = 0 }
+    }
+}
+
 
 /// 按分隔符切分（`sep` 为空时返回只含原串的列表）
 #[alloc]
@@ -134,27 +211,14 @@ pub fn pad_right(ref String s, usize width, char fill) -> String {
 }
 
 /// 按行拆分（`\n`，兼容 `\r\n`；末尾换行不产生空行）
+///
+/// 基于惰性迭代器 `s.lines_iter()` 收集。
 #[alloc]
 #[state]
 pub fn lines(ref String s) -> ArrayList[String] {
     res = ArrayList::new[String]()
-    start = 0usize
-    i = 0usize
-    while i < s.len {
-        if s.data[i] == '\n' {
-            end = i
-            if end > start {
-                if s.data[end - 1] == '\r' {
-                    end = end - 1
-                }
-            }
-            res.push(s.substring(start, end))
-            start = i + 1
-        }
-        i = i + 1
-    }
-    if start < s.len {
-        res.push(s.substring(start, s.len))
+    for ln in s.copy().lines_iter() {
+        res.push(ln)
     }
     return res
 }
@@ -174,23 +238,14 @@ pub fn split_once(ref String s, ref String sep) -> Split {
 }
 
 /// 按空白字符拆分（连续空白视为一个分隔；忽略首尾空白）
+///
+/// 基于惰性迭代器 `s.split_whitespace_iter()` 收集。
 #[alloc]
 #[state]
 pub fn split_whitespace(ref String s) -> ArrayList[String] {
     res = ArrayList::new[String]()
-    i = 0usize
-    while i < s.len {
-        while i < s.len && s.data[i].is_space() {
-            i = i + 1
-        }
-        if i >= s.len {
-            break
-        }
-        start = i
-        while i < s.len && !s.data[i].is_space() {
-            i = i + 1
-        }
-        res.push(s.substring(start, i))
+    for w in s.copy().split_whitespace_iter() {
+        res.push(w)
     }
     return res
 }

@@ -134,3 +134,16 @@ fn test_set_ops() {
     #assert(d.contains(1))
     #assert(!d.contains(2))
 }
+
+#[test]
+fn test_set_into_iter() {
+    s = HashSet::new[int]()
+    s.insert(1)
+    s.insert(2)
+    s.insert(3)
+    n = 0
+    for k in s.into_iter() {
+        n = n + k
+    }
+    #assert_eq(n, 6)
+}

@@ -14,6 +14,8 @@ import "text";
 | `lines(ref String s) -> ArrayList[String]` | 按行拆分（`\n`，兼容 `\r\n`；末尾换行不产生空行） |
 | `split_whitespace(ref String s) -> ArrayList[String]` | 按空白拆分（连续空白视为一个；忽略首尾） |
 | `count(ref String s, ref String needle) -> int` | 非重叠出现次数（needle 为空返回 0） |
+| `s.lines_iter() -> LinesIter` | 惰性按行迭代（消费 `s`；`lines` 基于它实现） |
+| `s.split_whitespace_iter() -> SplitWhitespaceIter` | 惰性按空白迭代（消费 `s`；`split_whitespace` 基于它实现） |
 | `split_once(ref String s, ref String sep) -> Split` | 在首个分隔符处切分；`Split { found, before, after }` |
 
 ## 示例

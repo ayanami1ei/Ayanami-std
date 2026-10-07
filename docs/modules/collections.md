@@ -179,6 +179,7 @@ pub interface Hash {
 | `s.for_each(Fn(K))` / `s.fold[U](init, Fn(U, K) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `s.retain(Fn(K) -> bool)` | 原地保留满足谓词的元素 |
 | `s.union(other)` / `s.intersection(other)` / `s.difference(other)` | 并 / 交 / 差（返回新集合） |
+| `s.into_iter() -> HashSetIter[K]` | 拥有型迭代器（`for k in s.into_iter()`） |
 | `s.to_string()`（`K: ToString`） | 形如 `{a, b}`（顺序为实现相关） |
 | `s.len()` / `s.is_empty()` | 长度 / 是否为空 |
 
@@ -192,6 +193,7 @@ pub interface Hash {
 | `m.for_each(Fn(K, V))` / `m.fold[U](init, Fn(U, K, V) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `m.retain(Fn(K, V) -> bool)` | 原地保留满足谓词的键值对 |
 | `m.to_string()`（`K/V: ToString`） | 形如 `{a: 1, b: 2}`（顺序为实现相关） |
+| `m.into_iter() -> HashMapIter[K, V]` | 拥有型迭代器，产出 `Pair[K, V]`（`for p in m.into_iter()`） |
 | `m.remove(k) -> bool` | 删除；不存在返回 false |
 | `m.len()` / `m.is_empty()` | 长度 / 是否为空 |
 

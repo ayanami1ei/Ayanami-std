@@ -5,6 +5,7 @@
 import "hash"
 import "option"
 import "arraylist"
+import "iter"
 
 pub struct HashMap[K: Hash, V] {
     [K] keys
@@ -251,5 +252,34 @@ impl[K: ToString, V: ToString] HashMap[K, V] {
         }
         res = res + "}"
         return res
+    }
+}
+
+/// 拥有型迭代器（产出 `Pair[K, V]`；顺序为实现相关）
+pub struct HashMapIter[K: Hash, V] {
+    HashMap[K, V] map
+    usize index
+}
+
+impl[K: Hash, V] HashMapIter[K, V] {
+    #[state]
+    pub fn next(ref mut self) -> Option[Pair[K, V]] {
+        while self.index < self.map.cap {
+            if self.map.state[self.index] == 1 {
+                k = self.map.keys[self.index]
+                v = self.map.vals[self.index]
+                self.index = self.index + 1
+                return Option::Some(Pair[K, V] { first = k, second = v })
+            }
+            self.index = self.index + 1
+        }
+        return Option::None()
+    }
+}
+
+impl[K: Hash, V] HashMap[K, V] {
+    /// 转为拥有所有权的迭代器（`for p in m.into_iter()`）
+    pub fn into_iter(self) -> HashMapIter[K, V] {
+        return HashMapIter[K, V] { map = self, index = 0 }
     }
 }

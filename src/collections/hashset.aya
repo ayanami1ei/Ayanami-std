@@ -4,6 +4,7 @@
 // 装填因子超过 0.5 时扩容（grow 顺带清墓碑），保证探测必然终止。
 import "hash"
 import "arraylist"
+import "iter"
 
 pub struct HashSet[K: Hash] {
     [K] keys
@@ -265,5 +266,33 @@ impl[K: ToString] HashSet[K] {
         }
         res = res + "}"
         return res
+    }
+}
+
+/// 拥有型迭代器（顺序为实现相关）
+pub struct HashSetIter[K: Hash] {
+    HashSet[K] set
+    usize index
+}
+
+impl[K: Hash] HashSetIter[K] {
+    #[state]
+    pub fn next(ref mut self) -> Option[K] {
+        while self.index < self.set.cap {
+            if self.set.state[self.index] == 1 {
+                k = self.set.keys[self.index]
+                self.index = self.index + 1
+                return Option::Some(k)
+            }
+            self.index = self.index + 1
+        }
+        return Option::None()
+    }
+}
+
+impl[K: Hash] HashSet[K] {
+    /// 转为拥有所有权的迭代器（`for k in s.into_iter()`）
+    pub fn into_iter(self) -> HashSetIter[K] {
+        return HashSetIter[K] { set = self, index = 0 }
     }
 }
