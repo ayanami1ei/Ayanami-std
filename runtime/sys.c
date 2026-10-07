@@ -107,6 +107,12 @@ int64_t __ayanami_fs_append(__ayanami_str_view path, __ayanami_str_view data) {
     return (w == (size_t)data.len) ? 0 : -1;
 }
 
+int64_t __ayanami_fs_remove(__ayanami_str_view path) {
+    char p[4096];
+    if (!path_cstr(path, p, sizeof p)) return -1;
+    return remove(p) == 0 ? 0 : -1;
+}
+
 // ── 命令行参数（/proc/self/cmdline，惰性解析） ──
 
 static char **g_args = NULL;

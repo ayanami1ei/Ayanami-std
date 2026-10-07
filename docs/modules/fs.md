@@ -11,6 +11,7 @@ import "fs";
 | `write_file(String path, String data) -> bool` | 覆盖写入（成功 `true`） |
 | `read_lines(String path) -> Option[ArrayList[String]]` | 按行拆分（`\r\n` 兼容；失败 `None`） |
 | `append_file(String path, String data) -> bool` | 追加写入（不存在则创建） |
+| `remove_file(String path) -> bool` | 删除文件（成功 `true`） |
 
 ## 示例
 

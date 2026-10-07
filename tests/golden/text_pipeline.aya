@@ -1,0 +1,22 @@
+// text_pipeline — 迭代器管道示例
+//
+// split_whitespace_iter → MapIter（长度）→ FilterIter（>4）→ for 输出。
+// 注：FilterIter 的元素 T / MapIter 的结果 U 为拥有类型（如 String）暂受主仓
+// #164/#165 限制，这里先映射为长度（int）再过滤。
+import "iter"
+import "text"
+import "io"
+
+fn main() -> int {
+    s = "the quick brown fox jumps over the lazy dog"
+    words = s.split_whitespace_iter()
+    lens = MapIter::new(words, (String w) -> int { return w.len as int })
+    long = FilterIter::new(lens, (int n) -> bool { return n > 4 })
+    total = 0
+    for n in long {
+        println(n)
+        total = total + n
+    }
+    println(total)
+    return 0
+}

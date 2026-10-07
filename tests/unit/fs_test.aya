@@ -35,3 +35,12 @@ fn test_append() {
     s = read_file("/tmp/ayanami_fs_append_test.txt").unwrap_or("")
     #assert_eq(s, "abc")
 }
+
+#[test]
+fn test_remove() {
+    #assert(write_file("/tmp/ayanami_fs_remove_test.txt", "x"))
+    #assert(exists("/tmp/ayanami_fs_remove_test.txt"))
+    #assert(remove_file("/tmp/ayanami_fs_remove_test.txt"))
+    #assert(!exists("/tmp/ayanami_fs_remove_test.txt"))
+    #assert(!remove_file("/tmp/ayanami_fs_no_such_file_xyz"))
+}
