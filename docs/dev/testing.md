@@ -10,6 +10,7 @@
 AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
 ./scripts/test.sh --no-install        # 跳过重建
 ./scripts/test.sh --filter string     # 只跑名字含 string 的用例
+./scripts/check_warnings.sh            # 零告警门禁（逐模块打包）
 ```
 
 输出示例：
