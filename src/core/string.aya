@@ -1,3 +1,4 @@
+#[pure]
 extern "C" fn __ayanami_int_to_char(int c) -> char;
 
 // A5c-2：运行时 panic（越界检查用；用户可见的 #panic 在 panic 模块）
