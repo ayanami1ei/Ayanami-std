@@ -19,6 +19,7 @@ pub struct LinesIter {
 }
 
 impl LinesIter {
+    #[alloc]
     #[state]
     pub fn next(ref mut self) -> Option[String] {
         if self.i >= self.s.len {
@@ -58,6 +59,7 @@ pub struct SplitWhitespaceIter {
 }
 
 impl SplitWhitespaceIter {
+    #[alloc]
     #[state]
     pub fn next(ref mut self) -> Option[String] {
         while self.i < self.s.len {
