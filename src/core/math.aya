@@ -45,6 +45,16 @@ extern "C" fn __ayanami_floor(float x) -> float;
 extern "C" fn __ayanami_ceil(float x) -> float;
 #[pure]
 extern "C" fn __ayanami_float_is_nan(float x) -> int;
+#[pure]
+extern "C" fn __ayanami_exp(float x) -> float;
+#[pure]
+extern "C" fn __ayanami_log(float x) -> float;
+#[pure]
+extern "C" fn __ayanami_log10(float x) -> float;
+#[pure]
+extern "C" fn __ayanami_round(float x) -> float;
+#[pure]
+extern "C" fn __ayanami_trunc(float x) -> float;
 
 #[pure]
 pub fn abs(float x) -> float {
@@ -79,6 +89,26 @@ pub fn floor(float x) -> float { return __ayanami_floor(x) }
 
 #[pure]
 pub fn ceil(float x) -> float { return __ayanami_ceil(x) }
+
+/// e^x
+#[pure]
+pub fn exp(float x) -> float { return __ayanami_exp(x) }
+
+/// 自然对数
+#[pure]
+pub fn ln(float x) -> float { return __ayanami_log(x) }
+
+/// 常用对数（底 10）
+#[pure]
+pub fn log10(float x) -> float { return __ayanami_log10(x) }
+
+/// 四舍五入（half away from zero）
+#[pure]
+pub fn round(float x) -> float { return __ayanami_round(x) }
+
+/// 向零截断
+#[pure]
+pub fn trunc(float x) -> float { return __ayanami_trunc(x) }
 
 #[pure]
 pub fn pow(float base, int exp) -> float {

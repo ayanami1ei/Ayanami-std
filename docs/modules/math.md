@@ -23,6 +23,8 @@ import "math";
 | `sqrt(float x)` | 平方根 |
 | `floor(float x)` / `ceil(float x)` | 向下 / 向上取整 |
 | `pow(float base, int exp)` | 浮点幂 |
+| `exp(float x)` / `ln(float x)` / `log10(float x)` | e^x / 自然对数 / 常用对数 |
+| `round(float x)` / `trunc(float x)` | 四舍五入（half away from zero）/ 向零截断 |
 
 ## 示例（输出即注释）
 

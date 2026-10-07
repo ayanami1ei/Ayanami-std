@@ -28,6 +28,11 @@ double __ayanami_sqrt(double x) { return sqrt(x); }
 double __ayanami_floor(double x) { return floor(x); }
 double __ayanami_ceil(double x) { return ceil(x); }
 int64_t __ayanami_float_is_nan(double x) { return isnan(x) ? 1 : 0; }
+double __ayanami_exp(double x) { return exp(x); }
+double __ayanami_log(double x) { return log(x); }
+double __ayanami_log10(double x) { return log10(x); }
+double __ayanami_round(double x) { return round(x); }
+double __ayanami_trunc(double x) { return trunc(x); }
 
 /* A5d-3b：诊断通道弱符号（可执行文件里为 no-op；插件 shim 提供强定义） */
 __attribute__((weak)) void __ayanami_diag_emit(long long level, __ayanami_diag_buf msg) {

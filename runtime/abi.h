@@ -54,6 +54,11 @@ double __ayanami_sqrt(double x);
 double __ayanami_floor(double x);
 double __ayanami_ceil(double x);
 int64_t __ayanami_float_is_nan(double x);
+double __ayanami_exp(double x);
+double __ayanami_log(double x);
+double __ayanami_log10(double x);
+double __ayanami_round(double x);
+double __ayanami_trunc(double x);
 
 // ── 诊断通道（弱符号；插件 shim 可提供强定义） ──
 void __ayanami_diag_emit(long long level, __ayanami_diag_buf msg);

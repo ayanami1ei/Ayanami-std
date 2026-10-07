@@ -55,3 +55,15 @@ fn test_nan() {
     #assert(n.is_nan())
     #assert(!1.5.is_nan())
 }
+
+#[test]
+fn test_exp_log_round() {
+    #assert_close(exp(0.0), 1.0, 0.0001)
+    #assert_close(ln(1.0), 0.0, 0.0001)
+    #assert_close(log10(1000.0), 3.0, 0.0001)
+    #assert_close(round(2.5), 3.0, 0.0001)
+    #assert_close(round(2.4), 2.0, 0.0001)
+    #assert_close(round(0.0 - 2.5), 0.0 - 3.0, 0.0001)
+    #assert_close(trunc(2.9), 2.0, 0.0001)
+    #assert_close(trunc(0.0 - 2.9), 0.0 - 2.0, 0.0001)
+}
