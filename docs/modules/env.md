@@ -9,6 +9,8 @@ import "env";
 | `arg_count() -> int` | 参数个数（含程序名，下标 0） |
 | `arg(int i) -> String` | 第 i 个参数；越界返回空串 |
 | `get_env(String name) -> Option[String]` | 环境变量；缺失 → `None` |
+| `get_env_or(String name, String fallback) -> String` | 缺失用 fallback |
+| `args() -> ArrayList[String]` | 全部命令行参数（含程序名） |
 
 ## 示例
 

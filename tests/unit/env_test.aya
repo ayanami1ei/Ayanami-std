@@ -14,3 +14,12 @@ fn test_env() {
     p = get_env("PATH").unwrap_or("")
     #assert(!p.is_empty())
 }
+
+#[test]
+fn test_env_or_args() {
+    #assert_eq(get_env_or("AYANAMI_NO_SUCH_ENV_XYZ", "fallback"), "fallback")
+    n = arg_count()
+    #assert_eq(args().len() as int, n)
+    p = get_env_or("PATH", "")
+    #assert(!p.is_empty())
+}

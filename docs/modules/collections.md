@@ -58,7 +58,7 @@ pub interface List[T] {
 | `a.first()` / `a.last() -> T` | 首 / 末元素；空表 panic 101 |
 | `a.map[U](Fn(T) -> U)` | 映射为新表 |
 | `a.filter(Fn(T) -> bool)` | 过滤为新表 |
-| `a.fold[U](init, Fn(U, T) -> U)` | 折叠 |
+| `a.fold[U](init, Fn(U, T) -> U)` | 折叠（累加器需为 Copy，见主仓 #156） |
 | `a.any(Fn(T) -> bool)` / `a.all(...)` | 存在 / 全部满足 |
 | `a.find(Fn(T) -> bool) -> Option[T]` | 首个满足谓词的元素 |
 | `a.position(Fn(T) -> bool) -> int` / `a.count(Fn(T) -> bool) -> usize` | 首个满足的下标（无 `-1`）/ 个数 |

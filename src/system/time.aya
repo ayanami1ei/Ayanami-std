@@ -18,6 +18,12 @@ pub fn now_unix() -> int {
     return __ayanami_time_unix()
 }
 
+/// 自 `start`（来自 `now_millis`）起的毫秒差
+#[io]
+pub fn elapsed_ms(int start) -> int {
+    return now_millis() - start
+}
+
 /// 睡眠 `ms` 毫秒（`<= 0` 直接返回）
 #[io]
 pub fn sleep_ms(int ms) {

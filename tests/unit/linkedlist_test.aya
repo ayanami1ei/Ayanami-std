@@ -53,3 +53,24 @@ fn test_ll_misc() {
     l.clear()
     #assert(l.is_empty())
 }
+
+#[test]
+fn test_ll_functional() {
+    l = LinkedList::new[int]()
+    l.push(1)
+    l.push(2)
+    l.push(3)
+    m = l.map((int x) -> int { return x * 10 })
+    #assert_eq(m.index(2), 30)
+    f = l.filter((int x) -> bool { return x > 1 })
+    #assert_eq(f.len(), 2)
+    s = l.fold(0, (int acc, int x) -> int { return acc + x })
+    #assert_eq(s, 6)
+    #assert(l.any((int x) -> bool { return x == 3 }))
+    #assert(l.all((int x) -> bool { return x > 0 }))
+    #assert_eq(l.find((int x) -> bool { return x > 1 }).unwrap_or(0), 2)
+    #assert_eq(l.position((int x) -> bool { return x == 3 }), 2)
+    #assert_eq(l.count((int x) -> bool { return x % 2 == 1 }), 2)
+    l.retain((int x) -> bool { return x != 2 })
+    #assert_eq(l.len(), 2)
+}

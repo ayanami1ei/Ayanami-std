@@ -31,6 +31,26 @@ fn main() -> int {
 }
 ```
 
+## 示例：文本统计
+
+见 `examples/text_stats.aya`（`split_whitespace` + `fold` + `count` 组合）：
+
+```ayanami
+ws = split_whitespace("the quick brown fox")
+n = ws.len() as int                 // 4
+
+maxlen = ws.fold(0usize, (usize acc, String w) -> usize {
+    if w.len > acc { return w.len }
+    return acc
+})                                  // 5
+pos = ws.position((String w) -> bool { return w.len == maxlen })
+ws.index(pos as usize)              // "quick"
+count("the fox and the dog", "the") // 2
+```
+
+> `fold` 的累加器目前需为 Copy 类型（非 Copy 累加器受主仓
+> [#156](https://github.com/ayanami1ei/Ayanami-language/issues/156) 限制）。
+
 ## 注意
 
 - 依赖 `string` + `arraylist`；内部过程式实现（单趟扫描），对外声明式调用。

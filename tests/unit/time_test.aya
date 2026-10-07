@@ -16,3 +16,11 @@ fn test_sleep() {
     t2 = now_millis()
     #assert(t2 - t1 >= 25)
 }
+
+#[test]
+fn test_elapsed() {
+    t = now_millis()
+    #assert(elapsed_ms(t) >= 0)
+    sleep_ms(20)
+    #assert(elapsed_ms(t) >= 15)
+}
