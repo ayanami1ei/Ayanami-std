@@ -37,9 +37,13 @@ pub fn pow(int base, int exp) -> int {
 
 // ── A6：浮点重载与数学函数 ──
 
+#[pure]
 extern "C" fn __ayanami_sqrt(float x) -> float;
+#[pure]
 extern "C" fn __ayanami_floor(float x) -> float;
+#[pure]
 extern "C" fn __ayanami_ceil(float x) -> float;
+#[pure]
 extern "C" fn __ayanami_float_is_nan(float x) -> int;
 
 #[pure]
