@@ -99,3 +99,63 @@ fn test_filter_map_compose() {
     }
     #assert_eq(s, 70)
 }
+
+#[test]
+fn test_take_adapter() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    a.push(4)
+    t = TakeIter::new(a.into_iter(), 2usize)
+    s = 0
+    for x in t {
+        s = s + x
+    }
+    #assert_eq(s, 3)
+}
+
+#[test]
+fn test_map_filter_take() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    a.push(4)
+    a.push(5)
+    m = MapIter::new(a.into_iter(), (int x) -> int { return x * 10 })
+    f = FilterIter::new(m, (int x) -> bool { return x > 20 })
+    t = TakeIter::new(f, 2usize)
+    s = 0
+    for x in t {
+        s = s + x
+    }
+    #assert_eq(s, 70)
+}
+
+#[test]
+fn test_enumerate_zip() {
+    a = ArrayList::new[int]()
+    a.push(10)
+    a.push(20)
+    e = EnumerateIter::new(a.into_iter())
+    s = 0
+    for p in e {
+        s = s + (p.first as int) * 100 + p.second
+    }
+    #assert_eq(s, 130)
+
+    b = ArrayList::new[int]()
+    b.push(1)
+    b.push(2)
+    b.push(3)
+    c = ArrayList::new[int]()
+    c.push(7)
+    c.push(8)
+    z = ZipIter::new(b.into_iter(), c.into_iter())
+    n = 0
+    for p in z {
+        n = n + p.first * p.second
+    }
+    #assert_eq(n, 23)
+}

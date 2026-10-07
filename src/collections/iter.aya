@@ -2,8 +2,6 @@
 //
 // 任何具备 `fn next(ref mut self) -> Option[T]` 的类型都可被 `for x in it` 迭代；
 // 集合提供拥有型迭代器（`a.into_iter()`）；适配器用泛型约束 `I: Iterator[T]` 组合。
-//
-// take/enumerate/zip 待元素类型推断修复（主仓 #160）后提供。
 import "option"
 import "arraylist"
 import "linkedlist"
@@ -11,6 +9,12 @@ import "linkedlist"
 /// 迭代器接口（结构化：具备 `next` 即满足）
 pub interface Iterator[T] {
     fn next(ref mut self) -> Option[T];
+}
+
+/// 二元组（zip / enumerate 的元素）
+pub struct Pair[A, B] {
+    A first
+    B second
 }
 
 /// ArrayList 的拥有型迭代器
@@ -111,5 +115,80 @@ impl[T, I: Iterator[T]] FilterIter[T, I] {
             }
         }
         return Option::None()
+    }
+}
+
+/// take 适配器：最多产出前 n 个元素
+pub struct TakeIter[T, I: Iterator[T]] {
+    I inner
+    usize left
+}
+
+pub namespace TakeIter {
+    pub fn new[T, I: Iterator[T]](I inner, usize n) -> TakeIter[T, I] {
+        return TakeIter[T, I] { inner = inner, left = n }
+    }
+}
+
+impl[T, I: Iterator[T]] TakeIter[T, I] {
+    #[state]
+    pub fn next(ref mut self) -> Option[T] {
+        if self.left == 0 {
+            return Option::None()
+        }
+        self.left = self.left - 1
+        return self.inner.next()
+    }
+}
+
+/// enumerate 适配器：产出 `Pair[usize, T]`（下标从 0 起）
+pub struct EnumerateIter[T, I: Iterator[T]] {
+    I inner
+    usize index
+}
+
+pub namespace EnumerateIter {
+    pub fn new[T, I: Iterator[T]](I inner) -> EnumerateIter[T, I] {
+        return EnumerateIter[T, I] { inner = inner, index = 0 }
+    }
+}
+
+impl[T, I: Iterator[T]] EnumerateIter[T, I] {
+    #[state]
+    pub fn next(ref mut self) -> Option[Pair[usize, T]] {
+        o = self.inner.next()
+        if o._tag != 0 {
+            return Option::None()
+        }
+        i = self.index
+        self.index = self.index + 1
+        return Option::Some(Pair[usize, T] { first = i, second = o._data_Some._0 })
+    }
+}
+
+/// zip 适配器：逐对产出 `Pair[T, U]`，任一耗尽即结束
+pub struct ZipIter[T, U, IA: Iterator[T], IB: Iterator[U]] {
+    IA a
+    IB b
+}
+
+pub namespace ZipIter {
+    pub fn new[T, U, IA: Iterator[T], IB: Iterator[U]](IA a, IB b) -> ZipIter[T, U, IA, IB] {
+        return ZipIter[T, U, IA, IB] { a = a, b = b }
+    }
+}
+
+impl[T, U, IA: Iterator[T], IB: Iterator[U]] ZipIter[T, U, IA, IB] {
+    #[state]
+    pub fn next(ref mut self) -> Option[Pair[T, U]] {
+        oa = self.a.next()
+        if oa._tag != 0 {
+            return Option::None()
+        }
+        ob = self.b.next()
+        if ob._tag != 0 {
+            return Option::None()
+        }
+        return Option::Some(Pair[T, U] { first = oa._data_Some._0, second = ob._data_Some._0 })
     }
 }

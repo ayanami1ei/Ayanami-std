@@ -67,6 +67,9 @@ fn sum(Iterator[int] it) -> int {
 |---|---|
 | `MapIter::new(it, f)` | 映射 |
 | `FilterIter::new(it, pred)` | 过滤 |
+| `TakeIter::new(it, n)` | 最多前 `n` 个 |
+| `EnumerateIter::new(it)` | 产出 `Pair[usize, T]`（下标从 0 起） |
+| `ZipIter::new(a, b)` | 逐对产出 `Pair[T, U]`，任一耗尽即结束 |
 
 ```ayanami
 a = ArrayList::new[int]()
@@ -77,11 +80,11 @@ a.push(4)
 
 m = MapIter::new(a.into_iter(), (int x) -> int { return x * 10 })
 f = FilterIter::new(m, (int x) -> bool { return x > 20 })
+t = TakeIter::new(f, 2usize)
 
 s = 0
-for x in f { s = s + x }        // 30 + 40 = 70
+for x in t { s = s + x }        // 30 + 40 = 70
 ```
 
 > 适配器可任意嵌套（内层迭代器满足 `Iterator[T]` 即可）。
-> `take` / `enumerate` / `zip` 待元素类型推断修复（主仓
-> [#160](https://github.com/ayanami1ei/Ayanami-language/issues/160)）后提供。
+> `Pair[A, B] { first, second }` 用于 zip / enumerate 的元素。
