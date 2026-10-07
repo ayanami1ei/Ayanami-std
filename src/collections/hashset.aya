@@ -3,6 +3,7 @@
 // state：0=空、1=占用、2=墓碑；filled 为占用+墓碑槽数，
 // 装填因子超过 0.5 时扩容（grow 顺带清墓碑），保证探测必然终止。
 import "hash"
+import "arraylist"
 
 pub struct HashSet[K: Hash] {
     [K] keys
@@ -121,6 +122,21 @@ impl[K: Hash] HashSet[K] {
             i = (i + 1) % self.cap
         }
         return false
+    }
+
+    /// 所有元素（浅拷贝；顺序为实现相关）
+    #[alloc]
+    #[state]
+    pub fn to_list(ref self) -> ArrayList[K] {
+        res = ArrayList::new[K]()
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                res.push(self.keys[i])
+            }
+            i = i + 1
+        }
+        return res
     }
 
     pub fn len(ref self) -> usize {

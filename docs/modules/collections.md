@@ -61,7 +61,9 @@ pub interface List[T] {
 
 ## LinkedList[T]
 
-`LinkedList::new[T]()`，方法 `push` / `index` / `len` / `iter` / `to_string`，行为与 `ArrayList` 一致。
+方法集与 `ArrayList` 对齐：`push` / `index` / `set` / `pop` / `clear` / `is_empty` /
+`contains` / `index_of` / `remove` / `reverse` / `insert_at` / `remove_at` / `first` / `last` /
+`iter` / `to_string`，另有 `LinkedList::with_capacity[T](n)`；行为等价顺序表。
 
 ## 示例（输出即注释）
 
@@ -162,6 +164,7 @@ pub interface Hash {
 | `s.insert(k) -> bool` | 插入；已存在返回 false |
 | `s.contains(k) -> bool` | 是否包含 |
 | `s.remove(k) -> bool` | 删除；不存在返回 false |
+| `s.to_list() -> ArrayList[K]` | 所有元素（浅拷贝，顺序为实现相关） |
 | `s.len()` / `s.is_empty()` | 长度 / 是否为空 |
 
 | 方法 | 说明 |
@@ -170,6 +173,7 @@ pub interface Hash {
 | `m.insert(k, v) -> bool` | 插入；新增返回 true，覆盖旧值返回 false |
 | `m.get(k) -> Option[V]` | 取值（浅拷贝，与 `ArrayList.index` 一致） |
 | `m.contains_key(k) -> bool` | 是否包含键 |
+| `m.keys()` / `m.values() -> ArrayList[K]/ArrayList[V]` | 所有键 / 值（浅拷贝，顺序为实现相关） |
 | `m.remove(k) -> bool` | 删除；不存在返回 false |
 | `m.len()` / `m.is_empty()` | 长度 / 是否为空 |
 

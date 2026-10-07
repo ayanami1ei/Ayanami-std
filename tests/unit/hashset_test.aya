@@ -64,3 +64,14 @@ fn test_set_tombstone() {
     #assert(s.contains(19))
     #assert(!s.contains(0))
 }
+
+#[test]
+fn test_to_list() {
+    s = HashSet::new[String]()
+    s.insert("x")
+    s.insert("y")
+    l = s.to_list()
+    #assert_eq(l.len(), 2)
+    #assert(l.contains("x"))
+    #assert(l.contains("y"))
+}

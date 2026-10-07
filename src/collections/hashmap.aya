@@ -4,6 +4,7 @@
 // 装填因子与墓碑策略同 HashSet。
 import "hash"
 import "option"
+import "arraylist"
 
 pub struct HashMap[K: Hash, V] {
     [K] keys
@@ -150,6 +151,36 @@ impl[K: Hash, V] HashMap[K, V] {
             i = (i + 1) % self.cap
         }
         return false
+    }
+
+    /// 所有键（浅拷贝；顺序为实现相关）
+    #[alloc]
+    #[state]
+    pub fn keys(ref self) -> ArrayList[K] {
+        res = ArrayList::new[K]()
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                res.push(self.keys[i])
+            }
+            i = i + 1
+        }
+        return res
+    }
+
+    /// 所有值（浅拷贝；顺序为实现相关）
+    #[alloc]
+    #[state]
+    pub fn values(ref self) -> ArrayList[V] {
+        res = ArrayList::new[V]()
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                res.push(self.vals[i])
+            }
+            i = i + 1
+        }
+        return res
     }
 
     pub fn len(ref self) -> usize {

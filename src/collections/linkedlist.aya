@@ -1,6 +1,7 @@
 import "string"
 import "panic"
 import "list"
+import "eq"
 
 // 说明：链表曾基于 shared/weak 节点链；新所有权模型暂不支持"借用 unique 字段遍历"，
 // 因此改为数组缓冲实现，保持相同的 List 接口（行为等价：顺序表）。
@@ -13,6 +14,14 @@ pub struct LinkedList[T] {
 pub namespace LinkedList{
     pub fn new[T]()->LinkedList[T]{
         return LinkedList[T]{data=null, len=0, capability=0}
+    }
+    /// 预分配容量（cap <= 0 时等价于 new）
+#[alloc]
+    pub fn with_capacity[T](usize cap) -> LinkedList[T] {
+        if cap == 0 {
+            return LinkedList[T] { data = null, len = 0, capability = 0 }
+        }
+        return LinkedList[T] { data = [T; cap], len = 0, capability = cap }
     }
 }
 
@@ -46,6 +55,31 @@ impl[T] LinkedList[T] {
 
     pub fn len(ref self)->usize{ return self.len }
 
+#[state]
+    pub fn set(ref mut self, usize i, T v, int __line, int __col, String __file) {
+        if i >= self.len { panic_bounds_at(__line, __col, __file, i, self.len) }
+        self.data[i] = v
+    }
+
+    /// 弹出末元素（空表 panic 101）
+#[alloc]
+#[state]
+    pub fn pop(ref mut self, int __line, int __col, String __file) -> T {
+        if self.len == 0 { panic_at(__line, __col, __file, "pop from empty LinkedList") }
+        self.len = self.len - 1
+        return self.data[self.len]
+    }
+
+    pub fn is_empty(ref self) -> bool {
+        return self.len == 0
+    }
+
+    /// 清空（保留底层缓冲）
+#[state]
+    pub fn clear(ref mut self) {
+        self.len = 0
+    }
+
     pub fn iter(ref self, fn(T) f) {
         for i in (0, self.len as int) {
             f(self.data[i])
@@ -66,5 +100,116 @@ impl[T:ToString] LinkedList[T] {
         }
         res = res + "]"
         return res
+    }
+}
+
+/// 需要元素实现 Eq
+impl[T: Eq] LinkedList[T] {
+    /// 是否包含（线性查找）
+    pub fn contains(ref self, ref T v) -> bool {
+        i = 0usize
+        while i < self.len {
+            if self.data[i].same(v) {
+                return true
+            }
+            i = i + 1
+        }
+        return false
+    }
+
+    /// 首次出现下标；未找到返回 -1
+    pub fn index_of(ref self, ref T v) -> int {
+        i = 0usize
+        while i < self.len {
+            if self.data[i].same(v) {
+                return i as int
+            }
+            i = i + 1
+        }
+        return 0 - 1
+    }
+
+    /// 删除首个等于 v 的元素（后续前移）；未找到返回 false
+    #[state]
+    pub fn remove(ref mut self, ref T v) -> bool {
+        i = 0usize
+        while i < self.len {
+            if self.data[i].same(v) {
+                j = i
+                while j + 1 < self.len {
+                    self.data[j] = self.data[j + 1]
+                    j = j + 1
+                }
+                self.len = self.len - 1
+                return true
+            }
+            i = i + 1
+        }
+        return false
+    }
+}
+
+impl[T] LinkedList[T] {
+    /// 原地反转
+    #[state]
+    pub fn reverse(ref mut self) {
+        i = 0usize
+        j = self.len
+        while i + 1 < j {
+            j = j - 1
+            tmp = self.data[i]
+            self.data[i] = self.data[j]
+            self.data[j] = tmp
+            i = i + 1
+        }
+    }
+
+    /// 在 idx 处插入（idx == len 等价 push）；越界 panic 101
+    #[alloc]
+    #[state]
+    pub fn insert_at(ref mut self, usize idx, T v, int __line, int __col, String __file) {
+        if idx > self.len {
+            panic_bounds_at(__line, __col, __file, idx, self.len)
+        }
+        if self.len + 1 >= self.capability {
+            self.expand()
+        }
+        j = self.len
+        while j > idx {
+            self.data[j] = self.data[j - 1]
+            j = j - 1
+        }
+        self.data[idx] = v
+        self.len = self.len + 1
+    }
+
+    /// 删除 idx 处元素（后续前移）；越界 panic 101
+    #[state]
+    pub fn remove_at(ref mut self, usize idx, int __line, int __col, String __file) {
+        if idx >= self.len {
+            panic_bounds_at(__line, __col, __file, idx, self.len)
+        }
+        j = idx
+        while j + 1 < self.len {
+            self.data[j] = self.data[j + 1]
+            j = j + 1
+        }
+        self.len = self.len - 1
+    }
+
+    /// 首元素（空表 panic 101）
+    pub fn first(ref self, int __line, int __col, String __file) -> T {
+        if self.len == 0 {
+            panic_at(__line, __col, __file, "first from empty LinkedList")
+        }
+        return self.data[0]
+    }
+
+    /// 末元素（空表 panic 101）
+    pub fn last(ref self, int __line, int __col, String __file) -> T {
+        if self.len == 0 {
+            panic_at(__line, __col, __file, "last from empty LinkedList")
+        }
+        return self.data[self.len - 1]
     }
 }

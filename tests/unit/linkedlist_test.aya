@@ -12,3 +12,44 @@ fn test_basic() {
     #assert_eq(l.index(0), 1)
     #assert_eq(l.index(2), 3)
 }
+
+#[test]
+fn test_ll_eq_ops() {
+    l = LinkedList::new[int]()
+    l.push(10)
+    l.push(20)
+    l.push(30)
+    #assert(l.contains(20))
+    #assert_eq(l.index_of(30), 2)
+    #assert(l.remove(20))
+    #assert_eq(l.len(), 2)
+    #assert(!l.contains(20))
+}
+
+#[test]
+fn test_ll_mut_ops() {
+    l = LinkedList::new[int]()
+    l.push(1)
+    l.push(3)
+    l.insert_at(1, 2)
+    #assert_eq(l.index(1), 2)
+    l.reverse()
+    #assert_eq(l.index(0), 3)
+    l.remove_at(0)
+    #assert_eq(l.index(0), 2)
+    #assert_eq(l.first(), 2)
+    #assert_eq(l.last(), 1)
+}
+
+#[test]
+fn test_ll_misc() {
+    l = LinkedList::with_capacity[int](2)
+    l.push(5)
+    #assert_eq(l.pop(), 5)
+    #assert(l.is_empty())
+    l.push(7)
+    l.set(0, 9)
+    #assert_eq(l.index(0), 9)
+    l.clear()
+    #assert(l.is_empty())
+}

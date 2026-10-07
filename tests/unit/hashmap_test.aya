@@ -40,3 +40,20 @@ fn test_map_string_value() {
     v2 = m.get("name").unwrap_or("none")
     #assert(v2.eq("ayanami2"))
 }
+
+#[test]
+fn test_keys_values() {
+    m = HashMap::new[String, int]()
+    m.insert("a", 1)
+    m.insert("b", 2)
+    ks = m.keys()
+    #assert_eq(ks.len(), 2)
+    #assert(ks.contains("a"))
+    #assert(ks.contains("b"))
+    vs = m.values()
+    #assert_eq(vs.len(), 2)
+    #assert(vs.contains(1))
+    #assert(vs.contains(2))
+    e = HashMap::new[String, int]()
+    #assert_eq(e.keys().len(), 0)
+}
