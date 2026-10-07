@@ -89,8 +89,5 @@ s = 0
 for x in t { s = s + x }        // 30 + 40 = 70
 ```
 
-> 适配器可任意嵌套（内层迭代器满足 `Iterator[T]` 即可）。
+> 适配器可任意嵌套（内层迭代器满足 `Iterator[T]` 即可），拥有类型（如 `String`）正常。
 > `Pair[A, B] { first, second }` 用于 zip / enumerate 的元素。
-> 拥有类型（如 `String`）经 `MapIter` 结果（`U`）或 `FilterIter` 元素（`T`）传递暂受主仓
-> [#164](https://github.com/ayanami1ei/Ayanami-language/issues/164) /
-> [#165](https://github.com/ayanami1ei/Ayanami-language/issues/165) 限制；Copy 类型正常。

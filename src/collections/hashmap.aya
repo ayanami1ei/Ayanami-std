@@ -233,7 +233,7 @@ impl[K: Hash, V] HashMap[K, V] {
 }
 
 /// 需要键与值实现 ToString（形如 `{k: v, ...}`，顺序为实现相关）
-impl[K: ToString, V: ToString] HashMap[K, V] {
+impl[K: Hash + ToString, V: ToString] HashMap[K, V] {
     #[alloc]
     #[state]
     pub fn to_string(ref self) -> String {

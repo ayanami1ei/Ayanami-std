@@ -1,6 +1,7 @@
 import "iter"
 import "arraylist"
 import "linkedlist"
+import "text"
 import "test"
 
 struct Countdown {
@@ -158,4 +159,16 @@ fn test_enumerate_zip() {
         n = n + p.first * p.second
     }
     #assert_eq(n, 23)
+}
+
+#[test]
+fn test_string_adapters() {
+    words = "quick brown ox".split_whitespace_iter()
+    long = FilterIter::new(words, (String w) -> bool { return w.len > 4 })
+    upper = MapIter::new(long, (String w) -> String { return w.to_upper() })
+    n = 0
+    for w in upper {
+        n = n + w.len as int
+    }
+    #assert_eq(n, 10)
 }

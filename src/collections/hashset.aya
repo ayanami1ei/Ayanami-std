@@ -247,7 +247,7 @@ impl[K: Hash] HashSet[K] {
 }
 
 /// 需要元素实现 ToString（形如 `{a, b}`，顺序为实现相关）
-impl[K: ToString] HashSet[K] {
+impl[K: Hash + ToString] HashSet[K] {
     #[alloc]
     #[state]
     pub fn to_string(ref self) -> String {
