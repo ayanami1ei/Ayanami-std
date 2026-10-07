@@ -88,7 +88,8 @@ fn main() -> int {
 }
 ```
 
-> lambda 目前**不能捕获外部变量**（闭包捕获属主仓 M2）；组合子里只能使用参数与全局函数。
+> lambda 支持**按值捕获**（M2）：`limit = 2; o.map((int x) -> int { return x + limit })`。
+> 捕获按值（拥有类型移动）；lambda 内修改的是捕获副本，不影响外部变量。
 
 ## Error 接口
 

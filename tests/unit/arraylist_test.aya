@@ -94,3 +94,48 @@ fn test_first_last() {
     #assert_eq(a.first(), 5)
     #assert_eq(a.last(), 7)
 }
+
+#[test]
+fn test_map_filter() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    b = a.map((int x) -> int { return x * 10 })
+    #assert_eq(b.len(), 3)
+    #assert_eq(b.index(0), 10)
+    #assert_eq(b.index(2), 30)
+    c = a.filter((int x) -> bool { return x > 1 })
+    #assert_eq(c.len(), 2)
+    #assert_eq(c.index(0), 2)
+}
+
+#[test]
+fn test_fold_any_all_find() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    s = a.fold(0, (int acc, int x) -> int { return acc + x })
+    #assert_eq(s, 6)
+    #assert(a.any((int x) -> bool { return x == 2 }))
+    #assert(!a.any((int x) -> bool { return x == 9 }))
+    #assert(a.all((int x) -> bool { return x > 0 }))
+    #assert(!a.all((int x) -> bool { return x > 1 }))
+    f = a.find((int x) -> bool { return x > 1 })
+    #assert_eq(f.unwrap_or(0), 2)
+    g = a.find((int x) -> bool { return x > 9 })
+    #assert(g.is_none())
+}
+
+#[test]
+fn test_capture_filter() {
+    limit = 2
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    b = a.filter((int x) -> bool { return x > limit })
+    #assert_eq(b.len(), 1)
+    #assert_eq(b.index(0), 3)
+}

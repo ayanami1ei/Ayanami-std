@@ -153,6 +153,30 @@ impl[K: Hash, V] HashMap[K, V] {
         return false
     }
 
+    /// 遍历所有键值（浅拷贝；顺序为实现相关）
+    pub fn for_each(ref self, Fn(K, V) f) {
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                f(self.keys[i], self.vals[i])
+            }
+            i = i + 1
+        }
+    }
+
+    /// 折叠：acc = f(acc, k, v)
+    pub fn fold[U](ref self, U init, Fn(U, K, V) -> U f) -> U {
+        acc = init
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                acc = f(acc, self.keys[i], self.vals[i])
+            }
+            i = i + 1
+        }
+        return acc
+    }
+
     /// 所有键（浅拷贝；顺序为实现相关）
     #[alloc]
     #[state]

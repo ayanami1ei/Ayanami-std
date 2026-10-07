@@ -88,3 +88,12 @@ fn test_set_to_string() {
     e = HashSet::new[String]()
     #assert_eq(e.to_string(), "{}")
 }
+
+#[test]
+fn test_set_fold() {
+    s = HashSet::new[int]()
+    s.insert(1)
+    s.insert(2)
+    total = s.fold(0, (int acc, int k) -> int { return acc + k })
+    #assert_eq(total, 3)
+}

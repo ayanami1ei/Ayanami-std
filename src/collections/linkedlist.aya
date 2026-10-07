@@ -80,7 +80,7 @@ impl[T] LinkedList[T] {
         self.len = 0
     }
 
-    pub fn iter(ref self, fn(T) f) {
+    pub fn iter(ref self, Fn(T) f) {
         for i in (0, self.len as int) {
             f(self.data[i])
         }

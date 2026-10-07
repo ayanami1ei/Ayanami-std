@@ -3,5 +3,5 @@ pub interface List[T]{
     fn push(ref mut self, T val);
     fn index(ref self, usize index)->T;
     fn len(ref self)->usize;
-    fn iter(ref self, fn(T) f);
+    fn iter(ref self, Fn(T) f);
 }

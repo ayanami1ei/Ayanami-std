@@ -56,7 +56,12 @@ pub interface List[T] {
 | `a.reverse()` | 原地反转 |
 | `a.insert_at(i, v)` / `a.remove_at(i)` | 指定位置插入 / 删除；越界 panic 101 |
 | `a.first()` / `a.last() -> T` | 首 / 末元素；空表 panic 101 |
-| `a.iter(f)` | 遍历（回调无捕获，见下） |
+| `a.map[U](Fn(T) -> U)` | 映射为新表 |
+| `a.filter(Fn(T) -> bool)` | 过滤为新表 |
+| `a.fold[U](init, Fn(U, T) -> U)` | 折叠 |
+| `a.any(Fn(T) -> bool)` / `a.all(...)` | 存在 / 全部满足 |
+| `a.find(Fn(T) -> bool) -> Option[T]` | 首个满足谓词的元素 |
+| `a.iter(f)` | 遍历（回调可捕获，见下） |
 | `a.to_string()` | 形如 `"[1, 2]"`（要求 `T: ToString`） |
 
 ## LinkedList[T]
@@ -85,7 +90,7 @@ fn main() -> int {
 }
 ```
 
-遍历（回调形如 `(类型 参数) { ... }`，**不能捕获外部变量**，可调用全局函数）：
+遍历与捕获（回调形如 `(类型 参数) -> U { ... }`，支持按值捕获，M2）：
 
 ```ayanami
 import "arraylist"
@@ -96,6 +101,10 @@ fn main() -> int {
     a.push(1)
     a.push(2)
     a.iter((int x) { println(x) })   // 1 然后 2
+
+    limit = 1
+    b = a.filter((int x) -> bool { return x > limit })   // [2]（按值捕获 limit）
+    println(b.len())                 // 1
     return 0
 }
 ```
@@ -165,6 +174,7 @@ pub interface Hash {
 | `s.contains(k) -> bool` | 是否包含 |
 | `s.remove(k) -> bool` | 删除；不存在返回 false |
 | `s.to_list() -> ArrayList[K]` | 所有元素（浅拷贝，顺序为实现相关） |
+| `s.for_each(Fn(K))` / `s.fold[U](init, Fn(U, K) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `s.to_string()`（`K: ToString`） | 形如 `{a, b}`（顺序为实现相关） |
 | `s.len()` / `s.is_empty()` | 长度 / 是否为空 |
 
@@ -175,6 +185,7 @@ pub interface Hash {
 | `m.get(k) -> Option[V]` | 取值（浅拷贝，与 `ArrayList.index` 一致） |
 | `m.contains_key(k) -> bool` | 是否包含键 |
 | `m.keys()` / `m.values() -> ArrayList[K]/ArrayList[V]` | 所有键 / 值（浅拷贝，顺序为实现相关） |
+| `m.for_each(Fn(K, V))` / `m.fold[U](init, Fn(U, K, V) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `m.to_string()`（`K/V: ToString`） | 形如 `{a: 1, b: 2}`（顺序为实现相关） |
 | `m.remove(k) -> bool` | 删除；不存在返回 false |
 | `m.len()` / `m.is_empty()` | 长度 / 是否为空 |

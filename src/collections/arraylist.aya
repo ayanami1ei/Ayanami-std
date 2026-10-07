@@ -2,6 +2,7 @@ import "string"
 import "panic"
 import "list"
 import "eq"
+import "option"
 
 pub struct ArrayList[T]{
     [T] data
@@ -78,7 +79,7 @@ impl[T] ArrayList[T]{
         self.len = 0
     }
 
-    pub fn iter(ref self, fn(T) f) {
+    pub fn iter(ref self, Fn(T) f) {
         for i in (0, self.len as int) {
             f(self.data[i])
         }
@@ -147,6 +148,81 @@ impl[T: Eq] ArrayList[T] {
 }
 
 impl[T] ArrayList[T] {
+    /// 映射为新表
+    #[alloc]
+    #[state]
+    pub fn map[U](ref self, Fn(T) -> U f) -> ArrayList[U] {
+        res = ArrayList::new[U]()
+        i = 0usize
+        while i < self.len {
+            res.push(f(self.data[i]))
+            i = i + 1
+        }
+        return res
+    }
+
+    /// 过滤为新表
+    #[alloc]
+    #[state]
+    pub fn filter(ref self, Fn(T) -> bool f) -> ArrayList[T] {
+        res = ArrayList::new[T]()
+        i = 0usize
+        while i < self.len {
+            if f(self.data[i]) {
+                res.push(self.data[i])
+            }
+            i = i + 1
+        }
+        return res
+    }
+
+    /// 折叠：acc = f(acc, item)
+    pub fn fold[U](ref self, U init, Fn(U, T) -> U f) -> U {
+        acc = init
+        i = 0usize
+        while i < self.len {
+            acc = f(acc, self.data[i])
+            i = i + 1
+        }
+        return acc
+    }
+
+    /// 是否存在满足谓词的元素
+    pub fn any(ref self, Fn(T) -> bool f) -> bool {
+        i = 0usize
+        while i < self.len {
+            if f(self.data[i]) {
+                return true
+            }
+            i = i + 1
+        }
+        return false
+    }
+
+    /// 是否所有元素满足谓词
+    pub fn all(ref self, Fn(T) -> bool f) -> bool {
+        i = 0usize
+        while i < self.len {
+            if !f(self.data[i]) {
+                return false
+            }
+            i = i + 1
+        }
+        return true
+    }
+
+    /// 首个满足谓词的元素；无则 None
+    pub fn find(ref self, Fn(T) -> bool f) -> Option[T] {
+        i = 0usize
+        while i < self.len {
+            if f(self.data[i]) {
+                return Option::Some(self.data[i])
+            }
+            i = i + 1
+        }
+        return Option::None()
+    }
+
     /// 原地反转
     #[state]
     pub fn reverse(ref mut self) {

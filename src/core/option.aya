@@ -41,7 +41,7 @@ impl[T] Option[T] {
     }
 
     /// 映射：`Some(v) → Some(f(v))`
-    pub fn map[U](self, fn(T) -> U f) -> Option[U] {
+    pub fn map[U](self, Fn(T) -> U f) -> Option[U] {
         match self {
             Some(v) => Option::Some(f(v)),
             None => Option::None(),
@@ -49,7 +49,7 @@ impl[T] Option[T] {
     }
 
     /// 链式：`Some(v) → f(v)`（`f` 返回 `Option[U]`）
-    pub fn and_then[U](self, fn(T) -> Option[U] f) -> Option[U] {
+    pub fn and_then[U](self, Fn(T) -> Option[U] f) -> Option[U] {
         match self {
             Some(v) => f(v),
             None => Option::None(),
@@ -57,7 +57,7 @@ impl[T] Option[T] {
     }
 
     /// 过滤：谓词为假时变 `None`
-    pub fn filter(self, fn(T) -> bool f) -> Option[T] {
+    pub fn filter(self, Fn(T) -> bool f) -> Option[T] {
         match self {
             Some(v) => if f(v) { Option::Some(v) } else { Option::None() },
             None => Option::None(),
@@ -91,7 +91,7 @@ impl[T, E] Result[T, E] {
     }
 
     /// 映射 Ok 值
-    pub fn map[U](self, fn(T) -> U f) -> Result[U, E] {
+    pub fn map[U](self, Fn(T) -> U f) -> Result[U, E] {
         match self {
             Ok(v) => Result::Ok(f(v)),
             Err(e) => Result::Err(e),
@@ -99,7 +99,7 @@ impl[T, E] Result[T, E] {
     }
 
     /// 映射 Err 值
-    pub fn map_err[F](self, fn(E) -> F f) -> Result[T, F] {
+    pub fn map_err[F](self, Fn(E) -> F f) -> Result[T, F] {
         match self {
             Ok(v) => Result::Ok(v),
             Err(e) => Result::Err(f(e)),

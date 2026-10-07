@@ -71,3 +71,14 @@ fn test_map_to_string() {
     e = HashMap::new[String, int]()
     #assert_eq(e.to_string(), "{}")
 }
+
+#[test]
+fn test_map_fold() {
+    m = HashMap::new[String, int]()
+    m.insert("a", 1)
+    m.insert("b", 2)
+    total = m.fold(0, (int acc, String k, int v) -> int { return acc + v })
+    #assert_eq(total, 3)
+    cnt = m.fold(0, (int acc, String k, int v) -> int { return acc + 1 })
+    #assert_eq(cnt, 2)
+}
