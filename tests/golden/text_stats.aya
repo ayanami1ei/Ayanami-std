@@ -1,7 +1,6 @@
 // text_stats — 文本统计示例
 //
-// 演示：split_whitespace + fold（usize 累加器）+ position + count 组合。
-// 注：fold 的非 Copy 累加器暂受主仓 #156 限制，这里用长度折叠再定位单词。
+// 演示：split_whitespace + fold + count 组合。
 import "text"
 import "io"
 
@@ -11,14 +10,12 @@ fn main() -> int {
     n = ws.len() as int
     println("words: " + n)
 
-    maxlen = ws.fold(0usize, (usize acc, String w) -> usize {
-        if w.len > acc {
-            return w.len
+    longest = ws.fold("", (String acc, String w) -> String {
+        if w.len > acc.len {
+            return w
         }
         return acc
     })
-    pos = ws.position((String w) -> bool { return w.len == maxlen })
-    longest = ws.index(pos as usize)
     println("longest: " + longest)
     println("the: " + count(s, "the"))
     return 0

@@ -38,18 +38,12 @@ fn main() -> int {
 ```ayanami
 ws = split_whitespace("the quick brown fox")
 n = ws.len() as int                 // 4
-
-maxlen = ws.fold(0usize, (usize acc, String w) -> usize {
-    if w.len > acc { return w.len }
+longest = ws.fold("", (String acc, String w) -> String {
+    if w.len > acc.len { return w }
     return acc
-})                                  // 5
-pos = ws.position((String w) -> bool { return w.len == maxlen })
-ws.index(pos as usize)              // "quick"
+})                                  // "quick"
 count("the fox and the dog", "the") // 2
 ```
-
-> `fold` 的累加器目前需为 Copy 类型（非 Copy 累加器受主仓
-> [#156](https://github.com/ayanami1ei/Ayanami-language/issues/156) 限制）。
 
 ## 注意
 
