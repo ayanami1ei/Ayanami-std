@@ -139,6 +139,64 @@ impl[K: Hash] HashSet[K] {
         }
     }
 
+    /// 并集（新集合）
+    #[alloc]
+    #[state]
+    pub fn union(ref self, ref HashSet[K] other) -> HashSet[K] {
+        res = HashSet::new[K]()
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                res.insert(self.keys[i])
+            }
+            i = i + 1
+        }
+        i = 0usize
+        while i < other.cap {
+            if other.state[i] == 1 {
+                res.insert(other.keys[i])
+            }
+            i = i + 1
+        }
+        return res
+    }
+
+    /// 交集（新集合）
+    #[alloc]
+    #[state]
+    pub fn intersection(ref self, ref HashSet[K] other) -> HashSet[K] {
+        res = HashSet::new[K]()
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                k = self.keys[i]
+                if other.contains(k) {
+                    res.insert(k)
+                }
+            }
+            i = i + 1
+        }
+        return res
+    }
+
+    /// 差集 self - other（新集合）
+    #[alloc]
+    #[state]
+    pub fn difference(ref self, ref HashSet[K] other) -> HashSet[K] {
+        res = HashSet::new[K]()
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                k = self.keys[i]
+                if !other.contains(k) {
+                    res.insert(k)
+                }
+            }
+            i = i + 1
+        }
+        return res
+    }
+
     /// 遍历所有元素（浅拷贝；顺序为实现相关）
     pub fn for_each(ref self, Fn(K) f) {
         i = 0usize

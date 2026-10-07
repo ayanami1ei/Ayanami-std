@@ -110,3 +110,27 @@ fn test_set_retain() {
     #assert(s.contains(1))
     #assert(s.contains(3))
 }
+
+#[test]
+fn test_set_ops() {
+    a = HashSet::new[int]()
+    a.insert(1)
+    a.insert(2)
+    a.insert(3)
+    b = HashSet::new[int]()
+    b.insert(2)
+    b.insert(3)
+    b.insert(4)
+    u = a.union(b)
+    #assert_eq(u.len(), 4)
+    #assert(u.contains(1))
+    #assert(u.contains(4))
+    i = a.intersection(b)
+    #assert_eq(i.len(), 2)
+    #assert(i.contains(2))
+    #assert(i.contains(3))
+    d = a.difference(b)
+    #assert_eq(d.len(), 1)
+    #assert(d.contains(1))
+    #assert(!d.contains(2))
+}

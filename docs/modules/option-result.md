@@ -20,9 +20,11 @@ import "std";
 | `o.is_some() -> bool` | 是否有值（消费 `self`） |
 | `o.unwrap_or(default) -> T` | 有值取值，否则返回默认值（消费 `self`） |
 | `o.or(other) -> Option[T]` | `Some` 返回自身，`None` 返回 `other` |
-| `o.map[U](fn(T) -> U)` | `Some(v)` → `Some(f(v))`，`None` 不变 |
-| `o.and_then[U](fn(T) -> Option[U])` | `Some(v)` → `f(v)`（链式），`None` 不变 |
-| `o.filter(fn(T) -> bool)` | 谓词为假时变 `None` |
+| `o.map[U](Fn(T) -> U)` | `Some(v)` → `Some(f(v))`，`None` 不变 |
+| `o.and_then[U](Fn(T) -> Option[U])` | `Some(v)` → `f(v)`（链式），`None` 不变 |
+| `o.filter(Fn(T) -> bool)` | 谓词为假时变 `None` |
+| `o.unwrap_or_else(Fn() -> T)` | 有值取值，否则 `f()` |
+| `o.map_or[U](default, Fn(T) -> U)` | 映射或默认值 |
 
 泛型实参由上下文推导，通常写在带返回类型的辅助函数里：
 
@@ -54,8 +56,10 @@ fn main() -> int {
 | `r.unwrap_or(default) -> T` | `Ok` 取值，`Err` 返回默认值 |
 | `r.ok() -> Option[T]` | `Ok(v)` → `Some(v)`，`Err` → `None` |
 | `r.try_unwrap() -> T` | 兼容旧行为（`Err` → `0`） |
-| `r.map[U](fn(T) -> U)` | 映射 `Ok` 值，`Err` 原样 |
-| `r.map_err[F](fn(E) -> F)` | 映射 `Err` 值，`Ok` 原样 |
+| `r.map[U](Fn(T) -> U)` | 映射 `Ok` 值，`Err` 原样 |
+| `r.map_err[F](Fn(E) -> F)` | 映射 `Err` 值，`Ok` 原样 |
+| `r.unwrap_or_else(Fn(E) -> T)` | `Ok` 取值，`Err` 用 `f(e)` |
+| `r.map_or[U](default, Fn(T) -> U)` | 映射 `Ok` 或默认值 |
 
 ```ayanami
 fn parse(int x) -> Result[int, int] {
