@@ -9,6 +9,10 @@ fn none_int() -> Option[int] {
     return Option::None()
 }
 
+fn seven() -> int {
+    return 7
+}
+
 #[test]
 fn test_option_map() {
     a = some_int(3)
@@ -64,7 +68,7 @@ fn test_unwrap_or_else_map_or() {
     a = some_int(3)
     #assert_eq(a.unwrap_or_else(() -> int { return 7 }), 3)
     b = none_int()
-    #assert_eq(b.unwrap_or_else(() -> int { return 7 }), 7)
+    #assert_eq(b.unwrap_or_else(seven), 7)   // 命名零参函数（#152 修复）
     c = some_int(3)
     #assert_eq(c.map_or(0, (int x) -> int { return x * 10 }), 30)
     d = none_int()
