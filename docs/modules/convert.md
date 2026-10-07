@@ -11,6 +11,9 @@ import "convert";
 | `s.try_parse_int() -> Option[int]` | 可选 `+/-`、全为数字；空白 / 非法 / 溢出 → `None` |
 | `s.try_parse_float() -> Option[float]` | `[+/-] digits [. digits]`（无指数）；非法 → `None` |
 | `s.try_parse_bool() -> Option[bool]` | 仅 `"true"` / `"false"` |
+| `s.try_parse_int_radix(base) -> Option[int]` | 按进制严格解析（base ∈ [2, 36]；允许 `+/-`，不允许空白/前缀） |
+| `s.parse_int_radix(base) -> int` | 宽松：失败返回 `0` |
+| `s.is_float() -> bool` | 整个串是否为合法浮点 |
 | `s.parse_float() -> float` | 宽松：失败返回 `0.0`（对齐 `parse_int`） |
 
 严格版**不允许首尾空白**（与 Rust 一致）；需要容忍空白时先 `.trim()`。
