@@ -1,0 +1,66 @@
+// iter — 迭代器协议与集合迭代器（M3 I2）
+//
+// 任何具备 `fn next(ref mut self) -> Option[T]` 的类型都可被 `for x in it` 迭代；
+// 集合提供拥有型迭代器（`a.into_iter()`）。
+//
+// 适配器（map/filter/take）待编译器修复后提供：
+// - #159：参数化约束 impl 打包后方法丢失（`I: Iterator[T]` 跨 .lcl 不可用）
+// - #158：for-in 迭代接口值且迭代器持有 ArrayList 时堆损坏
+import "option"
+import "arraylist"
+import "linkedlist"
+
+/// 迭代器接口（结构化：具备 `next` 即满足）
+pub interface Iterator[T] {
+    fn next(ref mut self) -> Option[T];
+}
+
+/// ArrayList 的拥有型迭代器
+pub struct ArrayListIter[T] {
+    ArrayList[T] data
+    usize index
+}
+
+impl[T] ArrayListIter[T] {
+    #[state]
+    pub fn next(ref mut self) -> Option[T] {
+        if self.index >= self.data.len {
+            return Option::None()
+        }
+        v = self.data.index(self.index)
+        self.index = self.index + 1
+        return Option::Some(v)
+    }
+}
+
+impl[T] ArrayList[T] {
+    /// 转为拥有所有权的迭代器（`for x in a.into_iter()`）
+    pub fn into_iter(self) -> ArrayListIter[T] {
+        return ArrayListIter[T] { data = self, index = 0 }
+    }
+}
+
+/// LinkedList 的拥有型迭代器
+pub struct LinkedListIter[T] {
+    LinkedList[T] data
+    usize index
+}
+
+impl[T] LinkedListIter[T] {
+    #[state]
+    pub fn next(ref mut self) -> Option[T] {
+        if self.index >= self.data.len {
+            return Option::None()
+        }
+        v = self.data.index(self.index)
+        self.index = self.index + 1
+        return Option::Some(v)
+    }
+}
+
+impl[T] LinkedList[T] {
+    /// 转为拥有所有权的迭代器
+    pub fn into_iter(self) -> LinkedListIter[T] {
+        return LinkedListIter[T] { data = self, index = 0 }
+    }
+}

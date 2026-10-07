@@ -16,6 +16,7 @@
 | [time.md](modules/time.md) | 时间：`now_millis`（单调）/ `now_unix` |
 | [fs.md](modules/fs.md) | 文件读写：`exists` / `read_file` / `write_file` |
 | [env.md](modules/env.md) | 命令行参数与环境变量 |
+| [iter.md](modules/iter.md) | 迭代器：`for-in` 协议、`into_iter`、自定义迭代器 |
 | [collections.md](modules/collections.md) | 集合与排序：`List` 接口、`ArrayList`、`LinkedList`、`HashSet`/`HashMap`、`Ord` 排序 |
 | [text.md](modules/text.md) | 文本处理：`split` / `join` / `replace` / `pad_*` / `lines` / `split_once` |
 | [option-result.md](modules/option-result.md) | `std` 聚合：`Option`、`Result`、`Error` 接口 |

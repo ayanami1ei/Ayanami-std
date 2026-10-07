@@ -1,0 +1,71 @@
+import "iter"
+import "arraylist"
+import "linkedlist"
+import "test"
+
+struct Countdown {
+    int cur
+}
+
+impl Countdown {
+    #[state]
+    pub fn next(ref mut self) -> Option[int] {
+        if self.cur <= 0 {
+            return Option::None()
+        }
+        v = self.cur
+        self.cur = self.cur - 1
+        return Option::Some(v)
+    }
+}
+
+fn sum_it(Iterator[int] it) -> int {
+    s = 0
+    for x in it {
+        s = s + x
+    }
+    return s
+}
+
+#[test]
+fn test_for_in_arraylist() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    s = 0
+    for x in a.into_iter() {
+        s = s + x
+    }
+    #assert_eq(s, 6)
+}
+
+#[test]
+fn test_for_in_linkedlist() {
+    l = LinkedList::new[int]()
+    l.push(5)
+    l.push(6)
+    s = 0
+    for x in l.into_iter() {
+        s = s + x
+    }
+    #assert_eq(s, 11)
+}
+
+#[test]
+fn test_interface_param() {
+    c = Countdown { cur = 3 }
+    #assert_eq(sum_it(c), 6)
+}
+
+#[test]
+fn test_for_in_strings() {
+    a = ArrayList::new[String]()
+    a.push("a")
+    a.push("b")
+    n = 0
+    for x in a.into_iter() {
+        n = n + x.len as int
+    }
+    #assert_eq(n, 2)
+}
