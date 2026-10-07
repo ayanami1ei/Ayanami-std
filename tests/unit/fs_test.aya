@@ -4,10 +4,9 @@ import "test"
 
 #[test]
 fn test_roundtrip() {
-    path = "/tmp/ayanami_fs_test.txt"
-    #assert(write_file(path, "hello fs"))
-    #assert(exists(path))
-    s = read_file(path).unwrap_or("")
+    #assert(write_file("/tmp/ayanami_fs_test.txt", "hello fs"))
+    #assert(exists("/tmp/ayanami_fs_test.txt"))
+    s = read_file("/tmp/ayanami_fs_test.txt").unwrap_or("")
     #assert_eq(s, "hello fs")
 }
 
@@ -19,10 +18,9 @@ fn test_missing() {
 
 #[test]
 fn test_read_lines() {
-    path = "/tmp/ayanami_fs_lines_test.txt"
-    #assert(write_file(path, "a\r\nb\nc"))
+    #assert(write_file("/tmp/ayanami_fs_lines_test.txt", "a\r\nb\nc"))
     empty = ArrayList::new[String]()
-    ls = read_lines(path).unwrap_or(empty)
+    ls = read_lines("/tmp/ayanami_fs_lines_test.txt").unwrap_or(empty)
     #assert_eq(ls.len(), 3)
     #assert_eq(ls.index(0), "a")
     #assert_eq(ls.index(1), "b")

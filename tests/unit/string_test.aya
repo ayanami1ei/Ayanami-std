@@ -91,3 +91,17 @@ fn test_remove_affix() {
     #assert_eq(s.remove_suffix("-post"), "pre-hello")
     #assert_eq(s.remove_suffix("xxx"), "pre-hello-post")
 }
+
+#[test]
+fn test_self_append() {
+    s = "ab"
+    s = s.add("cd")
+    #assert_eq(s, "abcd")
+    t = "x"
+    t = t + "y"
+    #assert_eq(t, "xy")
+    u = ""
+    u = u + "a"
+    u = u + "b"
+    #assert_eq(u, "ab")
+}
