@@ -10,6 +10,7 @@ import "fs";
 | `read_file(String path) -> Option[String]` | 读取整个文件（失败 `None`） |
 | `write_file(String path, String data) -> bool` | 覆盖写入（成功 `true`） |
 | `read_lines(String path) -> Option[ArrayList[String]]` | 按行拆分（`\r\n` 兼容；失败 `None`） |
+| `append_file(String path, String data) -> bool` | 追加写入（不存在则创建） |
 
 ## 示例
 

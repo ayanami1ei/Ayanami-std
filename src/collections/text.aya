@@ -89,38 +89,65 @@ impl String {
     }
 }
 
+/// 惰性按分隔符拆分迭代器（消费原串）
+pub struct SplitIter {
+    String s
+    String sep
+    usize i
+    bool done
+}
 
-/// 按分隔符切分（`sep` 为空时返回只含原串的列表）
-#[alloc]
-#[state]
-pub fn split(ref String s, ref String sep) -> ArrayList[String] {
-    res = ArrayList::new[String]()
-    // 注意：此处用 else 单出口——若写成 `if sep.len == 0 { ...; return res }` 再在后续使用 res，
-    // 当前 move 检查对分支 return 路径不敏感会误报 moved value（issue #116）。
-    if sep.len == 0 {
-        res.push(s.copy())
-    } else {
-        start = 0usize
-        i = 0usize
-        while i + sep.len <= s.len {
+impl SplitIter {
+    #[alloc]
+    #[state]
+    pub fn next(ref mut self) -> Option[String] {
+        if self.done {
+            return Option::None()
+        }
+        if self.sep.len == 0 {
+            self.done = true
+            return Option::Some(self.s.substring(0, self.s.len))
+        }
+        start = self.i
+        while self.i + self.sep.len <= self.s.len {
             matched = true
             j = 0usize
-            while j < sep.len {
-                if s.index(i + j) != sep.index(j) {
+            while j < self.sep.len {
+                if self.s.data[self.i + j] != self.sep.data[j] {
                     matched = false
                     break
                 }
                 j = j + 1
             }
             if matched {
-                res.push(s.substring(start, i))
-                i = i + sep.len
-                start = i
-            } else {
-                i = i + 1
+                end = self.i
+                self.i = self.i + self.sep.len
+                return Option::Some(self.s.substring(start, end))
             }
+            self.i = self.i + 1
         }
-        res.push(s.substring(start, s.len))
+        self.done = true
+        return Option::Some(self.s.substring(start, self.s.len))
+    }
+}
+
+impl String {
+    /// 惰性按分隔符拆分（消费 self；`sep` 为空时产出整串一次）
+    pub fn split_iter(self, String sep) -> SplitIter {
+        return SplitIter { s = self, sep = sep, i = 0, done = false }
+    }
+}
+
+
+/// 按分隔符切分（`sep` 为空时返回只含原串的列表）
+///
+/// 基于惰性迭代器 `s.split_iter(sep)` 收集。
+#[alloc]
+#[state]
+pub fn split(ref String s, ref String sep) -> ArrayList[String] {
+    res = ArrayList::new[String]()
+    for part in s.copy().split_iter(sep.copy()) {
+        res.push(part)
     }
     return res
 }

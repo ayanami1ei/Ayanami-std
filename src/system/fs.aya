@@ -7,6 +7,7 @@ import "text"
 extern "C" fn __ayanami_fs_size(String path) -> int;
 extern "C" fn __ayanami_fs_read(String path) -> [char];
 extern "C" fn __ayanami_fs_write(String path, String data) -> int;
+extern "C" fn __ayanami_fs_append(String path, String data) -> int;
 
 /// 文件是否存在
 #[io]
@@ -47,4 +48,10 @@ pub fn read_lines(String path) -> Option[ArrayList[String]] {
     }
     ls = lines(data._data_Some._0)
     return Option::Some(ls)
+}
+
+/// 追加写入（成功 true；文件不存在则创建）
+#[io]
+pub fn append_file(String path, String data) -> bool {
+    return __ayanami_fs_append(path, data) == 0
 }

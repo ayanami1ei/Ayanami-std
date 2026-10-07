@@ -112,3 +112,32 @@ fn test_text_iters() {
     }
     #assert_eq(w, 4)
 }
+
+#[test]
+fn test_split_iter() {
+    n = 0
+    for p in "a,b,c".split_iter(",") {
+        n = n + p.len as int
+    }
+    #assert_eq(n, 3)
+    e = 0
+    for p in "a,b,".split_iter(",") {
+        e = e + 1
+    }
+    #assert_eq(e, 3)
+    one = 0
+    for p in "abc".split_iter(",") {
+        one = one + p.len as int
+    }
+    #assert_eq(one, 3)
+    empty = 0
+    for p in "".split_iter(",") {
+        empty = empty + 1
+    }
+    #assert_eq(empty, 1)
+    raw = 0
+    for p in "abc".split_iter("") {
+        raw = raw + p.len as int
+    }
+    #assert_eq(raw, 3)
+}

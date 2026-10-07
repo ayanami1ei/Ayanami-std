@@ -97,6 +97,16 @@ int64_t __ayanami_fs_write(__ayanami_str_view path, __ayanami_str_view data) {
     return (w == (size_t)data.len) ? 0 : -1;
 }
 
+int64_t __ayanami_fs_append(__ayanami_str_view path, __ayanami_str_view data) {
+    char p[4096];
+    if (!path_cstr(path, p, sizeof p)) return -1;
+    FILE *f = fopen(p, "ab");
+    if (!f) return -1;
+    size_t w = fwrite(data.data, 1, (size_t)data.len, f);
+    fclose(f);
+    return (w == (size_t)data.len) ? 0 : -1;
+}
+
 // ── 命令行参数（/proc/self/cmdline，惰性解析） ──
 
 static char **g_args = NULL;

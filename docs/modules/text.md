@@ -16,6 +16,7 @@ import "text";
 | `count(ref String s, ref String needle) -> int` | 非重叠出现次数（needle 为空返回 0） |
 | `s.lines_iter() -> LinesIter` | 惰性按行迭代（消费 `s`；`lines` 基于它实现） |
 | `s.split_whitespace_iter() -> SplitWhitespaceIter` | 惰性按空白迭代（消费 `s`；`split_whitespace` 基于它实现） |
+| `s.split_iter(sep) -> SplitIter` | 惰性按分隔符迭代（消费 `s`；`split` 基于它实现） |
 | `split_once(ref String s, ref String sep) -> Split` | 在首个分隔符处切分；`Split { found, before, after }` |
 
 ## 示例

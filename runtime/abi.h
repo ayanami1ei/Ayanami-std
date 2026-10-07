@@ -107,6 +107,7 @@ int64_t __ayanami_time_unix(void);    // Unix 秒
 int64_t __ayanami_fs_size(__ayanami_str_view path);   // 字节数；-1 不存在/出错
 char *__ayanami_fs_read(__ayanami_str_view path);     // unique_alloc 缓冲（NUL 结尾）；NULL 出错
 int64_t __ayanami_fs_write(__ayanami_str_view path, __ayanami_str_view data); // 0 成功 / -1
+int64_t __ayanami_fs_append(__ayanami_str_view path, __ayanami_str_view data); // 追加；0 成功 / -1
 
 // ── 命令行参数 / 环境变量（返回值为 unique_alloc 拷贝） ──
 int64_t __ayanami_arg_count(void);                    // argc（含程序名）

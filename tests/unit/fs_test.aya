@@ -27,3 +27,11 @@ fn test_read_lines() {
     #assert_eq(ls.index(2), "c")
     #assert(read_lines("/tmp/ayanami_no_such_file_xyz").is_none())
 }
+
+#[test]
+fn test_append() {
+    #assert(write_file("/tmp/ayanami_fs_append_test.txt", "a"))
+    #assert(append_file("/tmp/ayanami_fs_append_test.txt", "bc"))
+    s = read_file("/tmp/ayanami_fs_append_test.txt").unwrap_or("")
+    #assert_eq(s, "abc")
+}
