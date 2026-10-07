@@ -1,0 +1,39 @@
+// callbacks — 闭包派发表示例
+//
+// 演示：Fn 值存入 HashMap（捕获闭包 + 命名函数），运行时按名字分发。
+import "hashmap"
+import "io"
+
+fn triple(int x) -> int {
+    return x * 3
+}
+
+fn main() -> int {
+    base = 100
+    m = HashMap::new[String, Fn(int) -> int]()
+    m.insert("add", (int x) -> int { return x + base })   // 捕获 base
+    m.insert("double", (int x) -> int { return x * 2 })
+    m.insert("triple", triple)                            // 命名函数 → 静态闭包
+
+    o = m.get("add")
+    if o._tag != 0 {
+        return 1
+    }
+    f = o._data_Some._0
+    println(f(5))       // 105
+
+    o2 = m.get("double")
+    if o2._tag != 0 {
+        return 2
+    }
+    g = o2._data_Some._0
+    println(g(5))       // 10
+
+    o3 = m.get("triple")
+    if o3._tag != 0 {
+        return 3
+    }
+    h = o3._data_Some._0
+    println(h(5))       // 15
+    return 0
+}

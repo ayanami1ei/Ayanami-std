@@ -211,6 +211,7 @@ m.get("x").unwrap_or(0)   // 2
 
 > 值读取为浅拷贝；需要深拷贝时对结果调用 `.copy()`。
 > 扩展键类型：为新类型提供 `hash` + `hash_eq` 两个方法即满足 `Hash`。
+> `Fn` 值也可直接存入集合（回调派发表），见 `examples/callbacks.aya`。
 
 ## 注意
 
