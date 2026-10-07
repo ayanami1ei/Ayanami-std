@@ -69,3 +69,33 @@ fn test_for_in_strings() {
     }
     #assert_eq(n, 2)
 }
+
+#[test]
+fn test_map_adapter() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    m = MapIter::new(a.into_iter(), (int x) -> int { return x * 10 })
+    s = 0
+    for x in m {
+        s = s + x
+    }
+    #assert_eq(s, 60)
+}
+
+#[test]
+fn test_filter_map_compose() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    a.push(4)
+    m = MapIter::new(a.into_iter(), (int x) -> int { return x * 10 })
+    f = FilterIter::new(m, (int x) -> bool { return x > 20 })
+    s = 0
+    for x in f {
+        s = s + x
+    }
+    #assert_eq(s, 70)
+}

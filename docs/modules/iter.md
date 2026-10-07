@@ -61,13 +61,27 @@ fn sum(Iterator[int] it) -> int {
 }
 ```
 
-## 适配器（待编译器修复）
+## 适配器
 
-`MapIter` / `FilterIter` / `TakeIter` 暂不提供：
+| 构造 | 说明 |
+|---|---|
+| `MapIter::new(it, f)` | 映射 |
+| `FilterIter::new(it, pred)` | 过滤 |
 
-- 参数化约束 `I: Iterator[T]` 的 impl 打包为 `.lcl` 后方法丢失（主仓
-  [#159](https://github.com/ayanami1ei/Ayanami-language/issues/159)）；
-- `for-in` 迭代接口值且迭代器持有 `ArrayList` 时堆损坏（主仓
-  [#158](https://github.com/ayanami1ei/Ayanami-language/issues/158)）。
+```ayanami
+a = ArrayList::new[int]()
+a.push(1)
+a.push(2)
+a.push(3)
+a.push(4)
 
-修复后可提供 `map/filter/take/zip/enumerate` 链式适配器。
+m = MapIter::new(a.into_iter(), (int x) -> int { return x * 10 })
+f = FilterIter::new(m, (int x) -> bool { return x > 20 })
+
+s = 0
+for x in f { s = s + x }        // 30 + 40 = 70
+```
+
+> 适配器可任意嵌套（内层迭代器满足 `Iterator[T]` 即可）。
+> `take` / `enumerate` / `zip` 待元素类型推断修复（主仓
+> [#160](https://github.com/ayanami1ei/Ayanami-language/issues/160)）后提供。

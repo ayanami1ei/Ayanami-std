@@ -1,11 +1,9 @@
-// iter — 迭代器协议与集合迭代器（M3 I2）
+// iter — 迭代器协议、集合迭代器与适配器（M3 I2/I3）
 //
 // 任何具备 `fn next(ref mut self) -> Option[T]` 的类型都可被 `for x in it` 迭代；
-// 集合提供拥有型迭代器（`a.into_iter()`）。
+// 集合提供拥有型迭代器（`a.into_iter()`）；适配器用泛型约束 `I: Iterator[T]` 组合。
 //
-// 适配器（map/filter/take）待编译器修复后提供：
-// - #159：参数化约束 impl 打包后方法丢失（`I: Iterator[T]` 跨 .lcl 不可用）
-// - #158：for-in 迭代接口值且迭代器持有 ArrayList 时堆损坏
+// take/enumerate/zip 待元素类型推断修复（主仓 #160）后提供。
 import "option"
 import "arraylist"
 import "linkedlist"
@@ -62,5 +60,56 @@ impl[T] LinkedList[T] {
     /// 转为拥有所有权的迭代器
     pub fn into_iter(self) -> LinkedListIter[T] {
         return LinkedListIter[T] { data = self, index = 0 }
+    }
+}
+
+/// map 适配器：`f` 作用于每个元素
+pub struct MapIter[T, U, I: Iterator[T]] {
+    I inner
+    Fn(T) -> U f
+}
+
+pub namespace MapIter {
+    pub fn new[T, U, I: Iterator[T]](I inner, Fn(T) -> U f) -> MapIter[T, U, I] {
+        return MapIter[T, U, I] { inner = inner, f = f }
+    }
+}
+
+impl[T, U, I: Iterator[T]] MapIter[T, U, I] {
+    #[state]
+    pub fn next(ref mut self) -> Option[U] {
+        o = self.inner.next()
+        if o._tag != 0 {
+            return Option::None()
+        }
+        return Option::Some((self.f)(o._data_Some._0))
+    }
+}
+
+/// filter 适配器：仅产出谓词为真的元素
+pub struct FilterIter[T, I: Iterator[T]] {
+    I inner
+    Fn(T) -> bool pred
+}
+
+pub namespace FilterIter {
+    pub fn new[T, I: Iterator[T]](I inner, Fn(T) -> bool pred) -> FilterIter[T, I] {
+        return FilterIter[T, I] { inner = inner, pred = pred }
+    }
+}
+
+impl[T, I: Iterator[T]] FilterIter[T, I] {
+    #[state]
+    pub fn next(ref mut self) -> Option[T] {
+        while true {
+            o = self.inner.next()
+            if o._tag != 0 {
+                return Option::None()
+            }
+            if (self.pred)(o._data_Some._0) {
+                return Option::Some(o._data_Some._0)
+            }
+        }
+        return Option::None()
     }
 }
