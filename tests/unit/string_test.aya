@@ -82,3 +82,12 @@ fn test_float_format() {
     w = 1000000.0
     #assert_eq(w.to_fixed(0), "1000000")
 }
+
+#[test]
+fn test_remove_affix() {
+    s = "pre-hello-post"
+    #assert_eq(s.remove_prefix("pre-"), "hello-post")
+    #assert_eq(s.remove_prefix("xxx"), "pre-hello-post")
+    #assert_eq(s.remove_suffix("-post"), "pre-hello")
+    #assert_eq(s.remove_suffix("xxx"), "pre-hello-post")
+}

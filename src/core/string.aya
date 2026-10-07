@@ -552,6 +552,26 @@ impl String {
         }
         return self.substring(s as usize, e as usize);
     }
+    /// 去掉前缀（无前缀返回自身拷贝）
+    #[alloc]
+    #[state]
+    pub fn remove_prefix(ref self, ref String prefix) -> String {
+        if self.starts_with(prefix) {
+            return self.substring(prefix.len, self.len)
+        }
+        return self.copy()
+    }
+
+    /// 去掉后缀（无后缀返回自身拷贝）
+    #[alloc]
+    #[state]
+    pub fn remove_suffix(ref self, ref String suffix) -> String {
+        if self.ends_with(suffix) {
+            return self.substring(0, self.len - suffix.len)
+        }
+        return self.copy()
+    }
+
     /// 去除首部空白
     #[alloc]
     #[state]

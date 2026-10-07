@@ -73,3 +73,23 @@ fn test_split_once() {
     #assert(r3.before.is_empty())
     #assert_eq(r3.after, "x")
 }
+
+#[test]
+fn test_split_whitespace() {
+    w = split_whitespace("  a  b\tc\nd ")
+    #assert_eq(w.len(), 4)
+    #assert_eq(w.index(0), "a")
+    #assert_eq(w.index(1), "b")
+    #assert_eq(w.index(2), "c")
+    #assert_eq(w.index(3), "d")
+    e = split_whitespace("   ")
+    #assert_eq(e.len(), 0)
+}
+
+#[test]
+fn test_count() {
+    #assert_eq(count("banana", "an"), 2)
+    #assert_eq(count("aaaa", "aa"), 2)
+    #assert_eq(count("abc", "x"), 0)
+    #assert_eq(count("abc", ""), 0)
+}

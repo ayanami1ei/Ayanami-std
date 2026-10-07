@@ -172,3 +172,53 @@ pub fn split_once(ref String s, ref String sep) -> Split {
     after = s.substring(p + sep.len, s.len)
     return Split { found = true, before = before, after = after }
 }
+
+/// 按空白字符拆分（连续空白视为一个分隔；忽略首尾空白）
+#[alloc]
+#[state]
+pub fn split_whitespace(ref String s) -> ArrayList[String] {
+    res = ArrayList::new[String]()
+    i = 0usize
+    while i < s.len {
+        while i < s.len && s.data[i].is_space() {
+            i = i + 1
+        }
+        if i >= s.len {
+            break
+        }
+        start = i
+        while i < s.len && !s.data[i].is_space() {
+            i = i + 1
+        }
+        res.push(s.substring(start, i))
+    }
+    return res
+}
+
+/// needle 的非重叠出现次数（needle 为空返回 0）
+#[pure]
+pub fn count(ref String s, ref String needle) -> int {
+    if needle.is_empty() {
+        return 0
+    }
+    n = 0
+    i = 0usize
+    while i + needle.len <= s.len {
+        j = 0usize
+        hit = true
+        while j < needle.len {
+            if s.data[i + j] != needle.data[j] {
+                hit = false
+                break
+            }
+            j = j + 1
+        }
+        if hit {
+            n = n + 1
+            i = i + needle.len
+        } else {
+            i = i + 1
+        }
+    }
+    return n
+}
