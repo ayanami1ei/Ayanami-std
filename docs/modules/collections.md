@@ -61,6 +61,8 @@ pub interface List[T] {
 | `a.fold[U](init, Fn(U, T) -> U)` | 折叠 |
 | `a.any(Fn(T) -> bool)` / `a.all(...)` | 存在 / 全部满足 |
 | `a.find(Fn(T) -> bool) -> Option[T]` | 首个满足谓词的元素 |
+| `a.position(Fn(T) -> bool) -> int` / `a.count(Fn(T) -> bool) -> usize` | 首个满足的下标（无 `-1`）/ 个数 |
+| `a.retain(Fn(T) -> bool)` | 原地保留满足谓词的元素 |
 | `a.iter(f)` | 遍历（回调可捕获，见下） |
 | `a.to_string()` | 形如 `"[1, 2]"`（要求 `T: ToString`） |
 
@@ -175,6 +177,7 @@ pub interface Hash {
 | `s.remove(k) -> bool` | 删除；不存在返回 false |
 | `s.to_list() -> ArrayList[K]` | 所有元素（浅拷贝，顺序为实现相关） |
 | `s.for_each(Fn(K))` / `s.fold[U](init, Fn(U, K) -> U)` | 遍历 / 折叠（顺序为实现相关） |
+| `s.retain(Fn(K) -> bool)` | 原地保留满足谓词的元素 |
 | `s.to_string()`（`K: ToString`） | 形如 `{a, b}`（顺序为实现相关） |
 | `s.len()` / `s.is_empty()` | 长度 / 是否为空 |
 
@@ -186,6 +189,7 @@ pub interface Hash {
 | `m.contains_key(k) -> bool` | 是否包含键 |
 | `m.keys()` / `m.values() -> ArrayList[K]/ArrayList[V]` | 所有键 / 值（浅拷贝，顺序为实现相关） |
 | `m.for_each(Fn(K, V))` / `m.fold[U](init, Fn(U, K, V) -> U)` | 遍历 / 折叠（顺序为实现相关） |
+| `m.retain(Fn(K, V) -> bool)` | 原地保留满足谓词的键值对 |
 | `m.to_string()`（`K/V: ToString`） | 形如 `{a: 1, b: 2}`（顺序为实现相关） |
 | `m.remove(k) -> bool` | 删除；不存在返回 false |
 | `m.len()` / `m.is_empty()` | 长度 / 是否为空 |

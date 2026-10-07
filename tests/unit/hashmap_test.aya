@@ -82,3 +82,16 @@ fn test_map_fold() {
     cnt = m.fold(0, (int acc, String k, int v) -> int { return acc + 1 })
     #assert_eq(cnt, 2)
 }
+
+#[test]
+fn test_map_retain() {
+    m = HashMap::new[String, int]()
+    m.insert("a", 1)
+    m.insert("b", 2)
+    m.insert("c", 3)
+    m.retain((String k, int v) -> bool { return v > 1 })
+    #assert_eq(m.len(), 2)
+    #assert(!m.contains_key("a"))
+    #assert(m.contains_key("b"))
+    #assert(m.contains_key("c"))
+}

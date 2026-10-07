@@ -124,6 +124,21 @@ impl[K: Hash] HashSet[K] {
         return false
     }
 
+    /// 原地保留满足谓词的元素
+    #[state]
+    pub fn retain(ref mut self, Fn(K) -> bool f) {
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                if !f(self.keys[i]) {
+                    self.state[i] = 2
+                    self.len = self.len - 1
+                }
+            }
+            i = i + 1
+        }
+    }
+
     /// 遍历所有元素（浅拷贝；顺序为实现相关）
     pub fn for_each(ref self, Fn(K) f) {
         i = 0usize

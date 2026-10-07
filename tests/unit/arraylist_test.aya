@@ -139,3 +139,19 @@ fn test_capture_filter() {
     #assert_eq(b.len(), 1)
     #assert_eq(b.index(0), 3)
 }
+
+#[test]
+fn test_retain_position_count() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    a.push(4)
+    #assert_eq(a.count((int x) -> bool { return x % 2 == 0 }), 2)
+    #assert_eq(a.position((int x) -> bool { return x > 2 }), 2)
+    #assert_eq(a.position((int x) -> bool { return x > 9 }), -1)
+    a.retain((int x) -> bool { return x % 2 == 0 })
+    #assert_eq(a.len(), 2)
+    #assert_eq(a.index(0), 2)
+    #assert_eq(a.index(1), 4)
+}

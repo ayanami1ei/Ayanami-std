@@ -97,3 +97,16 @@ fn test_set_fold() {
     total = s.fold(0, (int acc, int k) -> int { return acc + k })
     #assert_eq(total, 3)
 }
+
+#[test]
+fn test_set_retain() {
+    s = HashSet::new[int]()
+    s.insert(1)
+    s.insert(2)
+    s.insert(3)
+    s.retain((int k) -> bool { return k != 2 })
+    #assert_eq(s.len(), 2)
+    #assert(!s.contains(2))
+    #assert(s.contains(1))
+    #assert(s.contains(3))
+}
