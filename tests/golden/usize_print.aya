@@ -1,0 +1,11 @@
+import "io"
+import "arraylist"
+
+fn main() -> int {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    println(a.len())
+    println(a.len() + 1)
+    return 0
+}

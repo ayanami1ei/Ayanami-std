@@ -7,7 +7,7 @@ import "io";
 | 函数 | 说明 |
 |---|---|
 | `print(ref String s)` | 输出字符串（借用，不消费） |
-| `print(int n)` / `print(float f)` / `print(bool b)` / `print(char c)` | 常用类型重载 |
+| `print(int n)` / `print(usize n)` / `print(float f)` / `print(bool b)` / `print(char c)` | 常用类型重载 |
 | `println(...)` | 同上并追加换行；`println()` 只输出换行 |
 | `putchar(int c)` | 输出一个字符 |
 | `getchar() -> int` | 读取一个字符的编码（`int`） |

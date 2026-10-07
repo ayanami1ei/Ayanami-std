@@ -57,3 +57,17 @@ fn test_keys_values() {
     e = HashMap::new[String, int]()
     #assert_eq(e.keys().len(), 0)
 }
+
+#[test]
+fn test_map_to_string() {
+    m = HashMap::new[String, int]()
+    m.insert("a", 1)
+    m.insert("b", 2)
+    s = m.to_string()
+    #assert(s.starts_with("{"))
+    #assert(s.ends_with("}"))
+    #assert(s.contains("a: 1"))
+    #assert(s.contains("b: 2"))
+    e = HashMap::new[String, int]()
+    #assert_eq(e.to_string(), "{}")
+}

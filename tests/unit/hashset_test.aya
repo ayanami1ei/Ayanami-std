@@ -75,3 +75,16 @@ fn test_to_list() {
     #assert(l.contains("x"))
     #assert(l.contains("y"))
 }
+
+#[test]
+fn test_set_to_string() {
+    s = HashSet::new[String]()
+    s.insert("x")
+    s.insert("y")
+    t = s.to_string()
+    #assert(t.starts_with("{"))
+    #assert(t.contains("x"))
+    #assert(t.contains("y"))
+    e = HashSet::new[String]()
+    #assert_eq(e.to_string(), "{}")
+}

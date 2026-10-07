@@ -147,3 +147,26 @@ impl[K: Hash] HashSet[K] {
         return self.len == 0
     }
 }
+
+/// 需要元素实现 ToString（形如 `{a, b}`，顺序为实现相关）
+impl[K: ToString] HashSet[K] {
+    #[alloc]
+    #[state]
+    pub fn to_string(ref self) -> String {
+        res = "{"
+        first = true
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                if !first {
+                    res = res + ", "
+                }
+                res = res + self.keys[i]
+                first = false
+            }
+            i = i + 1
+        }
+        res = res + "}"
+        return res
+    }
+}

@@ -53,6 +53,12 @@ pub fn print(int n) {
 
 #[alloc]
 #[io]
+pub fn print(usize n) {
+    __ayanami_print_int(n as int)
+}
+
+#[alloc]
+#[io]
 pub fn print(float f) {
     n = __ayanami_float_len(f)
     data = __ayanami_float_str(f, n)
@@ -79,6 +85,13 @@ pub fn print(char c) {
 #[alloc]
 #[io]
 pub fn println(int n) {
+    print(n)
+    println()
+}
+
+#[alloc]
+#[io]
+pub fn println(usize n) {
     print(n)
     println()
 }

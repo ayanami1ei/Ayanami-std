@@ -165,6 +165,7 @@ pub interface Hash {
 | `s.contains(k) -> bool` | 是否包含 |
 | `s.remove(k) -> bool` | 删除；不存在返回 false |
 | `s.to_list() -> ArrayList[K]` | 所有元素（浅拷贝，顺序为实现相关） |
+| `s.to_string()`（`K: ToString`） | 形如 `{a, b}`（顺序为实现相关） |
 | `s.len()` / `s.is_empty()` | 长度 / 是否为空 |
 
 | 方法 | 说明 |
@@ -174,6 +175,7 @@ pub interface Hash {
 | `m.get(k) -> Option[V]` | 取值（浅拷贝，与 `ArrayList.index` 一致） |
 | `m.contains_key(k) -> bool` | 是否包含键 |
 | `m.keys()` / `m.values() -> ArrayList[K]/ArrayList[V]` | 所有键 / 值（浅拷贝，顺序为实现相关） |
+| `m.to_string()`（`K/V: ToString`） | 形如 `{a: 1, b: 2}`（顺序为实现相关） |
 | `m.remove(k) -> bool` | 删除；不存在返回 false |
 | `m.len()` / `m.is_empty()` | 长度 / 是否为空 |
 
