@@ -50,8 +50,12 @@ fn test_dir_ops() {
     #assert(is_dir("/tmp"))
     #assert(!is_dir("/tmp/ayanami_no_such_file_xyz"))
     #assert(write_file("/tmp/ayanami_fs_dir_test.txt", "x"))
-    entries = list_dir("/tmp")
+    o = list_dir("/tmp")
+    if o._tag != 0 {
+        return
+    }
+    entries = o._data_Some._0
     #assert(entries.contains("ayanami_fs_dir_test.txt"))
     #assert(remove_file("/tmp/ayanami_fs_dir_test.txt"))
-    #assert(list_dir("/tmp/ayanami_no_such_file_xyz").is_empty())
+    #assert(list_dir("/tmp/ayanami_no_such_file_xyz").is_none())
 }

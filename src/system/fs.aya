@@ -72,29 +72,17 @@ pub fn is_dir(String path) -> bool {
     return __ayanami_fs_is_dir(path) == 1
 }
 
-/// 目录项（不含 `.` / `..`；失败返回空表）
-///
-/// 注：`Option[ArrayList[String]]` 版待主仓 #170 修复（[char] extern 缓冲 +
-/// Option 返回时列表头损坏）。
+/// 目录项（不含 `.` / `..`；失败 None）
 #[alloc]
 #[state]
 #[io]
-pub fn list_dir(String path) -> ArrayList[String] {
+pub fn list_dir(String path) -> Option[ArrayList[String]] {
     data = __ayanami_fs_list_data(path)
     if data == null {
-        return ArrayList::new[String]()
+        return Option::None()
     }
     n = __ayanami_fs_list_len()
     s = String::new(data, n as usize)
-    res = ArrayList::new[String]()
-    start = 0usize
-    i = 0usize
-    while i < s.len {
-        if s.data[i] == '\n' {
-            res.push(s.substring(start, i))
-            start = i + 1
-        }
-        i = i + 1
-    }
-    return res
+    ls = lines(s)
+    return Option::Some(ls)
 }
