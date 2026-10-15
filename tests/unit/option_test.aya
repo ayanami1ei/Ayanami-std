@@ -16,29 +16,29 @@ fn seven() -> int {
 #[test]
 fn test_option_map() {
     a = some_int(3)
-    b = a.map((int x) { return x + 1 })
+    b = a.map((int x) -> int { return x + 1 })
     #assert_eq(b.unwrap_or(0), 4)
     c = none_int()
-    d = c.map((int x) { return x + 1 })
+    d = c.map((int x) -> int { return x + 1 })
     #assert(d.is_none())
 }
 
 #[test]
 fn test_option_chain() {
     a = some_int(3)
-    b = a.and_then((int x) { return some_int(x * 2) })
+    b = a.and_then((int x) -> Option[int] { return some_int(x * 2) })
     #assert_eq(b.unwrap_or(0), 6)
     c = some_int(3)
-    d = c.filter((int x) { return x > 5 })
+    d = c.filter((int x) -> bool { return x > 5 })
     #assert(d.is_none())
     e = some_int(3)
-    f = e.filter((int x) { return x > 2 })
+    f = e.filter((int x) -> bool { return x > 2 })
     #assert_eq(f.unwrap_or(0), 3)
 }
 
 #[test]
 fn test_option_chained() {
-    r = some_int(3).map((int x) { return x + 1 }).filter((int x) { return x > 3 })
+    r = some_int(3).map((int x) -> int { return x + 1 }).filter((int x) -> bool { return x > 3 })
     #assert_eq(r.unwrap_or(0), 4)
 }
 
@@ -53,13 +53,13 @@ fn err_int(int v) -> Result[int, int] {
 #[test]
 fn test_result_map() {
     r = ok_int(2)
-    s = r.map((int x) { return x * 10 })
+    s = r.map((int x) -> int { return x * 10 })
     #assert_eq(s.unwrap_or(0), 20)
     e = ok_int(2)
-    f = e.map_err((int x) { return x + 1 })
+    f = e.map_err((int x) -> int { return x + 1 })
     #assert_eq(f.unwrap_or(0), 2)
     g = err_int(5)
-    h = g.map((int x) { return x * 10 })
+    h = g.map((int x) -> int { return x * 10 })
     #assert(h.is_err())
 }
 
