@@ -9,6 +9,9 @@ extern "C" fn __ayanami_fs_read(String path) -> [char];
 extern "C" fn __ayanami_fs_write(String path, String data) -> int;
 extern "C" fn __ayanami_fs_append(String path, String data) -> int;
 extern "C" fn __ayanami_fs_remove(String path) -> int;
+extern "C" fn __ayanami_fs_is_dir(String path) -> int;
+extern "C" fn __ayanami_fs_list_data(String path) -> [char];
+extern "C" fn __ayanami_fs_list_len() -> int;
 
 /// 文件是否存在
 #[io]
@@ -61,4 +64,37 @@ pub fn append_file(String path, String data) -> bool {
 #[io]
 pub fn remove_file(String path) -> bool {
     return __ayanami_fs_remove(path) == 0
+}
+
+/// 是否目录
+#[io]
+pub fn is_dir(String path) -> bool {
+    return __ayanami_fs_is_dir(path) == 1
+}
+
+/// 目录项（不含 `.` / `..`；失败返回空表）
+///
+/// 注：`Option[ArrayList[String]]` 版待主仓 #170 修复（[char] extern 缓冲 +
+/// Option 返回时列表头损坏）。
+#[alloc]
+#[state]
+#[io]
+pub fn list_dir(String path) -> ArrayList[String] {
+    data = __ayanami_fs_list_data(path)
+    if data == null {
+        return ArrayList::new[String]()
+    }
+    n = __ayanami_fs_list_len()
+    s = String::new(data, n as usize)
+    res = ArrayList::new[String]()
+    start = 0usize
+    i = 0usize
+    while i < s.len {
+        if s.data[i] == '\n' {
+            res.push(s.substring(start, i))
+            start = i + 1
+        }
+        i = i + 1
+    }
+    return res
 }

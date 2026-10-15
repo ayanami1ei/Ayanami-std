@@ -109,6 +109,9 @@ char *__ayanami_fs_read(__ayanami_str_view path);     // unique_alloc 缓冲（N
 int64_t __ayanami_fs_write(__ayanami_str_view path, __ayanami_str_view data); // 0 成功 / -1
 int64_t __ayanami_fs_append(__ayanami_str_view path, __ayanami_str_view data); // 追加；0 成功 / -1
 int64_t __ayanami_fs_remove(__ayanami_str_view path); // 删除文件；0 成功 / -1
+int64_t __ayanami_fs_is_dir(__ayanami_str_view path); // 1 目录 / 0 否
+char *__ayanami_fs_list_data(__ayanami_str_view path); // 目录项 '\n' 连接（unique_alloc、NUL 结尾）；NULL 失败
+int64_t __ayanami_fs_list_len(void); // 最近一次 list_data 的字节长度
 
 // ── 命令行参数 / 环境变量（返回值为 unique_alloc 拷贝） ──
 int64_t __ayanami_arg_count(void);                    // argc（含程序名）

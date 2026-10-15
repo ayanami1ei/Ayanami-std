@@ -6,6 +6,7 @@
 #include <time.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <dirent.h>
 #if defined(__linux__)
 #include <sys/random.h>
 #endif
@@ -111,6 +112,52 @@ int64_t __ayanami_fs_remove(__ayanami_str_view path) {
     char p[4096];
     if (!path_cstr(path, p, sizeof p)) return -1;
     return remove(p) == 0 ? 0 : -1;
+}
+
+int64_t __ayanami_fs_is_dir(__ayanami_str_view path) {
+    char p[4096];
+    if (!path_cstr(path, p, sizeof p)) return 0;
+    struct stat st;
+    if (stat(p, &st) != 0) return 0;
+    return S_ISDIR(st.st_mode) ? 1 : 0;
+}
+
+// 最近一次 list_data 的字节长度（调用方随后读取）
+static int64_t g_list_len = 0;
+
+int64_t __ayanami_fs_list_len(void) {
+    return g_list_len;
+}
+
+// 目录项（跳过 . / ..；'\n' 连接、NUL 结尾）——单趟 realloc
+char *__ayanami_fs_list_data(__ayanami_str_view path) {
+    char p[4096];
+    if (!path_cstr(path, p, sizeof p)) return NULL;
+    DIR *d = opendir(p);
+    if (!d) return NULL;
+    size_t cap = 256, off = 0;
+    char *buf = (char *)__ayanami_unique_alloc(cap);
+    if (!buf) { closedir(d); return NULL; }
+    struct dirent *e;
+    while ((e = readdir(d)) != NULL) {
+        if (strcmp(e->d_name, ".") == 0 || strcmp(e->d_name, "..") == 0) continue;
+        size_t n = strlen(e->d_name);
+        if (off + n + 2 > cap) {
+            size_t ncap = cap * 2;
+            while (off + n + 2 > ncap) ncap *= 2;
+            char *nb = (char *)realloc(buf, ncap);
+            if (!nb) { __ayanami_unique_free(buf); closedir(d); return NULL; }
+            buf = nb;
+            cap = ncap;
+        }
+        memcpy(buf + off, e->d_name, n);
+        off += n;
+        buf[off++] = '\n';
+    }
+    buf[off] = 0;
+    g_list_len = (int64_t)off;
+    closedir(d);
+    return buf;
 }
 
 // ── 命令行参数（/proc/self/cmdline，惰性解析） ──

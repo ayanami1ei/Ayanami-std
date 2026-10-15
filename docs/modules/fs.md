@@ -12,6 +12,8 @@ import "fs";
 | `read_lines(String path) -> Option[ArrayList[String]]` | 按行拆分（`\r\n` 兼容；失败 `None`） |
 | `append_file(String path, String data) -> bool` | 追加写入（不存在则创建） |
 | `remove_file(String path) -> bool` | 删除文件（成功 `true`） |
+| `is_dir(String path) -> bool` | 是否目录 |
+| `list_dir(String path) -> ArrayList[String]` | 目录项（不含 `.` / `..`；失败返回空表） |
 
 ## 示例
 
