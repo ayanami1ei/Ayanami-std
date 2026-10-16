@@ -9,6 +9,8 @@ extern "C" fn __ayanami_fs_read(String path) -> [char];
 extern "C" fn __ayanami_fs_write(String path, String data) -> int;
 extern "C" fn __ayanami_fs_append(String path, String data) -> int;
 extern "C" fn __ayanami_fs_remove(String path) -> int;
+extern "C" fn __ayanami_fs_copy(String src, String dst) -> int;
+extern "C" fn __ayanami_fs_rename(String from, String to) -> int;
 extern "C" fn __ayanami_fs_is_dir(String path) -> int;
 extern "C" fn __ayanami_fs_mkdir(String path) -> int;
 extern "C" fn __ayanami_fs_rmdir(String path) -> int;
@@ -117,4 +119,16 @@ pub fn mtime(String path) -> Option[int] {
 #[io]
 pub fn is_file(String path) -> bool {
     return __ayanami_fs_is_file(path) == 1
+}
+
+/// 复制文件（成功 true；目标存在则覆盖）
+#[io]
+pub fn copy_file(String src, String dst) -> bool {
+    return __ayanami_fs_copy(src, dst) == 0
+}
+
+/// 重命名 / 移动文件（成功 true）
+#[io]
+pub fn rename_file(String from, String to) -> bool {
+    return __ayanami_fs_rename(from, to) == 0
 }

@@ -12,6 +12,8 @@ import "fs";
 | `read_lines(String path) -> Option[ArrayList[String]]` | 按行拆分（`\r\n` 兼容；失败 `None`） |
 | `append_file(String path, String data) -> bool` | 追加写入（不存在则创建） |
 | `remove_file(String path) -> bool` | 删除文件（成功 `true`） |
+| `copy_file(String src, String dst) -> bool` | 复制文件（覆盖目标） |
+| `rename_file(String from, String to) -> bool` | 重命名 / 移动文件 |
 | `is_dir(String path) -> bool` | 是否目录 |
 | `is_file(String path) -> bool` | 是否普通文件 |
 | `mkdir(String path) -> bool` / `rmdir(String path) -> bool` | 创建 / 删除（空）目录 |

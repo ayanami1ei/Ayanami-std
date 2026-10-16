@@ -76,3 +76,18 @@ fn test_fs_more() {
     #assert(mtime("/tmp/ayanami_no_such_file_xyz").is_none())
     #assert(!mkdir("/tmp/ayanami_no_such_dir_xyz/sub"))
 }
+
+#[test]
+fn test_copy_rename() {
+    #assert(write_file("/tmp/ayanami_fs_cr_src.txt", "hello"))
+    #assert(copy_file("/tmp/ayanami_fs_cr_src.txt", "/tmp/ayanami_fs_cr_dst.txt"))
+    v = read_file("/tmp/ayanami_fs_cr_dst.txt").unwrap_or("")
+    #assert_eq(v, "hello")
+    #assert(rename_file("/tmp/ayanami_fs_cr_dst.txt", "/tmp/ayanami_fs_cr_dst2.txt"))
+    #assert(!exists("/tmp/ayanami_fs_cr_dst.txt"))
+    v2 = read_file("/tmp/ayanami_fs_cr_dst2.txt").unwrap_or("")
+    #assert_eq(v2, "hello")
+    #assert(remove_file("/tmp/ayanami_fs_cr_src.txt"))
+    #assert(remove_file("/tmp/ayanami_fs_cr_dst2.txt"))
+    #assert(!copy_file("/tmp/ayanami_no_such_file_xyz", "/tmp/ayanami_fs_cr_dst.txt"))
+}

@@ -108,6 +108,33 @@ int64_t __ayanami_fs_append(__ayanami_str_view path, __ayanami_str_view data) {
     return (w == (size_t)data.len) ? 0 : -1;
 }
 
+int64_t __ayanami_fs_copy(__ayanami_str_view src, __ayanami_str_view dst) {
+    char ps[4096], pd[4096];
+    if (!path_cstr(src, ps, sizeof ps)) return -1;
+    if (!path_cstr(dst, pd, sizeof pd)) return -1;
+    FILE *in = fopen(ps, "rb");
+    if (!in) return -1;
+    FILE *out = fopen(pd, "wb");
+    if (!out) { fclose(in); return -1; }
+    char buf[8192];
+    size_t n;
+    int64_t rc = 0;
+    while ((n = fread(buf, 1, sizeof buf, in)) > 0) {
+        if (fwrite(buf, 1, n, out) != n) { rc = -1; break; }
+    }
+    if (ferror(in)) rc = -1;
+    fclose(in);
+    fclose(out);
+    return rc;
+}
+
+int64_t __ayanami_fs_rename(__ayanami_str_view from, __ayanami_str_view to) {
+    char pf[4096], pt[4096];
+    if (!path_cstr(from, pf, sizeof pf)) return -1;
+    if (!path_cstr(to, pt, sizeof pt)) return -1;
+    return rename(pf, pt) == 0 ? 0 : -1;
+}
+
 int64_t __ayanami_fs_remove(__ayanami_str_view path) {
     char p[4096];
     if (!path_cstr(path, p, sizeof p)) return -1;

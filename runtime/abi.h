@@ -109,6 +109,8 @@ char *__ayanami_fs_read(__ayanami_str_view path);     // unique_alloc 缓冲（N
 int64_t __ayanami_fs_write(__ayanami_str_view path, __ayanami_str_view data); // 0 成功 / -1
 int64_t __ayanami_fs_append(__ayanami_str_view path, __ayanami_str_view data); // 追加；0 成功 / -1
 int64_t __ayanami_fs_remove(__ayanami_str_view path); // 删除文件；0 成功 / -1
+int64_t __ayanami_fs_copy(__ayanami_str_view src, __ayanami_str_view dst); // 复制文件；0 成功 / -1
+int64_t __ayanami_fs_rename(__ayanami_str_view from, __ayanami_str_view to); // 重命名/移动；0 成功 / -1
 int64_t __ayanami_fs_mkdir(__ayanami_str_view path); // 创建目录；0 成功 / -1
 int64_t __ayanami_fs_rmdir(__ayanami_str_view path); // 删除空目录；0 成功 / -1
 int64_t __ayanami_fs_mtime(__ayanami_str_view path); // 修改时间（Unix 秒）；-1 失败
