@@ -107,12 +107,6 @@ void __ayanami_panic_bounds_at(long long line, long long col, __ayanami_str_view
     __ayanami_panic_print_msg(line, col, file.data, file.len, buf, (long)strlen(buf));
 }
 
-// std 内部别名：供 std 模块显式调用，避免与编译器边界检查 lowering 的同名内置
-// declare 重复（主仓 #174）；行为与原名完全一致。
-void __ayanami_panic_bounds_at_std(long long line, long long col, __ayanami_str_view file,
-                                   long long index, long long len) {
-    __ayanami_panic_bounds_at(line, col, file, index, len);
-}
 
 // ──────────────────────────────────────────────
 //  Overflow checks (M1.7, debug builds)
