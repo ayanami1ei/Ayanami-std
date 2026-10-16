@@ -13,6 +13,9 @@ import "fs";
 | `append_file(String path, String data) -> bool` | 追加写入（不存在则创建） |
 | `remove_file(String path) -> bool` | 删除文件（成功 `true`） |
 | `is_dir(String path) -> bool` | 是否目录 |
+| `is_file(String path) -> bool` | 是否普通文件 |
+| `mkdir(String path) -> bool` / `rmdir(String path) -> bool` | 创建 / 删除（空）目录 |
+| `mtime(String path) -> Option[int]` | 修改时间（Unix 秒；失败 `None`） |
 | `list_dir(String path) -> Option[ArrayList[String]]` | 目录项（不含 `.` / `..`；失败 `None`） |
 
 ## 示例

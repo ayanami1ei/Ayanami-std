@@ -1,4 +1,5 @@
 import "fs"
+import "time"
 import "arraylist"
 import "test"
 
@@ -58,4 +59,20 @@ fn test_dir_ops() {
     #assert(entries.contains("ayanami_fs_dir_test.txt"))
     #assert(remove_file("/tmp/ayanami_fs_dir_test.txt"))
     #assert(list_dir("/tmp/ayanami_no_such_file_xyz").is_none())
+}
+
+#[test]
+fn test_fs_more() {
+    d = "/tmp/ayanami_fs_mkdir_" + now_millis().to_string()
+    #assert(mkdir(d.copy()))
+    #assert(is_dir(d.copy()))
+    #assert(write_file(d + "/f.txt", "x"))
+    #assert(is_file(d + "/f.txt"))
+    #assert(mtime(d + "/f.txt").unwrap_or(-1) > 0)
+    #assert(!is_file(d.copy()))
+    #assert(remove_file(d + "/f.txt"))
+    #assert(rmdir(d.copy()))
+    #assert(!is_dir(d.copy()))
+    #assert(mtime("/tmp/ayanami_no_such_file_xyz").is_none())
+    #assert(!mkdir("/tmp/ayanami_no_such_dir_xyz/sub"))
 }

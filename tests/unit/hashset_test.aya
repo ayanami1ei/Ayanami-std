@@ -121,7 +121,7 @@ fn test_set_ops() {
     b.insert(2)
     b.insert(3)
     b.insert(4)
-    u = a.union(b)
+    u = a.union_with(b)
     #assert_eq(u.len(), 4)
     #assert(u.contains(1))
     #assert(u.contains(4))

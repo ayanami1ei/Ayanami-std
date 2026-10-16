@@ -114,6 +114,34 @@ int64_t __ayanami_fs_remove(__ayanami_str_view path) {
     return remove(p) == 0 ? 0 : -1;
 }
 
+int64_t __ayanami_fs_mkdir(__ayanami_str_view path) {
+    char p[4096];
+    if (!path_cstr(path, p, sizeof p)) return -1;
+    return mkdir(p, 0755) == 0 ? 0 : -1;
+}
+
+int64_t __ayanami_fs_rmdir(__ayanami_str_view path) {
+    char p[4096];
+    if (!path_cstr(path, p, sizeof p)) return -1;
+    return rmdir(p) == 0 ? 0 : -1;
+}
+
+int64_t __ayanami_fs_mtime(__ayanami_str_view path) {
+    char p[4096];
+    if (!path_cstr(path, p, sizeof p)) return -1;
+    struct stat st;
+    if (stat(p, &st) != 0) return -1;
+    return (int64_t)st.st_mtime;
+}
+
+int64_t __ayanami_fs_is_file(__ayanami_str_view path) {
+    char p[4096];
+    if (!path_cstr(path, p, sizeof p)) return 0;
+    struct stat st;
+    if (stat(p, &st) != 0) return 0;
+    return S_ISREG(st.st_mode) ? 1 : 0;
+}
+
 int64_t __ayanami_fs_is_dir(__ayanami_str_view path) {
     char p[4096];
     if (!path_cstr(path, p, sizeof p)) return 0;

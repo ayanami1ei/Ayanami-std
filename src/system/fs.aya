@@ -10,6 +10,10 @@ extern "C" fn __ayanami_fs_write(String path, String data) -> int;
 extern "C" fn __ayanami_fs_append(String path, String data) -> int;
 extern "C" fn __ayanami_fs_remove(String path) -> int;
 extern "C" fn __ayanami_fs_is_dir(String path) -> int;
+extern "C" fn __ayanami_fs_mkdir(String path) -> int;
+extern "C" fn __ayanami_fs_rmdir(String path) -> int;
+extern "C" fn __ayanami_fs_mtime(String path) -> int;
+extern "C" fn __ayanami_fs_is_file(String path) -> int;
 extern "C" fn __ayanami_fs_list_data(String path) -> [char];
 extern "C" fn __ayanami_fs_list_len() -> int;
 
@@ -85,4 +89,32 @@ pub fn list_dir(String path) -> Option[ArrayList[String]] {
     s = String::new(data, n as usize)
     ls = lines(s)
     return Option::Some(ls)
+}
+
+/// 创建目录（成功 true）
+#[io]
+pub fn mkdir(String path) -> bool {
+    return __ayanami_fs_mkdir(path) == 0
+}
+
+/// 删除空目录（成功 true）
+#[io]
+pub fn rmdir(String path) -> bool {
+    return __ayanami_fs_rmdir(path) == 0
+}
+
+/// 修改时间（Unix 秒；失败 None）
+#[io]
+pub fn mtime(String path) -> Option[int] {
+    t = __ayanami_fs_mtime(path)
+    if t < 0 {
+        return Option::None()
+    }
+    return Option::Some(t)
+}
+
+/// 是否普通文件
+#[io]
+pub fn is_file(String path) -> bool {
+    return __ayanami_fs_is_file(path) == 1
 }

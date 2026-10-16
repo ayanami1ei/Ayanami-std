@@ -178,7 +178,7 @@ pub interface Hash {
 | `s.to_list() -> ArrayList[K]` | 所有元素（浅拷贝，顺序为实现相关） |
 | `s.for_each(Fn(K))` / `s.fold[U](init, Fn(U, K) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `s.retain(Fn(K) -> bool)` | 原地保留满足谓词的元素 |
-| `s.union(other)` / `s.intersection(other)` / `s.difference(other)` | 并 / 交 / 差（返回新集合） |
+| `s.union_with(other)` / `s.intersection(other)` / `s.difference(other)` | 并 / 交 / 差（返回新集合；`union` 为语言关键字故加 `_with`） |
 | `s.into_iter() -> HashSetIter[K]` | 拥有型迭代器（`for k in s.into_iter()`） |
 | `s.to_string()`（`K: ToString`） | 形如 `{a, b}`（顺序为实现相关） |
 | `s.len()` / `s.is_empty()` | 长度 / 是否为空 |
