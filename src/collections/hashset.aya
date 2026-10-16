@@ -142,10 +142,10 @@ impl[K: Hash] HashSet[K] {
 
     /// 并集（新集合）
     ///
-    /// 注：`union` 现为语言关键字（联合类型），故命名 `union_with`。
+    /// 注：`union` 为语言关键字，成员位置允许（#172）故可直接用该名。
     #[alloc]
     #[state]
-    pub fn union_with(ref self, ref HashSet[K] other) -> HashSet[K] {
+    pub fn union(ref self, ref HashSet[K] other) -> HashSet[K] {
         res = HashSet::new[K]()
         i = 0usize
         while i < self.cap {
