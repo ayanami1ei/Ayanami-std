@@ -27,6 +27,8 @@ int64_t __ayanami_live_allocs(void);
 void __ayanami_panic_print_msg(long long line, long long col, const char *file, long file_len,
                                const char *msg, long msg_len);
 void __ayanami_panic_at(long long line, long long col, __ayanami_str_view file, __ayanami_str_view msg);
+void __ayanami_panic_bounds_at_std(long long line, long long col, __ayanami_str_view file,
+                               long long index, long long len); // std 内部别名（#174）
 void __ayanami_panic_bounds_at(long long line, long long col, __ayanami_str_view file,
                                long long index, long long len);
 

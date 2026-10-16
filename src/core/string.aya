@@ -5,14 +5,16 @@ extern "C" fn __ayanami_int_to_char(int c) -> char;
 #[pure]
 #[noreturn]
 extern "C" fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
+// 注：用 std 内部别名（__ayanami_panic_bounds_at_std）调用运行时；
+// 直接声明原名会与编译器边界检查 lowering 的内置 declare 重复（主仓 #174）。
 #[pure]
 #[noreturn]
-extern "C" fn __ayanami_panic_bounds_at(int line, int col, String file, int index, int len) -> void;
+extern "C" fn __ayanami_panic_bounds_at_std(int line, int col, String file, int index, int len) -> void;
 
 #[pure]
 #[noreturn]
 pub fn panic_bounds_at(int line, int col, String file, usize index, usize len) -> void {
-    __ayanami_panic_bounds_at(line, col, file, index as int, len as int);
+    __ayanami_panic_bounds_at_std(line, col, file, index as int, len as int);
 }
 
 
