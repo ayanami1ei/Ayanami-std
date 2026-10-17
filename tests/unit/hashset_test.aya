@@ -176,3 +176,13 @@ fn test_clear() {
     #assert(s.contains(3))
     #assert_eq(s.len(), 1)
 }
+
+#[test]
+fn test_set_capacity() {
+    s = HashSet::with_capacity[String](8usize)
+    s.insert("a")
+    #assert(s.contains("a"))
+    #assert_eq(s.len(), 1)
+    e = HashSet::with_capacity[String](0usize)
+    #assert(e.is_empty())
+}

@@ -20,6 +20,14 @@ pub namespace HashMap {
     pub fn new[K: Hash, V]() -> HashMap[K, V] {
         return HashMap[K, V] { keys = null, vals = null, state = null, len = 0, filled = 0, cap = 0 }
     }
+    /// 预分配槽位数（cap <= 0 等价 new）
+#[alloc]
+    pub fn with_capacity[K: Hash, V](usize cap) -> HashMap[K, V] {
+        if cap == 0 {
+            return HashMap[K, V] { keys = null, vals = null, state = null, len = 0, filled = 0, cap = 0 }
+        }
+        return HashMap[K, V] { keys = [K; cap], vals = [V; cap], state = [int; cap], len = 0, filled = 0, cap = cap }
+    }
 }
 
 impl[K: Hash, V] HashMap[K, V] {

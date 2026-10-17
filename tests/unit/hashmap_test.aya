@@ -127,3 +127,14 @@ fn test_map_clear() {
     m.insert("x", 7)
     #assert_eq(m.get("x").unwrap_or(0), 7)
 }
+
+#[test]
+fn test_with_capacity() {
+    m = HashMap::with_capacity[String, int](8usize)
+    m.insert("a", 1)
+    m.insert("b", 2)
+    #assert_eq(m.len(), 2)
+    #assert_eq(m.get("b").unwrap_or(0), 2)
+    e = HashMap::with_capacity[String, int](0usize)
+    #assert(e.is_empty())
+}

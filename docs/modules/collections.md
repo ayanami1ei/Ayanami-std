@@ -176,7 +176,7 @@ pub interface Hash {
 
 | 方法 | 说明 |
 |---|---|
-| `HashSet::new[K]()` | 空集合 |
+| `HashSet::new[K]()` / `with_capacity[K](n)` | 空集合 / 预分配槽位 |
 | `s.insert(k) -> bool` | 插入；已存在返回 false |
 | `s.contains(k) -> bool` | 是否包含 |
 | `s.remove(k) -> bool` | 删除；不存在返回 false |
@@ -192,7 +192,7 @@ pub interface Hash {
 
 | 方法 | 说明 |
 |---|---|
-| `HashMap::new[K, V]()` | 空表 |
+| `HashMap::new[K, V]()` / `with_capacity[K, V](n)` | 空表 / 预分配槽位 |
 | `m.insert(k, v) -> bool` | 插入；新增返回 true，覆盖旧值返回 false |
 | `m.get(k) -> Option[V]` | 取值（浅拷贝，与 `ArrayList.index` 一致） |
 | `m.contains_key(k) -> bool` | 是否包含键 |
