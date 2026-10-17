@@ -74,7 +74,7 @@ fn test_shuffle() {
         a.push(i)
         i = i + 1
     }
-    shuffle_int(a, r)
+    shuffle(a, r)
     #assert_eq(a.len(), 10)
     c = ArrayList::new[int]()
     i = 0
@@ -95,7 +95,7 @@ fn test_shuffle() {
         b.push(i)
         i = i + 1
     }
-    shuffle_int(b, r2)
+    shuffle(b, r2)
     i = 0
     while i < 10 {
         #assert_eq(c.index(i as usize), b.index(i as usize))

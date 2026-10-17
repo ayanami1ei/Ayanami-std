@@ -65,15 +65,13 @@ impl Rng {
     }
 }
 
-/// 原地洗牌 ArrayList[int]（Fisher–Yates；确定性取决于 Rng 状态）
+/// 原地洗牌 ArrayList[T]（Fisher–Yates；确定性取决于 Rng 状态）
 #[state]
-pub fn shuffle_int(ref mut ArrayList[int] a, ref mut Rng r) {
+pub fn shuffle[T](ref mut ArrayList[T] a, ref mut Rng r) {
     i = a.len()
     while i > 1 {
         j = r.next_range(0, i as int) as usize
         i = i - 1
-        tmp = a.data[i]
-        a.data[i] = a.data[j]
-        a.data[j] = tmp
+        a.swap(i, j)
     }
 }
