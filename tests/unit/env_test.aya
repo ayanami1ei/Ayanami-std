@@ -23,3 +23,9 @@ fn test_env_or_args() {
     p = get_env_or("PATH", "")
     #assert(!p.is_empty())
 }
+
+#[test]
+fn test_has_env() {
+    #assert(has_env("PATH"))
+    #assert(!has_env("AYANAMI_NO_SUCH_ENV_XYZ"))
+}

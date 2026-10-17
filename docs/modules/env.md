@@ -10,6 +10,7 @@ import "env";
 | `arg(int i) -> String` | 第 i 个参数；越界返回空串 |
 | `get_env(String name) -> Option[String]` | 环境变量；缺失 → `None` |
 | `get_env_or(String name, String fallback) -> String` | 缺失用 fallback |
+| `has_env(String name) -> bool` | 环境变量是否存在 |
 | `args() -> ArrayList[String]` | 全部命令行参数（含程序名） |
 
 ## 示例
