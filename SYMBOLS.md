@@ -526,32 +526,33 @@ src/dev/test.aya:155: pub fn assert_some(String input, String opt, int __line, i
 src/dev/test.aya:162: pub fn assert_none(String input, String opt, int __line, int __col, String __file) -> String
 src/dev/test.aya:170: pub fn assert_close(String input, String a, String b, String eps, int __line, int __col, String __file) -> String
 src/dev/test.aya:178: pub fn fail(String input, String msg, int __line, int __col, String __file) -> String
-src/meta/mir.aya:13: pub struct MirFunction
-src/meta/mir.aya:36: pub fn scan_effects(ref MirFunction f) -> bool
-src/meta/mir.aya:60: pub fn warn(String msg)
-src/meta/mir.aya:65: pub fn error(String msg)
-src/meta/mir.aya:72: pub fn replace_int(ref mut MirFunction f, int idx, int value)
-src/meta/mir.aya:79: pub fn replace_float(ref mut MirFunction f, int idx, int bits)
-src/meta/mir.aya:86: pub fn replace_bool(ref mut MirFunction f, int idx, int value)
-src/meta/mir.aya:93: pub fn replace_char(ref mut MirFunction f, int idx, int code)
-src/meta/mir.aya:100: pub fn replace_with(ref mut MirFunction f, int idx, int src)
-src/meta/mir.aya:107: pub fn delete_stmt(ref mut MirFunction f, int idx)
-src/meta/mir.aya:114: pub fn subtree_sizes(ref MirFunction f) -> [int]
-src/meta/mir.aya:132: pub fn stmt_is_assign(int k) -> bool
-src/meta/mir.aya:136: pub fn stmt_is_return(int k) -> bool
-src/meta/mir.aya:140: pub fn stmt_is_if(int k) -> bool
-src/meta/mir.aya:144: pub fn stmt_is_while(int k) -> bool
-src/meta/mir.aya:148: pub fn stmt_is_break(int k) -> bool
-src/meta/mir.aya:152: pub fn stmt_is_continue(int k) -> bool
-src/meta/mir.aya:157: pub fn op_is_add(int op) -> bool
-src/meta/mir.aya:161: pub fn op_is_sub(int op) -> bool
-src/meta/mir.aya:165: pub fn op_is_mul(int op) -> bool
-src/meta/mir.aya:169: pub fn op_is_eq(int op) -> bool
-src/meta/mir.aya:173: pub fn op_is_neq(int op) -> bool
-src/meta/mir.aya:177: pub fn op_is_lt(int op) -> bool
-src/meta/mir.aya:181: pub fn op_is_gt(int op) -> bool
-src/meta/mir.aya:187: pub fn is_int_literal(ref MirFunction f, int idx) -> bool
-src/meta/mir.aya:195: pub fn folded_int(ref MirFunction f, int idx) -> int
+src/meta/mir.aya:17: pub struct MirFunction
+src/meta/mir.aya:39: pub fn schema_version() -> int
+src/meta/mir.aya:45: pub fn scan_effects(ref MirFunction f) -> bool
+src/meta/mir.aya:69: pub fn warn(String msg)
+src/meta/mir.aya:74: pub fn error(String msg)
+src/meta/mir.aya:81: pub fn replace_int(ref mut MirFunction f, int idx, int value)
+src/meta/mir.aya:88: pub fn replace_float(ref mut MirFunction f, int idx, int bits)
+src/meta/mir.aya:95: pub fn replace_bool(ref mut MirFunction f, int idx, int value)
+src/meta/mir.aya:102: pub fn replace_char(ref mut MirFunction f, int idx, int code)
+src/meta/mir.aya:109: pub fn replace_with(ref mut MirFunction f, int idx, int src)
+src/meta/mir.aya:116: pub fn delete_stmt(ref mut MirFunction f, int idx)
+src/meta/mir.aya:123: pub fn subtree_sizes(ref MirFunction f) -> [int]
+src/meta/mir.aya:141: pub fn stmt_is_assign(int k) -> bool
+src/meta/mir.aya:145: pub fn stmt_is_return(int k) -> bool
+src/meta/mir.aya:149: pub fn stmt_is_if(int k) -> bool
+src/meta/mir.aya:153: pub fn stmt_is_while(int k) -> bool
+src/meta/mir.aya:157: pub fn stmt_is_break(int k) -> bool
+src/meta/mir.aya:161: pub fn stmt_is_continue(int k) -> bool
+src/meta/mir.aya:166: pub fn op_is_add(int op) -> bool
+src/meta/mir.aya:170: pub fn op_is_sub(int op) -> bool
+src/meta/mir.aya:174: pub fn op_is_mul(int op) -> bool
+src/meta/mir.aya:178: pub fn op_is_eq(int op) -> bool
+src/meta/mir.aya:182: pub fn op_is_neq(int op) -> bool
+src/meta/mir.aya:186: pub fn op_is_lt(int op) -> bool
+src/meta/mir.aya:190: pub fn op_is_gt(int op) -> bool
+src/meta/mir.aya:196: pub fn is_int_literal(ref MirFunction f, int idx) -> bool
+src/meta/mir.aya:204: pub fn folded_int(ref MirFunction f, int idx) -> int
 src/system/env.aya:20: pub fn arg_count() -> int
 src/system/env.aya:26: pub fn arg(int i) -> String
 src/system/env.aya:40: pub fn get_env(String name) -> Option[String]
@@ -803,6 +804,12 @@ tests/unit/mem_test.aya:123: fn churn_set() -> int
 tests/unit/mem_test.aya:142: fn churn_nested() -> int
 tests/unit/mem_test.aya:158: fn test_owned_cleanup()
 tests/unit/mem_test.aya:166: fn test_owned_cleanup_cycles()
+tests/unit/mir_test.aya:8: fn mk(int n) -> MirFunction
+tests/unit/mir_test.aya:32: fn test_schema_version()
+tests/unit/mir_test.aya:37: fn test_scan_effects()
+tests/unit/mir_test.aya:59: fn test_subtree_sizes()
+tests/unit/mir_test.aya:71: fn test_edit_helpers()
+tests/unit/mir_test.aya:98: fn test_stmt_op_predicates()
 tests/unit/num_test.aya:6: fn test_wrapping()
 tests/unit/num_test.aya:17: fn test_overflow_flags()
 tests/unit/num_test.aya:29: fn test_saturating()

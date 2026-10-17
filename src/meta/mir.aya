@@ -1,13 +1,17 @@
-// A5d-3：MIR 优化注解的公开视图（schema v1，扁平 preorder）
+// A5d-3：MIR 优化注解的公开视图（schema v3，扁平 preorder）
+//
+// 版本契约：SCHEMA_VERSION 以编译器为准（当前 3；blob 首 8 字节 = 版本号），
+// 布局/语义变更必须同步：编译器 pass_plugin.rs（shim）↔ 本文件 ↔ docs/dev/plugins.md。
+// 兼容性检查：插件可调用 `schema_version()` 断言与编译器一致。
 //
 // 布局与编译器生成的 C 桥接一一对应：
 //   int  → i64；[int] → 堆数组指针；字段顺序固定。
 // 节点按 preorder 排列：child_counts[i] 是第 i 个节点的直接子节点数，
 // 函数体根节点为下标 0（空函数 node_count == 0）。
 //
-// 约定：
+// 约定（变换合法性，详见 docs/dev/plugins.md）：
 // - pure/no_error 可直接改写；
-// - 其余只读数组不得修改；
+// - 其余只读数组不得修改（契约禁止；shim 会整体重编码）；
 // - body 改写通过编辑数组表达：edit_kind[i]=1 表示把第 i 个表达式节点替换为
 //   edit_i64[i] 的整型字面量（目前仅支持 int）；编译器应用后会重跑借用检查。
 pub struct MirFunction {
@@ -31,8 +35,13 @@ pub struct MirFunction {
     [int] edit_i64
 }
 
+/// MIR blob schema 版本（与编译器 SCHEMA_VERSION 对齐；当前 3）
+pub fn schema_version() -> int {
+    return 3;
+}
+
 /// 无副作用扫描：调用（且被调方非 pure）、堆分配、汇编、字段/索引写
-/// 任一出现即判定有副作用。v0 直接线性遍历全部节点。
+/// 任一出现即判定有副作用。线性遍历全部节点。
 pub fn scan_effects(ref MirFunction f) -> bool {
     for i in (0, f.node_count) {
         if f.is_alloc[i] != 0 {

@@ -25,6 +25,7 @@
 | [panic.md](modules/panic.md) | 运行时 panic：`#panic`、越界与空表行为 |
 | [runtime.md](dev/runtime.md) | C 运行时：ABI、约定与扩展步骤 |
 | [testing.md](dev/testing.md) | 测试框架：运行方式与新增用例 |
+| [plugins.md](dev/plugins.md) | 插件契约：MIR pass/check、标注验证责任、schema 版本与回归测试要求 |
 
 ## 引入与运行
 

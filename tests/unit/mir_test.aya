@@ -1,0 +1,114 @@
+// mir_test — MIR 插件 API（src/meta/mir.aya）纯逻辑单测
+//
+// 覆盖：schema 版本、scan_effects、subtree_sizes、编辑辅助、语句/运算符编码。
+import "mir";
+
+import "test";
+
+fn mk(int n) -> MirFunction {
+    return MirFunction {
+        pure = 1,
+        no_error = 1,
+        node_count = n,
+        kinds = [int; n as usize],
+        is_call = [int; n as usize],
+        callee_pure = [int; n as usize],
+        is_alloc = [int; n as usize],
+        is_asm = [int; n as usize],
+        is_store = [int; n as usize],
+        child_counts = [int; n as usize],
+        ops = [int; n as usize],
+        lit_kinds = [int; n as usize],
+        lit_i64 = [int; n as usize],
+        lit_f64 = [int; n as usize],
+        stmt_kinds = [int; n as usize],
+        var_ids = [int; n as usize],
+        edit_kind = [int; n as usize],
+        edit_i64 = [int; n as usize],
+    };
+}
+
+#[test]
+fn test_schema_version() {
+    #assert_eq(schema_version(), 3)
+}
+
+#[test]
+fn test_scan_effects() {
+    f = mk(3);
+    #assert(scan_effects(f));
+    f2 = mk(3);
+    f2.is_alloc[1] = 1;
+    #assert(!scan_effects(f2));
+    f3 = mk(3);
+    f3.is_asm[0] = 1;
+    #assert(!scan_effects(f3));
+    f4 = mk(3);
+    f4.is_store[2] = 1;
+    #assert(!scan_effects(f4));
+    f5 = mk(3);
+    f5.is_call[0] = 1;
+    f5.callee_pure[0] = 1;
+    #assert(scan_effects(f5));
+    f6 = mk(3);
+    f6.is_call[0] = 1;
+    #assert(!scan_effects(f6))
+}
+
+#[test]
+fn test_subtree_sizes() {
+    f = mk(3);
+    f.child_counts[0] = 2;
+    f.child_counts[1] = 0;
+    f.child_counts[2] = 0;
+    sizes = subtree_sizes(f);
+    #assert_eq(sizes[0], 3);
+    #assert_eq(sizes[1], 1);
+    #assert_eq(sizes[2], 1)
+}
+
+#[test]
+fn test_edit_helpers() {
+    f = mk(2);
+    replace_int(f, 1, 42);
+    #assert_eq(f.edit_kind[1], 1);
+    #assert_eq(f.edit_i64[1], 42);
+    #assert(is_int_literal(f, 1));
+    #assert_eq(folded_int(f, 1), 42);
+    f2 = mk(2);
+    f2.lit_kinds[0] = 1;
+    f2.lit_i64[0] = 7;
+    #assert(is_int_literal(f2, 0));
+    #assert_eq(folded_int(f2, 0), 7);
+    f3 = mk(2);
+    #assert(!is_int_literal(f3, 0));
+    replace_float(f3, 0, 123);
+    #assert_eq(f3.edit_kind[0], 2);
+    replace_bool(f3, 1, 1);
+    #assert_eq(f3.edit_kind[1], 3);
+    replace_char(f3, 1, 65);
+    #assert_eq(f3.edit_kind[1], 4);
+    replace_with(f3, 0, 1);
+    #assert_eq(f3.edit_kind[0], 5);
+    delete_stmt(f3, 0);
+    #assert_eq(f3.edit_kind[0], 6)
+}
+
+#[test]
+fn test_stmt_op_predicates() {
+    #assert(stmt_is_assign(1));
+    #assert(stmt_is_return(4));
+    #assert(stmt_is_if(5));
+    #assert(stmt_is_while(6));
+    #assert(stmt_is_break(7));
+    #assert(stmt_is_continue(8));
+    #assert(!stmt_is_assign(2));
+    #assert(op_is_add(1));
+    #assert(op_is_sub(2));
+    #assert(op_is_mul(3));
+    #assert(op_is_eq(6));
+    #assert(op_is_neq(7));
+    #assert(op_is_lt(8));
+    #assert(op_is_gt(9));
+    #assert(!op_is_add(9))
+}
