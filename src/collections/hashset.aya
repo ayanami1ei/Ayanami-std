@@ -109,6 +109,31 @@ impl[K: Hash] HashSet[K] {
         return false
     }
 
+    /// 删除并返回元素；不存在返回 None
+    #[state]
+    pub fn take(ref mut self, ref K k) -> Option[K] {
+        if self.cap == 0 {
+            return Option::None()
+        }
+        i = (k.hash() % self.cap as int) as usize
+        while true {
+            s = self.state[i]
+            if s == 0 {
+                return Option::None()
+            }
+            if s == 1 {
+                if self.keys[i].hash_eq(k) {
+                    e = self.keys[i]
+                    self.state[i] = 2
+                    self.len = self.len - 1
+                    return Option::Some(e)
+                }
+            }
+            i = (i + 1) % self.cap
+        }
+        return Option::None()
+    }
+
     /// 删除（墓碑）；不存在返回 false
     #[state]
     pub fn remove(ref mut self, ref K k) -> bool {
@@ -173,6 +198,11 @@ impl[K: Hash] HashSet[K] {
             i = i + 1
         }
         return true
+    }
+
+    /// 是否超集（包含 other 的所有元素）
+    pub fn is_superset_of(ref self, ref HashSet[K] other) -> bool {
+        return other.is_subset_of(self)
     }
 
     /// 并集（新集合）

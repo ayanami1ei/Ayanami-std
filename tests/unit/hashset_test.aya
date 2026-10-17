@@ -186,3 +186,22 @@ fn test_set_capacity() {
     e = HashSet::with_capacity[String](0usize)
     #assert(e.is_empty())
 }
+
+#[test]
+fn test_take_superset() {
+    s = HashSet::new[int]()
+    s.insert(1)
+    s.insert(2)
+    e = s.take(1)
+    #assert_eq(e.unwrap_or(0), 1)
+    #assert(!s.contains(1))
+    #assert_eq(s.len(), 1)
+    #assert(s.take(9).is_none())
+    a = HashSet::new[int]()
+    a.insert(1)
+    b = HashSet::new[int]()
+    b.insert(1)
+    b.insert(2)
+    #assert(b.is_superset_of(a))
+    #assert(!a.is_superset_of(b))
+}

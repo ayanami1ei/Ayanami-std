@@ -180,11 +180,13 @@ pub interface Hash {
 | `s.insert(k) -> bool` | 插入；已存在返回 false |
 | `s.contains(k) -> bool` | 是否包含 |
 | `s.remove(k) -> bool` | 删除；不存在返回 false |
+| `s.take(k) -> Option[K]` | 删除并返回元素 |
 | `s.to_list() -> ArrayList[K]` | 所有元素（浅拷贝，顺序为实现相关） |
 | `s.for_each(Fn(K))` / `s.fold[U](init, Fn(U, K) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `s.retain(Fn(K) -> bool)` | 原地保留满足谓词的元素 |
 | `s.union(other)` / `s.intersection(other)` / `s.difference(other)` | 并 / 交 / 差（返回新集合） |
 | `s.is_subset_of(other) -> bool` | 是否子集（空集恒真） |
+| `s.is_superset_of(other) -> bool` | 是否超集 |
 | `s.clear()` | 清空（保留容量） |
 | `s.into_iter() -> HashSetIter[K]` | 拥有型迭代器（`for k in s.into_iter()`） |
 | `s.to_string()`（`K: ToString`） | 形如 `{a, b}`（顺序为实现相关） |
