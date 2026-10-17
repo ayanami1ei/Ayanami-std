@@ -1,6 +1,9 @@
 // bitops — 位操作工具（popcount / leading_zeros / trailing_zeros）
+#[pure]
 extern "C" fn __ayanami_popcount(int x) -> int;
+#[pure]
 extern "C" fn __ayanami_clz(int x) -> int;
+#[pure]
 extern "C" fn __ayanami_ctz(int x) -> int;
 
 /// 置位比特数
