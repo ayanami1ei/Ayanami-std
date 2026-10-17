@@ -304,39 +304,39 @@ src/core/math.aya:40: pub fn clamp(int x, int lo, int hi) -> int
 src/core/math.aya:51: pub fn min(usize a, usize b) -> usize
 src/core/math.aya:59: pub fn max(usize a, usize b) -> usize
 src/core/math.aya:67: pub fn clamp(usize x, usize lo, usize hi) -> usize
-src/core/math.aya:78: pub fn pow(int base, int exp) -> int
-src/core/math.aya:89: pub fn pi() -> float
-src/core/math.aya:94: fn ln2() -> float
-src/core/math.aya:99: fn two_pi() -> float
-src/core/math.aya:104: fn half_pi() -> float
-src/core/math.aya:109: fn quarter_pi() -> float
-src/core/math.aya:114: pub fn abs(float x) -> float
-src/core/math.aya:122: pub fn min(float a, float b) -> float
-src/core/math.aya:130: pub fn max(float a, float b) -> float
-src/core/math.aya:138: pub fn clamp(float x, float lo, float hi) -> float
-src/core/math.aya:150: pub fn trunc(float x) -> float
-src/core/math.aya:156: pub fn floor(float x) -> float
-src/core/math.aya:170: pub fn ceil(float x) -> float
-src/core/math.aya:184: pub fn round(float x) -> float
-src/core/math.aya:193: pub fn sqrt(float x) -> float
-src/core/math.aya:222: pub fn exp(float x) -> float
-src/core/math.aya:251: pub fn ln(float x) -> float
-src/core/math.aya:283: pub fn log10(float x) -> float
-src/core/math.aya:289: pub fn sin(float x) -> float
-src/core/math.aya:305: pub fn cos(float x) -> float
-src/core/math.aya:321: pub fn tan(float x) -> float
-src/core/math.aya:326: fn atan_series(float z) -> float
-src/core/math.aya:340: fn atan1(float x) -> float
-src/core/math.aya:356: pub fn atan2(float y, float x) -> float
-src/core/math.aya:376: pub fn pow(float base, int exp) -> float
-src/core/math.aya:396: pub fn gcd(int a, int b) -> int
-src/core/math.aya:409: pub fn lcm(int a, int b) -> int
-src/core/math.aya:421: pub fn is_prime(int n) -> bool
-src/core/math.aya:438: impl int
-src/core/math.aya:441: fn is_even(self) -> bool
-src/core/math.aya:446: fn is_odd(self) -> bool
-src/core/math.aya:451: impl float
-src/core/math.aya:454: fn is_nan(self) -> bool
+src/core/math.aya:79: pub fn pow(int base, int exp) -> int
+src/core/math.aya:90: pub fn pi() -> float
+src/core/math.aya:95: fn ln2() -> float
+src/core/math.aya:100: fn two_pi() -> float
+src/core/math.aya:105: fn half_pi() -> float
+src/core/math.aya:110: fn quarter_pi() -> float
+src/core/math.aya:115: pub fn abs(float x) -> float
+src/core/math.aya:123: pub fn min(float a, float b) -> float
+src/core/math.aya:131: pub fn max(float a, float b) -> float
+src/core/math.aya:139: pub fn clamp(float x, float lo, float hi) -> float
+src/core/math.aya:151: pub fn trunc(float x) -> float
+src/core/math.aya:157: pub fn floor(float x) -> float
+src/core/math.aya:171: pub fn ceil(float x) -> float
+src/core/math.aya:185: pub fn round(float x) -> float
+src/core/math.aya:194: pub fn sqrt(float x) -> float
+src/core/math.aya:227: pub fn exp(float x) -> float
+src/core/math.aya:271: pub fn ln(float x) -> float
+src/core/math.aya:307: pub fn log10(float x) -> float
+src/core/math.aya:313: pub fn sin(float x) -> float
+src/core/math.aya:329: pub fn cos(float x) -> float
+src/core/math.aya:345: pub fn tan(float x) -> float
+src/core/math.aya:350: fn atan_series(float z) -> float
+src/core/math.aya:364: fn atan1(float x) -> float
+src/core/math.aya:380: pub fn atan2(float y, float x) -> float
+src/core/math.aya:400: pub fn pow(float base, int exp) -> float
+src/core/math.aya:420: pub fn gcd(int a, int b) -> int
+src/core/math.aya:433: pub fn lcm(int a, int b) -> int
+src/core/math.aya:445: pub fn is_prime(int n) -> bool
+src/core/math.aya:463: impl int
+src/core/math.aya:466: fn is_even(self) -> bool
+src/core/math.aya:471: fn is_odd(self) -> bool
+src/core/math.aya:476: impl float
+src/core/math.aya:479: fn is_nan(self) -> bool
 src/core/num.aya:48: pub struct Overflowing
 src/core/num.aya:55: pub fn wrapping_add(int a, int b) -> int
 src/core/num.aya:61: pub fn wrapping_sub(int a, int b) -> int
@@ -737,6 +737,7 @@ tests/unit/math_test.aya:83: fn test_sign()
 tests/unit/math_test.aya:90: fn test_pow_negative()
 tests/unit/math_test.aya:97: fn test_usize_minmax()
 tests/unit/math_test.aya:106: fn test_abs_min_panics()
+tests/unit/math_test.aya:113: fn test_float_special()
 tests/unit/num_test.aya:6: fn test_wrapping()
 tests/unit/num_test.aya:17: fn test_overflow_flags()
 tests/unit/num_test.aya:29: fn test_saturating()
