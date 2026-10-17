@@ -28,14 +28,14 @@ fn main() -> int {
 
     ks = counts.sorted_keys()
     i = 0usize
-    out = ""
+    res = ""
     while i < ks.len() {
         if i > 0 {
-            out = out + " "
+            res = res + " "
         }
-        out = out + ks.index(i)
+        res = res + ks.index(i)
         i = i + 1
     }
-    println("sorted: " + out)
+    println("sorted: " + res)
     return 0
 }
