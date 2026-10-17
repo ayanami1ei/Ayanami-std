@@ -205,6 +205,7 @@ pub interface Hash {
 | `m.to_string()`（`K/V: ToString`） | 形如 `{a: 1, b: 2}`（顺序为实现相关） |
 | `m.into_iter() -> HashMapIter[K, V]` | 拥有型迭代器，产出 `Pair[K, V]`（`for p in m.into_iter()`） |
 | `m.remove(k) -> bool` | 删除；不存在返回 false |
+| `m.remove_get(k) -> Option[V]` | 删除并返回旧值（浅拷贝） |
 | `m.len()` / `m.is_empty()` | 长度 / 是否为空 |
 
 ```ayanami

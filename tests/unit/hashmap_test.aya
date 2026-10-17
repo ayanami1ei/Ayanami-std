@@ -151,3 +151,15 @@ fn test_get_or_insert() {
     #assert_eq(c, 2)
     #assert_eq(m.len(), 2)
 }
+
+#[test]
+fn test_remove_get() {
+    m = HashMap::new[String, int]()
+    m.insert("a", 1)
+    m.insert("b", 2)
+    v = m.remove_get("a")
+    #assert_eq(v.unwrap_or(0), 1)
+    #assert_eq(m.len(), 1)
+    #assert(m.remove_get("a").is_none())
+    #assert_eq(m.get("b").unwrap_or(0), 2)
+}
