@@ -12,6 +12,15 @@ pub fn popcount(int x) -> int {
     return __ayanami_popcount(x)
 }
 
+/// 是否 2 的幂（`x > 0` 且仅一个置位）
+#[pure]
+pub fn is_power_of_two(int x) -> bool {
+    if x <= 0 {
+        return false
+    }
+    return __ayanami_popcount(x) == 1
+}
+
 /// 前导零个数（`x == 0` 返回 64）
 #[pure]
 pub fn leading_zeros(int x) -> int {

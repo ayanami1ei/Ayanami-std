@@ -7,6 +7,7 @@ import "bitops";
 | 函数 | 说明 |
 |---|---|
 | `popcount(int x) -> int` | 置位比特数 |
+| `is_power_of_two(int x) -> bool` | 是否 2 的幂（`x > 0` 且仅一个置位） |
 | `leading_zeros(int x) -> int` | 前导零个数（`0` → 64） |
 | `trailing_zeros(int x) -> int` | 尾随零个数（`0` → 64） |
 
