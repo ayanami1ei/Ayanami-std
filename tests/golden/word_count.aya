@@ -19,5 +19,17 @@ fn main() -> int {
     println(counts.get("fox").unwrap_or(0))
     println(counts.get("dog").unwrap_or(0))
     println(counts.get("cat").unwrap_or(0))
+
+    ks = counts.sorted_keys()
+    i = 0usize
+    out = ""
+    while i < ks.len() {
+        if i > 0 {
+            out = out + " "
+        }
+        out = out + ks.index(i)
+        i = i + 1
+    }
+    println("sorted: " + out)
     return 0
 }

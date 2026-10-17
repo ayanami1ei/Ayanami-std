@@ -25,5 +25,17 @@ fn main() -> int {
     println("distinct words: " + n)
     println("are: " + counts.get("are").unwrap_or(0))
     println("you: " + counts.get("you").unwrap_or(0))
+
+    ks = counts.sorted_keys()
+    i = 0usize
+    out = ""
+    while i < ks.len() {
+        if i > 0 {
+            out = out + " "
+        }
+        out = out + ks.index(i)
+        i = i + 1
+    }
+    println("sorted: " + out)
     return 0
 }
