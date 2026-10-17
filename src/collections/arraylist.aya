@@ -127,6 +127,19 @@ impl[T: Eq] ArrayList[T] {
         return 0 - 1
     }
 
+    /// 最后一次出现下标；未找到返回 -1
+    pub fn last_index_of(ref self, ref T v) -> int {
+        i = self.len
+        while i > 0 {
+            i = i - 1
+            x = self.data[i]
+            if x.same(v) {
+                return i as int
+            }
+        }
+        return 0 - 1
+    }
+
     /// 去除相邻重复元素（保留每组第一个）
     #[state]
     pub fn dedup(ref mut self) {

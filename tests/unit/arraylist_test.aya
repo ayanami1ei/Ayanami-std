@@ -206,3 +206,16 @@ fn test_dedup() {
     one.dedup()
     #assert_eq(one.len(), 1)
 }
+
+#[test]
+fn test_last_index_of() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(1)
+    #assert_eq(a.last_index_of(1), 2)
+    #assert_eq(a.last_index_of(2), 1)
+    #assert_eq(a.last_index_of(9), -1)
+    e = ArrayList::new[int]()
+    #assert_eq(e.last_index_of(1), -1)
+}
