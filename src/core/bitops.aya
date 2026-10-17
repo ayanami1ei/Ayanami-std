@@ -1,15 +1,49 @@
-// bitops — 位操作工具（popcount / leading_zeros / trailing_zeros）
-#[pure]
-extern "C" fn __ayanami_popcount(int x) -> int;
-#[pure]
-extern "C" fn __ayanami_clz(int x) -> int;
-#[pure]
-extern "C" fn __ayanami_ctz(int x) -> int;
+// bitops — 位操作工具（纯 Ayanami 实现）
 
 /// 置位比特数
 #[pure]
 pub fn popcount(int x) -> int {
-    return __ayanami_popcount(x)
+    n = 0
+    i = 0
+    while i < 64 {
+        if ((x >> i) & 1) != 0 {
+            n = n + 1
+        }
+        i = i + 1
+    }
+    return n
+}
+
+/// 前导零个数（`x == 0` 返回 64）
+#[pure]
+pub fn leading_zeros(int x) -> int {
+    if x == 0 {
+        return 64
+    }
+    i = 63
+    while i >= 0 {
+        if ((x >> i) & 1) != 0 {
+            return 63 - i
+        }
+        i = i - 1
+    }
+    return 64
+}
+
+/// 尾随零个数（`x == 0` 返回 64）
+#[pure]
+pub fn trailing_zeros(int x) -> int {
+    if x == 0 {
+        return 64
+    }
+    i = 0
+    while i < 64 {
+        if ((x >> i) & 1) != 0 {
+            return i
+        }
+        i = i + 1
+    }
+    return 64
 }
 
 /// 是否 2 的幂（`x > 0` 且仅一个置位）
@@ -18,17 +52,5 @@ pub fn is_power_of_two(int x) -> bool {
     if x <= 0 {
         return false
     }
-    return __ayanami_popcount(x) == 1
-}
-
-/// 前导零个数（`x == 0` 返回 64）
-#[pure]
-pub fn leading_zeros(int x) -> int {
-    return __ayanami_clz(x)
-}
-
-/// 尾随零个数（`x == 0` 返回 64）
-#[pure]
-pub fn trailing_zeros(int x) -> int {
-    return __ayanami_ctz(x)
+    return popcount(x) == 1
 }

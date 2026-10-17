@@ -62,3 +62,7 @@ fn main() -> int {
 - `gcd(0, 0) == 0`；`lcm` 任一参数为 0 返回 0。
 - `sqrt` / `floor` / `ceil` 由运行时 libm 提供；数学域行为（如 `sqrt(-1.0)`）暂不做诊断。
 - 浮点比较是精确比较，涉及误差时自行处理容差。
+
+> `sqrt` / `exp` / `ln` / `log10` / `sin` / `cos` / `tan` / `atan2` / `floor` / `ceil` /
+> `round` / `trunc` / `is_nan` 均为**纯 Ayanami 实现**（牛顿迭代 / 级数 / 范围归约），
+> 不依赖 C libm；运行时仅保留机器相关基础件。

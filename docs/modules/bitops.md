@@ -20,4 +20,4 @@ println(trailing_zeros(8))      // 3
 println(leading_zeros(1))       // 63
 ```
 
-> 由运行时 `__builtin_*` 提供（64 位）；负数按补码位模式处理。
+> **纯 Ayanami 实现**（移位循环），不依赖 C 内置函数；负数按补码位模式处理（64 位）。

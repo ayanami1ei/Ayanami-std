@@ -46,34 +46,23 @@ pub fn pow(int base, int exp) -> int {
     return result;
 }
 
-// ── A6：浮点重载与数学函数 ──
+// ── A6：浮点数学（纯 Ayanami 实现，不依赖 C libm） ──
+
+/// 圆周率
+#[pure]
+pub fn pi() -> float { return 3.141592653589793 }
 
 #[pure]
-extern "C" fn __ayanami_sqrt(float x) -> float;
+fn ln2() -> float { return 0.6931471805599453 }
+
 #[pure]
-extern "C" fn __ayanami_floor(float x) -> float;
+fn two_pi() -> float { return 6.283185307179586 }
+
 #[pure]
-extern "C" fn __ayanami_ceil(float x) -> float;
+fn half_pi() -> float { return 1.5707963267948966 }
+
 #[pure]
-extern "C" fn __ayanami_float_is_nan(float x) -> int;
-#[pure]
-extern "C" fn __ayanami_exp(float x) -> float;
-#[pure]
-extern "C" fn __ayanami_log(float x) -> float;
-#[pure]
-extern "C" fn __ayanami_log10(float x) -> float;
-#[pure]
-extern "C" fn __ayanami_round(float x) -> float;
-#[pure]
-extern "C" fn __ayanami_trunc(float x) -> float;
-#[pure]
-extern "C" fn __ayanami_sin(float x) -> float;
-#[pure]
-extern "C" fn __ayanami_cos(float x) -> float;
-#[pure]
-extern "C" fn __ayanami_tan(float x) -> float;
-#[pure]
-extern "C" fn __ayanami_atan2(float y, float x) -> float;
+fn quarter_pi() -> float { return 0.7853981633974483 }
 
 #[pure]
 pub fn abs(float x) -> float {
@@ -100,54 +89,232 @@ pub fn clamp(float x, float lo, float hi) -> float {
     return x
 }
 
+/// 向零截断
 #[pure]
-pub fn sqrt(float x) -> float { return __ayanami_sqrt(x) }
+pub fn trunc(float x) -> float {
+    return (x as int) as float
+}
 
+/// 向下取整
 #[pure]
-pub fn floor(float x) -> float { return __ayanami_floor(x) }
+pub fn floor(float x) -> float {
+    i = x as int
+    f = i as float
+    if x >= 0.0 {
+        return f
+    }
+    if x == f {
+        return f
+    }
+    return (i - 1) as float
+}
 
+/// 向上取整
 #[pure]
-pub fn ceil(float x) -> float { return __ayanami_ceil(x) }
-
-/// e^x
-#[pure]
-pub fn exp(float x) -> float { return __ayanami_exp(x) }
-
-/// 自然对数
-#[pure]
-pub fn ln(float x) -> float { return __ayanami_log(x) }
-
-/// 常用对数（底 10）
-#[pure]
-pub fn log10(float x) -> float { return __ayanami_log10(x) }
+pub fn ceil(float x) -> float {
+    i = x as int
+    f = i as float
+    if x <= 0.0 {
+        return f
+    }
+    if x == f {
+        return f
+    }
+    return (i + 1) as float
+}
 
 /// 四舍五入（half away from zero）
 #[pure]
-pub fn round(float x) -> float { return __ayanami_round(x) }
+pub fn round(float x) -> float {
+    if x >= 0.0 {
+        return floor(x + 0.5)
+    }
+    return 0.0 - floor(0.0 - x + 0.5)
+}
 
-/// 向零截断
+/// 平方根（牛顿迭代；负数返回 NaN）
 #[pure]
-pub fn trunc(float x) -> float { return __ayanami_trunc(x) }
+pub fn sqrt(float x) -> float {
+    if x < 0.0 {
+        return 0.0 / 0.0
+    }
+    if x == 0.0 {
+        return 0.0
+    }
+    g = x
+    if x < 1.0 {
+        g = 1.0
+    }
+    i = 0
+    while i < 64 {
+        ng = 0.5 * (g + x / g)
+        d = ng - g
+        if d < 0.0 {
+            d = 0.0 - d
+        }
+        g = ng
+        if d <= 1.0e-15 * g {
+            break
+        }
+        i = i + 1
+    }
+    return g
+}
 
-/// 圆周率
+/// e^x（范围归约 + Taylor 级数）
 #[pure]
-pub fn pi() -> float { return 3.141592653589793 }
+pub fn exp(float x) -> float {
+    k = round(x / ln2()) as int
+    r = x - (k as float) * ln2()
+    s = 1.0
+    t = 1.0
+    n = 1
+    while n <= 24 {
+        t = t * r / (n as float)
+        s = s + t
+        n = n + 1
+    }
+    if k >= 0 {
+        i = 0
+        while i < k {
+            s = s * 2.0
+            i = i + 1
+        }
+    } else {
+        i = 0
+        while i < 0 - k {
+            s = s / 2.0
+            i = i + 1
+        }
+    }
+    return s
+}
 
-/// 正弦
+/// 自然对数（范围归约 + atanh 级数；0 → -inf、负数 → NaN）
 #[pure]
-pub fn sin(float x) -> float { return __ayanami_sin(x) }
+pub fn ln(float x) -> float {
+    if x < 0.0 {
+        return 0.0 / 0.0
+    }
+    if x == 0.0 {
+        return 0.0 - 1.0 / 0.0
+    }
+    m = x
+    e = 0
+    while m >= 1.5 {
+        m = m / 2.0
+        e = e + 1
+    }
+    while m < 0.75 {
+        m = m * 2.0
+        e = e - 1
+    }
+    z = (m - 1.0) / (m + 1.0)
+    z2 = z * z
+    s = 0.0
+    t = z
+    n = 1
+    while n <= 41 {
+        s = s + t / (n as float)
+        t = t * z2
+        n = n + 2
+    }
+    return 2.0 * s + (e as float) * ln2()
+}
 
-/// 余弦
+/// 常用对数（底 10）
 #[pure]
-pub fn cos(float x) -> float { return __ayanami_cos(x) }
+pub fn log10(float x) -> float {
+    return ln(x) / 2.302585092994046
+}
+
+/// 正弦（范围归约 + Taylor 级数）
+#[pure]
+pub fn sin(float x) -> float {
+    k = round(x / two_pi()) as int
+    r = x - (k as float) * two_pi()
+    s = r
+    t = r
+    n = 1
+    while n <= 20 {
+        t = 0.0 - t * r * r / ((2.0 * (n as float)) * (2.0 * (n as float) + 1.0))
+        s = s + t
+        n = n + 1
+    }
+    return s
+}
+
+/// 余弦（范围归约 + Taylor 级数）
+#[pure]
+pub fn cos(float x) -> float {
+    k = round(x / two_pi()) as int
+    r = x - (k as float) * two_pi()
+    s = 1.0
+    t = 1.0
+    n = 1
+    while n <= 20 {
+        t = 0.0 - t * r * r / ((2.0 * (n as float) - 1.0) * (2.0 * (n as float)))
+        s = s + t
+        n = n + 1
+    }
+    return s
+}
 
 /// 正切
 #[pure]
-pub fn tan(float x) -> float { return __ayanami_tan(x) }
+pub fn tan(float x) -> float {
+    return sin(x) / cos(x)
+}
+
+#[pure]
+fn atan_series(float z) -> float {
+    z2 = z * z
+    s = 0.0
+    t = z
+    n = 1
+    while n <= 41 {
+        s = s + t / (n as float)
+        t = 0.0 - t * z2
+        n = n + 2
+    }
+    return s
+}
+
+#[pure]
+fn atan1(float x) -> float {
+    if x < 0.0 {
+        return 0.0 - atan1(0.0 - x)
+    }
+    if x > 1.0 {
+        return half_pi() - atan1(1.0 / x)
+    }
+    if x > 0.5 {
+        z = (x - 1.0) / (x + 1.0)
+        return quarter_pi() + atan_series(z)
+    }
+    return atan_series(x)
+}
 
 /// 方位角 atan2(y, x)
 #[pure]
-pub fn atan2(float y, float x) -> float { return __ayanami_atan2(y, x) }
+pub fn atan2(float y, float x) -> float {
+    if x > 0.0 {
+        return atan1(y / x)
+    }
+    if x < 0.0 {
+        if y >= 0.0 {
+            return pi() + atan1(y / x)
+        }
+        return 0.0 - pi() + atan1(y / x)
+    }
+    if y > 0.0 {
+        return half_pi()
+    }
+    if y < 0.0 {
+        return 0.0 - half_pi()
+    }
+    return 0.0
+}
 
 #[pure]
 pub fn pow(float base, int exp) -> float {
@@ -219,9 +386,15 @@ impl int {
 }
 
 impl float {
-    /// 是否 NaN（runtime `isnan`）
+    /// 是否 NaN（IEEE：与 0 的比较均无序）
     #[pure]
     pub fn is_nan(self) -> bool {
-        return __ayanami_float_is_nan(self) != 0
+        if self >= 0.0 {
+            return false
+        }
+        if self < 0.0 {
+            return false
+        }
+        return true
     }
 }

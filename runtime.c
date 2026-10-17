@@ -20,32 +20,9 @@ static int64_t live_allocs = 0;
 
 int64_t __ayanami_runtime_abi(void) { return AYANAMI_RUNTIME_ABI; }
 
-/* A6：标准库辅助 —— int→char 与数学函数 */
-char __ayanami_int_to_char(long long c) {
-    return (char)c;
-}
-double __ayanami_sqrt(double x) { return sqrt(x); }
-double __ayanami_floor(double x) { return floor(x); }
-double __ayanami_ceil(double x) { return ceil(x); }
-int64_t __ayanami_float_is_nan(double x) { return isnan(x) ? 1 : 0; }
-double __ayanami_exp(double x) { return exp(x); }
-double __ayanami_log(double x) { return log(x); }
-double __ayanami_log10(double x) { return log10(x); }
-double __ayanami_round(double x) { return round(x); }
-double __ayanami_trunc(double x) { return trunc(x); }
-double __ayanami_sin(double x) { return sin(x); }
-double __ayanami_cos(double x) { return cos(x); }
-double __ayanami_tan(double x) { return tan(x); }
-double __ayanami_atan2(double y, double x) { return atan2(y, x); }
-int64_t __ayanami_popcount(int64_t x) { return (int64_t)__builtin_popcountll((unsigned long long)x); }
-int64_t __ayanami_clz(int64_t x) {
-    if (x == 0) return 64;
-    return (int64_t)__builtin_clzll((unsigned long long)x);
-}
-int64_t __ayanami_ctz(int64_t x) {
-    if (x == 0) return 64;
-    return (int64_t)__builtin_ctzll((unsigned long long)x);
-}
+/* A6：标准库辅助 —— 数学与位操作已迁移为纯 Ayanami 实现
+ * （std/src/core/math.aya、std/src/core/bitops.aya）；
+ * 运行时仅保留机器相关的基础件（内存/IO/系统调用/浮点格式化）。 */
 
 /* A5d-3b：诊断通道弱符号（可执行文件里为 no-op；插件 shim 提供强定义） */
 __attribute__((weak)) void __ayanami_diag_emit(long long level, __ayanami_diag_buf msg) {

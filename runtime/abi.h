@@ -49,23 +49,6 @@ int64_t __ayanami_float_sci_len(double n, int64_t digits);
 char *__ayanami_float_sci_str(double n, int64_t digits, int64_t out_len);
 
 // ── 数学 ──
-char __ayanami_int_to_char(long long c);
-double __ayanami_sqrt(double x);
-double __ayanami_floor(double x);
-double __ayanami_ceil(double x);
-int64_t __ayanami_float_is_nan(double x);
-double __ayanami_exp(double x);
-double __ayanami_log(double x);
-double __ayanami_log10(double x);
-double __ayanami_round(double x);
-double __ayanami_trunc(double x);
-double __ayanami_sin(double x);
-double __ayanami_cos(double x);
-double __ayanami_tan(double x);
-double __ayanami_atan2(double y, double x);
-int64_t __ayanami_popcount(int64_t x);
-int64_t __ayanami_clz(int64_t x);
-int64_t __ayanami_ctz(int64_t x);
 
 // ── 诊断通道（弱符号；插件 shim 可提供强定义） ──
 void __ayanami_diag_emit(long long level, __ayanami_diag_buf msg);
