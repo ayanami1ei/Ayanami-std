@@ -1,46 +1,9 @@
-// dir_copy — 递归复制目录树示例
+// dir_copy — 递归复制目录树示例（使用 fs.copy_tree）
 //
-// 创建源目录树 → 递归复制到目标 → 校验内容 → 清理。
+// 创建源目录树 → copy_tree 复制 → 校验内容 → 清理。
 import "fs"
 import "time"
 import "io"
-
-struct Counts {
-    int files
-    int dirs
-}
-
-fn copy_tree(String src, String dst, int depth) -> Counts {
-    if depth <= 0 {
-        return Counts { files = 0, dirs = 0 }
-    }
-    mkdir(dst.copy())
-    o = list_dir(src.copy())
-    if o._tag != 0 {
-        return Counts { files = 0, dirs = 0 }
-    }
-    entries = o._data_Some._0
-    files = 0
-    dirs = 0
-    i = 0usize
-    while i < entries.len() {
-        name = entries.index(i)
-        s = src + "/" + name
-        d = dst + "/" + name
-        if is_dir(s.copy()) {
-            dirs = dirs + 1
-            sub = copy_tree(s, d, depth - 1)
-            files = files + sub.files
-            dirs = dirs + sub.dirs
-        } else {
-            if copy_file(s, d) {
-                files = files + 1
-            }
-        }
-        i = i + 1
-    }
-    return Counts { files = files, dirs = dirs }
-}
 
 fn main() -> int {
     base = "/tmp/ayanami_copy_" + now_millis().to_string()
@@ -53,9 +16,8 @@ fn main() -> int {
     write_file(src + "/b.txt", "B")
     write_file(src + "/sub/c.txt", "C")
 
-    c = copy_tree(src.copy(), dst.copy(), 3)
-    println("copied files: " + c.files)
-    println("copied dirs: " + c.dirs)
+    n = copy_tree(src.copy(), dst.copy())
+    println("copied files: " + n)
 
     va = read_file(dst + "/a.txt").unwrap_or("")
     vc = read_file(dst + "/sub/c.txt").unwrap_or("")

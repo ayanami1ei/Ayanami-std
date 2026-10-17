@@ -132,3 +132,59 @@ pub fn copy_file(String src, String dst) -> bool {
 pub fn rename_file(String from, String to) -> bool {
     return __ayanami_fs_rename(from, to) == 0
 }
+
+/// 文件字节数（失败 None）
+#[io]
+pub fn size(String path) -> Option[int] {
+    n = __ayanami_fs_size(path)
+    if n < 0 {
+        return Option::None()
+    }
+    return Option::Some(n)
+}
+
+/// 递归复制目录树（返回复制的文件数；失败 -1；目标目录已存在时合并）
+#[alloc]
+#[state]
+#[io]
+pub fn copy_tree(String src, String dst) -> int {
+    return copy_tree_impl(src, dst, 16)
+}
+
+fn copy_tree_impl(String src, String dst, int depth) -> int {
+    if depth <= 0 {
+        return 0 - 1
+    }
+    if !mkdir(dst.copy()) {
+        if !is_dir(dst.copy()) {
+            return 0 - 1
+        }
+    }
+    o = list_dir(src.copy())
+    if o._tag != 0 {
+        return 0 - 1
+    }
+    entries = o._data_Some._0
+    n = 0
+    i = 0usize
+    while i < entries.len() {
+        name = entries.index(i)
+        s = src + "/" + name
+        d = dst + "/" + name
+        if is_dir(s.copy()) {
+            sub = copy_tree_impl(s, d, depth - 1)
+            if sub < 0 {
+                return 0 - 1
+            }
+            n = n + sub
+        } else {
+            if copy_file(s, d) {
+                n = n + 1
+            } else {
+                return 0 - 1
+            }
+        }
+        i = i + 1
+    }
+    return n
+}

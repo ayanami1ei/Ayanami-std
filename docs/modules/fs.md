@@ -18,6 +18,8 @@ import "fs";
 | `is_file(String path) -> bool` | 是否普通文件 |
 | `mkdir(String path) -> bool` / `rmdir(String path) -> bool` | 创建 / 删除（空）目录 |
 | `mtime(String path) -> Option[int]` | 修改时间（Unix 秒；失败 `None`） |
+| `size(String path) -> Option[int]` | 文件字节数（失败 `None`） |
+| `copy_tree(String src, String dst) -> int` | 递归复制目录树（返回文件数；失败 `-1`） |
 | `list_dir(String path) -> Option[ArrayList[String]]` | 目录项（不含 `.` / `..`；失败 `None`） |
 
 ## 示例

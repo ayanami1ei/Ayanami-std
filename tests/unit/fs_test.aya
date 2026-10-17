@@ -91,3 +91,30 @@ fn test_copy_rename() {
     #assert(remove_file("/tmp/ayanami_fs_cr_dst2.txt"))
     #assert(!copy_file("/tmp/ayanami_no_such_file_xyz", "/tmp/ayanami_fs_cr_dst.txt"))
 }
+
+#[test]
+fn test_size_copy_tree() {
+    base = "/tmp/ayanami_fs_tree_" + now_millis().to_string()
+    src = base + "/src"
+    dst = base + "/dst"
+    #assert(mkdir(base.copy()))
+    #assert(mkdir(src.copy()))
+    #assert(mkdir(src + "/sub"))
+    #assert(write_file(src + "/a.txt", "hello"))
+    #assert(write_file(src + "/sub/b.txt", "xy"))
+    #assert_eq(size(src + "/a.txt").unwrap_or(-1), 5)
+    n = copy_tree(src.copy(), dst.copy())
+    #assert_eq(n, 2)
+    v = read_file(dst + "/sub/b.txt").unwrap_or("")
+    #assert_eq(v, "xy")
+    #assert(size("/tmp/ayanami_no_such_file_xyz").is_none())
+    #assert(remove_file(src + "/a.txt"))
+    #assert(remove_file(src + "/sub/b.txt"))
+    #assert(remove_file(dst + "/a.txt"))
+    #assert(remove_file(dst + "/sub/b.txt"))
+    #assert(rmdir(src + "/sub"))
+    #assert(rmdir(dst + "/sub"))
+    #assert(rmdir(src.copy()))
+    #assert(rmdir(dst.copy()))
+    #assert(rmdir(base.copy()))
+}
