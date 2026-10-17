@@ -187,8 +187,8 @@ AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
 
 ```bash
 # 在主仓根目录构建编译器后
-AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/build.sh --install <主仓>/target/debug/std
+AYANAMI_BIN=<主仓>/target/debug/ayanami ./packaging/build.sh --install <主仓>/target/debug/std
 ```
 
-之后运行任意 `import` 标准库的程序即可看到改动；`./scripts/build.sh` 不带 `--install`
+之后运行任意 `import` 标准库的程序即可看到改动；`./packaging/build.sh` 不带 `--install`
 只生成 `src/*.lcl`。发布时主仓 `./scripts/package_release.sh` 会逐模块构建并组装 `install/std/`。

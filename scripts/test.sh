@@ -32,7 +32,7 @@ for arg in "$@"; do
 done
 
 if [[ "${SKIP_INSTALL:-0}" != "1" ]]; then
-    AYANAMI_BIN="$BIN" ./scripts/build.sh --install "$(dirname "$BIN")/std" || exit 1
+    AYANAMI_BIN="$BIN" ./packaging/build.sh --install "$(dirname "$BIN")/std" || exit 1
 fi
 
 exec python3 scripts/run_tests.py --bin "$BIN" "${ARGS[@]}"

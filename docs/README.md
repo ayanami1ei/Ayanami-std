@@ -47,7 +47,7 @@ fn main() -> int {
 本仓库是编译器主仓的 `std/` 子模块。开发态改完 `src/` 后重建并安装，再跑回归：
 
 ```bash
-AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/build.sh --install <主仓>/target/debug/std
+AYANAMI_BIN=<主仓>/target/debug/ayanami ./packaging/build.sh --install <主仓>/target/debug/std
 AYANAMI_BIN=<主仓>/target/debug/ayanami ./scripts/test.sh
 ```
 
