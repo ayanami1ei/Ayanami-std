@@ -9,6 +9,7 @@ import "convert";
 | 方法 | 说明 |
 |---|---|
 | `s.try_parse_int() -> Option[int]` | 可选 `+/-`、全为数字；空白 / 非法 / 溢出 → `None` |
+| `s.try_parse_uint() -> Option[usize]` | 同 `try_parse_int` 且拒绝负数 |
 | `s.try_parse_float() -> Option[float]` | `[+/-] digits [. digits]`（无指数）；非法 → `None` |
 | `s.try_parse_bool() -> Option[bool]` | 仅 `"true"` / `"false"` |
 | `s.try_parse_int_radix(base) -> Option[int]` | 按进制严格解析（base ∈ [2, 36]；允许 `+/-`，不允许空白/前缀） |

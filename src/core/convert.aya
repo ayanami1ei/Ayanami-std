@@ -76,6 +76,20 @@ impl String {
         }
         return Option::Some(v);
     }
+    /// 严格解析 usize（负数/非法返回 None）
+    #[pure]
+    pub fn try_parse_uint(ref self) -> Option[usize] {
+        v = self.try_parse_int()
+        if v._tag != 0 {
+            return Option::None()
+        }
+        n = v._data_Some._0
+        if n < 0 {
+            return Option::None()
+        }
+        return Option::Some(n as usize)
+    }
+
     /// 严格解析浮点：可选 +/-，digits [. digits]（无指数）；非法输入返回 None
     #[pure]
     fn try_parse_float(ref self) -> Option[float] {

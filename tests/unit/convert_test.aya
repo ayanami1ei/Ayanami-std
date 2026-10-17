@@ -95,3 +95,11 @@ fn test_is_float() {
     #assert(!"abc".is_float());
     #assert(!"".is_float())
 }
+
+#[test]
+fn test_parse_uint() {
+    #assert_eq("42".try_parse_uint().unwrap_or(0), 42usize)
+    #assert_eq("0".try_parse_uint().unwrap_or(1), 0usize)
+    #assert("-1".try_parse_uint().is_none())
+    #assert("abc".try_parse_uint().is_none())
+}
