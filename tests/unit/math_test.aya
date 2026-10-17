@@ -67,3 +67,13 @@ fn test_exp_log_round() {
     #assert_close(trunc(2.9), 2.0, 0.0001)
     #assert_close(trunc(0.0 - 2.9), 0.0 - 2.0, 0.0001)
 }
+
+#[test]
+fn test_trig() {
+    #assert_close(sin(0.0), 0.0, 0.0001)
+    #assert_close(cos(0.0), 1.0, 0.0001)
+    #assert_close(sin(pi() / 2.0), 1.0, 0.0001)
+    #assert_close(cos(pi()), 0.0 - 1.0, 0.0001)
+    #assert_close(tan(0.0), 0.0, 0.0001)
+    #assert_close(atan2(1.0, 1.0), pi() / 4.0, 0.0001)
+}

@@ -1,0 +1,22 @@
+// bitops — 位操作工具（popcount / leading_zeros / trailing_zeros）
+extern "C" fn __ayanami_popcount(int x) -> int;
+extern "C" fn __ayanami_clz(int x) -> int;
+extern "C" fn __ayanami_ctz(int x) -> int;
+
+/// 置位比特数
+#[pure]
+pub fn popcount(int x) -> int {
+    return __ayanami_popcount(x)
+}
+
+/// 前导零个数（`x == 0` 返回 64）
+#[pure]
+pub fn leading_zeros(int x) -> int {
+    return __ayanami_clz(x)
+}
+
+/// 尾随零个数（`x == 0` 返回 64）
+#[pure]
+pub fn trailing_zeros(int x) -> int {
+    return __ayanami_ctz(x)
+}

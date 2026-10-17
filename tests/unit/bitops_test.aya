@@ -1,0 +1,20 @@
+import "bitops"
+import "test"
+
+#[test]
+fn test_popcount() {
+    #assert_eq(popcount(0), 0)
+    #assert_eq(popcount(1), 1)
+    #assert_eq(popcount(7), 3)
+    #assert_eq(popcount(255), 8)
+}
+
+#[test]
+fn test_zeros() {
+    #assert_eq(leading_zeros(0), 64)
+    #assert_eq(trailing_zeros(0), 64)
+    #assert_eq(trailing_zeros(8), 3)
+    #assert_eq(leading_zeros(1), 63)
+    x = 0 - 1
+    #assert_eq(leading_zeros(x), 0)
+}

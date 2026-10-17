@@ -55,6 +55,14 @@ extern "C" fn __ayanami_log10(float x) -> float;
 extern "C" fn __ayanami_round(float x) -> float;
 #[pure]
 extern "C" fn __ayanami_trunc(float x) -> float;
+#[pure]
+extern "C" fn __ayanami_sin(float x) -> float;
+#[pure]
+extern "C" fn __ayanami_cos(float x) -> float;
+#[pure]
+extern "C" fn __ayanami_tan(float x) -> float;
+#[pure]
+extern "C" fn __ayanami_atan2(float y, float x) -> float;
 
 #[pure]
 pub fn abs(float x) -> float {
@@ -109,6 +117,26 @@ pub fn round(float x) -> float { return __ayanami_round(x) }
 /// 向零截断
 #[pure]
 pub fn trunc(float x) -> float { return __ayanami_trunc(x) }
+
+/// 圆周率
+#[pure]
+pub fn pi() -> float { return 3.141592653589793 }
+
+/// 正弦
+#[pure]
+pub fn sin(float x) -> float { return __ayanami_sin(x) }
+
+/// 余弦
+#[pure]
+pub fn cos(float x) -> float { return __ayanami_cos(x) }
+
+/// 正切
+#[pure]
+pub fn tan(float x) -> float { return __ayanami_tan(x) }
+
+/// 方位角 atan2(y, x)
+#[pure]
+pub fn atan2(float y, float x) -> float { return __ayanami_atan2(y, x) }
 
 #[pure]
 pub fn pow(float base, int exp) -> float {

@@ -10,6 +10,7 @@
 | [design.md](dev/design.md) | 设计标准：对外声明式、对内过程式、整体面向对象 |
 | [io.md](modules/io.md) | 输入输出：`print` / `println` / `putchar` / `getchar` |
 | [math.md](modules/math.md) | 数学函数：整型与浮点重载 |
+| [bitops.md](modules/bitops.md) | 位操作：popcount / leading_zeros / trailing_zeros |
 | [string.md](modules/string.md) | 字符串与字符：`String` 方法、`char` 工具、`ToString` |
 | [convert.md](modules/convert.md) | 解析与转换：`try_parse_*`、`parse_*_or`、`to_*`、`Into[T]` |
 | [rand.md](modules/rand.md) | 伪随机数：`Rng`（LCG，确定性） |

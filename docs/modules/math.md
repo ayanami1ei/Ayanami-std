@@ -25,6 +25,9 @@ import "math";
 | `pow(float base, int exp)` | 浮点幂 |
 | `exp(float x)` / `ln(float x)` / `log10(float x)` | e^x / 自然对数 / 常用对数 |
 | `round(float x)` / `trunc(float x)` | 四舍五入（half away from zero）/ 向零截断 |
+| `pi() -> float` | 圆周率 |
+| `sin(x)` / `cos(x)` / `tan(x)` | 三角函数（弧度） |
+| `atan2(y, x)` | 方位角（`[-pi, pi]`） |
 
 ## 示例（输出即注释）
 
