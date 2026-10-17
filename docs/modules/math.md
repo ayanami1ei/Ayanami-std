@@ -9,6 +9,7 @@ import "math";
 | 函数 | 说明 |
 |---|---|
 | `abs(int x)` | 绝对值 |
+| `sign(int x)` | 符号（`-1` / `0` / `1`） |
 | `min(int a, int b)` / `max(int a, int b)` | 最小 / 最大 |
 | `clamp(int x, int lo, int hi)` | 夹取到 `[lo, hi]` |
 | `pow(int base, int exp)` | 整数幂（循环乘法，`exp >= 0`） |

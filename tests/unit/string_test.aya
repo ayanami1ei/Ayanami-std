@@ -105,3 +105,11 @@ fn test_self_append() {
     u = u + "b"
     #assert_eq(u, "ab")
 }
+
+#[test]
+fn test_is_whitespace() {
+    #assert("   ".is_whitespace())
+    #assert("\t\n".is_whitespace())
+    #assert(!"".is_whitespace())
+    #assert(!" a ".is_whitespace())
+}

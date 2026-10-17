@@ -8,6 +8,8 @@ import "time";
 |---|---|
 | `now_millis() -> int` | 单调毫秒（`CLOCK_MONOTONIC`），适合计时/差值 |
 | `now_unix() -> int` | Unix 秒（墙上时钟） |
+| `now_micros() -> int` | 单调微秒（计时用） |
+| `format_ms(int ms) -> String` | 毫秒格式化 `HH:MM:SS.mmm` |
 | `elapsed_ms(int start) -> int` | 自 `start`（来自 `now_millis`）起的毫秒差 |
 | `sleep_ms(int ms)` | 睡眠 `ms` 毫秒（`<= 0` 直接返回；`nanosleep`，被信号打断自动续睡） |
 

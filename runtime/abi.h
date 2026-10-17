@@ -108,7 +108,8 @@ __AYANAMI_OVF_DECL(mul_u128, unsigned __int128)
 // ── 系统扩展 ──
 int64_t __ayanami_random_u64(void);   // 系统熵源（getrandom / /dev/urandom）
 int64_t __ayanami_time_millis(void);  // 单调毫秒（计时用）
-int64_t __ayanami_time_unix(void);    // Unix 秒
+int64_t __ayanami_time_unix(void);
+int64_t __ayanami_time_micros(void);    // Unix 秒
 
 // ── 文件（缓冲区由 unique_alloc 分配，调用方用 unique_free 释放） ──
 int64_t __ayanami_fs_size(__ayanami_str_view path);   // 字节数；-1 不存在/出错

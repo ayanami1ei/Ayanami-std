@@ -38,6 +38,13 @@ int64_t __ayanami_time_millis(void) {
     return (int64_t)ts.tv_sec * 1000 + (int64_t)(ts.tv_nsec / 1000000);
 }
 
+// 单调微秒
+int64_t __ayanami_time_micros(void) {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (int64_t)ts.tv_sec * 1000000 + (int64_t)(ts.tv_nsec / 1000);
+}
+
 // Unix 秒
 int64_t __ayanami_time_unix(void) {
     return (int64_t)time(NULL);

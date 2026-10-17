@@ -77,3 +77,10 @@ fn test_trig() {
     #assert_close(tan(0.0), 0.0, 0.0001)
     #assert_close(atan2(1.0, 1.0), pi() / 4.0, 0.0001)
 }
+
+#[test]
+fn test_sign() {
+    #assert_eq(sign(0 - 5), -1)
+    #assert_eq(sign(0), 0)
+    #assert_eq(sign(7), 1)
+}

@@ -552,6 +552,22 @@ impl String {
         }
         return self.substring(s as usize, e as usize);
     }
+    /// 是否全为空白（空串为 false）
+    #[pure]
+    pub fn is_whitespace(ref self) -> bool {
+        if self.len == 0 {
+            return false
+        }
+        i = 0usize
+        while i < self.len {
+            if !self.data[i].is_space() {
+                return false
+            }
+            i = i + 1
+        }
+        return true
+    }
+
     /// 去掉前缀（无前缀返回自身拷贝）
     #[alloc]
     #[state]
