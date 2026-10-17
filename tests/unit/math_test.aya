@@ -109,6 +109,13 @@ fn test_abs_min_panics() {
     x = abs(m);
 }
 
+#[should_panic]
+fn test_neg_min_panics() {
+    // 一元负号带溢出检查（-i64::MIN panic，#183 已修）
+    m = 0 - 9223372036854775807 - 1;
+    x = -m;
+}
+
 #[test]
 fn test_float_special() {
     inf = 1.0 / 0.0;

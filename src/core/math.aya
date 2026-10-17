@@ -3,7 +3,7 @@
 #[pure]
 pub fn abs(int x) -> int {
     if x < 0 {
-        // 0 - x：带溢出检查（abs(i64::MIN) panic，而非静默回绕；一元 -x 本身不检查见 #183）
+        // 0 - x：带溢出检查（abs(i64::MIN) panic，而非静默回绕）
         return 0 - x;
     }
     return x;

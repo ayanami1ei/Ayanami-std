@@ -113,23 +113,19 @@ pub fn saturating_mul(int a, int b) -> int {
 /// 环绕加法（带溢出标记）
 #[pure]
 pub fn overflowing_add(int a, int b) -> Overflowing {
-    // #182：比较结果先入局部变量（bool 字段直接赋比较表达式会 llc 报错）
-    ov = __ayanami_add_overflow(a, b) == 1;
-    return Overflowing { value = __ayanami_wrapping_add(a, b), overflow = ov };
+    return Overflowing { value = __ayanami_wrapping_add(a, b), overflow = __ayanami_add_overflow(a, b) == 1 };
 }
 
 /// 环绕减法（带溢出标记）
 #[pure]
 pub fn overflowing_sub(int a, int b) -> Overflowing {
-    ov = __ayanami_sub_overflow(a, b) == 1;  // #182
-    return Overflowing { value = __ayanami_wrapping_sub(a, b), overflow = ov };
+    return Overflowing { value = __ayanami_wrapping_sub(a, b), overflow = __ayanami_sub_overflow(a, b) == 1 };
 }
 
 /// 环绕乘法（带溢出标记）
 #[pure]
 pub fn overflowing_mul(int a, int b) -> Overflowing {
-    ov = __ayanami_mul_overflow(a, b) == 1;  // #182
-    return Overflowing { value = __ayanami_wrapping_mul(a, b), overflow = ov };
+    return Overflowing { value = __ayanami_wrapping_mul(a, b), overflow = __ayanami_mul_overflow(a, b) == 1 };
 }
 
 /// 取负是否溢出（仅 `i64::MIN`）
@@ -150,8 +146,7 @@ pub fn saturating_neg(int a) -> int {
 /// 环绕取负（带溢出标记）
 #[pure]
 pub fn overflowing_neg(int a) -> Overflowing {
-    ov = neg_overflow(a);  // #182
-    return Overflowing { value = wrapping_neg(a), overflow = ov };
+    return Overflowing { value = wrapping_neg(a), overflow = neg_overflow(a) };
 }
 
 /// 检查取负（`i64::MIN` 返回 None）
