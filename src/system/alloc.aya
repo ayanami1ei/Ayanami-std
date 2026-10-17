@@ -1,0 +1,56 @@
+// alloc — 全局分配器（可替换后端）
+//
+// 默认实现由运行时提供（malloc/free + live_allocs 计数）；用户可在程序中导出
+// 同名 `extern "C"` 定义（强符号覆盖弱符号），整个程序（含编译器生成的分配调用）
+// 都会走自定义实现 —— Rust `#[global_allocator]` 的对应物。
+//
+// 契约（C ABI 符号）：
+//   [char] __ayanami_default_alloc(usize size)   默认分配原语（malloc；不计数）
+//   void   __ayanami_default_free([char] ptr)    默认释放原语（free；0 安全）
+//   [char] __ayanami_counted_alloc(usize size)   计数分配（std 入口；转发 unique_alloc）
+//   void   __ayanami_counted_free([char] ptr)    计数释放（std 入口；转发 unique_free）
+//   int    __ayanami_live_allocs()               存活分配数（计数分配维护）
+//
+// 详见 docs/modules/alloc.md。
+extern "C" fn __ayanami_default_alloc(usize size) -> usize;
+
+extern "C" fn __ayanami_default_free(usize addr);
+
+extern "C" fn __ayanami_counted_alloc(usize size) -> usize;
+
+extern "C" fn __ayanami_counted_free(usize addr);
+
+extern "C" fn __ayanami_live_allocs() -> int;
+
+/// 分配器接口（地址用 usize 表示；0 表示失败/空）
+interface Allocator {
+    fn alloc(ref self, usize size) -> usize;
+    fn free(ref self, usize addr);
+}
+
+/// 默认分配器（运行时 malloc/free；计入 live_allocs）—— 无状态，命名空间形式
+pub namespace DefaultAllocator {
+    /// 分配（失败返回 0）
+    pub fn alloc(usize size) -> usize {
+        return __ayanami_counted_alloc(size);
+    }
+    /// 释放（0 安全）
+    pub fn free(usize addr) {
+        __ayanami_counted_free(addr)
+    }
+}
+
+/// 当前存活分配数（默认实现计数；自定义分配器不计数时为 0）
+pub fn live_allocs() -> int {
+    return __ayanami_live_allocs();
+}
+
+/// 默认分配（不经计数；供自定义分配器包装转发）
+pub fn default_alloc(usize size) -> usize {
+    return __ayanami_default_alloc(size);
+}
+
+/// 默认释放
+pub fn default_free(usize addr) {
+    __ayanami_default_free(addr)
+}
