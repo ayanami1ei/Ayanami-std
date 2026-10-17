@@ -6,6 +6,7 @@ import "hash"
 import "option"
 import "arraylist"
 import "iter"
+import "sort"
 
 pub struct HashMap[K: Hash, V] {
     [K] keys
@@ -406,5 +407,29 @@ impl[K: Hash, V: Eq] HashMap[K, V] {
             i = i + 1
         }
         return false
+    }
+}
+
+/// 需要键实现 Ord（排序视图）
+impl[K: Hash + Ord, V] HashMap[K, V] {
+    /// 排序后的键列表（升序）
+    #[alloc]
+    #[state]
+    pub fn sorted_keys(ref self) -> ArrayList[K] {
+        ks = self.keys()
+        ks.sort()
+        return ks
+    }
+}
+
+/// 需要值实现 Ord（排序视图）
+impl[K: Hash, V: Ord] HashMap[K, V] {
+    /// 排序后的值列表（升序）
+    #[alloc]
+    #[state]
+    pub fn sorted_values(ref self) -> ArrayList[V] {
+        vs = self.values()
+        vs.sort()
+        return vs
     }
 }

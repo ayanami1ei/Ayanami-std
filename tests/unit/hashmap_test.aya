@@ -195,3 +195,18 @@ fn test_map_to_list() {
     }
     #assert_eq(n, 3)
 }
+
+#[test]
+fn test_sorted_views() {
+    m = HashMap::new[String, int]()
+    m.insert("c", 3)
+    m.insert("a", 1)
+    m.insert("b", 2)
+    ks = m.sorted_keys()
+    #assert_eq(ks.len(), 3)
+    #assert_eq(ks.index(0), "a")
+    #assert_eq(ks.index(2), "c")
+    vs = m.sorted_values()
+    #assert_eq(vs.index(0), 1)
+    #assert_eq(vs.index(2), 3)
+}
