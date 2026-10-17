@@ -72,8 +72,10 @@ pub interface List[T] {
 ## LinkedList[T]
 
 方法集与 `ArrayList` 对齐：`push` / `index` / `set` / `pop` / `clear` / `is_empty` /
-`contains` / `index_of` / `remove` / `reverse` / `insert_at` / `remove_at` / `first` / `last` /
-`iter` / `to_string`，另有 `LinkedList::with_capacity[T](n)`；行为等价顺序表。
+`contains` / `index_of` / `last_index_of` / `remove` / `dedup` / `reverse` / `swap` /
+`insert_at` / `remove_at` / `first` / `last` / `map` / `filter` / `fold` / `any` / `all` /
+`find` / `position` / `count` / `retain` / `iter` / `to_string`，另有
+`LinkedList::with_capacity[T](n)`；行为等价顺序表。
 
 ## 示例（输出即注释）
 
