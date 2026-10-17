@@ -53,3 +53,23 @@ fn test_checked_overflowing() {
     #assert(!o2.overflow);
     #assert_eq(o2.value, 3)
 }
+
+#[test]
+fn test_neg_family() {
+    max = 9223372036854775807;
+    min = 0 - max - 1;
+    #assert_eq(wrapping_neg(5), -5);
+    #assert_eq(saturating_neg(5), -5);
+    #assert_eq(saturating_neg(min), max);
+    #assert_eq(wrapping_neg(min), min);
+    #assert(neg_overflow(min));
+    #assert(!neg_overflow(5));
+    #assert(checked_neg(min).is_none());
+    #assert_eq(checked_neg(7).unwrap_or(0), -7);
+    o = overflowing_neg(min);
+    #assert(o.overflow);
+    #assert_eq(o.value, min);
+    o2 = overflowing_neg(3);
+    #assert(!o2.overflow);
+    #assert_eq(o2.value, -3)
+}

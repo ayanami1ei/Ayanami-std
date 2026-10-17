@@ -9,10 +9,10 @@ import "num";
 | API | 说明 |
 |---|---|
 | `wrapping_add/sub/mul/neg` | 环绕（溢出回绕） |
-| `saturating_add/sub/mul` | 饱和（溢出取 `int` 边界值） |
-| `overflowing_add/sub/mul -> Overflowing` | 环绕值 + 溢出标记（`{ value, overflow }`） |
-| `checked_add/sub/mul -> Option[int]` | 溢出返回 `None` |
-| `add_overflow/sub_overflow/mul_overflow -> bool` | 单独取溢出标记 |
+| `saturating_add/sub/mul/neg` | 饱和（溢出取 `int` 边界值；`saturating_neg(i64::MIN) == i64::MAX`） |
+| `overflowing_add/sub/mul/neg -> Overflowing` | 环绕值 + 溢出标记（`{ value, overflow }`） |
+| `checked_add/sub/mul/neg -> Option[int]` | 溢出返回 `None` |
+| `add_overflow/sub_overflow/mul_overflow/neg_overflow -> bool` | 单独取溢出标记 |
 
 ```ayanami
 import "num"

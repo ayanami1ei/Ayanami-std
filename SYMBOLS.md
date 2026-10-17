@@ -351,9 +351,13 @@ src/core/num.aya:109: pub fn saturating_mul(int a, int b) -> int
 src/core/num.aya:115: pub fn overflowing_add(int a, int b) -> Overflowing
 src/core/num.aya:123: pub fn overflowing_sub(int a, int b) -> Overflowing
 src/core/num.aya:130: pub fn overflowing_mul(int a, int b) -> Overflowing
-src/core/num.aya:137: pub fn checked_add(int a, int b) -> Option[int]
-src/core/num.aya:146: pub fn checked_sub(int a, int b) -> Option[int]
-src/core/num.aya:155: pub fn checked_mul(int a, int b) -> Option[int]
+src/core/num.aya:137: pub fn neg_overflow(int a) -> bool
+src/core/num.aya:143: pub fn saturating_neg(int a) -> int
+src/core/num.aya:152: pub fn overflowing_neg(int a) -> Overflowing
+src/core/num.aya:159: pub fn checked_neg(int a) -> Option[int]
+src/core/num.aya:168: pub fn checked_add(int a, int b) -> Option[int]
+src/core/num.aya:177: pub fn checked_sub(int a, int b) -> Option[int]
+src/core/num.aya:186: pub fn checked_mul(int a, int b) -> Option[int]
 src/core/option.aya:5: interface Error
 src/core/option.aya:6: fn what(ref self) -> String;
 src/core/option.aya:9: pub enum Result[T, E]
@@ -592,12 +596,12 @@ src/system/rand.aya:42: fn next_range(ref mut self, int lo, int hi) -> int
 src/system/rand.aya:52: fn next_bool(ref mut self) -> bool
 src/system/rand.aya:58: fn next_float01(ref mut self) -> float
 src/system/rand.aya:67: pub fn shuffle[T](ref mut ArrayList[T] a, ref mut Rng r)
-src/system/time.aya:19: pub fn now_millis() -> int
-src/system/time.aya:25: pub fn now_micros() -> int
-src/system/time.aya:31: pub fn now_unix() -> int
-src/system/time.aya:38: pub fn format_ms(int ms) -> String
-src/system/time.aya:58: pub fn elapsed_ms(int start) -> int
-src/system/time.aya:64: pub fn sleep_ms(int ms)
+src/system/time.aya:21: pub fn now_millis() -> int
+src/system/time.aya:27: pub fn now_micros() -> int
+src/system/time.aya:33: pub fn now_unix() -> int
+src/system/time.aya:40: pub fn format_ms(int ms) -> String
+src/system/time.aya:60: pub fn elapsed_ms(int start) -> int
+src/system/time.aya:66: pub fn sleep_ms(int ms)
 tests/compile_fail/missing_import.aya:3: fn main() -> int
 tests/golden/callback_dispatch.aya:5: fn triple(int x) -> int
 tests/golden/callback_dispatch.aya:9: fn main() -> int
@@ -742,6 +746,7 @@ tests/unit/num_test.aya:6: fn test_wrapping()
 tests/unit/num_test.aya:17: fn test_overflow_flags()
 tests/unit/num_test.aya:29: fn test_saturating()
 tests/unit/num_test.aya:42: fn test_checked_overflowing()
+tests/unit/num_test.aya:58: fn test_neg_family()
 tests/unit/option_test.aya:5: fn some_int(int v) -> Option[int]
 tests/unit/option_test.aya:9: fn none_int() -> Option[int]
 tests/unit/option_test.aya:13: fn seven() -> int

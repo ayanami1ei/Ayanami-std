@@ -34,5 +34,6 @@ fn test_micros_format() {
     #assert_eq(format_ms(3723004), "01:02:03.004");
     #assert_eq(format_ms(0), "00:00:00.000");
     #assert_eq(format_ms(59000), "00:00:59.000");
-    #assert_eq(format_ms(0 - 1001), "00:00:01.001")
+    #assert_eq(format_ms(0 - 1001), "00:00:01.001");
+    #assert_eq(format_ms(0 - 9223372036854775807 - 1), "2562047788015:12:55.807")
 }

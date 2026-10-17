@@ -132,6 +132,37 @@ pub fn overflowing_mul(int a, int b) -> Overflowing {
     return Overflowing { value = __ayanami_wrapping_mul(a, b), overflow = ov };
 }
 
+/// 取负是否溢出（仅 `i64::MIN`）
+#[pure]
+pub fn neg_overflow(int a) -> bool {
+    return a == 0 - 9223372036854775807 - 1;
+}
+
+/// 饱和取负（`i64::MIN` 饱和为 `i64::MAX`）
+#[pure]
+pub fn saturating_neg(int a) -> int {
+    if neg_overflow(a) {
+        return 9223372036854775807;
+    }
+    return wrapping_neg(a);
+}
+
+/// 环绕取负（带溢出标记）
+#[pure]
+pub fn overflowing_neg(int a) -> Overflowing {
+    ov = neg_overflow(a);  // #182
+    return Overflowing { value = wrapping_neg(a), overflow = ov };
+}
+
+/// 检查取负（`i64::MIN` 返回 None）
+#[pure]
+pub fn checked_neg(int a) -> Option[int] {
+    if neg_overflow(a) {
+        return Option::None();
+    }
+    return Option::Some(wrapping_neg(a));
+}
+
 /// 检查加法（溢出返回 None）
 #[pure]
 pub fn checked_add(int a, int b) -> Option[int] {
