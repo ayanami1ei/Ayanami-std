@@ -205,3 +205,21 @@ fn test_take_superset() {
     #assert(b.is_superset_of(a))
     #assert(!a.is_superset_of(b))
 }
+
+#[test]
+fn test_set_predicates() {
+    s = HashSet::new[int]()
+    s.insert(1)
+    s.insert(2)
+    s.insert(3)
+    #assert(s.any((int k) -> bool { return k == 2 }))
+    #assert(!s.any((int k) -> bool { return k == 9 }))
+    #assert(s.all((int k) -> bool { return k > 0 }))
+    #assert(!s.all((int k) -> bool { return k > 1 }))
+    c = s.count((int k) -> bool { return k % 2 == 1 })
+    #assert_eq(c, 2usize)
+    f = s.find((int k) -> bool { return k > 1 })
+    #assert_eq(f.unwrap_or(0), 2)
+    e = s.find((int k) -> bool { return k > 9 })
+    #assert(e.is_none())
+}

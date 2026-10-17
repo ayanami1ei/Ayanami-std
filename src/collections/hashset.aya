@@ -363,3 +363,63 @@ impl[K: Hash] HashSet[K] {
         return HashSetIter[K] { set = self, index = 0 }
     }
 }
+
+/// 谓词族（与 ArrayList/HashMap 对齐）
+impl[K: Hash] HashSet[K] {
+    /// 是否存在满足谓词的元素
+    pub fn any(ref self, Fn(K) -> bool f) -> bool {
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                if f(self.keys[i]) {
+                    return true
+                }
+            }
+            i = i + 1
+        }
+        return false
+    }
+
+    /// 是否所有元素满足谓词（空集 true）
+    pub fn all(ref self, Fn(K) -> bool f) -> bool {
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                if !f(self.keys[i]) {
+                    return false
+                }
+            }
+            i = i + 1
+        }
+        return true
+    }
+
+    /// 满足谓词的元素个数
+    pub fn count(ref self, Fn(K) -> bool f) -> usize {
+        n = 0usize
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                if f(self.keys[i]) {
+                    n = n + 1
+                }
+            }
+            i = i + 1
+        }
+        return n
+    }
+
+    /// 首个满足谓词的元素；无则 None
+    pub fn find(ref self, Fn(K) -> bool f) -> Option[K] {
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                if f(self.keys[i]) {
+                    return Option::Some(self.keys[i])
+                }
+            }
+            i = i + 1
+        }
+        return Option::None()
+    }
+}

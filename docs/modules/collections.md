@@ -187,6 +187,7 @@ pub interface Hash {
 | `s.union(other)` / `s.intersection(other)` / `s.difference(other)` | 并 / 交 / 差（返回新集合） |
 | `s.is_subset_of(other) -> bool` | 是否子集（空集恒真） |
 | `s.is_superset_of(other) -> bool` | 是否超集 |
+| `s.any/all(Fn(K) -> bool)` / `s.count(...) -> usize` / `s.find(...) -> Option[K]` | 谓词族（与 ArrayList/HashMap 对齐） |
 | `s.clear()` | 清空（保留容量） |
 | `s.into_iter() -> HashSetIter[K]` | 拥有型迭代器（`for k in s.into_iter()`） |
 | `s.to_string()`（`K: ToString`） | 形如 `{a, b}`（顺序为实现相关） |
