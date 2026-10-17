@@ -601,6 +601,8 @@ src/system/time.aya:64: pub fn sleep_ms(int ms)
 tests/compile_fail/missing_import.aya:3: fn main() -> int
 tests/golden/callback_dispatch.aya:5: fn triple(int x) -> int
 tests/golden/callback_dispatch.aya:9: fn main() -> int
+tests/golden/checksum.aya:8: fn rolling_hash(ref String s) -> int
+tests/golden/checksum.aya:18: fn main() -> int
 tests/golden/dir_copy.aya:10: fn main() -> int
 tests/golden/dir_walk.aya:10: struct Counts
 tests/golden/dir_walk.aya:15: fn walk(String path, int depth) -> Counts
@@ -609,6 +611,7 @@ tests/golden/io_print.aya:3: fn main() -> int
 tests/golden/log_stats.aya:14: fn main() -> int
 tests/golden/math_ops.aya:5: fn main() -> int
 tests/golden/num_format.aya:5: fn main() -> int
+tests/golden/overflow_arith.aya:5: fn main() -> int
 tests/golden/string_ops.aya:5: fn main() -> int
 tests/golden/text_ops.aya:5: fn main() -> int
 tests/golden/text_pipeline.aya:10: fn main() -> int

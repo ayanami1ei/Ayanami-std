@@ -1,0 +1,32 @@
+// checksum — 环绕算术示例（64 位滚动哈希）
+//
+// 演示 num 的 wrapping_mul / wrapping_add：普通 `*` / `+` 溢出会 panic，
+// 哈希计算必须显式环绕（回绕为 64 位补码）。
+import "io";
+
+import "num";
+
+import "string";
+
+/// 64 位滚动哈希（base 31，环绕语义）
+fn rolling_hash(ref String s) -> int {
+    h = 0;
+    i = 0usize;
+    while i < s.len() {
+        h = wrapping_add(wrapping_mul(h, 31), char_code(s[i]));
+        i = i + 1;
+    }
+    return h;
+}
+
+fn main() -> int {
+    println("ayanami  -> " + rolling_hash("ayanami").to_hex());
+    println("standard -> " + rolling_hash("standard").to_hex());
+    println("empty    -> " + rolling_hash("").to_hex());
+    long = "";
+    for i in (0, 20) {
+        long = long + "ayanami";
+    }
+    println("long     -> " + rolling_hash(long).to_hex());
+    return 0;
+}

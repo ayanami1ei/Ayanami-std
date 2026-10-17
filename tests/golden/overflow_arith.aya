@@ -1,0 +1,22 @@
+import "io";
+
+import "num";
+
+fn main() -> int {
+    max = 9223372036854775807;
+    min = 0 - max - 1;
+    println(wrapping_add(max, 1));
+    println(saturating_add(max, 1));
+    println(saturating_sub(min, 1));
+    println(saturating_mul(max, 2));
+    println(wrapping_mul(max, 2));
+    println(wrapping_neg(min));
+    println(checked_add(max, 1).is_none());
+    println(checked_add(1, 2).unwrap_or(0));
+    o = overflowing_add(max, 1);
+    println(o.value);
+    println(o.overflow);
+    println(add_overflow(max, 1));
+    println(mul_overflow(3, 4));
+    return 0;
+}
