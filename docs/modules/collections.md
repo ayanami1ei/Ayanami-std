@@ -201,6 +201,7 @@ pub interface Hash {
 | `m.clear()` | 清空（保留容量） |
 | `m.merge(other)` | 合并另一张表（同键以 other 覆盖） |
 | `m.keys()` / `m.values() -> ArrayList[K]/ArrayList[V]` | 所有键 / 值（浅拷贝，顺序为实现相关） |
+| `m.to_list() -> ArrayList[Pair[K, V]]` | 所有键值对（浅拷贝，顺序为实现相关） |
 | `m.for_each(Fn(K, V))` / `m.fold[U](init, Fn(U, K, V) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `m.retain(Fn(K, V) -> bool)` | 原地保留满足谓词的键值对 |
 | `m.to_string()`（`K/V: ToString`） | 形如 `{a: 1, b: 2}`（顺序为实现相关） |

@@ -178,3 +178,20 @@ fn test_merge() {
     #assert_eq(a.get("z").unwrap_or(0), 3)
     #assert_eq(b.len(), 2)
 }
+
+#[test]
+fn test_map_to_list() {
+    m = HashMap::new[String, int]()
+    m.insert("a", 1)
+    m.insert("b", 2)
+    ps = m.to_list()
+    #assert_eq(ps.len(), 2)
+    n = 0
+    i = 0usize
+    while i < ps.len() {
+        p = ps.index(i)
+        n = n + p.second
+        i = i + 1
+    }
+    #assert_eq(n, 3)
+}

@@ -283,6 +283,23 @@ impl[K: Hash, V] HashMap[K, V] {
         return acc
     }
 
+    /// 所有键值对（浅拷贝；顺序为实现相关）
+    #[alloc]
+    #[state]
+    pub fn to_list(ref self) -> ArrayList[Pair[K, V]] {
+        res = ArrayList::new[Pair[K, V]]()
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                k = self.keys[i]
+                v = self.vals[i]
+                res.push(Pair[K, V] { first = k, second = v })
+            }
+            i = i + 1
+        }
+        return res
+    }
+
     /// 所有键（浅拷贝；顺序为实现相关）
     #[alloc]
     #[state]
