@@ -182,6 +182,7 @@ pub interface Hash {
 | `s.retain(Fn(K) -> bool)` | 原地保留满足谓词的元素 |
 | `s.union(other)` / `s.intersection(other)` / `s.difference(other)` | 并 / 交 / 差（返回新集合） |
 | `s.is_subset_of(other) -> bool` | 是否子集（空集恒真） |
+| `s.clear()` | 清空（保留容量） |
 | `s.into_iter() -> HashSetIter[K]` | 拥有型迭代器（`for k in s.into_iter()`） |
 | `s.to_string()`（`K: ToString`） | 形如 `{a, b}`（顺序为实现相关） |
 | `s.len()` / `s.is_empty()` | 长度 / 是否为空 |
@@ -193,6 +194,7 @@ pub interface Hash {
 | `m.get(k) -> Option[V]` | 取值（浅拷贝，与 `ArrayList.index` 一致） |
 | `m.contains_key(k) -> bool` | 是否包含键 |
 | `m.contains_value(v) -> bool`（`V: Eq`） | 是否包含值（线性扫描） |
+| `m.clear()` | 清空（保留容量） |
 | `m.keys()` / `m.values() -> ArrayList[K]/ArrayList[V]` | 所有键 / 值（浅拷贝，顺序为实现相关） |
 | `m.for_each(Fn(K, V))` / `m.fold[U](init, Fn(U, K, V) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `m.retain(Fn(K, V) -> bool)` | 原地保留满足谓词的键值对 |

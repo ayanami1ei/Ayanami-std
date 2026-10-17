@@ -154,6 +154,18 @@ impl[K: Hash, V] HashMap[K, V] {
         return false
     }
 
+    /// 清空（保留容量）
+    #[state]
+    pub fn clear(ref mut self) {
+        i = 0usize
+        while i < self.cap {
+            self.state[i] = 0
+            i = i + 1
+        }
+        self.len = 0
+        self.filled = 0
+    }
+
     /// 原地保留满足谓词的键值对
     #[state]
     pub fn retain(ref mut self, Fn(K, V) -> bool f) {

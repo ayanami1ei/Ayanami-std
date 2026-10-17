@@ -140,6 +140,18 @@ impl[K: Hash] HashSet[K] {
         }
     }
 
+    /// 清空（保留容量）
+    #[state]
+    pub fn clear(ref mut self) {
+        i = 0usize
+        while i < self.cap {
+            self.state[i] = 0
+            i = i + 1
+        }
+        self.len = 0
+        self.filled = 0
+    }
+
     /// 是否子集（所有元素都在 other 中；空集为任何集合的子集）
     pub fn is_subset_of(ref self, ref HashSet[K] other) -> bool {
         i = 0usize

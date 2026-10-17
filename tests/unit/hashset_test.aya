@@ -163,3 +163,16 @@ fn test_subset() {
     #assert(e.is_subset_of(a))
     #assert(a.is_subset_of(a))
 }
+
+#[test]
+fn test_clear() {
+    s = HashSet::new[int]()
+    s.insert(1)
+    s.insert(2)
+    s.clear()
+    #assert(s.is_empty())
+    #assert(!s.contains(1))
+    s.insert(3)
+    #assert(s.contains(3))
+    #assert_eq(s.len(), 1)
+}

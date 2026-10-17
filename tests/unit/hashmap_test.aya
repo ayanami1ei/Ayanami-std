@@ -116,3 +116,14 @@ fn test_contains_value() {
     #assert(m.contains_value(2))
     #assert(!m.contains_value(9))
 }
+
+#[test]
+fn test_map_clear() {
+    m = HashMap::new[String, int]()
+    m.insert("a", 1)
+    m.clear()
+    #assert(m.is_empty())
+    #assert(!m.contains_key("a"))
+    m.insert("x", 7)
+    #assert_eq(m.get("x").unwrap_or(0), 7)
+}
