@@ -14,6 +14,7 @@ import "rand";
 | `r.next_range(int lo, int hi) -> int` | `[lo, hi)` 内的整数；`hi <= lo` 时返回 `lo` |
 | `r.next_bool() -> bool` | 随机布尔 |
 | `r.next_float01() -> float` | `[0.0, 1.0)` 内的浮点 |
+| `shuffle_int(ref mut ArrayList[int], ref mut Rng)` | 原地洗牌（Fisher–Yates） |
 
 ## 示例（猜数字）
 

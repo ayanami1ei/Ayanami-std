@@ -1,3 +1,4 @@
+import "arraylist"
 // rand — 伪随机数（纯 Ayanami LCG）
 //
 // - 确定性：相同种子产生相同序列；非加密用途。
@@ -61,5 +62,18 @@ impl Rng {
         v = self.next_int() % 1000000
         f = v as float
         return f / 1000000.0
+    }
+}
+
+/// 原地洗牌 ArrayList[int]（Fisher–Yates；确定性取决于 Rng 状态）
+#[state]
+pub fn shuffle_int(ref mut ArrayList[int] a, ref mut Rng r) {
+    i = a.len()
+    while i > 1 {
+        j = r.next_range(0, i as int) as usize
+        i = i - 1
+        tmp = a.data[i]
+        a.data[i] = a.data[j]
+        a.data[j] = tmp
     }
 }

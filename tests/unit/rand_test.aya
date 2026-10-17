@@ -1,4 +1,6 @@
 import "rand"
+import "arraylist"
+import "sort"
 import "test"
 
 #[test]
@@ -61,4 +63,36 @@ fn test_next_bool_float() {
     f = r.next_float01()
     #assert(f >= 0.0)
     #assert(f < 1.0)
+}
+
+#[test]
+fn test_shuffle() {
+    r = Rng::new(7)
+    a = ArrayList::new[int]()
+    i = 0
+    while i < 10 {
+        a.push(i)
+        i = i + 1
+    }
+    shuffle_int(a, r)
+    #assert_eq(a.len(), 10)
+    sort_int(a)
+    i = 0
+    while i < 10 {
+        #assert_eq(a.index(i as usize), i)
+        i = i + 1
+    }
+    r2 = Rng::new(7)
+    b = ArrayList::new[int]()
+    i = 0
+    while i < 10 {
+        b.push(i)
+        i = i + 1
+    }
+    shuffle_int(b, r2)
+    i = 0
+    while i < 10 {
+        #assert_eq(a.index(i as usize), b.index(i as usize))
+        i = i + 1
+    }
 }
