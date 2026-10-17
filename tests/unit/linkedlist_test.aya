@@ -1,100 +1,119 @@
-import "linkedlist"
-import "test"
+import "linkedlist";
+
+import "test";
 
 #[test]
 fn test_basic() {
-    l = LinkedList::new[int]()
-    #assert_eq(l.len(), 0)
-    l.push(1)
-    l.push(2)
-    l.push(3)
-    #assert_eq(l.len(), 3)
-    #assert_eq(l.index(0), 1)
+    l = LinkedList::new[int]();
+    #assert_eq(l.len(), 0);
+    l.push(1);
+    l.push(2);
+    l.push(3);
+    #assert_eq(l.len(), 3);
+    #assert_eq(l.index(0), 1);
     #assert_eq(l.index(2), 3)
 }
 
 #[test]
 fn test_ll_eq_ops() {
-    l = LinkedList::new[int]()
-    l.push(10)
-    l.push(20)
-    l.push(30)
-    #assert(l.contains(20))
-    #assert_eq(l.index_of(30), 2)
-    #assert(l.remove(20))
-    #assert_eq(l.len(), 2)
+    l = LinkedList::new[int]();
+    l.push(10);
+    l.push(20);
+    l.push(30);
+    #assert(l.contains(20));
+    #assert_eq(l.index_of(30), 2);
+    #assert(l.remove(20));
+    #assert_eq(l.len(), 2);
     #assert(!l.contains(20))
 }
 
 #[test]
 fn test_ll_mut_ops() {
-    l = LinkedList::new[int]()
-    l.push(1)
-    l.push(3)
-    l.insert_at(1, 2)
-    #assert_eq(l.index(1), 2)
-    l.reverse()
-    #assert_eq(l.index(0), 3)
-    l.remove_at(0)
-    #assert_eq(l.index(0), 2)
-    #assert_eq(l.first(), 2)
+    l = LinkedList::new[int]();
+    l.push(1);
+    l.push(3);
+    l.insert_at(1, 2);
+    #assert_eq(l.index(1), 2);
+    l.reverse();
+    #assert_eq(l.index(0), 3);
+    l.remove_at(0);
+    #assert_eq(l.index(0), 2);
+    #assert_eq(l.first(), 2);
     #assert_eq(l.last(), 1)
 }
 
 #[test]
 fn test_ll_misc() {
-    l = LinkedList::with_capacity[int](2)
-    l.push(5)
-    #assert_eq(l.pop(), 5)
-    #assert(l.is_empty())
-    l.push(7)
-    l.set(0, 9)
-    #assert_eq(l.index(0), 9)
-    l.clear()
+    l = LinkedList::with_capacity[int](2);
+    l.push(5);
+    #assert_eq(l.pop(), 5);
+    #assert(l.is_empty());
+    l.push(7);
+    l.set(0, 9);
+    #assert_eq(l.index(0), 9);
+    l.clear();
     #assert(l.is_empty())
 }
 
 #[test]
 fn test_ll_functional() {
-    l = LinkedList::new[int]()
-    l.push(1)
-    l.push(2)
-    l.push(3)
-    m = l.map((int x) -> int { return x * 10 })
-    #assert_eq(m.index(2), 30)
-    f = l.filter((int x) -> bool { return x > 1 })
-    #assert_eq(f.len(), 2)
-    s = l.fold(0, (int acc, int x) -> int { return acc + x })
-    #assert_eq(s, 6)
-    #assert(l.any((int x) -> bool { return x == 3 }))
-    #assert(l.all((int x) -> bool { return x > 0 }))
-    #assert_eq(l.find((int x) -> bool { return x > 1 }).unwrap_or(0), 2)
-    #assert_eq(l.position((int x) -> bool { return x == 3 }), 2)
-    #assert_eq(l.count((int x) -> bool { return x % 2 == 1 }), 2)
-    l.retain((int x) -> bool { return x != 2 })
+    l = LinkedList::new[int]();
+    l.push(1);
+    l.push(2);
+    l.push(3);
+    m = l.map((int x) -> int {
+        return x * 10;
+    });
+    #assert_eq(m.index(2), 30);
+    f = l.filter((int x) -> bool {
+        return x > 1;
+    });
+    #assert_eq(f.len(), 2);
+    s = l.fold(0, (int acc, int x) -> int {
+        return acc + x;
+    });
+    #assert_eq(s, 6);
+    #assert(l.any((int x) -> bool {
+        return x == 3;
+    }));
+    #assert(l.all((int x) -> bool {
+        return x > 0;
+    }));
+    #assert_eq(l.find((int x) -> bool {
+        return x > 1;
+    }).unwrap_or(0), 2);
+    #assert_eq(l.position((int x) -> bool {
+        return x == 3;
+    }), 2);
+    #assert_eq(l.count((int x) -> bool {
+        return x % 2 == 1;
+    }), 2);
+    l.retain((int x) -> bool {
+        return x != 2;
+    });
     #assert_eq(l.len(), 2)
 }
 
 #[test]
 fn test_ll_more() {
-    l = LinkedList::new[int]()
-    l.push(1)
-    l.push(2)
-    l.push(3)
-    l.swap(0, 2)
-    #assert_eq(l.index(0), 3)
-    d = LinkedList::new[int]()
-    d.push(1)
-    d.push(1)
-    d.push(2)
-    d.dedup()
-    #assert_eq(d.len(), 2)
-    #assert_eq(d.index(0), 1)
-    #assert_eq(d.index(1), 2)
-    f = LinkedList::new[int]()
-    f.push(5)
-    f.push(6)
-    f.push(5)
-    #assert_eq(f.last_index_of(5), 2)
+    l = LinkedList::new[int]();
+    l.push(1);
+    l.push(2);
+    l.push(3);
+    l.swap(0, 2);
+    #assert_eq(l.index(0), 3);
+    d = LinkedList::new[int]();
+    d.push(1);
+    d.push(1);
+    d.push(2);
+    d.dedup();
+    #assert_eq(d.len(), 2);
+    #assert_eq(d.index(0), 1);
+    #assert_eq(d.index(1), 2);
+    f = LinkedList::new[int]();
+    f.push(5);
+    f.push(6);
+    f.push(5);
+    #assert_eq(f.last_index_of(5), 2);
     #assert_eq(f.last_index_of(9), -1)
 }

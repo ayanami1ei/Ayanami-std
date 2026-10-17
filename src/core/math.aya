@@ -1,39 +1,48 @@
 // Math helpers
 // Usage: import "std/math.aya";
-
 #[pure]
 pub fn abs(int x) -> int {
-    if x < 0 { return -x; }
+    if x < 0 {
+        return -x;
+    }
     return x;
 }
 
 #[pure]
 pub fn min(int a, int b) -> int {
-    if a < b { return a; }
+    if a < b {
+        return a;
+    }
     return b;
 }
 
 #[pure]
 pub fn max(int a, int b) -> int {
-    if a > b { return a; }
+    if a > b {
+        return a;
+    }
     return b;
 }
 
 #[pure]
 pub fn sign(int x) -> int {
     if x < 0 {
-        return 0 - 1
+        return 0 - 1;
     }
     if x > 0 {
-        return 1
+        return 1;
     }
-    return 0
+    return 0;
 }
 
 #[pure]
 pub fn clamp(int x, int lo, int hi) -> int {
-    if x < lo { return lo; }
-    if x > hi { return hi; }
+    if x < lo {
+        return lo;
+    }
+    if x > hi {
+        return hi;
+    }
     return x;
 }
 
@@ -47,354 +56,371 @@ pub fn pow(int base, int exp) -> int {
 }
 
 // ── A6：浮点数学（纯 Ayanami 实现，不依赖 C libm） ──
-
 /// 圆周率
 #[pure]
-pub fn pi() -> float { return 3.141592653589793 }
+pub fn pi() -> float {
+    return 3.141592653589793;
+}
 
 #[pure]
-fn ln2() -> float { return 0.6931471805599453 }
+fn ln2() -> float {
+    return 0.6931471805599453;
+}
 
 #[pure]
-fn two_pi() -> float { return 6.283185307179586 }
+fn two_pi() -> float {
+    return 6.283185307179586;
+}
 
 #[pure]
-fn half_pi() -> float { return 1.5707963267948966 }
+fn half_pi() -> float {
+    return 1.5707963267948966;
+}
 
 #[pure]
-fn quarter_pi() -> float { return 0.7853981633974483 }
+fn quarter_pi() -> float {
+    return 0.7853981633974483;
+}
 
 #[pure]
 pub fn abs(float x) -> float {
-    if x < 0.0 { return -x }
-    return x
+    if x < 0.0 {
+        return -x;
+    }
+    return x;
 }
 
 #[pure]
 pub fn min(float a, float b) -> float {
-    if a < b { return a }
-    return b
+    if a < b {
+        return a;
+    }
+    return b;
 }
 
 #[pure]
 pub fn max(float a, float b) -> float {
-    if a > b { return a }
-    return b
+    if a > b {
+        return a;
+    }
+    return b;
 }
 
 #[pure]
 pub fn clamp(float x, float lo, float hi) -> float {
-    if x < lo { return lo }
-    if x > hi { return hi }
-    return x
+    if x < lo {
+        return lo;
+    }
+    if x > hi {
+        return hi;
+    }
+    return x;
 }
 
 /// 向零截断
 #[pure]
 pub fn trunc(float x) -> float {
-    return (x as int) as float
+    return x as int as float;
 }
 
 /// 向下取整
 #[pure]
 pub fn floor(float x) -> float {
-    i = x as int
-    f = i as float
+    i = x as int;
+    f = i as float;
     if x >= 0.0 {
-        return f
+        return f;
     }
     if x == f {
-        return f
+        return f;
     }
-    return (i - 1) as float
+    return (i - 1) as float;
 }
 
 /// 向上取整
 #[pure]
 pub fn ceil(float x) -> float {
-    i = x as int
-    f = i as float
+    i = x as int;
+    f = i as float;
     if x <= 0.0 {
-        return f
+        return f;
     }
     if x == f {
-        return f
+        return f;
     }
-    return (i + 1) as float
+    return (i + 1) as float;
 }
 
 /// 四舍五入（half away from zero）
 #[pure]
 pub fn round(float x) -> float {
     if x >= 0.0 {
-        return floor(x + 0.5)
+        return floor(x + 0.5);
     }
-    return 0.0 - floor(0.0 - x + 0.5)
+    return 0.0 - floor(0.0 - x + 0.5);
 }
 
 /// 平方根（牛顿迭代；负数返回 NaN）
 #[pure]
 pub fn sqrt(float x) -> float {
     if x < 0.0 {
-        return 0.0 / 0.0
+        return 0.0 / 0.0;
     }
     if x == 0.0 {
-        return 0.0
+        return 0.0;
     }
-    g = x
+    g = x;
     if x < 1.0 {
-        g = 1.0
+        g = 1.0;
     }
-    i = 0
+    i = 0;
     while i < 64 {
-        ng = 0.5 * (g + x / g)
-        d = ng - g
+        ng = 0.5 * (g + x / g);
+        d = ng - g;
         if d < 0.0 {
-            d = 0.0 - d
+            d = 0.0 - d;
         }
-        g = ng
-        if d <= 1.0e-15 * g {
-            break
+        g = ng;
+        if d <= 0.000000000000001 * g {
+            break;
         }
-        i = i + 1
+        i = i + 1;
     }
-    return g
+    return g;
 }
 
 /// e^x（范围归约 + Taylor 级数）
 #[pure]
 pub fn exp(float x) -> float {
-    k = round(x / ln2()) as int
-    r = x - (k as float) * ln2()
-    s = 1.0
-    t = 1.0
-    n = 1
+    k = round(x / ln2()) as int;
+    r = x - k as float * ln2();
+    s = 1.0;
+    t = 1.0;
+    n = 1;
     while n <= 24 {
-        t = t * r / (n as float)
-        s = s + t
-        n = n + 1
+        t = t * r / n as float;
+        s = s + t;
+        n = n + 1;
     }
     if k >= 0 {
-        i = 0
+        i = 0;
         while i < k {
-            s = s * 2.0
-            i = i + 1
+            s = s * 2.0;
+            i = i + 1;
         }
     } else {
-        i = 0
+        i = 0;
         while i < 0 - k {
-            s = s / 2.0
-            i = i + 1
+            s = s / 2.0;
+            i = i + 1;
         }
     }
-    return s
+    return s;
 }
 
 /// 自然对数（范围归约 + atanh 级数；0 → -inf、负数 → NaN）
 #[pure]
 pub fn ln(float x) -> float {
     if x < 0.0 {
-        return 0.0 / 0.0
+        return 0.0 / 0.0;
     }
     if x == 0.0 {
-        return 0.0 - 1.0 / 0.0
+        return 0.0 - 1.0 / 0.0;
     }
-    m = x
-    e = 0
+    m = x;
+    e = 0;
     while m >= 1.5 {
-        m = m / 2.0
-        e = e + 1
+        m = m / 2.0;
+        e = e + 1;
     }
     while m < 0.75 {
-        m = m * 2.0
-        e = e - 1
+        m = m * 2.0;
+        e = e - 1;
     }
-    z = (m - 1.0) / (m + 1.0)
-    z2 = z * z
-    s = 0.0
-    t = z
-    n = 1
+    z = (m - 1.0) / (m + 1.0);
+    z2 = z * z;
+    s = 0.0;
+    t = z;
+    n = 1;
     while n <= 41 {
-        s = s + t / (n as float)
-        t = t * z2
-        n = n + 2
+        s = s + t / n as float;
+        t = t * z2;
+        n = n + 2;
     }
-    return 2.0 * s + (e as float) * ln2()
+    return 2.0 * s + e as float * ln2();
 }
 
 /// 常用对数（底 10）
 #[pure]
 pub fn log10(float x) -> float {
-    return ln(x) / 2.302585092994046
+    return ln(x) / 2.302585092994046;
 }
 
 /// 正弦（范围归约 + Taylor 级数）
 #[pure]
 pub fn sin(float x) -> float {
-    k = round(x / two_pi()) as int
-    r = x - (k as float) * two_pi()
-    s = r
-    t = r
-    n = 1
+    k = round(x / two_pi()) as int;
+    r = x - k as float * two_pi();
+    s = r;
+    t = r;
+    n = 1;
     while n <= 20 {
-        t = 0.0 - t * r * r / ((2.0 * (n as float)) * (2.0 * (n as float) + 1.0))
-        s = s + t
-        n = n + 1
+        t = 0.0 - t * r * r / (2.0 * n as float * (2.0 * n as float + 1.0));
+        s = s + t;
+        n = n + 1;
     }
-    return s
+    return s;
 }
 
 /// 余弦（范围归约 + Taylor 级数）
 #[pure]
 pub fn cos(float x) -> float {
-    k = round(x / two_pi()) as int
-    r = x - (k as float) * two_pi()
-    s = 1.0
-    t = 1.0
-    n = 1
+    k = round(x / two_pi()) as int;
+    r = x - k as float * two_pi();
+    s = 1.0;
+    t = 1.0;
+    n = 1;
     while n <= 20 {
-        t = 0.0 - t * r * r / ((2.0 * (n as float) - 1.0) * (2.0 * (n as float)))
-        s = s + t
-        n = n + 1
+        t = 0.0 - t * r * r / ((2.0 * n as float - 1.0) * (2.0 * n as float));
+        s = s + t;
+        n = n + 1;
     }
-    return s
+    return s;
 }
 
 /// 正切
 #[pure]
 pub fn tan(float x) -> float {
-    return sin(x) / cos(x)
+    return sin(x) / cos(x);
 }
 
 #[pure]
 fn atan_series(float z) -> float {
-    z2 = z * z
-    s = 0.0
-    t = z
-    n = 1
+    z2 = z * z;
+    s = 0.0;
+    t = z;
+    n = 1;
     while n <= 41 {
-        s = s + t / (n as float)
-        t = 0.0 - t * z2
-        n = n + 2
+        s = s + t / n as float;
+        t = 0.0 - t * z2;
+        n = n + 2;
     }
-    return s
+    return s;
 }
 
 #[pure]
 fn atan1(float x) -> float {
     if x < 0.0 {
-        return 0.0 - atan1(0.0 - x)
+        return 0.0 - atan1(0.0 - x);
     }
     if x > 1.0 {
-        return half_pi() - atan1(1.0 / x)
+        return half_pi() - atan1(1.0 / x);
     }
     if x > 0.5 {
-        z = (x - 1.0) / (x + 1.0)
-        return quarter_pi() + atan_series(z)
+        z = (x - 1.0) / (x + 1.0);
+        return quarter_pi() + atan_series(z);
     }
-    return atan_series(x)
+    return atan_series(x);
 }
 
 /// 方位角 atan2(y, x)
 #[pure]
 pub fn atan2(float y, float x) -> float {
     if x > 0.0 {
-        return atan1(y / x)
+        return atan1(y / x);
     }
     if x < 0.0 {
         if y >= 0.0 {
-            return pi() + atan1(y / x)
+            return pi() + atan1(y / x);
         }
-        return 0.0 - pi() + atan1(y / x)
+        return 0.0 - pi() + atan1(y / x);
     }
     if y > 0.0 {
-        return half_pi()
+        return half_pi();
     }
     if y < 0.0 {
-        return 0.0 - half_pi()
+        return 0.0 - half_pi();
     }
-    return 0.0
+    return 0.0;
 }
 
 #[pure]
 pub fn pow(float base, int exp) -> float {
-    result = 1.0
+    result = 1.0;
     for i in (0, exp) {
-        result = result * base
+        result = result * base;
     }
-    return result
+    return result;
 }
 
 // ── 数论与整数工具 ──
-
 /// 最大公约数（`gcd(0, 0) == 0`）
 #[pure]
 pub fn gcd(int a, int b) -> int {
-    x = abs(a)
-    y = abs(b)
+    x = abs(a);
+    y = abs(b);
     while y != 0 {
-        t = x % y
-        x = y
-        y = t
+        t = x % y;
+        x = y;
+        y = t;
     }
-    return x
+    return x;
 }
 
 /// 最小公倍数（任一为 0 返回 0）
 #[pure]
 pub fn lcm(int a, int b) -> int {
     if a == 0 {
-        return 0
+        return 0;
     }
     if b == 0 {
-        return 0
+        return 0;
     }
-    return abs(a / gcd(a, b)) * abs(b)
+    return abs(a / gcd(a, b)) * abs(b);
 }
 
 /// 是否素数（`n < 2` 为 false）
 #[pure]
 pub fn is_prime(int n) -> bool {
     if n < 2 {
-        return false
+        return false;
     }
     if n % 2 == 0 {
-        return n == 2
+        return n == 2;
     }
-    d = 3
+    d = 3;
     while d * d <= n {
         if n % d == 0 {
-            return false
+            return false;
         }
-        d = d + 2
+        d = d + 2;
     }
-    return true
+    return true;
 }
 
 impl int {
     /// 是否偶数
     #[pure]
-    pub fn is_even(self) -> bool {
-        return self % 2 == 0
+    fn is_even(self) -> bool {
+        return self % 2 == 0;
     }
-
     /// 是否奇数
     #[pure]
-    pub fn is_odd(self) -> bool {
-        return self % 2 != 0
+    fn is_odd(self) -> bool {
+        return self % 2 != 0;
     }
 }
 
 impl float {
     /// 是否 NaN（IEEE：与 0 的比较均无序）
     #[pure]
-    pub fn is_nan(self) -> bool {
+    fn is_nan(self) -> bool {
         if self >= 0.0 {
-            return false
+            return false;
         }
         if self < 0.0 {
-            return false
+            return false;
         }
-        return true
+        return true;
     }
 }

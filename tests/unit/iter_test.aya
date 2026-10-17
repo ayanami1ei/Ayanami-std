@@ -1,8 +1,12 @@
-import "iter"
-import "arraylist"
-import "linkedlist"
-import "text"
-import "test"
+import "iter";
+
+import "arraylist";
+
+import "linkedlist";
+
+import "text";
+
+import "test";
 
 struct Countdown {
     int cur
@@ -10,165 +14,178 @@ struct Countdown {
 
 impl Countdown {
     #[state]
-    pub fn next(ref mut self) -> Option[int] {
+    fn next(ref mut self) -> Option[int] {
         if self.cur <= 0 {
-            return Option::None()
+            return Option::None();
         }
-        v = self.cur
-        self.cur = self.cur - 1
-        return Option::Some(v)
+        v = self.cur;
+        self.cur = self.cur - 1;
+        return Option::Some(v);
     }
 }
 
 fn sum_it(Iterator[int] it) -> int {
-    s = 0
+    s = 0;
     for x in it {
-        s = s + x
+        s = s + x;
     }
-    return s
+    return s;
 }
 
 #[test]
 fn test_for_in_arraylist() {
-    a = ArrayList::new[int]()
-    a.push(1)
-    a.push(2)
-    a.push(3)
-    s = 0
+    a = ArrayList::new[int]();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    s = 0;
     for x in a.into_iter() {
-        s = s + x
+        s = s + x;
     }
     #assert_eq(s, 6)
 }
 
 #[test]
 fn test_for_in_linkedlist() {
-    l = LinkedList::new[int]()
-    l.push(5)
-    l.push(6)
-    s = 0
+    l = LinkedList::new[int]();
+    l.push(5);
+    l.push(6);
+    s = 0;
     for x in l.into_iter() {
-        s = s + x
+        s = s + x;
     }
     #assert_eq(s, 11)
 }
 
 #[test]
 fn test_interface_param() {
-    c = Countdown { cur = 3 }
+    c = Countdown { cur = 3 };
     #assert_eq(sum_it(c), 6)
 }
 
 #[test]
 fn test_for_in_strings() {
-    a = ArrayList::new[String]()
-    a.push("a")
-    a.push("b")
-    n = 0
+    a = ArrayList::new[String]();
+    a.push("a");
+    a.push("b");
+    n = 0;
     for x in a.into_iter() {
-        n = n + x.len as int
+        n = n + x.len as int;
     }
     #assert_eq(n, 2)
 }
 
 #[test]
 fn test_map_adapter() {
-    a = ArrayList::new[int]()
-    a.push(1)
-    a.push(2)
-    a.push(3)
-    m = MapIter::new(a.into_iter(), (int x) -> int { return x * 10 })
-    s = 0
+    a = ArrayList::new[int]();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    m = MapIter::new(a.into_iter(), (int x) -> int {
+        return x * 10;
+    });
+    s = 0;
     for x in m {
-        s = s + x
+        s = s + x;
     }
     #assert_eq(s, 60)
 }
 
 #[test]
 fn test_filter_map_compose() {
-    a = ArrayList::new[int]()
-    a.push(1)
-    a.push(2)
-    a.push(3)
-    a.push(4)
-    m = MapIter::new(a.into_iter(), (int x) -> int { return x * 10 })
-    f = FilterIter::new(m, (int x) -> bool { return x > 20 })
-    s = 0
+    a = ArrayList::new[int]();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    a.push(4);
+    m = MapIter::new(a.into_iter(), (int x) -> int {
+        return x * 10;
+    });
+    f = FilterIter::new(m, (int x) -> bool {
+        return x > 20;
+    });
+    s = 0;
     for x in f {
-        s = s + x
+        s = s + x;
     }
     #assert_eq(s, 70)
 }
 
 #[test]
 fn test_take_adapter() {
-    a = ArrayList::new[int]()
-    a.push(1)
-    a.push(2)
-    a.push(3)
-    a.push(4)
-    t = TakeIter::new(a.into_iter(), 2usize)
-    s = 0
+    a = ArrayList::new[int]();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    a.push(4);
+    t = TakeIter::new(a.into_iter(), 2usize);
+    s = 0;
     for x in t {
-        s = s + x
+        s = s + x;
     }
     #assert_eq(s, 3)
 }
 
 #[test]
 fn test_map_filter_take() {
-    a = ArrayList::new[int]()
-    a.push(1)
-    a.push(2)
-    a.push(3)
-    a.push(4)
-    a.push(5)
-    m = MapIter::new(a.into_iter(), (int x) -> int { return x * 10 })
-    f = FilterIter::new(m, (int x) -> bool { return x > 20 })
-    t = TakeIter::new(f, 2usize)
-    s = 0
+    a = ArrayList::new[int]();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    a.push(4);
+    a.push(5);
+    m = MapIter::new(a.into_iter(), (int x) -> int {
+        return x * 10;
+    });
+    f = FilterIter::new(m, (int x) -> bool {
+        return x > 20;
+    });
+    t = TakeIter::new(f, 2usize);
+    s = 0;
     for x in t {
-        s = s + x
+        s = s + x;
     }
     #assert_eq(s, 70)
 }
 
 #[test]
 fn test_enumerate_zip() {
-    a = ArrayList::new[int]()
-    a.push(10)
-    a.push(20)
-    e = EnumerateIter::new(a.into_iter())
-    s = 0
+    a = ArrayList::new[int]();
+    a.push(10);
+    a.push(20);
+    e = EnumerateIter::new(a.into_iter());
+    s = 0;
     for p in e {
-        s = s + (p.first as int) * 100 + p.second
+        s = s + p.first as int * 100 + p.second;
     }
-    #assert_eq(s, 130)
-
-    b = ArrayList::new[int]()
-    b.push(1)
-    b.push(2)
-    b.push(3)
-    c = ArrayList::new[int]()
-    c.push(7)
-    c.push(8)
-    z = ZipIter::new(b.into_iter(), c.into_iter())
-    n = 0
+    #assert_eq(s, 130);
+    b = ArrayList::new[int]();
+    b.push(1);
+    b.push(2);
+    b.push(3);
+    c = ArrayList::new[int]();
+    c.push(7);
+    c.push(8);
+    z = ZipIter::new(b.into_iter(), c.into_iter());
+    n = 0;
     for p in z {
-        n = n + p.first * p.second
+        n = n + p.first * p.second;
     }
     #assert_eq(n, 23)
 }
 
 #[test]
 fn test_string_adapters() {
-    words = "quick brown ox".split_whitespace_iter()
-    long = FilterIter::new(words, (String w) -> bool { return w.len > 4 })
-    upper = MapIter::new(long, (String w) -> String { return w.to_upper() })
-    n = 0
+    words = "quick brown ox".split_whitespace_iter();
+    long = FilterIter::new(words, (String w) -> bool {
+        return w.len > 4;
+    });
+    upper = MapIter::new(long, (String w) -> String {
+        return w.to_upper();
+    });
+    n = 0;
     for w in upper {
-        n = n + w.len as int
+        n = n + w.len as int;
     }
     #assert_eq(n, 10)
 }

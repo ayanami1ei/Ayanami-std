@@ -1,31 +1,32 @@
-import "env"
-import "test"
+import "env";
+
+import "test";
 
 #[test]
 fn test_args() {
-    #assert(arg_count() >= 1)
-    #assert(!arg(0).is_empty())
+    #assert(arg_count() >= 1);
+    #assert(!arg(0).is_empty());
     #assert(arg(9999).is_empty())
 }
 
 #[test]
 fn test_env() {
-    #assert(get_env("AYANAMI_NO_SUCH_ENV_XYZ").is_none())
-    p = get_env("PATH").unwrap_or("")
+    #assert(get_env("AYANAMI_NO_SUCH_ENV_XYZ").is_none());
+    p = get_env("PATH").unwrap_or("");
     #assert(!p.is_empty())
 }
 
 #[test]
 fn test_env_or_args() {
-    #assert_eq(get_env_or("AYANAMI_NO_SUCH_ENV_XYZ", "fallback"), "fallback")
-    n = arg_count()
-    #assert_eq(args().len() as int, n)
-    p = get_env_or("PATH", "")
+    #assert_eq(get_env_or("AYANAMI_NO_SUCH_ENV_XYZ", "fallback"), "fallback");
+    n = arg_count();
+    #assert_eq(args().len() as int, n);
+    p = get_env_or("PATH", "");
     #assert(!p.is_empty())
 }
 
 #[test]
 fn test_has_env() {
-    #assert(has_env("PATH"))
+    #assert(has_env("PATH"));
     #assert(!has_env("AYANAMI_NO_SUCH_ENV_XYZ"))
 }

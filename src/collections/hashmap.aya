@@ -2,11 +2,15 @@
 //
 // 值读取为浅拷贝（与 ArrayList.index 一致）；需要深拷贝时对结果调用 .copy()。
 // 装填因子与墓碑策略同 HashSet。
-import "hash"
-import "option"
-import "arraylist"
-import "iter"
-import "sort"
+import "hash";
+
+import "option";
+
+import "arraylist";
+
+import "iter";
+
+import "sort";
 
 pub struct HashMap[K: Hash, V] {
     [K] keys
@@ -19,15 +23,15 @@ pub struct HashMap[K: Hash, V] {
 
 pub namespace HashMap {
     pub fn new[K: Hash, V]() -> HashMap[K, V] {
-        return HashMap[K, V] { keys = null, vals = null, state = null, len = 0, filled = 0, cap = 0 }
+        return HashMap[K, V] { keys = null, vals = null, state = null, len = 0, filled = 0, cap = 0 };
     }
     /// 预分配槽位数（cap <= 0 等价 new）
-#[alloc]
+    #[alloc]
     pub fn with_capacity[K: Hash, V](usize cap) -> HashMap[K, V] {
         if cap == 0 {
-            return HashMap[K, V] { keys = null, vals = null, state = null, len = 0, filled = 0, cap = 0 }
+            return HashMap[K, V] { keys = null, vals = null, state = null, len = 0, filled = 0, cap = 0 };
         }
-        return HashMap[K, V] { keys = [K; cap], vals = [V; cap], state = [int; cap], len = 0, filled = 0, cap = cap }
+        return HashMap[K, V] { keys = [K; cap], vals = [V; cap], state = [int; cap], len = 0, filled = 0, cap = cap };
     }
 }
 
@@ -35,308 +39,292 @@ impl[K: Hash, V] HashMap[K, V] {
     #[alloc]
     #[state]
     fn grow(ref mut self) {
-        new_cap = 8usize
+        new_cap = 8usize;
         if self.cap > 0 {
-            new_cap = self.cap * 2
+            new_cap = self.cap * 2;
         }
-        nk = [K; new_cap]
-        nv = [V; new_cap]
-        ns = [int; new_cap]
-        i = 0usize
+        nk = [K; new_cap];
+        nv = [V; new_cap];
+        ns = [int; new_cap];
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                k = self.keys[i]
-                v = self.vals[i]
-                nc = new_cap as int
-                h = k.hash() % nc
-                j = h as usize
+                k = self.keys[i];
+                v = self.vals[i];
+                nc = new_cap as int;
+                h = k.hash() % nc;
+                j = h as usize;
                 while ns[j] != 0 {
-                    j = (j + 1) % new_cap
+                    j = (j + 1) % new_cap;
                 }
-                nk[j] = k
-                nv[j] = v
-                ns[j] = 1
+                nk[j] = k;
+                nv[j] = v;
+                ns[j] = 1;
             }
-            i = i + 1
+            i = i + 1;
         }
-        self.keys = nk
-        self.vals = nv
-        self.state = ns
-        self.cap = new_cap
-        self.filled = self.len
+        self.keys = nk;
+        self.vals = nv;
+        self.state = ns;
+        self.cap = new_cap;
+        self.filled = self.len;
     }
-
     /// 插入或更新；新增返回 true，覆盖旧值返回 false
     #[alloc]
     #[state]
-    pub fn insert(ref mut self, K k, V v) -> bool {
+    fn insert(ref mut self, K k, V v) -> bool {
         if self.cap == 0 {
             self.grow()
         }
         if (self.filled + 1) * 2 >= self.cap {
             self.grow()
         }
-        i = (k.hash() % self.cap as int) as usize
+        i = (k.hash() % self.cap as int) as usize;
         while true {
             if self.state[i] == 0 {
-                self.keys[i] = k
-                self.vals[i] = v
-                self.state[i] = 1
-                self.len = self.len + 1
-                self.filled = self.filled + 1
-                return true
+                self.keys[i] = k;
+                self.vals[i] = v;
+                self.state[i] = 1;
+                self.len = self.len + 1;
+                self.filled = self.filled + 1;
+                return true;
             }
             if self.state[i] == 1 {
                 if self.keys[i].hash_eq(ref k) {
-                    self.vals[i] = v
-                    return false
+                    self.vals[i] = v;
+                    return false;
                 }
             }
-            i = (i + 1) % self.cap
+            i = (i + 1) % self.cap;
         }
-        return false
+        return false;
     }
-
     /// 取已有值或插入并返回（浅拷贝；键存在时不覆盖）
     #[alloc]
     #[state]
-    pub fn get_or_insert(ref mut self, K k, V v) -> V {
+    fn get_or_insert(ref mut self, K k, V v) -> V {
         if self.cap == 0 {
             self.grow()
         }
         if (self.filled + 1) * 2 >= self.cap {
             self.grow()
         }
-        i = (k.hash() % self.cap as int) as usize
+        i = (k.hash() % self.cap as int) as usize;
         while true {
             if self.state[i] == 0 {
-                self.keys[i] = k
-                self.vals[i] = v
-                self.state[i] = 1
-                self.len = self.len + 1
-                self.filled = self.filled + 1
-                return self.vals[i]
+                self.keys[i] = k;
+                self.vals[i] = v;
+                self.state[i] = 1;
+                self.len = self.len + 1;
+                self.filled = self.filled + 1;
+                return self.vals[i];
             }
             if self.state[i] == 1 {
                 if self.keys[i].hash_eq(ref k) {
-                    return self.vals[i]
+                    return self.vals[i];
                 }
             }
-            i = (i + 1) % self.cap
+            i = (i + 1) % self.cap;
         }
-        return v
+        return v;
     }
-
     /// 取值（浅拷贝）；不存在返回 None
-    pub fn get(ref self, ref K k) -> Option[V] {
+    fn get(ref self, ref K k) -> Option[V] {
         if self.cap == 0 {
-            return Option::None()
+            return Option::None();
         }
-        i = (k.hash() % self.cap as int) as usize
+        i = (k.hash() % self.cap as int) as usize;
         while true {
-            s = self.state[i]
+            s = self.state[i];
             if s == 0 {
-                return Option::None()
+                return Option::None();
             }
             if s == 1 {
                 if self.keys[i].hash_eq(k) {
-                    return Option::Some(self.vals[i])
+                    return Option::Some(self.vals[i]);
                 }
             }
-            i = (i + 1) % self.cap
+            i = (i + 1) % self.cap;
         }
-        return Option::None()
+        return Option::None();
     }
-
     /// 是否包含键
-    pub fn contains_key(ref self, ref K k) -> bool {
+    fn contains_key(ref self, ref K k) -> bool {
         if self.cap == 0 {
-            return false
+            return false;
         }
-        i = (k.hash() % self.cap as int) as usize
+        i = (k.hash() % self.cap as int) as usize;
         while true {
-            s = self.state[i]
+            s = self.state[i];
             if s == 0 {
-                return false
+                return false;
             }
             if s == 1 {
                 if self.keys[i].hash_eq(k) {
-                    return true
+                    return true;
                 }
             }
-            i = (i + 1) % self.cap
+            i = (i + 1) % self.cap;
         }
-        return false
+        return false;
     }
-
     /// 删除并返回旧值（浅拷贝）；不存在返回 None
     #[state]
-    pub fn remove_get(ref mut self, ref K k) -> Option[V] {
+    fn remove_get(ref mut self, ref K k) -> Option[V] {
         if self.cap == 0 {
-            return Option::None()
+            return Option::None();
         }
-        i = (k.hash() % self.cap as int) as usize
+        i = (k.hash() % self.cap as int) as usize;
         while true {
-            s = self.state[i]
+            s = self.state[i];
             if s == 0 {
-                return Option::None()
+                return Option::None();
             }
             if s == 1 {
                 if self.keys[i].hash_eq(k) {
-                    v = self.vals[i]
-                    self.state[i] = 2
-                    self.len = self.len - 1
-                    return Option::Some(v)
+                    v = self.vals[i];
+                    self.state[i] = 2;
+                    self.len = self.len - 1;
+                    return Option::Some(v);
                 }
             }
-            i = (i + 1) % self.cap
+            i = (i + 1) % self.cap;
         }
-        return Option::None()
+        return Option::None();
     }
-
     /// 删除（墓碑）；不存在返回 false
     #[state]
-    pub fn remove(ref mut self, ref K k) -> bool {
+    fn remove(ref mut self, ref K k) -> bool {
         if self.cap == 0 {
-            return false
+            return false;
         }
-        i = (k.hash() % self.cap as int) as usize
+        i = (k.hash() % self.cap as int) as usize;
         while true {
-            s = self.state[i]
+            s = self.state[i];
             if s == 0 {
-                return false
+                return false;
             }
             if s == 1 {
                 if self.keys[i].hash_eq(k) {
-                    self.state[i] = 2
-                    self.len = self.len - 1
-                    return true
+                    self.state[i] = 2;
+                    self.len = self.len - 1;
+                    return true;
                 }
             }
-            i = (i + 1) % self.cap
+            i = (i + 1) % self.cap;
         }
-        return false
+        return false;
     }
-
     /// 清空（保留容量）
     #[state]
-    pub fn clear(ref mut self) {
-        i = 0usize
+    fn clear(ref mut self) {
+        i = 0usize;
         while i < self.cap {
-            self.state[i] = 0
-            i = i + 1
+            self.state[i] = 0;
+            i = i + 1;
         }
-        self.len = 0
-        self.filled = 0
+        self.len = 0;
+        self.filled = 0;
     }
-
     /// 合并另一张表（同键以 other 覆盖；other 保留）
     #[alloc]
     #[state]
-    pub fn merge(ref mut self, ref HashMap[K, V] other) {
-        i = 0usize
+    fn merge(ref mut self, ref HashMap[K, V] other) {
+        i = 0usize;
         while i < other.cap {
             if other.state[i] == 1 {
-                k = other.keys[i]
-                v = other.vals[i]
+                k = other.keys[i];
+                v = other.vals[i];
                 self.insert(k, v)
             }
-            i = i + 1
+            i = i + 1;
         }
     }
-
     /// 原地保留满足谓词的键值对
     #[state]
-    pub fn retain(ref mut self, Fn(K, V) -> bool f) {
-        i = 0usize
+    fn retain(ref mut self, Fn(K,V)->bool f) {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if !f(self.keys[i], self.vals[i]) {
-                    self.state[i] = 2
-                    self.len = self.len - 1
+                    self.state[i] = 2;
+                    self.len = self.len - 1;
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
     }
-
     /// 遍历所有键值（浅拷贝；顺序为实现相关）
-    pub fn for_each(ref self, Fn(K, V) f) {
-        i = 0usize
+    fn for_each(ref self, Fn(K,V) f) {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 f(self.keys[i], self.vals[i])
             }
-            i = i + 1
+            i = i + 1;
         }
     }
-
     /// 折叠：acc = f(acc, k, v)
-    pub fn fold[U](ref self, U init, Fn(U, K, V) -> U f) -> U {
-        acc = init
-        i = 0usize
+    fn fold[U](ref self, U init, Fn(U,K,V)->U f) -> U {
+        acc = init;
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                acc = f(acc, self.keys[i], self.vals[i])
+                acc = f(acc, self.keys[i], self.vals[i]);
             }
-            i = i + 1
+            i = i + 1;
         }
-        return acc
+        return acc;
     }
-
     /// 所有键值对（浅拷贝；顺序为实现相关）
     #[alloc]
     #[state]
-    pub fn to_list(ref self) -> ArrayList[Pair[K, V]] {
-        res = ArrayList::new[Pair[K, V]]()
-        i = 0usize
+    fn to_list(ref self) -> ArrayList[Pair[K, V]] {
+        res = ArrayList::new[Pair[K, V]]();
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                k = self.keys[i]
-                v = self.vals[i]
+                k = self.keys[i];
+                v = self.vals[i];
                 res.push(Pair[K, V] { first = k, second = v })
             }
-            i = i + 1
+            i = i + 1;
         }
-        return res
+        return res;
     }
-
     /// 所有键（浅拷贝；顺序为实现相关）
     #[alloc]
     #[state]
-    pub fn keys(ref self) -> ArrayList[K] {
-        res = ArrayList::new[K]()
-        i = 0usize
+    fn keys(ref self) -> ArrayList[K] {
+        res = ArrayList::new[K]();
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 res.push(self.keys[i])
             }
-            i = i + 1
+            i = i + 1;
         }
-        return res
+        return res;
     }
-
     /// 所有值（浅拷贝；顺序为实现相关）
     #[alloc]
     #[state]
-    pub fn values(ref self) -> ArrayList[V] {
-        res = ArrayList::new[V]()
-        i = 0usize
+    fn values(ref self) -> ArrayList[V] {
+        res = ArrayList::new[V]();
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 res.push(self.vals[i])
             }
-            i = i + 1
+            i = i + 1;
         }
-        return res
+        return res;
     }
-
-    pub fn len(ref self) -> usize {
-        return self.len
+    fn len(ref self) -> usize {
+        return self.len;
     }
-
-    pub fn is_empty(ref self) -> bool {
-        return self.len == 0
+    fn is_empty(ref self) -> bool {
+        return self.len == 0;
     }
 }
 
@@ -344,22 +332,22 @@ impl[K: Hash, V] HashMap[K, V] {
 impl[K: Hash + ToString, V: ToString] HashMap[K, V] {
     #[alloc]
     #[state]
-    pub fn to_string(ref self) -> String {
-        res = "{"
-        first = true
-        i = 0usize
+    fn to_string(ref self) -> String {
+        res = "{";
+        first = true;
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if !first {
-                    res = res + ", "
+                    res = res + ", ";
                 }
-                res = res + self.keys[i] + ": " + self.vals[i]
-                first = false
+                res = res + self.keys[i] + ": " + self.vals[i];
+                first = false;
             }
-            i = i + 1
+            i = i + 1;
         }
-        res = res + "}"
-        return res
+        res = res + "}";
+        return res;
     }
 }
 
@@ -371,42 +359,42 @@ pub struct HashMapIter[K: Hash, V] {
 
 impl[K: Hash, V] HashMapIter[K, V] {
     #[state]
-    pub fn next(ref mut self) -> Option[Pair[K, V]] {
+    fn next(ref mut self) -> Option[Pair[K, V]] {
         while self.index < self.map.cap {
             if self.map.state[self.index] == 1 {
-                k = self.map.keys[self.index]
-                v = self.map.vals[self.index]
-                self.index = self.index + 1
-                return Option::Some(Pair[K, V] { first = k, second = v })
+                k = self.map.keys[self.index];
+                v = self.map.vals[self.index];
+                self.index = self.index + 1;
+                return Option::Some(Pair[K, V] { first = k, second = v });
             }
-            self.index = self.index + 1
+            self.index = self.index + 1;
         }
-        return Option::None()
+        return Option::None();
     }
 }
 
 impl[K: Hash, V] HashMap[K, V] {
     /// 转为拥有所有权的迭代器（`for p in m.into_iter()`）
-    pub fn into_iter(self) -> HashMapIter[K, V] {
-        return HashMapIter[K, V] { map = self, index = 0 }
+    fn into_iter(self) -> HashMapIter[K, V] {
+        return HashMapIter[K, V] { map = self, index = 0 };
     }
 }
 
 /// 需要值实现 Eq
 impl[K: Hash, V: Eq] HashMap[K, V] {
     /// 是否包含值（线性扫描）
-    pub fn contains_value(ref self, ref V v) -> bool {
-        i = 0usize
+    fn contains_value(ref self, ref V v) -> bool {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                x = self.vals[i]
+                x = self.vals[i];
                 if x.same(v) {
-                    return true
+                    return true;
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return false
+        return false;
     }
 }
 
@@ -415,10 +403,10 @@ impl[K: Hash + Ord, V] HashMap[K, V] {
     /// 排序后的键列表（升序）
     #[alloc]
     #[state]
-    pub fn sorted_keys(ref self) -> ArrayList[K] {
-        ks = self.keys()
-        ks.sort()
-        return ks
+    fn sorted_keys(ref self) -> ArrayList[K] {
+        ks = self.keys();
+        ks.sort();
+        return ks;
     }
 }
 
@@ -427,10 +415,10 @@ impl[K: Hash, V: Ord] HashMap[K, V] {
     /// 排序后的值列表（升序）
     #[alloc]
     #[state]
-    pub fn sorted_values(ref self) -> ArrayList[V] {
-        vs = self.values()
-        vs.sort()
-        return vs
+    fn sorted_values(ref self) -> ArrayList[V] {
+        vs = self.values();
+        vs.sort();
+        return vs;
     }
 }
 
@@ -438,77 +426,74 @@ impl[K: Hash, V: Ord] HashMap[K, V] {
 impl[K: Hash, V] HashMap[K, V] {
     #[alloc]
     #[state]
-    pub fn map_values[U](ref self, Fn(V) -> U f) -> HashMap[K, U] {
-        res = HashMap::new[K, U]()
-        i = 0usize
+    fn map_values[U](ref self, Fn(V)->U f) -> HashMap[K, U] {
+        res = HashMap::new[K, U]();
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                k = self.keys[i]
-                v = self.vals[i]
+                k = self.keys[i];
+                v = self.vals[i];
                 res.insert(k, f(v))
             }
-            i = i + 1
+            i = i + 1;
         }
-        return res
+        return res;
     }
 }
 
 /// 谓词族（与 ArrayList 对齐）
 impl[K: Hash, V] HashMap[K, V] {
     /// 是否存在满足谓词的键值对
-    pub fn any(ref self, Fn(K, V) -> bool f) -> bool {
-        i = 0usize
+    fn any(ref self, Fn(K,V)->bool f) -> bool {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if f(self.keys[i], self.vals[i]) {
-                    return true
+                    return true;
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return false
+        return false;
     }
-
     /// 是否所有键值对满足谓词（空表 true）
-    pub fn all(ref self, Fn(K, V) -> bool f) -> bool {
-        i = 0usize
+    fn all(ref self, Fn(K,V)->bool f) -> bool {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if !f(self.keys[i], self.vals[i]) {
-                    return false
+                    return false;
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return true
+        return true;
     }
-
     /// 满足谓词的键值对个数
-    pub fn count(ref self, Fn(K, V) -> bool f) -> usize {
-        n = 0usize
-        i = 0usize
+    fn count(ref self, Fn(K,V)->bool f) -> usize {
+        n = 0usize;
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if f(self.keys[i], self.vals[i]) {
-                    n = n + 1
+                    n = n + 1;
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return n
+        return n;
     }
-
     /// 首个满足谓词的键值对；无则 None
-    pub fn find(ref self, Fn(K, V) -> bool f) -> Option[Pair[K, V]] {
-        i = 0usize
+    fn find(ref self, Fn(K,V)->bool f) -> Option[Pair[K, V]] {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if f(self.keys[i], self.vals[i]) {
-                    return Option::Some(Pair[K, V] { first = self.keys[i], second = self.vals[i] })
+                    return Option::Some(Pair[K, V] { first = self.keys[i], second = self.vals[i] });
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return Option::None()
+        return Option::None();
     }
 }

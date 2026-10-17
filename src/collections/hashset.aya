@@ -2,9 +2,11 @@
 //
 // state：0=空、1=占用、2=墓碑；filled 为占用+墓碑槽数，
 // 装填因子超过 0.5 时扩容（grow 顺带清墓碑），保证探测必然终止。
-import "hash"
-import "arraylist"
-import "iter"
+import "hash";
+
+import "arraylist";
+
+import "iter";
 
 pub struct HashSet[K: Hash] {
     [K] keys
@@ -16,15 +18,15 @@ pub struct HashSet[K: Hash] {
 
 pub namespace HashSet {
     pub fn new[K: Hash]() -> HashSet[K] {
-        return HashSet[K] { keys = null, state = null, len = 0, filled = 0, cap = 0 }
+        return HashSet[K] { keys = null, state = null, len = 0, filled = 0, cap = 0 };
     }
     /// 预分配槽位数（cap <= 0 等价 new）
-#[alloc]
+    #[alloc]
     pub fn with_capacity[K: Hash](usize cap) -> HashSet[K] {
         if cap == 0 {
-            return HashSet[K] { keys = null, state = null, len = 0, filled = 0, cap = 0 }
+            return HashSet[K] { keys = null, state = null, len = 0, filled = 0, cap = 0 };
         }
-        return HashSet[K] { keys = [K; cap], state = [int; cap], len = 0, filled = 0, cap = cap }
+        return HashSet[K] { keys = [K; cap], state = [int; cap], len = 0, filled = 0, cap = cap };
     }
 }
 
@@ -32,284 +34,268 @@ impl[K: Hash] HashSet[K] {
     #[alloc]
     #[state]
     fn grow(ref mut self) {
-        new_cap = 8usize
+        new_cap = 8usize;
         if self.cap > 0 {
-            new_cap = self.cap * 2
+            new_cap = self.cap * 2;
         }
-        nk = [K; new_cap]
-        ns = [int; new_cap]
-        i = 0usize
+        nk = [K; new_cap];
+        ns = [int; new_cap];
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                k = self.keys[i]
-                nc = new_cap as int
-                h = k.hash() % nc
-                j = h as usize
+                k = self.keys[i];
+                nc = new_cap as int;
+                h = k.hash() % nc;
+                j = h as usize;
                 while ns[j] != 0 {
-                    j = (j + 1) % new_cap
+                    j = (j + 1) % new_cap;
                 }
-                nk[j] = k
-                ns[j] = 1
+                nk[j] = k;
+                ns[j] = 1;
             }
-            i = i + 1
+            i = i + 1;
         }
-        self.keys = nk
-        self.state = ns
-        self.cap = new_cap
-        self.filled = self.len
+        self.keys = nk;
+        self.state = ns;
+        self.cap = new_cap;
+        self.filled = self.len;
     }
-
     /// 插入；已存在返回 false
     #[alloc]
     #[state]
-    pub fn insert(ref mut self, K k) -> bool {
+    fn insert(ref mut self, K k) -> bool {
         if self.cap == 0 {
             self.grow()
         }
         if (self.filled + 1) * 2 >= self.cap {
             self.grow()
         }
-        i = (k.hash() % self.cap as int) as usize
+        i = (k.hash() % self.cap as int) as usize;
         while true {
             if self.state[i] == 0 {
-                self.keys[i] = k
-                self.state[i] = 1
-                self.len = self.len + 1
-                self.filled = self.filled + 1
-                return true
+                self.keys[i] = k;
+                self.state[i] = 1;
+                self.len = self.len + 1;
+                self.filled = self.filled + 1;
+                return true;
             }
             if self.state[i] == 1 {
                 if self.keys[i].hash_eq(ref k) {
-                    return false
+                    return false;
                 }
             }
-            i = (i + 1) % self.cap
+            i = (i + 1) % self.cap;
         }
-        return false
+        return false;
     }
-
     /// 是否包含
-    pub fn contains(ref self, ref K k) -> bool {
+    fn contains(ref self, ref K k) -> bool {
         if self.cap == 0 {
-            return false
+            return false;
         }
-        i = (k.hash() % self.cap as int) as usize
+        i = (k.hash() % self.cap as int) as usize;
         while true {
-            s = self.state[i]
+            s = self.state[i];
             if s == 0 {
-                return false
+                return false;
             }
             if s == 1 {
                 if self.keys[i].hash_eq(k) {
-                    return true
+                    return true;
                 }
             }
-            i = (i + 1) % self.cap
+            i = (i + 1) % self.cap;
         }
-        return false
+        return false;
     }
-
     /// 删除并返回元素；不存在返回 None
     #[state]
-    pub fn take(ref mut self, ref K k) -> Option[K] {
+    fn take(ref mut self, ref K k) -> Option[K] {
         if self.cap == 0 {
-            return Option::None()
+            return Option::None();
         }
-        i = (k.hash() % self.cap as int) as usize
+        i = (k.hash() % self.cap as int) as usize;
         while true {
-            s = self.state[i]
+            s = self.state[i];
             if s == 0 {
-                return Option::None()
+                return Option::None();
             }
             if s == 1 {
                 if self.keys[i].hash_eq(k) {
-                    e = self.keys[i]
-                    self.state[i] = 2
-                    self.len = self.len - 1
-                    return Option::Some(e)
+                    e = self.keys[i];
+                    self.state[i] = 2;
+                    self.len = self.len - 1;
+                    return Option::Some(e);
                 }
             }
-            i = (i + 1) % self.cap
+            i = (i + 1) % self.cap;
         }
-        return Option::None()
+        return Option::None();
     }
-
     /// 删除（墓碑）；不存在返回 false
     #[state]
-    pub fn remove(ref mut self, ref K k) -> bool {
+    fn remove(ref mut self, ref K k) -> bool {
         if self.cap == 0 {
-            return false
+            return false;
         }
-        i = (k.hash() % self.cap as int) as usize
+        i = (k.hash() % self.cap as int) as usize;
         while true {
-            s = self.state[i]
+            s = self.state[i];
             if s == 0 {
-                return false
+                return false;
             }
             if s == 1 {
                 if self.keys[i].hash_eq(k) {
-                    self.state[i] = 2
-                    self.len = self.len - 1
-                    return true
+                    self.state[i] = 2;
+                    self.len = self.len - 1;
+                    return true;
                 }
             }
-            i = (i + 1) % self.cap
+            i = (i + 1) % self.cap;
         }
-        return false
+        return false;
     }
-
     /// 原地保留满足谓词的元素
     #[state]
-    pub fn retain(ref mut self, Fn(K) -> bool f) {
-        i = 0usize
+    fn retain(ref mut self, Fn(K)->bool f) {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if !f(self.keys[i]) {
-                    self.state[i] = 2
-                    self.len = self.len - 1
+                    self.state[i] = 2;
+                    self.len = self.len - 1;
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
     }
-
     /// 清空（保留容量）
     #[state]
-    pub fn clear(ref mut self) {
-        i = 0usize
+    fn clear(ref mut self) {
+        i = 0usize;
         while i < self.cap {
-            self.state[i] = 0
-            i = i + 1
+            self.state[i] = 0;
+            i = i + 1;
         }
-        self.len = 0
-        self.filled = 0
+        self.len = 0;
+        self.filled = 0;
     }
-
     /// 是否子集（所有元素都在 other 中；空集为任何集合的子集）
-    pub fn is_subset_of(ref self, ref HashSet[K] other) -> bool {
-        i = 0usize
+    fn is_subset_of(ref self, ref HashSet[K] other) -> bool {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                k = self.keys[i]
+                k = self.keys[i];
                 if !other.contains(k) {
-                    return false
+                    return false;
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return true
+        return true;
     }
-
     /// 是否超集（包含 other 的所有元素）
-    pub fn is_superset_of(ref self, ref HashSet[K] other) -> bool {
-        return other.is_subset_of(self)
+    fn is_superset_of(ref self, ref HashSet[K] other) -> bool {
+        return other.is_subset_of(self);
     }
-
     /// 并集（新集合）
     ///
     /// 注：`union` 为语言关键字，成员位置允许（#172）故可直接用该名。
     #[alloc]
     #[state]
-    pub fn union(ref self, ref HashSet[K] other) -> HashSet[K] {
-        res = HashSet::new[K]()
-        i = 0usize
+    fn union(ref self, ref HashSet[K] other) -> HashSet[K] {
+        res = HashSet::new[K]();
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 res.insert(self.keys[i])
             }
-            i = i + 1
+            i = i + 1;
         }
-        i = 0usize
+        i = 0usize;
         while i < other.cap {
             if other.state[i] == 1 {
                 res.insert(other.keys[i])
             }
-            i = i + 1
+            i = i + 1;
         }
-        return res
+        return res;
     }
-
     /// 交集（新集合）
     #[alloc]
     #[state]
-    pub fn intersection(ref self, ref HashSet[K] other) -> HashSet[K] {
-        res = HashSet::new[K]()
-        i = 0usize
+    fn intersection(ref self, ref HashSet[K] other) -> HashSet[K] {
+        res = HashSet::new[K]();
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                k = self.keys[i]
+                k = self.keys[i];
                 if other.contains(k) {
                     res.insert(k)
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return res
+        return res;
     }
-
     /// 差集 self - other（新集合）
     #[alloc]
     #[state]
-    pub fn difference(ref self, ref HashSet[K] other) -> HashSet[K] {
-        res = HashSet::new[K]()
-        i = 0usize
+    fn difference(ref self, ref HashSet[K] other) -> HashSet[K] {
+        res = HashSet::new[K]();
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                k = self.keys[i]
+                k = self.keys[i];
                 if !other.contains(k) {
                     res.insert(k)
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return res
+        return res;
     }
-
     /// 遍历所有元素（浅拷贝；顺序为实现相关）
-    pub fn for_each(ref self, Fn(K) f) {
-        i = 0usize
+    fn for_each(ref self, Fn(K) f) {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 f(self.keys[i])
             }
-            i = i + 1
+            i = i + 1;
         }
     }
-
     /// 折叠：acc = f(acc, k)
-    pub fn fold[U](ref self, U init, Fn(U, K) -> U f) -> U {
-        acc = init
-        i = 0usize
+    fn fold[U](ref self, U init, Fn(U,K)->U f) -> U {
+        acc = init;
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                acc = f(acc, self.keys[i])
+                acc = f(acc, self.keys[i]);
             }
-            i = i + 1
+            i = i + 1;
         }
-        return acc
+        return acc;
     }
-
     /// 所有元素（浅拷贝；顺序为实现相关）
     #[alloc]
     #[state]
-    pub fn to_list(ref self) -> ArrayList[K] {
-        res = ArrayList::new[K]()
-        i = 0usize
+    fn to_list(ref self) -> ArrayList[K] {
+        res = ArrayList::new[K]();
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 res.push(self.keys[i])
             }
-            i = i + 1
+            i = i + 1;
         }
-        return res
+        return res;
     }
-
-    pub fn len(ref self) -> usize {
-        return self.len
+    fn len(ref self) -> usize {
+        return self.len;
     }
-
-    pub fn is_empty(ref self) -> bool {
-        return self.len == 0
+    fn is_empty(ref self) -> bool {
+        return self.len == 0;
     }
 }
 
@@ -317,22 +303,22 @@ impl[K: Hash] HashSet[K] {
 impl[K: Hash + ToString] HashSet[K] {
     #[alloc]
     #[state]
-    pub fn to_string(ref self) -> String {
-        res = "{"
-        first = true
-        i = 0usize
+    fn to_string(ref self) -> String {
+        res = "{";
+        first = true;
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if !first {
-                    res = res + ", "
+                    res = res + ", ";
                 }
-                res = res + self.keys[i]
-                first = false
+                res = res + self.keys[i];
+                first = false;
             }
-            i = i + 1
+            i = i + 1;
         }
-        res = res + "}"
-        return res
+        res = res + "}";
+        return res;
     }
 }
 
@@ -344,82 +330,79 @@ pub struct HashSetIter[K: Hash] {
 
 impl[K: Hash] HashSetIter[K] {
     #[state]
-    pub fn next(ref mut self) -> Option[K] {
+    fn next(ref mut self) -> Option[K] {
         while self.index < self.set.cap {
             if self.set.state[self.index] == 1 {
-                k = self.set.keys[self.index]
-                self.index = self.index + 1
-                return Option::Some(k)
+                k = self.set.keys[self.index];
+                self.index = self.index + 1;
+                return Option::Some(k);
             }
-            self.index = self.index + 1
+            self.index = self.index + 1;
         }
-        return Option::None()
+        return Option::None();
     }
 }
 
 impl[K: Hash] HashSet[K] {
     /// 转为拥有所有权的迭代器（`for k in s.into_iter()`）
-    pub fn into_iter(self) -> HashSetIter[K] {
-        return HashSetIter[K] { set = self, index = 0 }
+    fn into_iter(self) -> HashSetIter[K] {
+        return HashSetIter[K] { set = self, index = 0 };
     }
 }
 
 /// 谓词族（与 ArrayList/HashMap 对齐）
 impl[K: Hash] HashSet[K] {
     /// 是否存在满足谓词的元素
-    pub fn any(ref self, Fn(K) -> bool f) -> bool {
-        i = 0usize
+    fn any(ref self, Fn(K)->bool f) -> bool {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if f(self.keys[i]) {
-                    return true
+                    return true;
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return false
+        return false;
     }
-
     /// 是否所有元素满足谓词（空集 true）
-    pub fn all(ref self, Fn(K) -> bool f) -> bool {
-        i = 0usize
+    fn all(ref self, Fn(K)->bool f) -> bool {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if !f(self.keys[i]) {
-                    return false
+                    return false;
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return true
+        return true;
     }
-
     /// 满足谓词的元素个数
-    pub fn count(ref self, Fn(K) -> bool f) -> usize {
-        n = 0usize
-        i = 0usize
+    fn count(ref self, Fn(K)->bool f) -> usize {
+        n = 0usize;
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if f(self.keys[i]) {
-                    n = n + 1
+                    n = n + 1;
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return n
+        return n;
     }
-
     /// 首个满足谓词的元素；无则 None
-    pub fn find(ref self, Fn(K) -> bool f) -> Option[K] {
-        i = 0usize
+    fn find(ref self, Fn(K)->bool f) -> Option[K] {
+        i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
                 if f(self.keys[i]) {
-                    return Option::Some(self.keys[i])
+                    return Option::Some(self.keys[i]);
                 }
             }
-            i = i + 1
+            i = i + 1;
         }
-        return Option::None()
+        return Option::None();
     }
 }

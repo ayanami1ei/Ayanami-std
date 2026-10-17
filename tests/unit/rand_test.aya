@@ -1,104 +1,107 @@
-import "rand"
-import "arraylist"
-import "sort"
-import "test"
+import "rand";
+
+import "arraylist";
+
+import "sort";
+
+import "test";
 
 #[test]
 fn test_range() {
-    r = Rng::new(12345)
-    a = r.next_range(0, 100)
-    #assert(a >= 0)
-    #assert(a < 100)
-    b = r.next_range(10, 20)
-    #assert(b >= 10)
-    #assert(b < 20)
-    c = r.next_range(5, 5)
+    r = Rng::new(12345);
+    a = r.next_range(0, 100);
+    #assert(a >= 0);
+    #assert(a < 100);
+    b = r.next_range(10, 20);
+    #assert(b >= 10);
+    #assert(b < 20);
+    c = r.next_range(5, 5);
     #assert_eq(c, 5)
 }
 
 #[test]
 fn test_deterministic() {
-    r1 = Rng::new(42)
-    r2 = Rng::new(42)
-    #assert_eq(r1.next_int(), r2.next_int())
-    #assert_eq(r1.next_int(), r2.next_int())
+    r1 = Rng::new(42);
+    r2 = Rng::new(42);
+    #assert_eq(r1.next_int(), r2.next_int());
+    #assert_eq(r1.next_int(), r2.next_int());
     #assert_eq(r1.next_int(), r2.next_int())
 }
 
 #[test]
 fn test_seed_variation() {
-    r1 = Rng::new(1)
-    r2 = Rng::new(2)
+    r1 = Rng::new(1);
+    r2 = Rng::new(2);
     #assert(r1.next_int() != r2.next_int())
 }
 
 #[test]
 fn test_negative_seed() {
-    r1 = Rng::new(0 - 5)
-    r2 = Rng::new(5)
+    r1 = Rng::new(0 - 5);
+    r2 = Rng::new(5);
     #assert_eq(r1.next_int(), r2.next_int())
 }
 
 #[test]
 fn test_entropy() {
-    r = Rng::from_entropy()
-    a = r.next_range(0, 10)
-    #assert(a >= 0)
+    r = Rng::from_entropy();
+    a = r.next_range(0, 10);
+    #assert(a >= 0);
     #assert(a < 10)
 }
 
 #[test]
 fn test_next_bool_float() {
-    r = Rng::new(7)
-    n_true = 0
-    i = 0
+    r = Rng::new(7);
+    n_true = 0;
+    i = 0;
     while i < 100 {
         if r.next_bool() {
-            n_true = n_true + 1
+            n_true = n_true + 1;
         }
-        i = i + 1
+        i = i + 1;
     }
-    #assert(n_true > 20)
-    #assert(n_true < 80)
-    f = r.next_float01()
-    #assert(f >= 0.0)
+    #assert(n_true > 20);
+    #assert(n_true < 80);
+    f = r.next_float01();
+    #assert(f >= 0.0);
     #assert(f < 1.0)
 }
 
 #[test]
 fn test_shuffle() {
-    r = Rng::new(7)
-    a = ArrayList::new[int]()
-    i = 0
+    r = Rng::new(7);
+    a = ArrayList::new[int]();
+    i = 0;
     while i < 10 {
-        a.push(i)
-        i = i + 1
+        a.push(i);
+        i = i + 1;
     }
-    shuffle(a, r)
-    #assert_eq(a.len(), 10)
-    c = ArrayList::new[int]()
-    i = 0
+    shuffle(a, r);
+    #assert_eq(a.len(), 10);
+    c = ArrayList::new[int]();
+    i = 0;
     while i < 10 {
-        c.push(a.index(i as usize))
-        i = i + 1
+        c.push(a.index(i as usize));
+        i = i + 1;
     }
-    sort_int(a)
-    i = 0
+    sort_int(a);
+    i = 0;
     while i < 10 {
-        #assert_eq(a.index(i as usize), i)
-        i = i + 1
+        #assert_eq(a.index(i as usize), i);
+        i = i + 1;
     }
-    r2 = Rng::new(7)
-    b = ArrayList::new[int]()
-    i = 0
+    r2 = Rng::new(7);
+    b = ArrayList::new[int]();
+    i = 0;
     while i < 10 {
-        b.push(i)
-        i = i + 1
+        b.push(i);
+        i = i + 1;
     }
-    shuffle(b, r2)
-    i = 0
+    shuffle(b, r2);
+    i = 0;
     while i < 10 {
-        #assert_eq(c.index(i as usize), b.index(i as usize))
-        i = i + 1
+        #assert_eq(c.index(i as usize), b.index(i as usize));
+        i = i + 1;
     }
 }

@@ -1,39 +1,38 @@
 // dir_copy — 递归复制目录树示例（使用 fs.copy_tree）
 //
 // 创建源目录树 → copy_tree 复制 → 校验内容 → 清理。
-import "fs"
-import "time"
-import "io"
+import "fs";
+
+import "time";
+
+import "io";
 
 fn main() -> int {
-    base = "/tmp/ayanami_copy_" + now_millis().to_string()
-    src = base + "/src"
-    dst = base + "/dst"
-    mkdir(base.copy())
-    mkdir(src.copy())
-    mkdir(src + "/sub")
-    write_file(src + "/a.txt", "A")
-    write_file(src + "/b.txt", "B")
-    write_file(src + "/sub/c.txt", "C")
-
-    n = copy_tree(src.copy(), dst.copy())
-    println("copied files: " + n)
-
-    va = read_file(dst + "/a.txt").unwrap_or("")
-    vc = read_file(dst + "/sub/c.txt").unwrap_or("")
-    println("a: " + va)
-    println("c: " + vc)
-
-    remove_file(src + "/a.txt")
-    remove_file(src + "/b.txt")
-    remove_file(src + "/sub/c.txt")
-    remove_file(dst + "/a.txt")
-    remove_file(dst + "/b.txt")
-    remove_file(dst + "/sub/c.txt")
-    rmdir(src + "/sub")
-    rmdir(dst + "/sub")
-    rmdir(src.copy())
-    rmdir(dst.copy())
-    rmdir(base.copy())
-    return 0
+    base = "/tmp/ayanami_copy_" + now_millis().to_string();
+    src = base + "/src";
+    dst = base + "/dst";
+    mkdir(base.copy());
+    mkdir(src.copy());
+    mkdir(src + "/sub");
+    write_file(src + "/a.txt", "A");
+    write_file(src + "/b.txt", "B");
+    write_file(src + "/sub/c.txt", "C");
+    n = copy_tree(src.copy(), dst.copy());
+    println("copied files: " + n);
+    va = read_file(dst + "/a.txt").unwrap_or("");
+    vc = read_file(dst + "/sub/c.txt").unwrap_or("");
+    println("a: " + va);
+    println("c: " + vc);
+    remove_file(src + "/a.txt");
+    remove_file(src + "/b.txt");
+    remove_file(src + "/sub/c.txt");
+    remove_file(dst + "/a.txt");
+    remove_file(dst + "/b.txt");
+    remove_file(dst + "/sub/c.txt");
+    rmdir(src + "/sub");
+    rmdir(dst + "/sub");
+    rmdir(src.copy());
+    rmdir(dst.copy());
+    rmdir(base.copy());
+    return 0;
 }

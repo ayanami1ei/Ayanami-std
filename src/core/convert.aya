@@ -5,8 +5,9 @@
 // - `Into[T]` 接口按“自然转换”提供（每个类型至多一个目标）；显式目标用 `to_*` 方法。
 // - 泛型约束 `[U: Into[float]]` 暂不支持（编译器限制），接口先供动态分发与文档使用。
 // - `Result` 版解析（parse_int_result -> Result[int, ParseError]）待编译器 #68/#69 修复后追加。
-import "string"
-import "option"
+import "string";
+
+import "option";
 
 /// 解析错误类别（为 Result 版解析预留）
 pub enum ParseError {
@@ -18,228 +19,221 @@ pub enum ParseError {
 /// 数字字符 → 数值（0-9 / a-z / A-Z → 0..35；非法返回 -1）
 #[pure]
 pub fn digit_value(char c) -> int {
-    code = char_code(c)
+    code = char_code(c);
     if code >= 48 && code <= 57 {
-        return code - 48
+        return code - 48;
     }
     if code >= 97 && code <= 122 {
-        return code - 97 + 10
+        return code - 97 + 10;
     }
     if code >= 65 && code <= 90 {
-        return code - 65 + 10
+        return code - 65 + 10;
     }
-    return 0 - 1
+    return 0 - 1;
 }
 
 impl String {
     /// 严格解析整数：可选 +/-，全部为数字；空白、非法字符、溢出返回 None
     #[pure]
-    pub fn try_parse_int(ref self) -> Option[int] {
-        n = self.len
+    fn try_parse_int(ref self) -> Option[int] {
+        n = self.len;
         if n == 0 {
-            return Option::None()
+            return Option::None();
         }
-        i = 0usize
-        neg = false
-        c = self.data[0]
+        i = 0usize;
+        neg = false;
+        c = self.data[0];
         if c == '-' {
-            neg = true
-            i = 1
+            neg = true;
+            i = 1;
         } else {
             if c == '+' {
-                i = 1
+                i = 1;
             }
         }
         if i >= n {
-            return Option::None()
+            return Option::None();
         }
-        v = 0
+        v = 0;
         while i < n {
-            c = self.data[i]
+            c = self.data[i];
             if !c.is_digit() {
-                return Option::None()
+                return Option::None();
             }
-            d = c.to_digit()
+            d = c.to_digit();
             if v > 922337203685477580 {
-                return Option::None()
+                return Option::None();
             }
-            v = v * 10
+            v = v * 10;
             if v > 9223372036854775807 - d {
-                return Option::None()
+                return Option::None();
             }
-            v = v + d
-            i = i + 1
+            v = v + d;
+            i = i + 1;
         }
         if neg {
-            return Option::Some(0 - v)
+            return Option::Some(0 - v);
         }
-        return Option::Some(v)
+        return Option::Some(v);
     }
-
     /// 严格解析浮点：可选 +/-，digits [. digits]（无指数）；非法输入返回 None
     #[pure]
-    pub fn try_parse_float(ref self) -> Option[float] {
-        n = self.len
+    fn try_parse_float(ref self) -> Option[float] {
+        n = self.len;
         if n == 0 {
-            return Option::None()
+            return Option::None();
         }
-        i = 0usize
-        neg = false
-        c = self.data[0]
+        i = 0usize;
+        neg = false;
+        c = self.data[0];
         if c == '-' {
-            neg = true
-            i = 1
+            neg = true;
+            i = 1;
         } else {
             if c == '+' {
-                i = 1
+                i = 1;
             }
         }
         if i >= n {
-            return Option::None()
+            return Option::None();
         }
-        v = 0.0
-        digits = 0
+        v = 0.0;
+        digits = 0;
         while i < n {
-            c = self.data[i]
+            c = self.data[i];
             if c == '.' {
-                break
+                break;
             }
             if !c.is_digit() {
-                return Option::None()
+                return Option::None();
             }
-            v = v * 10.0 + (c.to_digit() as float)
-            digits = digits + 1
-            i = i + 1
+            v = v * 10.0 + c.to_digit() as float;
+            digits = digits + 1;
+            i = i + 1;
         }
         if i < n {
             if c == '.' {
-                i = i + 1
-                scale = 0.1
+                i = i + 1;
+                scale = 0.1;
                 while i < n {
-                    c = self.data[i]
+                    c = self.data[i];
                     if !c.is_digit() {
-                        return Option::None()
+                        return Option::None();
                     }
-                    v = v + (c.to_digit() as float) * scale
-                    scale = scale * 0.1
-                    digits = digits + 1
-                    i = i + 1
+                    v = v + c.to_digit() as float * scale;
+                    scale = scale * 0.1;
+                    digits = digits + 1;
+                    i = i + 1;
                 }
             }
         }
         if digits == 0 {
-            return Option::None()
+            return Option::None();
         }
         if neg {
-            return Option::Some(0.0 - v)
+            return Option::Some(0.0 - v);
         }
-        return Option::Some(v)
+        return Option::Some(v);
     }
-
     /// 严格解析布尔：仅 "true" / "false"（内部有字符串字面量分配）
     #[alloc]
     #[state]
-    pub fn try_parse_bool(ref self) -> Option[bool] {
-        t = "true"
-        f = "false"
+    fn try_parse_bool(ref self) -> Option[bool] {
+        t = "true";
+        f = "false";
         if self.eq(t) {
-            return Option::Some(true)
+            return Option::Some(true);
         }
         if self.eq(f) {
-            return Option::Some(false)
+            return Option::Some(false);
         }
-        return Option::None()
+        return Option::None();
     }
-
     /// 严格按进制解析（base ∈ [2, 36]；允许 +/-，不允许空白/前缀）
     #[pure]
-    pub fn try_parse_int_radix(ref self, int base) -> Option[int] {
+    fn try_parse_int_radix(ref self, int base) -> Option[int] {
         if base < 2 {
-            return Option::None()
+            return Option::None();
         }
         if base > 36 {
-            return Option::None()
+            return Option::None();
         }
         if self.len == 0 {
-            return Option::None()
+            return Option::None();
         }
-        i = 0usize
-        neg = false
-        c0 = self.data[0]
+        i = 0usize;
+        neg = false;
+        c0 = self.data[0];
         if c0 == '-' {
-            neg = true
-            i = 1
+            neg = true;
+            i = 1;
         } else {
             if c0 == '+' {
-                i = 1
+                i = 1;
             }
         }
         if i >= self.len {
-            return Option::None()
+            return Option::None();
         }
-        v = 0
+        v = 0;
         while i < self.len {
-            d = digit_value(self.data[i])
+            d = digit_value(self.data[i]);
             if d < 0 {
-                return Option::None()
+                return Option::None();
             }
             if d >= base {
-                return Option::None()
+                return Option::None();
             }
-            v = v * base + d
-            i = i + 1
+            v = v * base + d;
+            i = i + 1;
         }
         if neg {
-            v = 0 - v
+            v = 0 - v;
         }
-        return Option::Some(v)
+        return Option::Some(v);
     }
-
     /// 宽松按进制解析：失败返回 0
     #[pure]
-    pub fn parse_int_radix(ref self, int base) -> int {
-        return self.try_parse_int_radix(base).unwrap_or(0)
+    fn parse_int_radix(ref self, int base) -> int {
+        return self.try_parse_int_radix(base).unwrap_or(0);
     }
-
     /// 整个串是否为合法浮点
     #[pure]
-    pub fn is_float(ref self) -> bool {
-        return self.try_parse_float().is_some()
+    fn is_float(ref self) -> bool {
+        return self.try_parse_float().is_some();
     }
-
     /// 宽松浮点解析：失败返回 0.0（对齐 parse_int）
     #[pure]
-    pub fn parse_float(ref self) -> float {
-        return self.try_parse_float().unwrap_or(0.0)
+    fn parse_float(ref self) -> float {
+        return self.try_parse_float().unwrap_or(0.0);
     }
 }
 
 // ── Result 版解析（错误分类；非法/溢出归为 Invalid） ──
-
 /// 严格解析整数（Result 版）
 #[pure]
 pub fn parse_int_result(ref String s) -> Result[int, ParseError] {
     if s.len == 0 {
-        return Result::Err(ParseError::Empty)
+        return Result::Err(ParseError::Empty);
     }
-    v = s.try_parse_int()
+    v = s.try_parse_int();
     if v._tag == 0 {
-        return Result::Ok(v._data_Some._0)
+        return Result::Ok(v._data_Some._0);
     }
-    return Result::Err(ParseError::Invalid)
+    return Result::Err(ParseError::Invalid);
 }
 
 /// 严格解析浮点（Result 版）
 #[pure]
 pub fn parse_float_result(ref String s) -> Result[float, ParseError] {
     if s.len == 0 {
-        return Result::Err(ParseError::Empty)
+        return Result::Err(ParseError::Empty);
     }
-    v = s.try_parse_float()
+    v = s.try_parse_float();
     if v._tag == 0 {
-        return Result::Ok(v._data_Some._0)
+        return Result::Ok(v._data_Some._0);
     }
-    return Result::Err(ParseError::Invalid)
+    return Result::Err(ParseError::Invalid);
 }
 
 /// 严格解析布尔（Result 版；内部有字面量分配）
@@ -247,89 +241,97 @@ pub fn parse_float_result(ref String s) -> Result[float, ParseError] {
 #[state]
 pub fn parse_bool_result(ref String s) -> Result[bool, ParseError] {
     if s.len == 0 {
-        return Result::Err(ParseError::Empty)
+        return Result::Err(ParseError::Empty);
     }
-    v = s.try_parse_bool()
+    v = s.try_parse_bool();
     if v._tag == 0 {
-        return Result::Ok(v._data_Some._0)
+        return Result::Ok(v._data_Some._0);
     }
-    return Result::Err(ParseError::Invalid)
+    return Result::Err(ParseError::Invalid);
 }
 
 // ── 便捷包装（返回 int/float/bool，避免调用方重复单态化泛型方法） ──
-
 /// 严格解析整数，失败用 fallback
 #[pure]
 pub fn parse_int_or(ref String s, int fallback) -> int {
-    return s.try_parse_int().unwrap_or(fallback)
+    return s.try_parse_int().unwrap_or(fallback);
 }
 
 /// 严格解析浮点，失败用 fallback
 #[pure]
 pub fn parse_float_or(ref String s, float fallback) -> float {
-    return s.try_parse_float().unwrap_or(fallback)
+    return s.try_parse_float().unwrap_or(fallback);
 }
 
 /// 严格解析布尔，失败用 fallback
 #[alloc]
 #[state]
 pub fn parse_bool_or(ref String s, bool fallback) -> bool {
-    return s.try_parse_bool().unwrap_or(fallback)
+    return s.try_parse_bool().unwrap_or(fallback);
 }
 
 // ── 显式目标转换（to_*） ──
-
 impl int {
     #[pure]
-    pub fn to_float(self) -> float { return self as float }
-
+    fn to_float(self) -> float {
+        return self as float;
+    }
     #[pure]
-    pub fn to_char(self) -> char { return self as char }
+    fn to_char(self) -> char {
+        return self as char;
+    }
 }
 
 impl float {
     /// 截断取整（向零）
     #[pure]
-    pub fn to_int(self) -> int { return self as int }
+    fn to_int(self) -> int {
+        return self as int;
+    }
 }
 
 impl char {
     #[pure]
-    pub fn to_int(self) -> int { return self as int }
+    fn to_int(self) -> int {
+        return self as int;
+    }
 }
 
 impl bool {
     #[pure]
-    pub fn to_int(self) -> int {
+    fn to_int(self) -> int {
         if self {
-            return 1
+            return 1;
         }
-        return 0
+        return 0;
     }
 }
 
 // ── Into[T]：自然转换（每类型至多一个目标） ──
-
-pub interface Into[T] {
+interface Into[T] {
     fn into(self) -> T;
 }
 
 impl int {
     #[pure]
-    pub fn into(self) -> float { return self as float }
+    fn into(self) -> float {
+        return self as float;
+    }
 }
 
 impl char {
     #[pure]
-    pub fn into(self) -> int { return self as int }
+    fn into(self) -> int {
+        return self as int;
+    }
 }
 
 impl bool {
     #[pure]
-    pub fn into(self) -> int {
+    fn into(self) -> int {
         if self {
-            return 1
+            return 1;
         }
-        return 0
+        return 0;
     }
 }

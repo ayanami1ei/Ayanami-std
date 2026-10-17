@@ -1,8 +1,12 @@
-import "string"
-import "panic"
-import "list"
-import "eq"
-import "option"
+import "string";
+
+import "panic";
+
+import "list";
+
+import "eq";
+
+import "option";
 
 // 说明：链表曾基于 shared/weak 节点链；新所有权模型暂不支持"借用 unique 字段遍历"，
 // 因此改为数组缓冲实现，保持相同的 List 接口（行为等价：顺序表）。
@@ -12,253 +16,249 @@ pub struct LinkedList[T] {
     usize capability
 }
 
-pub namespace LinkedList{
-    pub fn new[T]()->LinkedList[T]{
-        return LinkedList[T]{data=null, len=0, capability=0}
+pub namespace LinkedList {
+    pub fn new[T]() -> LinkedList[T] {
+        return LinkedList[T] { data = null, len = 0, capability = 0 };
     }
     /// 预分配容量（cap <= 0 时等价于 new）
-#[alloc]
+    #[alloc]
     pub fn with_capacity[T](usize cap) -> LinkedList[T] {
         if cap == 0 {
-            return LinkedList[T] { data = null, len = 0, capability = 0 }
+            return LinkedList[T] { data = null, len = 0, capability = 0 };
         }
-        return LinkedList[T] { data = [T; cap], len = 0, capability = cap }
+        return LinkedList[T] { data = [T; cap], len = 0, capability = cap };
     }
 }
 
 impl[T] LinkedList[T] {
-#[alloc]
-#[state]
-    fn expand(ref mut self){
+    #[alloc]
+    #[state]
+    fn expand(ref mut self) {
         if self.capability == 0 {
-            self.capability = 1
-            self.data = [T; 1]
+            self.capability = 1;
+            self.data = [T; 1];
         } else {
-            tmp = [T; self.capability * 2]
-            for i in (0, self.len as int) { tmp[i] = self.data[i] }
-            self.data = tmp
-            self.capability = self.capability * 2
+            tmp = [T; self.capability * 2];
+            for i in (0, self.len as int) {
+                tmp[i] = self.data[i];
+            }
+            self.data = tmp;
+            self.capability = self.capability * 2;
         }
     }
-
-#[alloc]
-#[state]
-    pub fn push(ref mut self, T val) {
-        if self.len + 1 >= self.capability { self.expand() }
-        self.data[self.len] = val
-        self.len = self.len + 1
+    #[alloc]
+    #[state]
+    fn push(ref mut self, T val) {
+        if self.len + 1 >= self.capability {
+            self.expand()
+        }
+        self.data[self.len] = val;
+        self.len = self.len + 1;
     }
-
-    pub fn index(ref self, usize index, int __line, int __col, String __file)->T{
-        if index >= self.len { panic_bounds_at(__line, __col, __file, index, self.len) }
-        return self.data[index]
+    fn index(ref self, usize index, int __line, int __col, String __file) -> T {
+        if index >= self.len {
+            panic_bounds_at(__line, __col, __file, index, self.len)
+        }
+        return self.data[index];
     }
-
-    pub fn len(ref self)->usize{ return self.len }
-
-#[state]
-    pub fn set(ref mut self, usize i, T v, int __line, int __col, String __file) {
-        if i >= self.len { panic_bounds_at(__line, __col, __file, i, self.len) }
-        self.data[i] = v
+    fn len(ref self) -> usize {
+        return self.len;
     }
-
+    #[state]
+    fn set(ref mut self, usize i, T v, int __line, int __col, String __file) {
+        if i >= self.len {
+            panic_bounds_at(__line, __col, __file, i, self.len)
+        }
+        self.data[i] = v;
+    }
     /// 弹出末元素（空表 panic 101）
-#[alloc]
-#[state]
-    pub fn pop(ref mut self, int __line, int __col, String __file) -> T {
-        if self.len == 0 { panic_at(__line, __col, __file, "pop from empty LinkedList") }
-        self.len = self.len - 1
-        return self.data[self.len]
+    #[alloc]
+    #[state]
+    fn pop(ref mut self, int __line, int __col, String __file) -> T {
+        if self.len == 0 {
+            panic_at(__line, __col, __file, "pop from empty LinkedList")
+        }
+        self.len = self.len - 1;
+        return self.data[self.len];
     }
-
-    pub fn is_empty(ref self) -> bool {
-        return self.len == 0
+    fn is_empty(ref self) -> bool {
+        return self.len == 0;
     }
-
     /// 清空（保留底层缓冲）
-#[state]
-    pub fn clear(ref mut self) {
-        self.len = 0
+    #[state]
+    fn clear(ref mut self) {
+        self.len = 0;
     }
-
-    pub fn iter(ref self, Fn(T) f) {
+    fn iter(ref self, Fn(T) f) {
         for i in (0, self.len as int) {
             f(self.data[i])
         }
     }
-
 }
 
 /// 需要元素实现 ToString
-impl[T:ToString] LinkedList[T] {
-#[alloc]
-#[state]
-    pub fn to_string(ref self) -> String {
-        res = "["
-        for i in (0, self.len as int){
-            res = res + self.data[i]
-            if i != self.len as int - 1 { res = res + ", " }
+impl[T: ToString] LinkedList[T] {
+    #[alloc]
+    #[state]
+    fn to_string(ref self) -> String {
+        res = "[";
+        for i in (0, self.len as int) {
+            res = res + self.data[i];
+            if i != self.len as int - 1 {
+                res = res + ", ";
+            }
         }
-        res = res + "]"
-        return res
+        res = res + "]";
+        return res;
     }
 }
 
 /// 需要元素实现 Eq
 impl[T: Eq] LinkedList[T] {
     /// 是否包含（线性查找）
-    pub fn contains(ref self, ref T v) -> bool {
-        i = 0usize
+    fn contains(ref self, ref T v) -> bool {
+        i = 0usize;
         while i < self.len {
             if self.data[i].same(v) {
-                return true
+                return true;
             }
-            i = i + 1
+            i = i + 1;
         }
-        return false
+        return false;
     }
-
     /// 首次出现下标；未找到返回 -1
-    pub fn index_of(ref self, ref T v) -> int {
-        i = 0usize
+    fn index_of(ref self, ref T v) -> int {
+        i = 0usize;
         while i < self.len {
             if self.data[i].same(v) {
-                return i as int
+                return i as int;
             }
-            i = i + 1
+            i = i + 1;
         }
-        return 0 - 1
+        return 0 - 1;
     }
-
     /// 最后一次出现下标；未找到返回 -1
-    pub fn last_index_of(ref self, ref T v) -> int {
-        i = self.len
+    fn last_index_of(ref self, ref T v) -> int {
+        i = self.len;
         while i > 0 {
-            i = i - 1
-            x = self.data[i]
+            i = i - 1;
+            x = self.data[i];
             if x.same(v) {
-                return i as int
+                return i as int;
             }
         }
-        return 0 - 1
+        return 0 - 1;
     }
-
     /// 去除相邻重复元素（保留每组第一个）
     #[state]
-    pub fn dedup(ref mut self) {
+    fn dedup(ref mut self) {
         if self.len <= 1 {
-            return
+            return;
         }
-        k = 0usize
-        i = 1usize
+        k = 0usize;
+        i = 1usize;
         while i < self.len {
-            a = self.data[i]
-            b = self.data[k]
+            a = self.data[i];
+            b = self.data[k];
             if !a.same(ref b) {
-                k = k + 1
-                self.data[k] = a
+                k = k + 1;
+                self.data[k] = a;
             }
-            i = i + 1
+            i = i + 1;
         }
-        self.len = k + 1
+        self.len = k + 1;
     }
-
     /// 删除首个等于 v 的元素（后续前移）；未找到返回 false
     #[state]
-    pub fn remove(ref mut self, ref T v) -> bool {
-        i = 0usize
+    fn remove(ref mut self, ref T v) -> bool {
+        i = 0usize;
         while i < self.len {
             if self.data[i].same(v) {
-                j = i
+                j = i;
                 while j + 1 < self.len {
-                    self.data[j] = self.data[j + 1]
-                    j = j + 1
+                    self.data[j] = self.data[j + 1];
+                    j = j + 1;
                 }
-                self.len = self.len - 1
-                return true
+                self.len = self.len - 1;
+                return true;
             }
-            i = i + 1
+            i = i + 1;
         }
-        return false
+        return false;
     }
 }
 
 impl[T] LinkedList[T] {
     /// 原地反转
     #[state]
-    pub fn reverse(ref mut self) {
-        i = 0usize
-        j = self.len
+    fn reverse(ref mut self) {
+        i = 0usize;
+        j = self.len;
         while i + 1 < j {
-            j = j - 1
-            tmp = self.data[i]
-            self.data[i] = self.data[j]
-            self.data[j] = tmp
-            i = i + 1
+            j = j - 1;
+            tmp = self.data[i];
+            self.data[i] = self.data[j];
+            self.data[j] = tmp;
+            i = i + 1;
         }
     }
-
     /// 交换两个下标处的元素；越界 panic 101
     #[state]
-    pub fn swap(ref mut self, usize i, usize j, int __line, int __col, String __file) {
+    fn swap(ref mut self, usize i, usize j, int __line, int __col, String __file) {
         if i >= self.len {
             panic_bounds_at(__line, __col, __file, i, self.len)
         }
         if j >= self.len {
             panic_bounds_at(__line, __col, __file, j, self.len)
         }
-        tmp = self.data[i]
-        self.data[i] = self.data[j]
-        self.data[j] = tmp
+        tmp = self.data[i];
+        self.data[i] = self.data[j];
+        self.data[j] = tmp;
     }
-
     /// 在 idx 处插入（idx == len 等价 push）；越界 panic 101
     #[alloc]
     #[state]
-    pub fn insert_at(ref mut self, usize idx, T v, int __line, int __col, String __file) {
+    fn insert_at(ref mut self, usize idx, T v, int __line, int __col, String __file) {
         if idx > self.len {
             panic_bounds_at(__line, __col, __file, idx, self.len)
         }
         if self.len + 1 >= self.capability {
             self.expand()
         }
-        j = self.len
+        j = self.len;
         while j > idx {
-            self.data[j] = self.data[j - 1]
-            j = j - 1
+            self.data[j] = self.data[j - 1];
+            j = j - 1;
         }
-        self.data[idx] = v
-        self.len = self.len + 1
+        self.data[idx] = v;
+        self.len = self.len + 1;
     }
-
     /// 删除 idx 处元素（后续前移）；越界 panic 101
     #[state]
-    pub fn remove_at(ref mut self, usize idx, int __line, int __col, String __file) {
+    fn remove_at(ref mut self, usize idx, int __line, int __col, String __file) {
         if idx >= self.len {
             panic_bounds_at(__line, __col, __file, idx, self.len)
         }
-        j = idx
+        j = idx;
         while j + 1 < self.len {
-            self.data[j] = self.data[j + 1]
-            j = j + 1
+            self.data[j] = self.data[j + 1];
+            j = j + 1;
         }
-        self.len = self.len - 1
+        self.len = self.len - 1;
     }
-
     /// 首元素（空表 panic 101）
-    pub fn first(ref self, int __line, int __col, String __file) -> T {
+    fn first(ref self, int __line, int __col, String __file) -> T {
         if self.len == 0 {
             panic_at(__line, __col, __file, "first from empty LinkedList")
         }
-        return self.data[0]
+        return self.data[0];
     }
-
     /// 末元素（空表 panic 101）
-    pub fn last(ref self, int __line, int __col, String __file) -> T {
+    fn last(ref self, int __line, int __col, String __file) -> T {
         if self.len == 0 {
             panic_at(__line, __col, __file, "last from empty LinkedList")
         }
-        return self.data[self.len - 1]
+        return self.data[self.len - 1];
     }
 }
 
@@ -266,115 +266,107 @@ impl[T] LinkedList[T] {
     /// 映射为新表
     #[alloc]
     #[state]
-    pub fn map[U](ref self, Fn(T) -> U f) -> LinkedList[U] {
-        res = LinkedList::new[U]()
-        i = 0usize
+    fn map[U](ref self, Fn(T)->U f) -> LinkedList[U] {
+        res = LinkedList::new[U]();
+        i = 0usize;
         while i < self.len {
-            res.push(f(self.data[i]))
-            i = i + 1
+            res.push(f(self.data[i]));
+            i = i + 1;
         }
-        return res
+        return res;
     }
-
     /// 过滤为新表
     #[alloc]
     #[state]
-    pub fn filter(ref self, Fn(T) -> bool f) -> LinkedList[T] {
-        res = LinkedList::new[T]()
-        i = 0usize
+    fn filter(ref self, Fn(T)->bool f) -> LinkedList[T] {
+        res = LinkedList::new[T]();
+        i = 0usize;
         while i < self.len {
             if f(self.data[i]) {
                 res.push(self.data[i])
             }
-            i = i + 1
+            i = i + 1;
         }
-        return res
+        return res;
     }
-
     /// 折叠：acc = f(acc, item)
-    pub fn fold[U](ref self, U init, Fn(U, T) -> U f) -> U {
-        acc = init
-        i = 0usize
+    fn fold[U](ref self, U init, Fn(U,T)->U f) -> U {
+        acc = init;
+        i = 0usize;
         while i < self.len {
-            acc = f(acc, self.data[i])
-            i = i + 1
+            acc = f(acc, self.data[i]);
+            i = i + 1;
         }
-        return acc
+        return acc;
     }
-
     /// 是否存在满足谓词的元素
-    pub fn any(ref self, Fn(T) -> bool f) -> bool {
-        i = 0usize
+    fn any(ref self, Fn(T)->bool f) -> bool {
+        i = 0usize;
         while i < self.len {
             if f(self.data[i]) {
-                return true
+                return true;
             }
-            i = i + 1
+            i = i + 1;
         }
-        return false
+        return false;
     }
-
     /// 是否所有元素满足谓词
-    pub fn all(ref self, Fn(T) -> bool f) -> bool {
-        i = 0usize
+    fn all(ref self, Fn(T)->bool f) -> bool {
+        i = 0usize;
         while i < self.len {
             if !f(self.data[i]) {
-                return false
+                return false;
             }
-            i = i + 1
+            i = i + 1;
         }
-        return true
+        return true;
     }
-
     /// 首个满足谓词的元素；无则 None
-    pub fn find(ref self, Fn(T) -> bool f) -> Option[T] {
-        i = 0usize
+    fn find(ref self, Fn(T)->bool f) -> Option[T] {
+        i = 0usize;
         while i < self.len {
             if f(self.data[i]) {
-                return Option::Some(self.data[i])
+                return Option::Some(self.data[i]);
             }
-            i = i + 1
+            i = i + 1;
         }
-        return Option::None()
+        return Option::None();
     }
-
     /// 首个满足谓词的下标；无则 -1
-    pub fn position(ref self, Fn(T) -> bool f) -> int {
-        i = 0usize
+    fn position(ref self, Fn(T)->bool f) -> int {
+        i = 0usize;
         while i < self.len {
             if f(self.data[i]) {
-                return i as int
+                return i as int;
             }
-            i = i + 1
+            i = i + 1;
         }
-        return 0 - 1
+        return 0 - 1;
     }
-
     /// 满足谓词的元素个数
-    pub fn count(ref self, Fn(T) -> bool f) -> usize {
-        n = 0usize
-        i = 0usize
+    fn count(ref self, Fn(T)->bool f) -> usize {
+        n = 0usize;
+        i = 0usize;
         while i < self.len {
             if f(self.data[i]) {
-                n = n + 1
+                n = n + 1;
             }
-            i = i + 1
+            i = i + 1;
         }
-        return n
+        return n;
     }
-
     /// 原地保留满足谓词的元素
     #[state]
-    pub fn retain(ref mut self, Fn(T) -> bool f) {
-        j = 0usize
-        i = 0usize
+    fn retain(ref mut self, Fn(T)->bool f) {
+        j = 0usize;
+        i = 0usize;
         while i < self.len {
             if f(self.data[i]) {
-                self.data[j] = self.data[i]
-                j = j + 1
+                self.data[j] = self.data[i];
+                j = j + 1;
             }
-            i = i + 1
+            i = i + 1;
         }
-        self.len = j
+        self.len = j;
     }
 }

@@ -1,241 +1,264 @@
-import "hashmap"
-import "test"
+import "hashmap";
+
+import "test";
 
 #[test]
 fn test_map_basic() {
-    m = HashMap::new[String, int]()
-    #assert(m.insert("a", 1))
-    #assert(!m.insert("a", 2))
-    #assert_eq(m.get("a").unwrap_or(0), 2)
-    #assert_eq(m.len(), 1)
-    #assert(m.contains_key("a"))
-    #assert(!m.contains_key("b"))
-    #assert(m.remove("a"))
-    #assert(!m.contains_key("a"))
+    m = HashMap::new[String, int]();
+    #assert(m.insert("a", 1));
+    #assert(!m.insert("a", 2));
+    #assert_eq(m.get("a").unwrap_or(0), 2);
+    #assert_eq(m.len(), 1);
+    #assert(m.contains_key("a"));
+    #assert(!m.contains_key("b"));
+    #assert(m.remove("a"));
+    #assert(!m.contains_key("a"));
     #assert_eq(m.get("a").unwrap_or(9), 9)
 }
 
 #[test]
 fn test_map_grow() {
-    m = HashMap::new[int, int]()
-    i = 0
+    m = HashMap::new[int, int]();
+    i = 0;
     while i < 200 {
-        j = i * 3
-        m.insert(j, i)
-        i = i + 1
+        j = i * 3;
+        m.insert(j, i);
+        i = i + 1;
     }
-    #assert_eq(m.len(), 200)
-    #assert_eq(m.get(0).unwrap_or(-1), 0)
-    #assert_eq(m.get(597).unwrap_or(-1), 199)
+    #assert_eq(m.len(), 200);
+    #assert_eq(m.get(0).unwrap_or(-1), 0);
+    #assert_eq(m.get(597).unwrap_or(-1), 199);
     #assert_eq(m.get(1).unwrap_or(-1), -1)
 }
 
 #[test]
 fn test_map_string_value() {
-    m = HashMap::new[String, String]()
-    m.insert("name", "ayanami")
-    v = m.get("name").unwrap_or("none")
-    #assert(v.eq("ayanami"))
-    m.insert("name", "ayanami2")
-    v2 = m.get("name").unwrap_or("none")
+    m = HashMap::new[String, String]();
+    m.insert("name", "ayanami");
+    v = m.get("name").unwrap_or("none");
+    #assert(v.eq("ayanami"));
+    m.insert("name", "ayanami2");
+    v2 = m.get("name").unwrap_or("none");
     #assert(v2.eq("ayanami2"))
 }
 
 #[test]
 fn test_keys_values() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.insert("b", 2)
-    ks = m.keys()
-    #assert_eq(ks.len(), 2)
-    #assert(ks.contains("a"))
-    #assert(ks.contains("b"))
-    vs = m.values()
-    #assert_eq(vs.len(), 2)
-    #assert(vs.contains(1))
-    #assert(vs.contains(2))
-    e = HashMap::new[String, int]()
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.insert("b", 2);
+    ks = m.keys();
+    #assert_eq(ks.len(), 2);
+    #assert(ks.contains("a"));
+    #assert(ks.contains("b"));
+    vs = m.values();
+    #assert_eq(vs.len(), 2);
+    #assert(vs.contains(1));
+    #assert(vs.contains(2));
+    e = HashMap::new[String, int]();
     #assert_eq(e.keys().len(), 0)
 }
 
 #[test]
 fn test_map_to_string() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.insert("b", 2)
-    s = m.to_string()
-    #assert(s.starts_with("{"))
-    #assert(s.ends_with("}"))
-    #assert(s.contains("a: 1"))
-    #assert(s.contains("b: 2"))
-    e = HashMap::new[String, int]()
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.insert("b", 2);
+    s = m.to_string();
+    #assert(s.starts_with("{"));
+    #assert(s.ends_with("}"));
+    #assert(s.contains("a: 1"));
+    #assert(s.contains("b: 2"));
+    e = HashMap::new[String, int]();
     #assert_eq(e.to_string(), "{}")
 }
 
 #[test]
 fn test_map_fold() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.insert("b", 2)
-    total = m.fold(0, (int acc, String k, int v) -> int { return acc + v })
-    #assert_eq(total, 3)
-    cnt = m.fold(0, (int acc, String k, int v) -> int { return acc + 1 })
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.insert("b", 2);
+    total = m.fold(0, (int acc, String k, int v) -> int {
+        return acc + v;
+    });
+    #assert_eq(total, 3);
+    cnt = m.fold(0, (int acc, String k, int v) -> int {
+        return acc + 1;
+    });
     #assert_eq(cnt, 2)
 }
 
 #[test]
 fn test_map_retain() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.insert("b", 2)
-    m.insert("c", 3)
-    m.retain((String k, int v) -> bool { return v > 1 })
-    #assert_eq(m.len(), 2)
-    #assert(!m.contains_key("a"))
-    #assert(m.contains_key("b"))
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.insert("b", 2);
+    m.insert("c", 3);
+    m.retain((String k, int v) -> bool {
+        return v > 1;
+    });
+    #assert_eq(m.len(), 2);
+    #assert(!m.contains_key("a"));
+    #assert(m.contains_key("b"));
     #assert(m.contains_key("c"))
 }
 
 #[test]
 fn test_map_into_iter() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.insert("b", 2)
-    n = 0
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.insert("b", 2);
+    n = 0;
     for p in m.into_iter() {
-        n = n + p.second
+        n = n + p.second;
     }
     #assert_eq(n, 3)
 }
 
 #[test]
 fn test_contains_value() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.insert("b", 2)
-    #assert(m.contains_value(2))
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.insert("b", 2);
+    #assert(m.contains_value(2));
     #assert(!m.contains_value(9))
 }
 
 #[test]
 fn test_map_clear() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.clear()
-    #assert(m.is_empty())
-    #assert(!m.contains_key("a"))
-    m.insert("x", 7)
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.clear();
+    #assert(m.is_empty());
+    #assert(!m.contains_key("a"));
+    m.insert("x", 7);
     #assert_eq(m.get("x").unwrap_or(0), 7)
 }
 
 #[test]
 fn test_with_capacity() {
-    m = HashMap::with_capacity[String, int](8usize)
-    m.insert("a", 1)
-    m.insert("b", 2)
-    #assert_eq(m.len(), 2)
-    #assert_eq(m.get("b").unwrap_or(0), 2)
-    e = HashMap::with_capacity[String, int](0usize)
+    m = HashMap::with_capacity[String, int](8usize);
+    m.insert("a", 1);
+    m.insert("b", 2);
+    #assert_eq(m.len(), 2);
+    #assert_eq(m.get("b").unwrap_or(0), 2);
+    e = HashMap::with_capacity[String, int](0usize);
     #assert(e.is_empty())
 }
 
 #[test]
 fn test_get_or_insert() {
-    m = HashMap::new[String, int]()
-    a = m.get_or_insert("x", 1)
-    #assert_eq(a, 1)
-    b = m.get_or_insert("x", 9)
-    #assert_eq(b, 1)
-    #assert_eq(m.len(), 1)
-    c = m.get_or_insert("y", 2)
-    #assert_eq(c, 2)
+    m = HashMap::new[String, int]();
+    a = m.get_or_insert("x", 1);
+    #assert_eq(a, 1);
+    b = m.get_or_insert("x", 9);
+    #assert_eq(b, 1);
+    #assert_eq(m.len(), 1);
+    c = m.get_or_insert("y", 2);
+    #assert_eq(c, 2);
     #assert_eq(m.len(), 2)
 }
 
 #[test]
 fn test_remove_get() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.insert("b", 2)
-    v = m.remove_get("a")
-    #assert_eq(v.unwrap_or(0), 1)
-    #assert_eq(m.len(), 1)
-    #assert(m.remove_get("a").is_none())
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.insert("b", 2);
+    v = m.remove_get("a");
+    #assert_eq(v.unwrap_or(0), 1);
+    #assert_eq(m.len(), 1);
+    #assert(m.remove_get("a").is_none());
     #assert_eq(m.get("b").unwrap_or(0), 2)
 }
 
 #[test]
 fn test_merge() {
-    a = HashMap::new[String, int]()
-    a.insert("x", 1)
-    a.insert("y", 2)
-    b = HashMap::new[String, int]()
-    b.insert("y", 9)
-    b.insert("z", 3)
-    a.merge(b)
-    #assert_eq(a.len(), 3)
-    #assert_eq(a.get("y").unwrap_or(0), 9)
-    #assert_eq(a.get("z").unwrap_or(0), 3)
+    a = HashMap::new[String, int]();
+    a.insert("x", 1);
+    a.insert("y", 2);
+    b = HashMap::new[String, int]();
+    b.insert("y", 9);
+    b.insert("z", 3);
+    a.merge(b);
+    #assert_eq(a.len(), 3);
+    #assert_eq(a.get("y").unwrap_or(0), 9);
+    #assert_eq(a.get("z").unwrap_or(0), 3);
     #assert_eq(b.len(), 2)
 }
 
 #[test]
 fn test_map_to_list() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.insert("b", 2)
-    ps = m.to_list()
-    #assert_eq(ps.len(), 2)
-    n = 0
-    i = 0usize
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.insert("b", 2);
+    ps = m.to_list();
+    #assert_eq(ps.len(), 2);
+    n = 0;
+    i = 0usize;
     while i < ps.len() {
-        p = ps.index(i)
-        n = n + p.second
-        i = i + 1
+        p = ps.index(i);
+        n = n + p.second;
+        i = i + 1;
     }
     #assert_eq(n, 3)
 }
 
 #[test]
 fn test_sorted_views() {
-    m = HashMap::new[String, int]()
-    m.insert("c", 3)
-    m.insert("a", 1)
-    m.insert("b", 2)
-    ks = m.sorted_keys()
-    #assert_eq(ks.len(), 3)
-    #assert_eq(ks.index(0), "a")
-    #assert_eq(ks.index(2), "c")
-    vs = m.sorted_values()
-    #assert_eq(vs.index(0), 1)
+    m = HashMap::new[String, int]();
+    m.insert("c", 3);
+    m.insert("a", 1);
+    m.insert("b", 2);
+    ks = m.sorted_keys();
+    #assert_eq(ks.len(), 3);
+    #assert_eq(ks.index(0), "a");
+    #assert_eq(ks.index(2), "c");
+    vs = m.sorted_values();
+    #assert_eq(vs.index(0), 1);
     #assert_eq(vs.index(2), 3)
 }
 
 #[test]
 fn test_map_values() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.insert("b", 2)
-    d = m.map_values((int v) -> int { return v * 10 })
-    #assert_eq(d.len(), 2)
-    #assert_eq(d.get("a").unwrap_or(0), 10)
-    #assert_eq(d.get("b").unwrap_or(0), 20)
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.insert("b", 2);
+    d = m.map_values((int v) -> int {
+        return v * 10;
+    });
+    #assert_eq(d.len(), 2);
+    #assert_eq(d.get("a").unwrap_or(0), 10);
+    #assert_eq(d.get("b").unwrap_or(0), 20);
     #assert_eq(m.get("a").unwrap_or(0), 1)
 }
 
 #[test]
 fn test_map_predicates() {
-    m = HashMap::new[String, int]()
-    m.insert("a", 1)
-    m.insert("b", 2)
-    #assert(m.any((String k, int v) -> bool { return v == 2 }))
-    #assert(!m.any((String k, int v) -> bool { return v == 9 }))
-    #assert(m.all((String k, int v) -> bool { return v > 0 }))
-    #assert(!m.all((String k, int v) -> bool { return v > 1 }))
-    c = m.count((String k, int v) -> bool { return v >= 1 })
-    #assert_eq(c, 2usize)
-    p = m.find((String k, int v) -> bool { return v == 2 })
-    #assert_eq(p._data_Some._0.second, 2)
-    e = m.find((String k, int v) -> bool { return v == 9 })
+    m = HashMap::new[String, int]();
+    m.insert("a", 1);
+    m.insert("b", 2);
+    #assert(m.any((String k, int v) -> bool {
+        return v == 2;
+    }));
+    #assert(!m.any((String k, int v) -> bool {
+        return v == 9;
+    }));
+    #assert(m.all((String k, int v) -> bool {
+        return v > 0;
+    }));
+    #assert(!m.all((String k, int v) -> bool {
+        return v > 1;
+    }));
+    c = m.count((String k, int v) -> bool {
+        return v >= 1;
+    });
+    #assert_eq(c, 2usize);
+    p = m.find((String k, int v) -> bool {
+        return v == 2;
+    });
+    #assert_eq(p._data_Some._0.second, 2);
+    e = m.find((String k, int v) -> bool {
+        return v == 9;
+    });
     #assert(e.is_none())
 }

@@ -1,120 +1,123 @@
-import "fs"
-import "time"
-import "arraylist"
-import "test"
+import "fs";
+
+import "time";
+
+import "arraylist";
+
+import "test";
 
 #[test]
 fn test_roundtrip() {
-    #assert(write_file("/tmp/ayanami_fs_test.txt", "hello fs"))
-    #assert(exists("/tmp/ayanami_fs_test.txt"))
-    s = read_file("/tmp/ayanami_fs_test.txt").unwrap_or("")
+    #assert(write_file("/tmp/ayanami_fs_test.txt", "hello fs"));
+    #assert(exists("/tmp/ayanami_fs_test.txt"));
+    s = read_file("/tmp/ayanami_fs_test.txt").unwrap_or("");
     #assert_eq(s, "hello fs")
 }
 
 #[test]
 fn test_missing() {
-    #assert(!exists("/tmp/ayanami_no_such_file_xyz"))
+    #assert(!exists("/tmp/ayanami_no_such_file_xyz"));
     #assert(read_file("/tmp/ayanami_no_such_file_xyz").is_none())
 }
 
 #[test]
 fn test_read_lines() {
-    #assert(write_file("/tmp/ayanami_fs_lines_test.txt", "a\r\nb\nc"))
-    empty = ArrayList::new[String]()
-    ls = read_lines("/tmp/ayanami_fs_lines_test.txt").unwrap_or(empty)
-    #assert_eq(ls.len(), 3)
-    #assert_eq(ls.index(0), "a")
-    #assert_eq(ls.index(1), "b")
-    #assert_eq(ls.index(2), "c")
+    #assert(write_file("/tmp/ayanami_fs_lines_test.txt", "a\r\nb\nc"));
+    empty = ArrayList::new[String]();
+    ls = read_lines("/tmp/ayanami_fs_lines_test.txt").unwrap_or(empty);
+    #assert_eq(ls.len(), 3);
+    #assert_eq(ls.index(0), "a");
+    #assert_eq(ls.index(1), "b");
+    #assert_eq(ls.index(2), "c");
     #assert(read_lines("/tmp/ayanami_no_such_file_xyz").is_none())
 }
 
 #[test]
 fn test_append() {
-    #assert(write_file("/tmp/ayanami_fs_append_test.txt", "a"))
-    #assert(append_file("/tmp/ayanami_fs_append_test.txt", "bc"))
-    s = read_file("/tmp/ayanami_fs_append_test.txt").unwrap_or("")
+    #assert(write_file("/tmp/ayanami_fs_append_test.txt", "a"));
+    #assert(append_file("/tmp/ayanami_fs_append_test.txt", "bc"));
+    s = read_file("/tmp/ayanami_fs_append_test.txt").unwrap_or("");
     #assert_eq(s, "abc")
 }
 
 #[test]
 fn test_remove() {
-    #assert(write_file("/tmp/ayanami_fs_remove_test.txt", "x"))
-    #assert(exists("/tmp/ayanami_fs_remove_test.txt"))
-    #assert(remove_file("/tmp/ayanami_fs_remove_test.txt"))
-    #assert(!exists("/tmp/ayanami_fs_remove_test.txt"))
+    #assert(write_file("/tmp/ayanami_fs_remove_test.txt", "x"));
+    #assert(exists("/tmp/ayanami_fs_remove_test.txt"));
+    #assert(remove_file("/tmp/ayanami_fs_remove_test.txt"));
+    #assert(!exists("/tmp/ayanami_fs_remove_test.txt"));
     #assert(!remove_file("/tmp/ayanami_fs_no_such_file_xyz"))
 }
 
 #[test]
 fn test_dir_ops() {
-    #assert(is_dir("/tmp"))
-    #assert(!is_dir("/tmp/ayanami_no_such_file_xyz"))
-    #assert(write_file("/tmp/ayanami_fs_dir_test.txt", "x"))
-    o = list_dir("/tmp")
+    #assert(is_dir("/tmp"));
+    #assert(!is_dir("/tmp/ayanami_no_such_file_xyz"));
+    #assert(write_file("/tmp/ayanami_fs_dir_test.txt", "x"));
+    o = list_dir("/tmp");
     if o._tag != 0 {
-        return
+        return;
     }
-    entries = o._data_Some._0
-    #assert(entries.contains("ayanami_fs_dir_test.txt"))
-    #assert(remove_file("/tmp/ayanami_fs_dir_test.txt"))
+    entries = o._data_Some._0;
+    #assert(entries.contains("ayanami_fs_dir_test.txt"));
+    #assert(remove_file("/tmp/ayanami_fs_dir_test.txt"));
     #assert(list_dir("/tmp/ayanami_no_such_file_xyz").is_none())
 }
 
 #[test]
 fn test_fs_more() {
-    d = "/tmp/ayanami_fs_mkdir_" + now_millis().to_string()
-    #assert(mkdir(d.copy()))
-    #assert(is_dir(d.copy()))
-    #assert(write_file(d + "/f.txt", "x"))
-    #assert(is_file(d + "/f.txt"))
-    #assert(mtime(d + "/f.txt").unwrap_or(-1) > 0)
-    #assert(!is_file(d.copy()))
-    #assert(remove_file(d + "/f.txt"))
-    #assert(rmdir(d.copy()))
-    #assert(!is_dir(d.copy()))
-    #assert(mtime("/tmp/ayanami_no_such_file_xyz").is_none())
+    d = "/tmp/ayanami_fs_mkdir_" + now_millis().to_string();
+    #assert(mkdir(d.copy()));
+    #assert(is_dir(d.copy()));
+    #assert(write_file(d + "/f.txt", "x"));
+    #assert(is_file(d + "/f.txt"));
+    #assert(mtime(d + "/f.txt").unwrap_or(-1) > 0);
+    #assert(!is_file(d.copy()));
+    #assert(remove_file(d + "/f.txt"));
+    #assert(rmdir(d.copy()));
+    #assert(!is_dir(d.copy()));
+    #assert(mtime("/tmp/ayanami_no_such_file_xyz").is_none());
     #assert(!mkdir("/tmp/ayanami_no_such_dir_xyz/sub"))
 }
 
 #[test]
 fn test_copy_rename() {
-    #assert(write_file("/tmp/ayanami_fs_cr_src.txt", "hello"))
-    #assert(copy_file("/tmp/ayanami_fs_cr_src.txt", "/tmp/ayanami_fs_cr_dst.txt"))
-    v = read_file("/tmp/ayanami_fs_cr_dst.txt").unwrap_or("")
-    #assert_eq(v, "hello")
-    #assert(rename_file("/tmp/ayanami_fs_cr_dst.txt", "/tmp/ayanami_fs_cr_dst2.txt"))
-    #assert(!exists("/tmp/ayanami_fs_cr_dst.txt"))
-    v2 = read_file("/tmp/ayanami_fs_cr_dst2.txt").unwrap_or("")
-    #assert_eq(v2, "hello")
-    #assert(remove_file("/tmp/ayanami_fs_cr_src.txt"))
-    #assert(remove_file("/tmp/ayanami_fs_cr_dst2.txt"))
+    #assert(write_file("/tmp/ayanami_fs_cr_src.txt", "hello"));
+    #assert(copy_file("/tmp/ayanami_fs_cr_src.txt", "/tmp/ayanami_fs_cr_dst.txt"));
+    v = read_file("/tmp/ayanami_fs_cr_dst.txt").unwrap_or("");
+    #assert_eq(v, "hello");
+    #assert(rename_file("/tmp/ayanami_fs_cr_dst.txt", "/tmp/ayanami_fs_cr_dst2.txt"));
+    #assert(!exists("/tmp/ayanami_fs_cr_dst.txt"));
+    v2 = read_file("/tmp/ayanami_fs_cr_dst2.txt").unwrap_or("");
+    #assert_eq(v2, "hello");
+    #assert(remove_file("/tmp/ayanami_fs_cr_src.txt"));
+    #assert(remove_file("/tmp/ayanami_fs_cr_dst2.txt"));
     #assert(!copy_file("/tmp/ayanami_no_such_file_xyz", "/tmp/ayanami_fs_cr_dst.txt"))
 }
 
 #[test]
 fn test_size_copy_tree() {
-    base = "/tmp/ayanami_fs_tree_" + now_millis().to_string()
-    src = base + "/src"
-    dst = base + "/dst"
-    #assert(mkdir(base.copy()))
-    #assert(mkdir(src.copy()))
-    #assert(mkdir(src + "/sub"))
-    #assert(write_file(src + "/a.txt", "hello"))
-    #assert(write_file(src + "/sub/b.txt", "xy"))
-    #assert_eq(size(src + "/a.txt").unwrap_or(-1), 5)
-    n = copy_tree(src.copy(), dst.copy())
-    #assert_eq(n, 2)
-    v = read_file(dst + "/sub/b.txt").unwrap_or("")
-    #assert_eq(v, "xy")
-    #assert(size("/tmp/ayanami_no_such_file_xyz").is_none())
-    #assert(remove_file(src + "/a.txt"))
-    #assert(remove_file(src + "/sub/b.txt"))
-    #assert(remove_file(dst + "/a.txt"))
-    #assert(remove_file(dst + "/sub/b.txt"))
-    #assert(rmdir(src + "/sub"))
-    #assert(rmdir(dst + "/sub"))
-    #assert(rmdir(src.copy()))
-    #assert(rmdir(dst.copy()))
+    base = "/tmp/ayanami_fs_tree_" + now_millis().to_string();
+    src = base + "/src";
+    dst = base + "/dst";
+    #assert(mkdir(base.copy()));
+    #assert(mkdir(src.copy()));
+    #assert(mkdir(src + "/sub"));
+    #assert(write_file(src + "/a.txt", "hello"));
+    #assert(write_file(src + "/sub/b.txt", "xy"));
+    #assert_eq(size(src + "/a.txt").unwrap_or(-1), 5);
+    n = copy_tree(src.copy(), dst.copy());
+    #assert_eq(n, 2);
+    v = read_file(dst + "/sub/b.txt").unwrap_or("");
+    #assert_eq(v, "xy");
+    #assert(size("/tmp/ayanami_no_such_file_xyz").is_none());
+    #assert(remove_file(src + "/a.txt"));
+    #assert(remove_file(src + "/sub/b.txt"));
+    #assert(remove_file(dst + "/a.txt"));
+    #assert(remove_file(dst + "/sub/b.txt"));
+    #assert(rmdir(src + "/sub"));
+    #assert(rmdir(dst + "/sub"));
+    #assert(rmdir(src.copy()));
+    #assert(rmdir(dst.copy()));
     #assert(rmdir(base.copy()))
 }

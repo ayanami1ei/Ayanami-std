@@ -1,17 +1,18 @@
-import "arraylist"
-import "test"
+import "arraylist";
+
+import "test";
 
 #[should_panic]
 fn test_index_oob() {
-    a = ArrayList::new[int]()
-    a.push(1)
-    x = a.index(5)
+    a = ArrayList::new[int]();
+    a.push(1);
+    x = a.index(5);
 }
 
 #[should_panic]
 fn test_pop_empty() {
-    a = ArrayList::new[int]()
-    x = a.pop()
+    a = ArrayList::new[int]();
+    x = a.pop();
 }
 
 #[should_panic]

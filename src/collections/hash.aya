@@ -2,9 +2,9 @@
 //
 // 算法：31 进制折叠取模（模 2147483647），结果非负、乘法不溢出 i64。
 // hash_eq 供泛型集合做键相等判断（接口带 Self）。
-import "string"
+import "string";
 
-pub interface Hash {
+interface Hash {
     fn hash(ref self) -> int;
     fn hash_eq(ref self, ref Self other) -> bool;
 }
@@ -12,35 +12,33 @@ pub interface Hash {
 impl String {
     /// 字符串哈希（确定性、非负）
     #[pure]
-    pub fn hash(ref self) -> int {
-        h = 0
-        i = 0usize
+    fn hash(ref self) -> int {
+        h = 0;
+        i = 0usize;
         while i < self.len {
-            h = (h * 31 + char_code(self.data[i])) % 2147483647
-            i = i + 1
+            h = (h * 31 + char_code(self.data[i])) % 2147483647;
+            i = i + 1;
         }
-        return h
+        return h;
     }
-
     #[pure]
-    pub fn hash_eq(ref self, ref String other) -> bool {
-        return self.eq(other)
+    fn hash_eq(ref self, ref String other) -> bool {
+        return self.eq(other);
     }
 }
 
 impl int {
     /// 整数哈希（非负）
     #[pure]
-    pub fn hash(ref self) -> int {
-        h = self % 2147483647
+    fn hash(ref self) -> int {
+        h = self % 2147483647;
         if h < 0 {
-            h = 0 - h
+            h = 0 - h;
         }
-        return h
+        return h;
     }
-
     #[pure]
-    pub fn hash_eq(ref self, ref int other) -> bool {
-        return self == other
+    fn hash_eq(ref self, ref int other) -> bool {
+        return self == other;
     }
 }

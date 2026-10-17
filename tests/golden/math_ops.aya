@@ -1,10 +1,11 @@
-import "io"
-import "math"
+import "io";
+
+import "math";
 
 fn main() -> int {
-    println(abs(-5))
-    println(min(3, 7))
-    println(pow(2, 10))
-    println(sqrt(9.0))
-    return 0
+    println(abs(-5));
+    println(min(3, 7));
+    println(pow(2, 10));
+    println(sqrt(9.0));
+    return 0;
 }

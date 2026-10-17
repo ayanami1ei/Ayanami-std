@@ -1,9 +1,11 @@
 // dir_walk — 目录遍历示例
 //
 // 创建小目录树，递归统计文件/目录数（带深度限制），随后清理。
-import "fs"
-import "time"
-import "io"
+import "fs";
+
+import "time";
+
+import "io";
 
 struct Counts {
     int files
@@ -12,49 +14,47 @@ struct Counts {
 
 fn walk(String path, int depth) -> Counts {
     if depth <= 0 {
-        return Counts { files = 0, dirs = 0 }
+        return Counts { files = 0, dirs = 0 };
     }
-    o = list_dir(path.copy())
+    o = list_dir(path.copy());
     if o._tag != 0 {
-        return Counts { files = 0, dirs = 0 }
+        return Counts { files = 0, dirs = 0 };
     }
-    entries = o._data_Some._0
-    files = 0
-    dirs = 0
-    i = 0usize
+    entries = o._data_Some._0;
+    files = 0;
+    dirs = 0;
+    i = 0usize;
     while i < entries.len() {
-        child = path + "/" + entries.index(i)
+        child = path + "/" + entries.index(i);
         if is_dir(child.copy()) {
-            dirs = dirs + 1
-            sub = walk(child, depth - 1)
-            files = files + sub.files
-            dirs = dirs + sub.dirs
+            dirs = dirs + 1;
+            sub = walk(child, depth - 1);
+            files = files + sub.files;
+            dirs = dirs + sub.dirs;
         } else {
             if is_file(child.copy()) {
-                files = files + 1
+                files = files + 1;
             }
         }
-        i = i + 1
+        i = i + 1;
     }
-    return Counts { files = files, dirs = dirs }
+    return Counts { files = files, dirs = dirs };
 }
 
 fn main() -> int {
-    root = "/tmp/ayanami_walk_" + now_millis().to_string()
-    mkdir(root.copy())
-    mkdir(root + "/sub")
-    write_file(root + "/a.txt", "a")
-    write_file(root + "/b.txt", "b")
-    write_file(root + "/sub/c.txt", "c")
-
-    c = walk(root.copy(), 3)
-    println("files: " + c.files)
-    println("dirs: " + c.dirs)
-
-    remove_file(root + "/a.txt")
-    remove_file(root + "/b.txt")
-    remove_file(root + "/sub/c.txt")
-    rmdir(root + "/sub")
-    rmdir(root.copy())
-    return 0
+    root = "/tmp/ayanami_walk_" + now_millis().to_string();
+    mkdir(root.copy());
+    mkdir(root + "/sub");
+    write_file(root + "/a.txt", "a");
+    write_file(root + "/b.txt", "b");
+    write_file(root + "/sub/c.txt", "c");
+    c = walk(root.copy(), 3);
+    println("files: " + c.files);
+    println("dirs: " + c.dirs);
+    remove_file(root + "/a.txt");
+    remove_file(root + "/b.txt");
+    remove_file(root + "/sub/c.txt");
+    rmdir(root + "/sub");
+    rmdir(root.copy());
+    return 0;
 }

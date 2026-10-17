@@ -1,37 +1,38 @@
-import "test"
-import "time"
+import "test";
+
+import "time";
 
 #[test]
 fn test_time() {
-    t1 = now_millis()
-    t2 = now_millis()
-    #assert(t2 >= t1)
+    t1 = now_millis();
+    t2 = now_millis();
+    #assert(t2 >= t1);
     #assert(now_unix() > 0)
 }
 
 #[test]
 fn test_sleep() {
-    t1 = now_millis()
-    sleep_ms(30)
-    t2 = now_millis()
+    t1 = now_millis();
+    sleep_ms(30);
+    t2 = now_millis();
     #assert(t2 - t1 >= 25)
 }
 
 #[test]
 fn test_elapsed() {
-    t = now_millis()
-    #assert(elapsed_ms(t) >= 0)
-    sleep_ms(20)
+    t = now_millis();
+    #assert(elapsed_ms(t) >= 0);
+    sleep_ms(20);
     #assert(elapsed_ms(t) >= 15)
 }
 
 #[test]
 fn test_micros_format() {
-    t1 = now_micros()
-    t2 = now_micros()
-    #assert(t2 >= t1)
-    #assert_eq(format_ms(3723004), "01:02:03.004")
-    #assert_eq(format_ms(0), "00:00:00.000")
-    #assert_eq(format_ms(59000), "00:00:59.000")
+    t1 = now_micros();
+    t2 = now_micros();
+    #assert(t2 >= t1);
+    #assert_eq(format_ms(3723004), "01:02:03.004");
+    #assert_eq(format_ms(0), "00:00:00.000");
+    #assert_eq(format_ms(59000), "00:00:59.000");
     #assert_eq(format_ms(0 - 1001), "00:00:01.001")
 }

@@ -1,48 +1,64 @@
 // fs — 文件读写（运行时提供）
-import "string"
-import "option"
-import "arraylist"
-import "text"
+import "string";
+
+import "option";
+
+import "arraylist";
+
+import "text";
 
 extern "C" fn __ayanami_fs_size(String path) -> int;
+
 extern "C" fn __ayanami_fs_read(String path) -> [char];
+
 extern "C" fn __ayanami_fs_write(String path, String data) -> int;
+
 extern "C" fn __ayanami_fs_append(String path, String data) -> int;
+
 extern "C" fn __ayanami_fs_remove(String path) -> int;
+
 extern "C" fn __ayanami_fs_copy(String src, String dst) -> int;
+
 extern "C" fn __ayanami_fs_rename(String from, String to) -> int;
+
 extern "C" fn __ayanami_fs_is_dir(String path) -> int;
+
 extern "C" fn __ayanami_fs_mkdir(String path) -> int;
+
 extern "C" fn __ayanami_fs_rmdir(String path) -> int;
+
 extern "C" fn __ayanami_fs_mtime(String path) -> int;
+
 extern "C" fn __ayanami_fs_is_file(String path) -> int;
+
 extern "C" fn __ayanami_fs_list_data(String path) -> [char];
+
 extern "C" fn __ayanami_fs_list_len() -> int;
 
 /// 文件是否存在
 #[io]
 pub fn exists(String path) -> bool {
-    return __ayanami_fs_size(path) >= 0
+    return __ayanami_fs_size(path) >= 0;
 }
 
 /// 读取整个文件（失败 None）
 #[io]
 pub fn read_file(String path) -> Option[String] {
-    n = __ayanami_fs_size(path)
+    n = __ayanami_fs_size(path);
     if n < 0 {
-        return Option::None()
+        return Option::None();
     }
-    data = __ayanami_fs_read(path)
+    data = __ayanami_fs_read(path);
     if data == null {
-        return Option::None()
+        return Option::None();
     }
-    return Option::Some(String::new(data, n as usize))
+    return Option::Some(String::new(data, n as usize));
 }
 
 /// 写入整个文件（成功 true）
 #[io]
 pub fn write_file(String path, String data) -> bool {
-    return __ayanami_fs_write(path, data) == 0
+    return __ayanami_fs_write(path, data) == 0;
 }
 
 /// 读取文件并按行拆分（`\r\n` 兼容；失败 None）
@@ -52,30 +68,30 @@ pub fn write_file(String path, String data) -> bool {
 #[state]
 #[io]
 pub fn read_lines(String path) -> Option[ArrayList[String]] {
-    data = read_file(path)
+    data = read_file(path);
     if data._tag != 0 {
-        return Option::None()
+        return Option::None();
     }
-    ls = lines(data._data_Some._0)
-    return Option::Some(ls)
+    ls = lines(data._data_Some._0);
+    return Option::Some(ls);
 }
 
 /// 追加写入（成功 true；文件不存在则创建）
 #[io]
 pub fn append_file(String path, String data) -> bool {
-    return __ayanami_fs_append(path, data) == 0
+    return __ayanami_fs_append(path, data) == 0;
 }
 
 /// 删除文件（成功 true）
 #[io]
 pub fn remove_file(String path) -> bool {
-    return __ayanami_fs_remove(path) == 0
+    return __ayanami_fs_remove(path) == 0;
 }
 
 /// 是否目录
 #[io]
 pub fn is_dir(String path) -> bool {
-    return __ayanami_fs_is_dir(path) == 1
+    return __ayanami_fs_is_dir(path) == 1;
 }
 
 /// 目录项（不含 `.` / `..`；失败 None）
@@ -83,64 +99,64 @@ pub fn is_dir(String path) -> bool {
 #[state]
 #[io]
 pub fn list_dir(String path) -> Option[ArrayList[String]] {
-    data = __ayanami_fs_list_data(path)
+    data = __ayanami_fs_list_data(path);
     if data == null {
-        return Option::None()
+        return Option::None();
     }
-    n = __ayanami_fs_list_len()
-    s = String::new(data, n as usize)
-    ls = lines(s)
-    return Option::Some(ls)
+    n = __ayanami_fs_list_len();
+    s = String::new(data, n as usize);
+    ls = lines(s);
+    return Option::Some(ls);
 }
 
 /// 创建目录（成功 true）
 #[io]
 pub fn mkdir(String path) -> bool {
-    return __ayanami_fs_mkdir(path) == 0
+    return __ayanami_fs_mkdir(path) == 0;
 }
 
 /// 删除空目录（成功 true）
 #[io]
 pub fn rmdir(String path) -> bool {
-    return __ayanami_fs_rmdir(path) == 0
+    return __ayanami_fs_rmdir(path) == 0;
 }
 
 /// 修改时间（Unix 秒；失败 None）
 #[io]
 pub fn mtime(String path) -> Option[int] {
-    t = __ayanami_fs_mtime(path)
+    t = __ayanami_fs_mtime(path);
     if t < 0 {
-        return Option::None()
+        return Option::None();
     }
-    return Option::Some(t)
+    return Option::Some(t);
 }
 
 /// 是否普通文件
 #[io]
 pub fn is_file(String path) -> bool {
-    return __ayanami_fs_is_file(path) == 1
+    return __ayanami_fs_is_file(path) == 1;
 }
 
 /// 复制文件（成功 true；目标存在则覆盖）
 #[io]
 pub fn copy_file(String src, String dst) -> bool {
-    return __ayanami_fs_copy(src, dst) == 0
+    return __ayanami_fs_copy(src, dst) == 0;
 }
 
 /// 重命名 / 移动文件（成功 true）
 #[io]
 pub fn rename_file(String from, String to) -> bool {
-    return __ayanami_fs_rename(from, to) == 0
+    return __ayanami_fs_rename(from, to) == 0;
 }
 
 /// 文件字节数（失败 None）
 #[io]
 pub fn size(String path) -> Option[int] {
-    n = __ayanami_fs_size(path)
+    n = __ayanami_fs_size(path);
     if n < 0 {
-        return Option::None()
+        return Option::None();
     }
-    return Option::Some(n)
+    return Option::Some(n);
 }
 
 /// 递归复制目录树（返回复制的文件数；失败 -1；目标目录已存在时合并）
@@ -148,43 +164,43 @@ pub fn size(String path) -> Option[int] {
 #[state]
 #[io]
 pub fn copy_tree(String src, String dst) -> int {
-    return copy_tree_impl(src, dst, 16)
+    return copy_tree_impl(src, dst, 16);
 }
 
 fn copy_tree_impl(String src, String dst, int depth) -> int {
     if depth <= 0 {
-        return 0 - 1
+        return 0 - 1;
     }
     if !mkdir(dst.copy()) {
         if !is_dir(dst.copy()) {
-            return 0 - 1
+            return 0 - 1;
         }
     }
-    o = list_dir(src.copy())
+    o = list_dir(src.copy());
     if o._tag != 0 {
-        return 0 - 1
+        return 0 - 1;
     }
-    entries = o._data_Some._0
-    n = 0
-    i = 0usize
+    entries = o._data_Some._0;
+    n = 0;
+    i = 0usize;
     while i < entries.len() {
-        name = entries.index(i)
-        s = src + "/" + name
-        d = dst + "/" + name
+        name = entries.index(i);
+        s = src + "/" + name;
+        d = dst + "/" + name;
         if is_dir(s.copy()) {
-            sub = copy_tree_impl(s, d, depth - 1)
+            sub = copy_tree_impl(s, d, depth - 1);
             if sub < 0 {
-                return 0 - 1
+                return 0 - 1;
             }
-            n = n + sub
+            n = n + sub;
         } else {
             if copy_file(s, d) {
-                n = n + 1
+                n = n + 1;
             } else {
-                return 0 - 1
+                return 0 - 1;
             }
         }
-        i = i + 1
+        i = i + 1;
     }
-    return n
+    return n;
 }

@@ -1,8 +1,8 @@
 // option — Option / Result / Error 基础类型
 // 独立成模块以打破依赖环：std 与 convert 等共享，不反向依赖 io/std。
-import "string"
+import "string";
 
-pub interface Error {
+interface Error {
     fn what(ref self) -> String;
 }
 
@@ -17,129 +17,116 @@ pub enum Option[T] {
 }
 
 impl[T] Option[T] {
-    pub fn unwrap_or(self, T default) -> T {
+    fn unwrap_or(self, T default) -> T {
         if self._tag == 0 {
-            return self._data_Some._0
+            return self._data_Some._0;
         }
-        return default
+        return default;
     }
-
-    pub fn is_some(self) -> bool {
-        return self._tag == 0
+    fn is_some(self) -> bool {
+        return self._tag == 0;
     }
-
-    pub fn is_none(self) -> bool {
-        return self._tag != 0
+    fn is_none(self) -> bool {
+        return self._tag != 0;
     }
-
     /// 或：Some 返回自身，None 返回 other
-    pub fn or(self, Option[T] other) -> Option[T] {
+    fn or(self, Option[T] other) -> Option[T] {
         if self._tag == 0 {
-            return self
+            return self;
         }
-        return other
+        return other;
     }
-
     /// 有值取值，否则用 `f()` 生成
-    pub fn unwrap_or_else(self, Fn() -> T f) -> T {
+    fn unwrap_or_else(self, Fn()->T f) -> T {
         match self {
             Some(v) => v,
             None => f(),
         }
     }
-
     /// 映射或返回默认值
-    pub fn map_or[U](self, U default, Fn(T) -> U f) -> U {
+    fn map_or[U](self, U default, Fn(T)->U f) -> U {
         match self {
             Some(v) => f(v),
             None => default,
         }
     }
-
     /// 映射：`Some(v) → Some(f(v))`
-    pub fn map[U](self, Fn(T) -> U f) -> Option[U] {
+    fn map[U](self, Fn(T)->U f) -> Option[U] {
         match self {
             Some(v) => Option::Some(f(v)),
             None => Option::None(),
         }
     }
-
     /// 链式：`Some(v) → f(v)`（`f` 返回 `Option[U]`）
-    pub fn and_then[U](self, Fn(T) -> Option[U] f) -> Option[U] {
+    fn and_then[U](self, Fn(T)->Option[U] f) -> Option[U] {
         match self {
             Some(v) => f(v),
             None => Option::None(),
         }
     }
-
     /// 过滤：谓词为假时变 `None`
-    pub fn filter(self, Fn(T) -> bool f) -> Option[T] {
+    fn filter(self, Fn(T)->bool f) -> Option[T] {
         match self {
-            Some(v) => if f(v) { Option::Some(v) } else { Option::None() },
+            Some(v) => if f(v) {
+                Option::Some(v)
+            } else {
+                Option::None()
+            },
             None => Option::None(),
         }
     }
 }
 
 impl[T, E] Result[T, E] {
-    pub fn is_ok(self) -> bool {
-        return self._tag == 0
+    fn is_ok(self) -> bool {
+        return self._tag == 0;
     }
-
-    pub fn is_err(self) -> bool {
-        return self._tag != 0
+    fn is_err(self) -> bool {
+        return self._tag != 0;
     }
-
     /// Ok 取值，Err 用默认值
-    pub fn unwrap_or(self, T default) -> T {
+    fn unwrap_or(self, T default) -> T {
         if self._tag == 0 {
-            return self._data_Ok._0
+            return self._data_Ok._0;
         }
-        return default
+        return default;
     }
-
     /// Ok → Some(v)，Err → None
-    pub fn ok(self) -> Option[T] {
+    fn ok(self) -> Option[T] {
         if self._tag == 0 {
-            return Option::Some(self._data_Ok._0)
+            return Option::Some(self._data_Ok._0);
         }
-        return Option::None()
+        return Option::None();
     }
-
     /// Ok 取值，Err 用 `f(e)` 生成
-    pub fn unwrap_or_else(self, Fn(E) -> T f) -> T {
+    fn unwrap_or_else(self, Fn(E)->T f) -> T {
         match self {
             Ok(v) => v,
             Err(e) => f(e),
         }
     }
-
     /// 映射 Ok 或返回默认值
-    pub fn map_or[U](self, U default, Fn(T) -> U f) -> U {
+    fn map_or[U](self, U default, Fn(T)->U f) -> U {
         match self {
             Ok(v) => f(v),
             Err(_) => default,
         }
     }
-
     /// 映射 Ok 值
-    pub fn map[U](self, Fn(T) -> U f) -> Result[U, E] {
+    fn map[U](self, Fn(T)->U f) -> Result[U, E] {
         match self {
             Ok(v) => Result::Ok(f(v)),
             Err(e) => Result::Err(e),
         }
     }
-
     /// 映射 Err 值
-    pub fn map_err[F](self, Fn(E) -> F f) -> Result[T, F] {
+    fn map_err[F](self, Fn(E)->F f) -> Result[T, F] {
         match self {
             Ok(v) => Result::Ok(v),
             Err(e) => Result::Err(f(e)),
         }
     }
-
-
-    pub fn try_unwrap(self) -> T {
+    fn try_unwrap(self) -> T {
         match self {
             Ok(v) => v,
             Err(_) => 0,

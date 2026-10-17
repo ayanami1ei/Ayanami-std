@@ -1,8 +1,9 @@
-import "std"
-import "test"
+import "std";
+
+import "test";
 
 fn some3() -> Option[int] {
-    return Option::Some(3)
+    return Option::Some(3);
 }
 
 #[should_panic]

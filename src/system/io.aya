@@ -1,45 +1,54 @@
-import "string"
-import "convert"
-import "option"
+import "string";
+
+import "convert";
+
+import "option";
 
 #[io]
 extern "C" fn __ayanami_getchar() -> int;
+
 #[io]
 extern "C" fn __ayanami_putchar(int c);
+
 #[io]
 extern "C" fn __ayanami_print_str([char] s, int len);
+
 #[io]
 extern "C" fn __ayanami_print_ln();
 
 #[io]
-pub fn getchar() -> int { 
-    return __ayanami_getchar() 
+pub fn getchar() -> int {
+    return __ayanami_getchar();
 }
+
 #[io]
-pub fn putchar(int c) { 
-    __ayanami_putchar(c); 
+pub fn putchar(int c) {
+    __ayanami_putchar(c);
 }
+
 #[alloc]
 #[io]
-pub fn print(ref String n) { 
-    __ayanami_print_str(n.data, n.len as int); 
+pub fn print(ref String n) {
+    __ayanami_print_str(n.data, n.len as int);
 }
+
 #[alloc]
 #[io]
 pub fn println() {
-    __ayanami_print_ln(); 
+    __ayanami_print_ln();
 }
+
 #[alloc]
 #[io]
 pub fn println(ref String s) {
-    print(s)
+    print(s);
     println()
 }
 
 // ── A6：常用类型的 print/println 重载 ──
-
 #[io]
 extern "C" fn __ayanami_print_int(int n);
+
 #[alloc]
 #[io]
 pub fn print(int n) {
@@ -72,21 +81,21 @@ pub fn print(bool b) {
 #[alloc]
 #[io]
 pub fn print(char c) {
-    buf = [c]
+    buf = [c];
     __ayanami_print_str(buf, 1)
 }
 
 #[alloc]
 #[io]
 pub fn println(int n) {
-    print(n)
+    print(n);
     println()
 }
 
 #[alloc]
 #[io]
 pub fn println(usize n) {
-    print(n)
+    print(n);
     println()
 }
 
@@ -94,42 +103,41 @@ pub fn println(usize n) {
 #[state]
 #[io]
 pub fn println(float f) {
-    print(f)
+    print(f);
     println()
 }
 
 #[alloc]
 #[io]
 pub fn println(bool b) {
-    print(b)
+    print(b);
     println()
 }
 
 #[alloc]
 #[io]
 pub fn println(char c) {
-    print(c)
+    print(c);
     println()
 }
 
 // ── 行输入（纯 Ayanami；不依赖 runtime 扩展） ──
-
 /// 读取一行（不含换行；EOF 返回空串）
 #[alloc]
 #[state]
 #[io]
 pub fn read_line() -> String {
-    s = String::empty()
-    c = getchar()
+    s = String::empty();
+    c = getchar();
     while c >= 0 && c != 10 {
         if c != 13 {
-            ch = c as char
-            s = s.add(ch.to_string())
+            ch = c as char;
+            s = s.add(ch.to_string());
         }
-        c = getchar()
+        c = getchar();
     }
-    empty = ""
-    return s.add(empty)
+    empty = "";
+    return s.add(empty);
 }
 
 /// 读取一行并宽松解析为 int（失败 0）
@@ -137,7 +145,7 @@ pub fn read_line() -> String {
 #[state]
 #[io]
 pub fn read_int() -> int {
-    return read_line().trim().parse_int()
+    return read_line().trim().parse_int();
 }
 
 /// 读取一行并严格解析为 int（失败 None）
@@ -145,7 +153,7 @@ pub fn read_int() -> int {
 #[state]
 #[io]
 pub fn try_read_int() -> Option[int] {
-    return read_line().trim().try_parse_int()
+    return read_line().trim().try_parse_int();
 }
 
 /// 读取一行并宽松解析为 float（失败 0.0）
@@ -153,7 +161,7 @@ pub fn try_read_int() -> Option[int] {
 #[state]
 #[io]
 pub fn read_float() -> float {
-    return read_line().trim().parse_float()
+    return read_line().trim().parse_float();
 }
 
 /// 读取一行并严格解析为 float（失败 None）
@@ -161,7 +169,7 @@ pub fn read_float() -> float {
 #[state]
 #[io]
 pub fn try_read_float() -> Option[float] {
-    return read_line().trim().try_parse_float()
+    return read_line().trim().try_parse_float();
 }
 
 /// 读取一行并宽松解析为 bool（失败 false）
@@ -169,7 +177,7 @@ pub fn try_read_float() -> Option[float] {
 #[state]
 #[io]
 pub fn read_bool() -> bool {
-    return read_line().trim().try_parse_bool().unwrap_or(false)
+    return read_line().trim().try_parse_bool().unwrap_or(false);
 }
 
 /// 读取一行并严格解析为 bool（失败 None）
@@ -177,7 +185,7 @@ pub fn read_bool() -> bool {
 #[state]
 #[io]
 pub fn try_read_bool() -> Option[bool] {
-    return read_line().trim().try_parse_bool()
+    return read_line().trim().try_parse_bool();
 }
 
 /// 读取一行并严格解析为 usize（失败 None；负数拒绝）
@@ -185,13 +193,13 @@ pub fn try_read_bool() -> Option[bool] {
 #[state]
 #[io]
 pub fn try_read_uint() -> Option[usize] {
-    v = read_line().trim().try_parse_int()
+    v = read_line().trim().try_parse_int();
     if v._tag != 0 {
-        return Option::None()
+        return Option::None();
     }
-    n = v._data_Some._0
+    n = v._data_Some._0;
     if n < 0 {
-        return Option::None()
+        return Option::None();
     }
-    return Option::Some(n as usize)
+    return Option::Some(n as usize);
 }

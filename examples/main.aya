@@ -1,9 +1,10 @@
-import "string"
-import "io"
+import "string";
 
-fn main()->int{
-    println("Hello, " + "World!")
-    println("value: " + 42)
-    println(1.to_string() + " + " + 2 + " = " + 3)
+import "io";
+
+fn main() -> int {
+    println("Hello, " + "World!");
+    println("value: " + 42);
+    println(1.to_string() + " + " + 2 + " = " + 3);
     return 0;
 }
