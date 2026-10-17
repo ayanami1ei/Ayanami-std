@@ -32,6 +32,7 @@ fn test_transform() {
 #[test]
 fn test_parse() {
     #assert_eq("123".parse_int(), 123);
+    #assert_eq("-9223372036854775808".parse_int(), 0 - 9223372036854775807 - 1);
     #assert("42".is_int());
     #assert(!"12a".is_int())
 }

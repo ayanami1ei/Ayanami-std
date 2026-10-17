@@ -51,7 +51,7 @@ impl int {
         }
         n = self;
         while n != 0 {
-            // 不取负（避免 i64::MIN 溢出）：余数取绝对值
+            // 不取负（避免 i64::MIN 溢出，见 #183）：余数取绝对值
             d = n % 10;
             if d < 0 {
                 d = 0 - d;
@@ -402,7 +402,9 @@ impl int {
         return self >= other;
     }
     fn neg(self) -> int {
-        return -self;
+        // 0 - self：与二元减法一致带溢出检查（i64::MIN 取负 panic，而非静默回绕）
+        // 注：内置一元 `-x` 目前不检查（#183），此方法仅在显式 .neg()/接口调用时生效
+        return 0 - self;
     }
 }
 
@@ -867,11 +869,13 @@ impl String {
             if !c.is_digit() {
                 break;
             }
-            v = v * 10 + c.to_digit();
+            if neg {
+                // 负向累加：i64::MIN 幅值 2^63 超出正数范围（不做最终取负）
+                v = v * 10 - c.to_digit();
+            } else {
+                v = v * 10 + c.to_digit();
+            }
             i = i + 1;
-        }
-        if neg {
-            return -v;
         }
         return v;
     }

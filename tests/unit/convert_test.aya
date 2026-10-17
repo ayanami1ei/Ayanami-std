@@ -19,7 +19,13 @@ fn test_parse_int() {
     #assert("".try_parse_int().is_none());
     #assert("+".try_parse_int().is_none());
     #assert("99999999999999999999".try_parse_int().is_none());
-    #assert_eq(parse_int_or("123", 0), 123)
+    #assert_eq(parse_int_or("123", 0), 123);
+    min = 0 - 9223372036854775807 - 1;
+    max = 9223372036854775807;
+    #assert_eq("-9223372036854775808".try_parse_int().unwrap_or(0), min);
+    #assert_eq("9223372036854775807".try_parse_int().unwrap_or(0), max);
+    #assert("9223372036854775808".try_parse_int().is_none());
+    #assert("-9223372036854775809".try_parse_int().is_none())
 }
 
 #[test]
@@ -85,7 +91,13 @@ fn test_radix_parse() {
     #assert("".try_parse_int_radix(10).is_none());
     #assert("ff".try_parse_int_radix(1).is_none());
     #assert_eq("ff".parse_int_radix(16), 255);
-    #assert_eq("xx".parse_int_radix(16), 0)
+    #assert_eq("xx".parse_int_radix(16), 0);
+    min = 0 - 9223372036854775807 - 1;
+    max = 9223372036854775807;
+    #assert_eq("-8000000000000000".try_parse_int_radix(16).unwrap_or(0), min);
+    #assert_eq("7fffffffffffffff".try_parse_int_radix(16).unwrap_or(0), max);
+    #assert("ffffffffffffffff".try_parse_int_radix(16).is_none());
+    #assert("8000000000000000".try_parse_int_radix(16).is_none())
 }
 
 #[test]

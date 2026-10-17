@@ -101,3 +101,10 @@ fn test_usize_minmax() {
     #assert_eq(max(a, b), 7usize);
     #assert_eq(clamp(10usize, 0usize, 5usize), 5usize)
 }
+
+#[should_panic]
+fn test_abs_min_panics() {
+    // abs(i64::MIN) 带溢出检查 panic（不再静默回绕）
+    m = 0 - 9223372036854775807 - 1;
+    x = abs(m);
+}

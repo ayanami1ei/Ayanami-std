@@ -61,18 +61,27 @@ impl String {
                 return Option::None();
             }
             d = c.to_digit();
-            if v > 922337203685477580 {
-                return Option::None();
+            if neg {
+                // 负向累加：允许到 i64::MIN（幅值 2^63）
+                if v < 0 - 922337203685477580 {
+                    return Option::None();
+                }
+                v = v * 10;
+                if v < 0 - 9223372036854775807 - 1 + d {
+                    return Option::None();
+                }
+                v = v - d;
+            } else {
+                if v > 922337203685477580 {
+                    return Option::None();
+                }
+                v = v * 10;
+                if v > 9223372036854775807 - d {
+                    return Option::None();
+                }
+                v = v + d;
             }
-            v = v * 10;
-            if v > 9223372036854775807 - d {
-                return Option::None();
-            }
-            v = v + d;
             i = i + 1;
-        }
-        if neg {
-            return Option::Some(0 - v);
         }
         return Option::Some(v);
     }
@@ -197,11 +206,19 @@ impl String {
             if d >= base {
                 return Option::None();
             }
-            v = v * base + d;
+            if neg {
+                // 负向累加：允许到 i64::MIN（幅值 2^63）
+                if v < (0 - 9223372036854775807 - 1 + d) / base {
+                    return Option::None();
+                }
+                v = v * base - d;
+            } else {
+                if v > (9223372036854775807 - d) / base {
+                    return Option::None();
+                }
+                v = v * base + d;
+            }
             i = i + 1;
-        }
-        if neg {
-            v = 0 - v;
         }
         return Option::Some(v);
     }
