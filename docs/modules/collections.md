@@ -195,6 +195,7 @@ pub interface Hash {
 | `HashMap::new[K, V]()` / `with_capacity[K, V](n)` | 空表 / 预分配槽位 |
 | `m.insert(k, v) -> bool` | 插入；新增返回 true，覆盖旧值返回 false |
 | `m.get(k) -> Option[V]` | 取值（浅拷贝，与 `ArrayList.index` 一致） |
+| `m.get_or_insert(k, v) -> V` | 取已有值或插入并返回（不覆盖已有） |
 | `m.contains_key(k) -> bool` | 是否包含键 |
 | `m.contains_value(v) -> bool`（`V: Eq`） | 是否包含值（线性扫描） |
 | `m.clear()` | 清空（保留容量） |

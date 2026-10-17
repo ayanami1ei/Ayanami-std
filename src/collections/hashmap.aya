@@ -96,6 +96,36 @@ impl[K: Hash, V] HashMap[K, V] {
         return false
     }
 
+    /// 取已有值或插入并返回（浅拷贝；键存在时不覆盖）
+    #[alloc]
+    #[state]
+    pub fn get_or_insert(ref mut self, K k, V v) -> V {
+        if self.cap == 0 {
+            self.grow()
+        }
+        if (self.filled + 1) * 2 >= self.cap {
+            self.grow()
+        }
+        i = (k.hash() % self.cap as int) as usize
+        while true {
+            if self.state[i] == 0 {
+                self.keys[i] = k
+                self.vals[i] = v
+                self.state[i] = 1
+                self.len = self.len + 1
+                self.filled = self.filled + 1
+                return self.vals[i]
+            }
+            if self.state[i] == 1 {
+                if self.keys[i].hash_eq(ref k) {
+                    return self.vals[i]
+                }
+            }
+            i = (i + 1) % self.cap
+        }
+        return v
+    }
+
     /// 取值（浅拷贝）；不存在返回 None
     pub fn get(ref self, ref K k) -> Option[V] {
         if self.cap == 0 {

@@ -138,3 +138,16 @@ fn test_with_capacity() {
     e = HashMap::with_capacity[String, int](0usize)
     #assert(e.is_empty())
 }
+
+#[test]
+fn test_get_or_insert() {
+    m = HashMap::new[String, int]()
+    a = m.get_or_insert("x", 1)
+    #assert_eq(a, 1)
+    b = m.get_or_insert("x", 9)
+    #assert_eq(b, 1)
+    #assert_eq(m.len(), 1)
+    c = m.get_or_insert("y", 2)
+    #assert_eq(c, 2)
+    #assert_eq(m.len(), 2)
+}
