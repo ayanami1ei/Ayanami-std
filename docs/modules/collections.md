@@ -54,6 +54,7 @@ pub interface List[T] {
 | `a.index_of(v) -> int`（`T: Eq`） | 首次出现下标；未找到 `-1` |
 | `a.remove(v) -> bool`（`T: Eq`） | 删除首个等于 `v` 的元素 |
 | `a.reverse()` | 原地反转 |
+| `a.swap(i, j)` | 交换两处元素；越界 panic 101 |
 | `a.insert_at(i, v)` / `a.remove_at(i)` | 指定位置插入 / 删除；越界 panic 101 |
 | `a.first()` / `a.last() -> T` | 首 / 末元素；空表 panic 101 |
 | `a.map[U](Fn(T) -> U)` | 映射为新表 |

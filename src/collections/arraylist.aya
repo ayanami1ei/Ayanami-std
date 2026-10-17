@@ -277,6 +277,20 @@ impl[T] ArrayList[T] {
         }
     }
 
+    /// 交换两个下标处的元素；越界 panic 101
+    #[state]
+    pub fn swap(ref mut self, usize i, usize j, int __line, int __col, String __file) {
+        if i >= self.len {
+            panic_bounds_at(__line, __col, __file, i, self.len)
+        }
+        if j >= self.len {
+            panic_bounds_at(__line, __col, __file, j, self.len)
+        }
+        tmp = self.data[i]
+        self.data[i] = self.data[j]
+        self.data[j] = tmp
+    }
+
     /// 在 idx 处插入（idx == len 等价 push）；越界 panic 101
     #[alloc]
     #[state]

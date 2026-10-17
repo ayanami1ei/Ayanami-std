@@ -170,3 +170,16 @@ fn test_fold_string() {
     })
     #assert_eq(longest, "bbb")
 }
+
+#[test]
+fn test_swap() {
+    a = ArrayList::new[int]()
+    a.push(1)
+    a.push(2)
+    a.push(3)
+    a.swap(0, 2)
+    #assert_eq(a.index(0), 3)
+    #assert_eq(a.index(2), 1)
+    a.swap(1, 1)
+    #assert_eq(a.index(1), 2)
+}
