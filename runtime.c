@@ -15,6 +15,7 @@
 //  Unique ownership (Box-like)
 // ──────────────────────────────────────────────
 
+#ifndef AYANAMI_ASM_PORT
 static int64_t live_allocs = 0;
 
 int64_t __ayanami_runtime_abi(void) { return AYANAMI_RUNTIME_ABI; }
@@ -62,27 +63,40 @@ int64_t __ayanami_saturating_mul(int64_t a, int64_t b) {
     return r;
 }
 
+#endif // AYANAMI_ASM_PORT（算术助手由汇编后端提供）
+
 /* A5d-3b：诊断通道弱符号（可执行文件里为 no-op；插件 shim 提供强定义） */
 __attribute__((weak)) void __ayanami_diag_emit(long long level, __ayanami_diag_buf msg) {
     (void)level;
     (void)msg;
 }
 
-void *__ayanami_unique_alloc(size_t size) {
-    void *p = malloc(size);
+#ifndef AYANAMI_ASM_PORT
+// 默认分配原语（供自定义分配器包装；不经计数）
+void *__ayanami_default_alloc(size_t size) { return malloc(size); }
+void __ayanami_default_free(void *ptr) { free(ptr); }
+
+// 计数分配（弱符号：用户程序可导出同名强定义覆盖，见 std/src/system/alloc.aya）
+__attribute__((weak)) void *__ayanami_unique_alloc(size_t size) {
+    void *p = __ayanami_default_alloc(size);
     if (p) live_allocs++;
     return p;
 }
 
-void __ayanami_unique_free(void *ptr) {
+__attribute__((weak)) void __ayanami_unique_free(void *ptr) {
     if (!ptr) return;
     live_allocs--;
-    free(ptr);
+    __ayanami_default_free(ptr);
 }
+
+// 计数分配的标准库入口（编译器内建声明只覆盖 unique_*，std 经此调用避免重复声明）
+void *__ayanami_counted_alloc(size_t size) { return __ayanami_unique_alloc(size); }
+void __ayanami_counted_free(void *ptr) { __ayanami_unique_free(ptr); }
 
 int64_t __ayanami_live_allocs(void) {
     return live_allocs;
 }
+#endif // AYANAMI_ASM_PORT（分配与 ABI 由汇编后端提供）
 
 // ──────────────────────────────────────────────
 //  A5c-2：运行时 panic（退出码 101，Rust 风格输出）

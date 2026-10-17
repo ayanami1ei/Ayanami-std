@@ -1,0 +1,41 @@
+// custom_alloc — 自定义分配器（std Allocator 接口实现）
+//
+// 演示：用户类型实现 `Allocator`（此处包装默认分配原语），经接口约束泛型调用。
+// 注：以 Ayanami 定义覆盖运行时弱符号（全局分配器）当前被编译器限制阻断（#195）；
+// C/汇编实现可经 runtime 归档覆盖（见 docs/modules/alloc.md）。
+import "alloc";
+
+import "io";
+
+import "string";
+
+struct WrapAlloc {
+    int tag
+}
+
+impl WrapAlloc {
+    fn alloc(ref self, usize size) -> usize {
+        return default_alloc(size);
+    }
+    fn free(ref self, usize addr) {
+        default_free(addr)
+    }
+}
+
+fn alloc_size[A: Allocator](ref A a, usize size) -> usize {
+    return a.alloc(size);
+}
+
+fn main() -> int {
+    a = WrapAlloc { tag = 1 };
+    before = live_allocs();
+    p = alloc_size(a, 64usize);
+    delta = live_allocs() - before;
+    if p == 0usize {
+        return 1;
+    }
+    println("allocated");
+    println(delta);
+    a.free(p);
+    return 0;
+}

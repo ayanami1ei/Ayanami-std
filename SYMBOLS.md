@@ -553,6 +553,15 @@ src/meta/mir.aya:186: pub fn op_is_lt(int op) -> bool
 src/meta/mir.aya:190: pub fn op_is_gt(int op) -> bool
 src/meta/mir.aya:196: pub fn is_int_literal(ref MirFunction f, int idx) -> bool
 src/meta/mir.aya:204: pub fn folded_int(ref MirFunction f, int idx) -> int
+src/system/alloc.aya:26: interface Allocator
+src/system/alloc.aya:27: fn alloc(ref self, usize size) -> usize;
+src/system/alloc.aya:28: fn free(ref self, usize addr);
+src/system/alloc.aya:32: pub namespace DefaultAllocator
+src/system/alloc.aya:34: pub fn alloc(usize size) -> usize
+src/system/alloc.aya:38: pub fn free(usize addr)
+src/system/alloc.aya:44: pub fn live_allocs() -> int
+src/system/alloc.aya:49: pub fn default_alloc(usize size) -> usize
+src/system/alloc.aya:54: pub fn default_free(usize addr)
 src/system/env.aya:20: pub fn arg_count() -> int
 src/system/env.aya:26: pub fn arg(int i) -> String
 src/system/env.aya:40: pub fn get_env(String name) -> Option[String]
@@ -651,6 +660,12 @@ tests/golden/callback_dispatch.aya:5: fn triple(int x) -> int
 tests/golden/callback_dispatch.aya:9: fn main() -> int
 tests/golden/checksum.aya:8: fn rolling_hash(ref String s) -> int
 tests/golden/checksum.aya:18: fn main() -> int
+tests/golden/custom_alloc.aya:12: struct WrapAlloc
+tests/golden/custom_alloc.aya:16: impl WrapAlloc
+tests/golden/custom_alloc.aya:17: fn alloc(ref self, usize size) -> usize
+tests/golden/custom_alloc.aya:20: fn free(ref self, usize addr)
+tests/golden/custom_alloc.aya:25: fn alloc_size[A: Allocator](ref A a, usize size) -> usize
+tests/golden/custom_alloc.aya:29: fn main() -> int
 tests/golden/dir_copy.aya:10: fn main() -> int
 tests/golden/dir_walk.aya:10: struct Counts
 tests/golden/dir_walk.aya:15: fn walk(String path, int depth) -> Counts
@@ -666,6 +681,14 @@ tests/golden/text_pipeline.aya:10: fn main() -> int
 tests/golden/text_stats.aya:8: fn main() -> int
 tests/golden/usize_print.aya:5: fn main() -> int
 tests/golden/word_count.aya:7: fn main() -> int
+tests/unit/alloc_test.aya:6: fn use_allocator[A: Allocator](ref A a, usize size) -> usize
+tests/unit/alloc_test.aya:11: struct WrapperAlloc
+tests/unit/alloc_test.aya:15: impl WrapperAlloc
+tests/unit/alloc_test.aya:16: fn alloc(ref self, usize size) -> usize
+tests/unit/alloc_test.aya:19: fn free(ref self, usize addr)
+tests/unit/alloc_test.aya:25: fn test_default_allocator()
+tests/unit/alloc_test.aya:35: fn test_allocator_interface()
+tests/unit/alloc_test.aya:46: fn test_default_wrappers()
 tests/unit/arraylist_test.aya:6: fn test_basic()
 tests/unit/arraylist_test.aya:25: fn test_capacity()
 tests/unit/arraylist_test.aya:33: fn test_capacity_boundary()

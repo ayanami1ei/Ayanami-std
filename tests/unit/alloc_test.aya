@@ -1,0 +1,50 @@
+// alloc_test — 全局分配器接口与默认实现
+import "alloc";
+
+import "test";
+
+fn use_allocator[A: Allocator](ref A a, usize size) -> usize {
+    return a.alloc(size);
+}
+
+/// 自定义分配器示例：包装默认实现（接口实现验证）
+struct WrapperAlloc {
+    int tag
+}
+
+impl WrapperAlloc {
+    fn alloc(ref self, usize size) -> usize {
+        return default_alloc(size);
+    }
+    fn free(ref self, usize addr) {
+        default_free(addr)
+    }
+}
+
+#[test]
+fn test_default_allocator() {
+    before = live_allocs();
+    p = DefaultAllocator::alloc(32usize);
+    #assert(p != 0usize);
+    #assert_eq(live_allocs(), before + 1);
+    DefaultAllocator::free(p);
+    #assert_eq(live_allocs(), before)
+}
+
+#[test]
+fn test_allocator_interface() {
+    a = WrapperAlloc { tag = 0 };
+    before = live_allocs();
+    p = use_allocator(a, 24usize);
+    #assert(p != null);
+    #assert_eq(live_allocs(), before);  // 包装默认原语：不经计数
+    a.free(p);
+    #assert_eq(live_allocs(), before)
+}
+
+#[test]
+fn test_default_wrappers() {
+    p = default_alloc(16usize);
+    #assert(p != 0usize);
+    default_free(p)
+}

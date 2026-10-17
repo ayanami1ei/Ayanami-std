@@ -18,8 +18,12 @@ typedef struct { char* data; long len; } __ayanami_diag_buf;
 int64_t __ayanami_runtime_abi(void);
 
 // ── 分配（唯一所有权） ──
-void *__ayanami_unique_alloc(size_t size);
-void __ayanami_unique_free(void *ptr);
+void *__ayanami_default_alloc(size_t size);   // 默认分配原语（malloc；不计计数）
+void __ayanami_default_free(void *ptr);       // 默认释放原语（free；NULL 安全）
+void *__ayanami_unique_alloc(size_t size);    // 计数分配（弱符号：用户强定义可覆盖）
+void __ayanami_unique_free(void *ptr);        // 计数释放（弱符号：用户强定义可覆盖）
+void *__ayanami_counted_alloc(size_t size);   // 计数分配（std 入口；转发 unique_alloc）
+void __ayanami_counted_free(void *ptr);       // 计数释放（std 入口；转发 unique_free）
 int64_t __ayanami_live_allocs(void);
 
 // ── panic（退出码 101） ──
