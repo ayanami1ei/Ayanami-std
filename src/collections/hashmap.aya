@@ -433,3 +433,22 @@ impl[K: Hash, V: Ord] HashMap[K, V] {
         return vs
     }
 }
+
+/// 值映射为新表（键不变；原表保留）
+impl[K: Hash, V] HashMap[K, V] {
+    #[alloc]
+    #[state]
+    pub fn map_values[U](ref self, Fn(V) -> U f) -> HashMap[K, U] {
+        res = HashMap::new[K, U]()
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                k = self.keys[i]
+                v = self.vals[i]
+                res.insert(k, f(v))
+            }
+            i = i + 1
+        }
+        return res
+    }
+}

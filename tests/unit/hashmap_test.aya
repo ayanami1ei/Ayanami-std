@@ -210,3 +210,15 @@ fn test_sorted_views() {
     #assert_eq(vs.index(0), 1)
     #assert_eq(vs.index(2), 3)
 }
+
+#[test]
+fn test_map_values() {
+    m = HashMap::new[String, int]()
+    m.insert("a", 1)
+    m.insert("b", 2)
+    d = m.map_values((int v) -> int { return v * 10 })
+    #assert_eq(d.len(), 2)
+    #assert_eq(d.get("a").unwrap_or(0), 10)
+    #assert_eq(d.get("b").unwrap_or(0), 20)
+    #assert_eq(m.get("a").unwrap_or(0), 1)
+}

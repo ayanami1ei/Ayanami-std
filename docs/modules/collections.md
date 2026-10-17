@@ -206,6 +206,7 @@ pub interface Hash {
 | `m.to_list() -> ArrayList[Pair[K, V]]` | 所有键值对（浅拷贝，顺序为实现相关） |
 | `m.sorted_keys() -> ArrayList[K]`（`K: Ord`） | 升序键列表 |
 | `m.sorted_values() -> ArrayList[V]`（`V: Ord`） | 升序值列表 |
+| `m.map_values[U](Fn(V) -> U) -> HashMap[K, U]` | 值映射为新表（键不变） |
 | `m.for_each(Fn(K, V))` / `m.fold[U](init, Fn(U, K, V) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `m.retain(Fn(K, V) -> bool)` | 原地保留满足谓词的键值对 |
 | `m.to_string()`（`K/V: ToString`） | 形如 `{a: 1, b: 2}`（顺序为实现相关） |
