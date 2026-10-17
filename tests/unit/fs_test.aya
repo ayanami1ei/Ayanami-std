@@ -121,3 +121,27 @@ fn test_size_copy_tree() {
     #assert(rmdir(dst.copy()));
     #assert(rmdir(base.copy()))
 }
+
+#[test]
+fn test_error_model() {
+    r = read_file_result("/tmp/ayanami_no_such_file_xyz");
+    #assert(r.is_err());
+    e = last_error("/tmp/ayanami_no_such_file_xyz");
+    #assert_eq(e.errno, 2);
+    #assert(e.what().contains("ayanami_no_such_file_xyz"));
+    #assert(e.what().contains("No such file"));
+    #assert(write_file("/tmp/ayanami_fs_err_test.txt", "ok"));
+    r2 = read_file_result("/tmp/ayanami_fs_err_test.txt");
+    #assert(r2.is_ok());
+    r3 = read_file_result("/tmp/ayanami_fs_err_test.txt");
+    #assert_eq(r3.unwrap_or(""), "ok");
+    #assert(mkdir("/tmp/ayanami_fs_err_dir"));
+    #assert(!mkdir("/tmp/ayanami_fs_err_dir"));
+    e2 = last_error("/tmp/ayanami_fs_err_dir");
+    #assert_eq(e2.errno, 17);
+    #assert(!write_file("/tmp/ayanami_no_dir_xyz/f.txt", "x"));
+    e3 = last_error("/tmp/ayanami_no_dir_xyz/f.txt");
+    #assert_eq(e3.errno, 2);
+    #assert(rmdir("/tmp/ayanami_fs_err_dir"));
+    #assert(remove_file("/tmp/ayanami_fs_err_test.txt"))
+}

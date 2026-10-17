@@ -575,6 +575,14 @@ src/system/fs.aya:148: pub fn rename_file(String from, String to) -> bool
 src/system/fs.aya:154: pub fn size(String path) -> Option[int]
 src/system/fs.aya:166: pub fn copy_tree(String src, String dst) -> int
 src/system/fs.aya:170: fn copy_tree_impl(String src, String dst, int depth) -> int
+src/system/fs.aya:218: pub enum IoErrorKind
+src/system/fs.aya:230: pub struct IoError
+src/system/fs.aya:236: fn classify_kind(int code) -> IoErrorKind
+src/system/fs.aya:249: impl IoError
+src/system/fs.aya:253: fn message(ref self) -> String
+src/system/fs.aya:262: fn what(ref self) -> String
+src/system/fs.aya:269: pub fn last_error(String path) -> IoError
+src/system/fs.aya:276: pub fn read_file_result(String path) -> Result[String, IoError]
 src/system/io.aya:20: pub fn getchar() -> int
 src/system/io.aya:25: pub fn putchar(int c)
 src/system/io.aya:31: pub fn print(ref String n)
@@ -711,6 +719,7 @@ tests/unit/fs_test.aya:53: fn test_dir_ops()
 tests/unit/fs_test.aya:68: fn test_fs_more()
 tests/unit/fs_test.aya:84: fn test_copy_rename()
 tests/unit/fs_test.aya:99: fn test_size_copy_tree()
+tests/unit/fs_test.aya:126: fn test_error_model()
 tests/unit/hash_test.aya:6: fn test_hash()
 tests/unit/hashmap_test.aya:6: fn test_map_basic()
 tests/unit/hashmap_test.aya:20: fn test_map_grow()

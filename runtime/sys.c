@@ -11,6 +11,57 @@
 #include <sys/random.h>
 #endif
 
+// ── 文件操作 errno 捕获（std fs 错误模型） ──
+//
+// 约定：g_fs_errno 记录最近一次 fs 调用的失败 errno（成功后不保证清零，
+// 调用方仅在失败分支读取）。
+
+static int64_t g_fs_errno = 0;
+
+int64_t __ayanami_fs_errno(void) {
+    return g_fs_errno;
+}
+
+static int64_t fs_fail(void) {
+    g_fs_errno = errno;
+    return -1;
+}
+
+static char *fs_fail_null(void) {
+    g_fs_errno = errno;
+    return NULL;
+}
+
+// errno → 稳定类别码（0 未找到 / 1 权限 / 2 已存在 / 3 非目录 / 4 是目录 /
+// 5 目录非空 / 6 非法输入 / 7 其他）
+int64_t __ayanami_fs_errno_kind(int64_t e) {
+    switch (e) {
+    case ENOENT: return 0;
+    case EACCES: case EPERM: return 1;
+    case EEXIST: return 2;
+    case ENOTDIR: return 3;
+    case EISDIR: return 4;
+    case ENOTEMPTY: return 5;
+    case EINVAL: case ENAMETOOLONG: return 6;
+    default: return 7;
+    }
+}
+
+// 系统错误消息（strerror 的 unique_alloc 拷贝，NUL 结尾；调用方拥有）
+char *__ayanami_fs_strerror(int64_t e) {
+    const char *m = strerror((int)e);
+    if (!m) m = "unknown error";
+    size_t n = strlen(m);
+    char *buf = (char *)__ayanami_unique_alloc(n + 1);
+    if (!buf) return NULL;
+    memcpy(buf, m, n + 1);
+    return buf;
+}
+
+int64_t __ayanami_cstr_len(const char *s) {
+    return s ? (int64_t)strlen(s) : 0;
+}
+
 // 系统熵源：优先 getrandom，退回 /dev/urandom，最后退回 time()
 int64_t __ayanami_random_u64(void) {
     uint64_t v = 0;
@@ -64,7 +115,7 @@ int64_t __ayanami_time_sleep_ms(int64_t ms) {
 // ── 文件 ──
 
 static int path_cstr(__ayanami_str_view path, char *out, size_t cap) {
-    if (path.len <= 0 || path.len >= (long)cap) return 0;
+    if (path.len <= 0 || path.len >= (long)cap) { errno = EINVAL; return 0; }
     memcpy(out, path.data, (size_t)path.len);
     out[path.len] = 0;
     return 1;
@@ -72,57 +123,62 @@ static int path_cstr(__ayanami_str_view path, char *out, size_t cap) {
 
 int64_t __ayanami_fs_size(__ayanami_str_view path) {
     char p[4096];
-    if (!path_cstr(path, p, sizeof p)) return -1;
+    if (!path_cstr(path, p, sizeof p)) return fs_fail();
     struct stat st;
-    if (stat(p, &st) != 0) return -1;
+    if (stat(p, &st) != 0) return fs_fail();
     return (int64_t)st.st_size;
 }
 
 char *__ayanami_fs_read(__ayanami_str_view path) {
     char p[4096];
-    if (!path_cstr(path, p, sizeof p)) return NULL;
+    if (!path_cstr(path, p, sizeof p)) return fs_fail_null();
     FILE *f = fopen(p, "rb");
-    if (!f) return NULL;
+    if (!f) return fs_fail_null();
     fseek(f, 0, SEEK_END);
     long n = ftell(f);
     fseek(f, 0, SEEK_SET);
-    if (n < 0) { fclose(f); return NULL; }
+    if (n < 0) { fclose(f); return fs_fail_null(); }
     char *buf = (char *)__ayanami_unique_alloc((size_t)n + 1);
-    if (!buf) { fclose(f); return NULL; }
+    if (!buf) { fclose(f); return fs_fail_null(); }
     size_t r = fread(buf, 1, (size_t)n, f);
+    int bad = (r != (size_t)n) || ferror(f);
     fclose(f);
+    if (bad) {
+        __ayanami_unique_free(buf);
+        return fs_fail_null();
+    }
     buf[r] = 0;
     return buf;
 }
 
 int64_t __ayanami_fs_write(__ayanami_str_view path, __ayanami_str_view data) {
     char p[4096];
-    if (!path_cstr(path, p, sizeof p)) return -1;
+    if (!path_cstr(path, p, sizeof p)) return fs_fail();
     FILE *f = fopen(p, "wb");
-    if (!f) return -1;
+    if (!f) return fs_fail();
     size_t w = fwrite(data.data, 1, (size_t)data.len, f);
     fclose(f);
-    return (w == (size_t)data.len) ? 0 : -1;
+    return (w == (size_t)data.len) ? 0 : fs_fail();
 }
 
 int64_t __ayanami_fs_append(__ayanami_str_view path, __ayanami_str_view data) {
     char p[4096];
-    if (!path_cstr(path, p, sizeof p)) return -1;
+    if (!path_cstr(path, p, sizeof p)) return fs_fail();
     FILE *f = fopen(p, "ab");
-    if (!f) return -1;
+    if (!f) return fs_fail();
     size_t w = fwrite(data.data, 1, (size_t)data.len, f);
     fclose(f);
-    return (w == (size_t)data.len) ? 0 : -1;
+    return (w == (size_t)data.len) ? 0 : fs_fail();
 }
 
 int64_t __ayanami_fs_copy(__ayanami_str_view src, __ayanami_str_view dst) {
     char ps[4096], pd[4096];
-    if (!path_cstr(src, ps, sizeof ps)) return -1;
-    if (!path_cstr(dst, pd, sizeof pd)) return -1;
+    if (!path_cstr(src, ps, sizeof ps)) return fs_fail();
+    if (!path_cstr(dst, pd, sizeof pd)) return fs_fail();
     FILE *in = fopen(ps, "rb");
-    if (!in) return -1;
+    if (!in) return fs_fail();
     FILE *out = fopen(pd, "wb");
-    if (!out) { fclose(in); return -1; }
+    if (!out) { fclose(in); return fs_fail(); }
     char buf[8192];
     size_t n;
     int64_t rc = 0;
@@ -132,39 +188,39 @@ int64_t __ayanami_fs_copy(__ayanami_str_view src, __ayanami_str_view dst) {
     if (ferror(in)) rc = -1;
     fclose(in);
     fclose(out);
-    return rc;
+    return rc == 0 ? 0 : fs_fail();
 }
 
 int64_t __ayanami_fs_rename(__ayanami_str_view from, __ayanami_str_view to) {
     char pf[4096], pt[4096];
-    if (!path_cstr(from, pf, sizeof pf)) return -1;
-    if (!path_cstr(to, pt, sizeof pt)) return -1;
-    return rename(pf, pt) == 0 ? 0 : -1;
+    if (!path_cstr(from, pf, sizeof pf)) return fs_fail();
+    if (!path_cstr(to, pt, sizeof pt)) return fs_fail();
+    return rename(pf, pt) == 0 ? 0 : fs_fail();
 }
 
 int64_t __ayanami_fs_remove(__ayanami_str_view path) {
     char p[4096];
-    if (!path_cstr(path, p, sizeof p)) return -1;
-    return remove(p) == 0 ? 0 : -1;
+    if (!path_cstr(path, p, sizeof p)) return fs_fail();
+    return remove(p) == 0 ? 0 : fs_fail();
 }
 
 int64_t __ayanami_fs_mkdir(__ayanami_str_view path) {
     char p[4096];
-    if (!path_cstr(path, p, sizeof p)) return -1;
-    return mkdir(p, 0755) == 0 ? 0 : -1;
+    if (!path_cstr(path, p, sizeof p)) return fs_fail();
+    return mkdir(p, 0755) == 0 ? 0 : fs_fail();
 }
 
 int64_t __ayanami_fs_rmdir(__ayanami_str_view path) {
     char p[4096];
-    if (!path_cstr(path, p, sizeof p)) return -1;
-    return rmdir(p) == 0 ? 0 : -1;
+    if (!path_cstr(path, p, sizeof p)) return fs_fail();
+    return rmdir(p) == 0 ? 0 : fs_fail();
 }
 
 int64_t __ayanami_fs_mtime(__ayanami_str_view path) {
     char p[4096];
-    if (!path_cstr(path, p, sizeof p)) return -1;
+    if (!path_cstr(path, p, sizeof p)) return fs_fail();
     struct stat st;
-    if (stat(p, &st) != 0) return -1;
+    if (stat(p, &st) != 0) return fs_fail();
     return (int64_t)st.st_mtime;
 }
 

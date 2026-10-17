@@ -107,6 +107,12 @@ int64_t __ayanami_fs_is_dir(__ayanami_str_view path); // 1 目录 / 0 否
 char *__ayanami_fs_list_data(__ayanami_str_view path); // 目录项 '\n' 连接（unique_alloc、NUL 结尾）；NULL 失败
 int64_t __ayanami_fs_list_len(void); // 最近一次 list_data 的字节长度
 
+// ── 文件错误信息（std fs 错误模型） ──
+int64_t __ayanami_fs_errno(void);            // 最近一次 fs 失败 errno
+int64_t __ayanami_fs_errno_kind(int64_t e);  // errno → 稳定类别码（0..7，见 sys.c）
+char *__ayanami_fs_strerror(int64_t e);      // strerror 拷贝（unique_alloc，调用方拥有）
+int64_t __ayanami_cstr_len(const char *s);   // C 串长度（NULL → 0）
+
 // ── 命令行参数 / 环境变量（返回值为 unique_alloc 拷贝） ──
 int64_t __ayanami_arg_count(void);                    // argc（含程序名）
 int64_t __ayanami_arg_len(int64_t i);                 // 第 i 个参数长度；-1 越界

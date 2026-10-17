@@ -37,7 +37,28 @@ fn main() -> int {
 }
 ```
 
+## 错误模型
+
+`*_result` / `last_error` 提供失败详情（类别 + 路径 + errno + 系统消息）：
+
+```ayanami
+r = read_file_result("/tmp/nope.txt")
+if r.is_err() {
+    e = last_error("/tmp/nope.txt")
+    println(e.what())        // /tmp/nope.txt: No such file or directory (errno 2)
+}
+```
+
+| API | 说明 |
+|---|---|
+| `read_file_result(path) -> Result[String, IoError]` | 读取失败带详情 |
+| `last_error(path) -> IoError` | 最近一次 fs 失败的错误（仅在失败分支读取有意义） |
+| `IoError { kind, path, errno }` | `what()` 完整消息；`message()` 系统消息 |
+| `IoErrorKind` | `NotFound` / `PermissionDenied` / `AlreadyExists` / `NotADirectory` / `IsADirectory` / `DirectoryNotEmpty` / `InvalidInput` / `Other` |
+
 ## 注意
 
 - 由 C 运行时提供（`runtime/sys.c`）；读取缓冲由 `unique_alloc` 分配，String 接管所有权。
 - 按字节读写（二进制安全）。
+- errno 捕获为进程内最近一次值（单线程约定）；`last_error` 的路径由调用方提供。
+- 路径 / 流式读写等抽象按实际需求再扩展。

@@ -204,3 +204,83 @@ fn copy_tree_impl(String src, String dst, int depth) -> int {
     }
     return n;
 }
+
+// ── 错误模型（errno 捕获 + strerror 消息） ──
+extern "C" fn __ayanami_fs_errno() -> int;
+
+extern "C" fn __ayanami_fs_errno_kind(int e) -> int;
+
+extern "C" fn __ayanami_fs_strerror(int e) -> [char];
+
+extern "C" fn __ayanami_cstr_len([char] s) -> int;
+
+/// IO 错误类别（由 errno 归类）
+pub enum IoErrorKind {
+    NotFound,
+    PermissionDenied,
+    AlreadyExists,
+    NotADirectory,
+    IsADirectory,
+    DirectoryNotEmpty,
+    InvalidInput,
+    Other,
+}
+
+/// IO 错误：类别 + 路径 + errno（`what()` 给出系统消息）
+pub struct IoError {
+    IoErrorKind kind
+    String path
+    int errno
+}
+
+fn classify_kind(int code) -> IoErrorKind {
+    match code {
+        0 => IoErrorKind::NotFound,
+        1 => IoErrorKind::PermissionDenied,
+        2 => IoErrorKind::AlreadyExists,
+        3 => IoErrorKind::NotADirectory,
+        4 => IoErrorKind::IsADirectory,
+        5 => IoErrorKind::DirectoryNotEmpty,
+        6 => IoErrorKind::InvalidInput,
+        _ => IoErrorKind::Other,
+    }
+}
+
+impl IoError {
+    /// 系统错误消息（strerror + errno 编号）
+    #[alloc]
+    #[state]
+    fn message(ref self) -> String {
+        p = __ayanami_fs_strerror(self.errno);
+        n = __ayanami_cstr_len(p);
+        m = String::new(p, n as usize);
+        return m + " (errno " + self.errno.to_string() + ")";
+    }
+    /// 完整消息：`<path>: <message>`（`Error` 接口）
+    #[alloc]
+    #[state]
+    fn what(ref self) -> String {
+        return self.path + ": " + self.message();
+    }
+}
+
+/// 最近一次 fs 调用失败的错误详情（仅在失败分支读取有意义）
+#[io]
+pub fn last_error(String path) -> IoError {
+    e = __ayanami_fs_errno();
+    return IoError { kind = classify_kind(__ayanami_fs_errno_kind(e)), path = path, errno = e };
+}
+
+/// 读取整个文件（失败带错误详情）
+#[io]
+pub fn read_file_result(String path) -> Result[String, IoError] {
+    n = __ayanami_fs_size(path);
+    if n < 0 {
+        return Result::Err(last_error(path));
+    }
+    data = __ayanami_fs_read(path);
+    if data == null {
+        return Result::Err(last_error(path));
+    }
+    return Result::Ok(String::new(data, n as usize));
+}
