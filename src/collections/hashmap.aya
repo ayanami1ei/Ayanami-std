@@ -452,3 +452,63 @@ impl[K: Hash, V] HashMap[K, V] {
         return res
     }
 }
+
+/// 谓词族（与 ArrayList 对齐）
+impl[K: Hash, V] HashMap[K, V] {
+    /// 是否存在满足谓词的键值对
+    pub fn any(ref self, Fn(K, V) -> bool f) -> bool {
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                if f(self.keys[i], self.vals[i]) {
+                    return true
+                }
+            }
+            i = i + 1
+        }
+        return false
+    }
+
+    /// 是否所有键值对满足谓词（空表 true）
+    pub fn all(ref self, Fn(K, V) -> bool f) -> bool {
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                if !f(self.keys[i], self.vals[i]) {
+                    return false
+                }
+            }
+            i = i + 1
+        }
+        return true
+    }
+
+    /// 满足谓词的键值对个数
+    pub fn count(ref self, Fn(K, V) -> bool f) -> usize {
+        n = 0usize
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                if f(self.keys[i], self.vals[i]) {
+                    n = n + 1
+                }
+            }
+            i = i + 1
+        }
+        return n
+    }
+
+    /// 首个满足谓词的键值对；无则 None
+    pub fn find(ref self, Fn(K, V) -> bool f) -> Option[Pair[K, V]] {
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                if f(self.keys[i], self.vals[i]) {
+                    return Option::Some(Pair[K, V] { first = self.keys[i], second = self.vals[i] })
+                }
+            }
+            i = i + 1
+        }
+        return Option::None()
+    }
+}

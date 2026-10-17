@@ -202,6 +202,7 @@ pub interface Hash {
 | `m.contains_value(v) -> bool`（`V: Eq`） | 是否包含值（线性扫描） |
 | `m.clear()` | 清空（保留容量） |
 | `m.merge(other)` | 合并另一张表（同键以 other 覆盖） |
+| `m.any/all(Fn(K, V) -> bool)` / `m.count(...) -> usize` / `m.find(...) -> Option[Pair[K, V]]` | 谓词族（与 ArrayList 对齐） |
 | `m.keys()` / `m.values() -> ArrayList[K]/ArrayList[V]` | 所有键 / 值（浅拷贝，顺序为实现相关） |
 | `m.to_list() -> ArrayList[Pair[K, V]]` | 所有键值对（浅拷贝，顺序为实现相关） |
 | `m.sorted_keys() -> ArrayList[K]`（`K: Ord`） | 升序键列表 |
