@@ -1,0 +1,52 @@
+// log_stats — 日志统计示例
+//
+// read_lines 读取 → count 统计级别 → 迭代器管道输出错误 → 单词计数 → 清理。
+import "fs"
+import "iter"
+import "text"
+import "time"
+import "io"
+
+fn main() -> int {
+    path = "/tmp/ayanami_log_" + now_millis().to_string() + ".txt"
+    data = "INFO boot\nWARN disk 90%\nERROR disk full\nINFO ready\nERROR disk full\nWARN mem\n"
+    ok = write_file(path.copy(), data.copy())
+    if !ok {
+        println("write failed")
+        return 1
+    }
+
+    o = read_lines(path.copy())
+    if o._tag != 0 {
+        println("read failed")
+        return 1
+    }
+    ls = o._data_Some._0
+
+    total = ls.len() as int
+    println("lines: " + total)
+
+    e0 = ls.count((String l) -> bool { return l.starts_with("ERROR") })
+    errors = e0 as int
+    println("errors: " + errors)
+
+    w0 = ls.count((String l) -> bool { return l.starts_with("WARN") })
+    warns = w0 as int
+    println("warns: " + warns)
+
+    it = ls.into_iter()
+    errs = FilterIter::new(it, (String l) -> bool { return l.starts_with("ERROR") })
+    msgs = MapIter::new(errs, (String l) -> String { return l.remove_prefix("ERROR ") })
+    for m in msgs {
+        println("error: " + m)
+    }
+
+    words = 0
+    for w in data.split_whitespace_iter() {
+        words = words + 1
+    }
+    println("words: " + words)
+
+    remove_file(path.copy())
+    return 0
+}
