@@ -194,3 +194,32 @@ impl[T, U, IA: Iterator[T], IB: Iterator[U]] ZipIter[T, U, IA, IB] {
         return Option::Some(Pair[T, U] { first = oa._data_Some._0, second = ob._data_Some._0 });
     }
 }
+
+// ── 组合接口：自由函数 + 方法语法（UFCS），支持自然链式 ──
+//
+// 例：`a.into_iter().map(f).filter(p).take(5usize)`、`s.lines().enumerate()`。
+// 集合自身的同名方法（如 ArrayList.map）优先于 UFCS 自由函数。
+/// 映射：`it.map(f)`
+pub fn map[T, U, I: Iterator[T]](I it, Fn(T)->U f) -> MapIter[T, U, I] {
+    return MapIter::new(it, f);
+}
+
+/// 过滤：`it.filter(pred)`
+pub fn filter[T, I: Iterator[T]](I it, Fn(T)->bool pred) -> FilterIter[T, I] {
+    return FilterIter::new(it, pred);
+}
+
+/// 取前 n 个：`it.take(n)`
+pub fn take[T, I: Iterator[T]](I it, usize n) -> TakeIter[T, I] {
+    return TakeIter::new(it, n);
+}
+
+/// 带下标：`it.enumerate()`
+pub fn enumerate[T, I: Iterator[T]](I it) -> EnumerateIter[T, I] {
+    return EnumerateIter::new(it);
+}
+
+/// 拉链：`it.zip(other)`
+pub fn zip[T, U, IA: Iterator[T], IB: Iterator[U]](IA a, IB b) -> ZipIter[T, U, IA, IB] {
+    return ZipIter::new(a, b);
+}

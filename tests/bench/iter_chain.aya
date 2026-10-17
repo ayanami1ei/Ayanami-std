@@ -1,0 +1,363 @@
+// iter_chain — 迭代器链基准（静态泛型链优化验证）
+//
+// 对比手写循环与适配器链（单态化 + LTO 内联后应同量级）：
+//   build      仅构建随机数据列表（基线）
+//   index      手动索引循环
+//   iter       拥有型迭代器循环
+//   chain      map + filter 链（namespace 构造）
+//   chain_for  for-in + map + filter
+//   deep       map → filter → take → enumerate 四层链
+//
+// 注：数据用带种子 RNG 生成（不可被编译器闭式折叠）；各 bench 返回 (耗时, 结果和)，
+// main 汇总打印结果和，保证循环体不可被优化消除。
+// 运行：ayanami run --release tests/bench/iter_chain.aya
+import "io";
+
+import "iter";
+
+import "arraylist";
+
+import "rand";
+
+import "string";
+
+import "time";
+
+fn build(int n, int seed) -> ArrayList[int] {
+    a = ArrayList::with_capacity[int](n as usize);
+    rng = Rng::new(seed);
+    i = 0;
+    while i < n {
+        a.push(rng.next_int() % 1000);
+        i = i + 1;
+    }
+    return a;
+}
+
+fn sum_index(ref ArrayList[int] a) -> int {
+    s = 0;
+    i = 0usize;
+    n = a.len();
+    while i < n {
+        v = a.index(i);
+        if v % 3 == 0 {
+            s = s + v * 2;
+        }
+        i = i + 1;
+    }
+    return s;
+}
+
+fn sum_iter(ArrayList[int] a) -> int {
+    it = a.into_iter();
+    s = 0;
+    while true {
+        o = it.next();
+        if o._tag != 0 {
+            break;
+        }
+        v = o._data_Some._0;
+        if v % 3 == 0 {
+            s = s + v * 2;
+        }
+    }
+    return s;
+}
+
+fn sum_chain(ArrayList[int] a) -> int {
+    it = MapIter::new(FilterIter::new(a.into_iter(), (int v) -> bool {
+        return v % 3 == 0;
+    }), (int v) -> int {
+        return v * 2;
+    });
+    s = 0;
+    while true {
+        o = it.next();
+        if o._tag != 0 {
+            break;
+        }
+        s = s + o._data_Some._0;
+    }
+    return s;
+}
+
+fn sum_chain_for(ArrayList[int] a) -> int {
+    s = 0;
+    for v in MapIter::new(FilterIter::new(a.into_iter(), (int v) -> bool {
+        return v % 3 == 0;
+    }), (int v) -> int {
+        return v * 2;
+    }) {
+        s = s + v;
+    }
+    return s;
+}
+
+fn sum_deep(ArrayList[int] a) -> int {
+    it = EnumerateIter::new(TakeIter::new(FilterIter::new(MapIter::new(a.into_iter(), (int v) -> int {
+        return v * 2;
+    }), (int v) -> bool {
+        return v % 3 == 0;
+    }), 100000usize));
+    s = 0;
+    while true {
+        o = it.next();
+        if o._tag != 0 {
+            break;
+        }
+        p = o._data_Some._0;
+        s = s + p.first as int + p.second;
+    }
+    return s;
+}
+
+/// 仅 map 一层（隔离层开销）
+fn sum_map_only(ArrayList[int] a) -> int {
+    it = MapIter::new(a.into_iter(), (int v) -> int {
+        return v * 2;
+    });
+    s = 0;
+    while true {
+        o = it.next();
+        if o._tag != 0 {
+            break;
+        }
+        s = s + o._data_Some._0;
+    }
+    return s;
+}
+
+/// 仅 filter 一层
+fn sum_filter_only(ArrayList[int] a) -> int {
+    it = FilterIter::new(a.into_iter(), (int v) -> bool {
+        return v % 3 == 0;
+    });
+    s = 0;
+    while true {
+        o = it.next();
+        if o._tag != 0 {
+            break;
+        }
+        s = s + o._data_Some._0;
+    }
+    return s;
+}
+
+fn twice(int v) -> int {
+    return v * 2;
+}
+
+/// 手写循环 + 命名函数调用（静态调用基线）
+fn sum_named(ArrayList[int] a) -> int {
+    it = a.into_iter();
+    s = 0;
+    while true {
+        o = it.next();
+        if o._tag != 0 {
+            break;
+        }
+        s = s + twice(o._data_Some._0);
+    }
+    return s;
+}
+
+/// 手写循环 + 闭包变量调用（闭包调用基线）
+fn sum_closure(ArrayList[int] a) -> int {
+    it = a.into_iter();
+    f = (int v) -> int {
+        return v * 2;
+    };
+    s = 0;
+    while true {
+        o = it.next();
+        if o._tag != 0 {
+            break;
+        }
+        s = s + f(o._data_Some._0);
+    }
+    return s;
+}
+
+fn bench_build(int n, int rounds) -> Pair[int, int] {
+    t0 = now_micros();
+    r = 0;
+    s = 0;
+    while r < rounds {
+        a = build(n, r);
+        s = s + a.len() as int;
+        r = r + 1;
+    }
+    t1 = now_micros();
+    return Pair[int, int] { first = t1 - t0, second = s };
+}
+
+fn bench_index(int n, int rounds) -> Pair[int, int] {
+    t0 = now_micros();
+    r = 0;
+    s = 0;
+    while r < rounds {
+        a = build(n, r);
+        s = s + sum_index(a);
+        r = r + 1;
+    }
+    t1 = now_micros();
+    return Pair[int, int] { first = t1 - t0, second = s };
+}
+
+fn bench_iter(int n, int rounds) -> Pair[int, int] {
+    t0 = now_micros();
+    r = 0;
+    s = 0;
+    while r < rounds {
+        s = s + sum_iter(build(n, r));
+        r = r + 1;
+    }
+    t1 = now_micros();
+    return Pair[int, int] { first = t1 - t0, second = s };
+}
+
+fn bench_chain(int n, int rounds) -> Pair[int, int] {
+    t0 = now_micros();
+    r = 0;
+    s = 0;
+    while r < rounds {
+        s = s + sum_chain(build(n, r));
+        r = r + 1;
+    }
+    t1 = now_micros();
+    return Pair[int, int] { first = t1 - t0, second = s };
+}
+
+fn bench_chain_for(int n, int rounds) -> Pair[int, int] {
+    t0 = now_micros();
+    r = 0;
+    s = 0;
+    while r < rounds {
+        s = s + sum_chain_for(build(n, r));
+        r = r + 1;
+    }
+    t1 = now_micros();
+    return Pair[int, int] { first = t1 - t0, second = s };
+}
+
+fn bench_deep(int n, int rounds) -> Pair[int, int] {
+    t0 = now_micros();
+    r = 0;
+    s = 0;
+    while r < rounds {
+        s = s + sum_deep(build(n, r));
+        r = r + 1;
+    }
+    t1 = now_micros();
+    return Pair[int, int] { first = t1 - t0, second = s };
+}
+
+fn bench_map_only(int n, int rounds) -> Pair[int, int] {
+    t0 = now_micros();
+    r = 0;
+    s = 0;
+    while r < rounds {
+        s = s + sum_map_only(build(n, r));
+        r = r + 1;
+    }
+    t1 = now_micros();
+    return Pair[int, int] { first = t1 - t0, second = s };
+}
+
+fn bench_filter_only(int n, int rounds) -> Pair[int, int] {
+    t0 = now_micros();
+    r = 0;
+    s = 0;
+    while r < rounds {
+        s = s + sum_filter_only(build(n, r));
+        r = r + 1;
+    }
+    t1 = now_micros();
+    return Pair[int, int] { first = t1 - t0, second = s };
+}
+
+fn bench_named(int n, int rounds) -> Pair[int, int] {
+    t0 = now_micros();
+    r = 0;
+    s = 0;
+    while r < rounds {
+        s = s + sum_named(build(n, r));
+        r = r + 1;
+    }
+    t1 = now_micros();
+    return Pair[int, int] { first = t1 - t0, second = s };
+}
+
+fn bench_closure(int n, int rounds) -> Pair[int, int] {
+    t0 = now_micros();
+    r = 0;
+    s = 0;
+    while r < rounds {
+        s = s + sum_closure(build(n, r));
+        r = r + 1;
+    }
+    t1 = now_micros();
+    return Pair[int, int] { first = t1 - t0, second = s };
+}
+
+fn ns_per_elem(int us, int elems) -> int {
+    return us * 1000 / elems;
+}
+
+fn main() -> int {
+    n = 200000;
+    rounds = 20;
+    // 预热 + 结果一致性
+    a = build(n, 0);
+    s_index = sum_index(a);
+    s_iter = sum_iter(build(n, 0));
+    s_chain = sum_chain(build(n, 0));
+    s_chain_for = sum_chain_for(build(n, 0));
+    s_deep = sum_deep(build(n, 0));
+    if s_index != s_iter {
+        return 1;
+    }
+    if s_index != s_chain {
+        return 2;
+    }
+    if s_index != s_chain_for {
+        return 3;
+    }
+    println("sum=" + s_index.to_string() + " deep=" + s_deep.to_string());
+    pb = bench_build(n, rounds);
+    pi = bench_index(n, rounds);
+    pt = bench_iter(n, rounds);
+    pc = bench_chain(n, rounds);
+    pf = bench_chain_for(n, rounds);
+    pd = bench_deep(n, rounds);
+    pm = bench_map_only(n, rounds);
+    pfl = bench_filter_only(n, rounds);
+    pn = bench_named(n, rounds);
+    pcl = bench_closure(n, rounds);
+    // 结果和汇总打印：防止循环体被优化消除
+    sink = pb.second + pi.second + pt.second + pc.second + pf.second + pd.second + pm.second + pfl.second + pn.second + pcl.second;
+    println("sink=" + sink.to_string());
+    base = pb.first;
+    ti = pi.first - base;
+    tt = pt.first - base;
+    tc = pc.first - base;
+    tf = pf.first - base;
+    td = pd.first - base;
+    tm = pm.first - base;
+    tfl = pfl.first - base;
+    tn = pn.first - base;
+    tcl = pcl.first - base;
+    elems = n * rounds;
+    per_round = base / rounds;
+    println("build " + per_round.to_string() + " us/round (baseline)");
+    println("index " + ti.to_string() + " us  " + ns_per_elem(ti, elems).to_string() + " ns/elem");
+    println("iter  " + tt.to_string() + " us  " + ns_per_elem(tt, elems).to_string() + " ns/elem");
+    println("chain " + tc.to_string() + " us  " + ns_per_elem(tc, elems).to_string() + " ns/elem");
+    println("for   " + tf.to_string() + " us  " + ns_per_elem(tf, elems).to_string() + " ns/elem");
+    println("deep  " + td.to_string() + " us  " + ns_per_elem(td, elems).to_string() + " ns/elem");
+    println("map   " + tm.to_string() + " us  " + ns_per_elem(tm, elems).to_string() + " ns/elem");
+    println("filt  " + tfl.to_string() + " us  " + ns_per_elem(tfl, elems).to_string() + " ns/elem");
+    println("named " + tn.to_string() + " us  " + ns_per_elem(tn, elems).to_string() + " ns/elem");
+    println("clos  " + tcl.to_string() + " us  " + ns_per_elem(tcl, elems).to_string() + " ns/elem");
+    return 0;
+}

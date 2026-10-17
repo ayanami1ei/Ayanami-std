@@ -189,3 +189,32 @@ fn test_string_adapters() {
     }
     #assert_eq(n, 10)
 }
+
+// ── 方法语法链（自由函数 UFCS：enumerate/zip/take 无同名冲突可链） ──
+#[test]
+fn test_method_chain_enumerate() {
+    a = ArrayList::new[int]();
+    a.push(10);
+    a.push(20);
+    n = 0;
+    for p in a.into_iter().enumerate() {
+        n = n + p.first as int + p.second;
+    }
+    #assert_eq(n, 31)
+}
+
+#[test]
+fn test_method_chain_take_zip() {
+    a = ArrayList::new[int]();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    b = ArrayList::new[int]();
+    b.push(10);
+    b.push(20);
+    s = 0;
+    for p in a.into_iter().take(2usize).zip(b.into_iter()) {
+        s = s + p.first * p.second;
+    }
+    #assert_eq(s, 50)
+}

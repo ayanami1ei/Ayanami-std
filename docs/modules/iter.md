@@ -91,3 +91,28 @@ for x in t { s = s + x }        // 30 + 40 = 70
 
 > 适配器可任意嵌套（内层迭代器满足 `Iterator[T]` 即可），拥有类型（如 `String`）正常。
 > `Pair[A, B] { first, second }` 用于 zip / enumerate 的元素。
+
+## 方法语法链（自由函数 UFCS）
+
+适配器同时提供自由函数形式，可用方法语法链式组合：
+
+```ayanami
+for p in a.into_iter().enumerate() { ... }              // 带下标
+for p in a.into_iter().take(2usize).zip(b.into_iter()) { ... }
+```
+
+| 自由函数 | 等价构造 |
+|---|---|
+| `it.map(f)` | `MapIter::new(it, f)` |
+| `it.filter(pred)` | `FilterIter::new(it, pred)` |
+| `it.take(n)` | `TakeIter::new(it, n)` |
+| `it.enumerate()` | `EnumerateIter::new(it)` |
+| `it.zip(other)` | `ZipIter::new(it, other)` |
+
+> 注：`map` / `filter`（以及导入 `hashset` 时的 `take`）与同名方法存在解析冲突（编译器 #189），
+> 修复前请用 `XxxIter::new` 构造，或仅链 `enumerate` / `zip` / `take`（无冲突时）。
+
+## 基准
+
+`tests/bench/iter_chain.aya`（`ayanami run --release`）：对比手写循环与适配器链的耗时与
+每元素开销。当前 `map` 层已与手写循环同量级，`FilterIter` 层约 5×（编译器 #191 跟踪）。

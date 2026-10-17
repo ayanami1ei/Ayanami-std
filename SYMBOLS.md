@@ -169,6 +169,11 @@ src/collections/iter.aya:177: pub namespace ZipIter
 src/collections/iter.aya:178: pub fn new[T, U, IA: Iterator[T], IB: Iterator[U]](IA a, IB b) -> ZipIter[T, U, IA, IB]
 src/collections/iter.aya:183: impl[T, U, IA: Iterator[T], IB: Iterator[U]] ZipIter[T, U, IA, IB]
 src/collections/iter.aya:185: fn next(ref mut self) -> Option[Pair[T, U]]
+src/collections/iter.aya:203: pub fn map[T, U, I: Iterator[T]](I it, Fn(T)->U f) -> MapIter[T, U, I]
+src/collections/iter.aya:208: pub fn filter[T, I: Iterator[T]](I it, Fn(T)->bool pred) -> FilterIter[T, I]
+src/collections/iter.aya:213: pub fn take[T, I: Iterator[T]](I it, usize n) -> TakeIter[T, I]
+src/collections/iter.aya:218: pub fn enumerate[T, I: Iterator[T]](I it) -> EnumerateIter[T, I]
+src/collections/iter.aya:223: pub fn zip[T, U, IA: Iterator[T], IB: Iterator[U]](IA a, IB b) -> ZipIter[T, U, IA, IB]
 src/collections/linkedlist.aya:13: pub struct LinkedList[T]
 src/collections/linkedlist.aya:19: pub namespace LinkedList
 src/collections/linkedlist.aya:20: pub fn new[T]() -> LinkedList[T]
@@ -609,6 +614,29 @@ src/system/time.aya:33: pub fn now_unix() -> int
 src/system/time.aya:40: pub fn format_ms(int ms) -> String
 src/system/time.aya:60: pub fn elapsed_ms(int start) -> int
 src/system/time.aya:66: pub fn sleep_ms(int ms)
+tests/bench/iter_chain.aya:26: fn build(int n, int seed) -> ArrayList[int]
+tests/bench/iter_chain.aya:37: fn sum_index(ref ArrayList[int] a) -> int
+tests/bench/iter_chain.aya:51: fn sum_iter(ArrayList[int] a) -> int
+tests/bench/iter_chain.aya:67: fn sum_chain(ArrayList[int] a) -> int
+tests/bench/iter_chain.aya:84: fn sum_chain_for(ArrayList[int] a) -> int
+tests/bench/iter_chain.aya:96: fn sum_deep(ArrayList[int] a) -> int
+tests/bench/iter_chain.aya:115: fn sum_map_only(ArrayList[int] a) -> int
+tests/bench/iter_chain.aya:131: fn sum_filter_only(ArrayList[int] a) -> int
+tests/bench/iter_chain.aya:146: fn twice(int v) -> int
+tests/bench/iter_chain.aya:151: fn sum_named(ArrayList[int] a) -> int
+tests/bench/iter_chain.aya:165: fn sum_closure(ArrayList[int] a) -> int
+tests/bench/iter_chain.aya:181: fn bench_build(int n, int rounds) -> Pair[int, int]
+tests/bench/iter_chain.aya:194: fn bench_index(int n, int rounds) -> Pair[int, int]
+tests/bench/iter_chain.aya:207: fn bench_iter(int n, int rounds) -> Pair[int, int]
+tests/bench/iter_chain.aya:219: fn bench_chain(int n, int rounds) -> Pair[int, int]
+tests/bench/iter_chain.aya:231: fn bench_chain_for(int n, int rounds) -> Pair[int, int]
+tests/bench/iter_chain.aya:243: fn bench_deep(int n, int rounds) -> Pair[int, int]
+tests/bench/iter_chain.aya:255: fn bench_map_only(int n, int rounds) -> Pair[int, int]
+tests/bench/iter_chain.aya:267: fn bench_filter_only(int n, int rounds) -> Pair[int, int]
+tests/bench/iter_chain.aya:279: fn bench_named(int n, int rounds) -> Pair[int, int]
+tests/bench/iter_chain.aya:291: fn bench_closure(int n, int rounds) -> Pair[int, int]
+tests/bench/iter_chain.aya:303: fn ns_per_elem(int us, int elems) -> int
+tests/bench/iter_chain.aya:307: fn main() -> int
 tests/compile_fail/missing_import.aya:3: fn main() -> int
 tests/golden/callback_dispatch.aya:5: fn triple(int x) -> int
 tests/golden/callback_dispatch.aya:9: fn main() -> int
@@ -733,6 +761,8 @@ tests/unit/iter_test.aya:115: fn test_take_adapter()
 tests/unit/iter_test.aya:130: fn test_map_filter_take()
 tests/unit/iter_test.aya:152: fn test_enumerate_zip()
 tests/unit/iter_test.aya:178: fn test_string_adapters()
+tests/unit/iter_test.aya:195: fn test_method_chain_enumerate()
+tests/unit/iter_test.aya:207: fn test_method_chain_take_zip()
 tests/unit/linkedlist_test.aya:6: fn test_basic()
 tests/unit/linkedlist_test.aya:18: fn test_ll_eq_ops()
 tests/unit/linkedlist_test.aya:31: fn test_ll_mut_ops()
