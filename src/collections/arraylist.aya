@@ -127,6 +127,26 @@ impl[T: Eq] ArrayList[T] {
         return 0 - 1
     }
 
+    /// 去除相邻重复元素（保留每组第一个）
+    #[state]
+    pub fn dedup(ref mut self) {
+        if self.len <= 1 {
+            return
+        }
+        k = 0usize
+        i = 1usize
+        while i < self.len {
+            a = self.data[i]
+            b = self.data[k]
+            if !a.same(ref b) {
+                k = k + 1
+                self.data[k] = a
+            }
+            i = i + 1
+        }
+        self.len = k + 1
+    }
+
     /// 删除首个等于 v 的元素（后续前移）；未找到返回 false
     #[state]
     pub fn remove(ref mut self, ref T v) -> bool {

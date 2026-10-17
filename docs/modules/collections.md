@@ -53,6 +53,7 @@ pub interface List[T] {
 | `a.contains(v)`（`T: Eq`） | 是否包含（线性查找） |
 | `a.index_of(v) -> int`（`T: Eq`） | 首次出现下标；未找到 `-1` |
 | `a.remove(v) -> bool`（`T: Eq`） | 删除首个等于 `v` 的元素 |
+| `a.dedup()`（`T: Eq`） | 去除相邻重复元素（保留每组第一个） |
 | `a.reverse()` | 原地反转 |
 | `a.swap(i, j)` | 交换两处元素；越界 panic 101 |
 | `a.insert_at(i, v)` / `a.remove_at(i)` | 指定位置插入 / 删除；越界 panic 101 |
