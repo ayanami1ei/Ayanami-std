@@ -23,6 +23,45 @@ int64_t __ayanami_runtime_abi(void) { return AYANAMI_RUNTIME_ABI; }
  * （std/src/core/math.aya、std/src/core/bitops.aya）；
  * 运行时仅保留机器相关的基础件（内存/IO/系统调用/浮点格式化）。 */
 
+// ── 显式溢出算术（std core/num.aya：wrapping / saturating / overflowing / checked） ──
+
+int64_t __ayanami_wrapping_add(int64_t a, int64_t b) { return (int64_t)((uint64_t)a + (uint64_t)b); }
+int64_t __ayanami_wrapping_sub(int64_t a, int64_t b) { return (int64_t)((uint64_t)a - (uint64_t)b); }
+int64_t __ayanami_wrapping_mul(int64_t a, int64_t b) { return (int64_t)((uint64_t)a * (uint64_t)b); }
+int64_t __ayanami_wrapping_neg(int64_t a) { return (int64_t)(0u - (uint64_t)a); }
+
+int64_t __ayanami_add_overflow(int64_t a, int64_t b) {
+    int64_t r;
+    return __builtin_add_overflow(a, b, &r) ? 1 : 0;
+}
+int64_t __ayanami_sub_overflow(int64_t a, int64_t b) {
+    int64_t r;
+    return __builtin_sub_overflow(a, b, &r) ? 1 : 0;
+}
+int64_t __ayanami_mul_overflow(int64_t a, int64_t b) {
+    int64_t r;
+    return __builtin_mul_overflow(a, b, &r) ? 1 : 0;
+}
+
+int64_t __ayanami_saturating_add(int64_t a, int64_t b) {
+    int64_t r;
+    if (__builtin_add_overflow(a, b, &r)) return a > 0 ? INT64_MAX : INT64_MIN;
+    return r;
+}
+int64_t __ayanami_saturating_sub(int64_t a, int64_t b) {
+    int64_t r;
+    if (__builtin_sub_overflow(a, b, &r)) return a > 0 ? INT64_MAX : INT64_MIN;
+    return r;
+}
+int64_t __ayanami_saturating_mul(int64_t a, int64_t b) {
+    int64_t r;
+    if (__builtin_mul_overflow(a, b, &r)) {
+        int neg = (a < 0) != (b < 0);
+        return neg ? INT64_MIN : INT64_MAX;
+    }
+    return r;
+}
+
 /* A5d-3b：诊断通道弱符号（可执行文件里为 no-op；插件 shim 提供强定义） */
 __attribute__((weak)) void __ayanami_diag_emit(long long level, __ayanami_diag_buf msg) {
     (void)level;

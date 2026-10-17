@@ -115,3 +115,15 @@ int64_t __ayanami_env_len(__ayanami_str_view name);   // 值长度；-1 缺失
 char *__ayanami_env_data(__ayanami_str_view name);    // unique_alloc 拷贝；NULL 缺失
 
 #endif
+
+// ── 显式溢出算术（std core/num.aya） ──
+int64_t __ayanami_wrapping_add(int64_t a, int64_t b);
+int64_t __ayanami_wrapping_sub(int64_t a, int64_t b);
+int64_t __ayanami_wrapping_mul(int64_t a, int64_t b);
+int64_t __ayanami_wrapping_neg(int64_t a);
+int64_t __ayanami_add_overflow(int64_t a, int64_t b);
+int64_t __ayanami_sub_overflow(int64_t a, int64_t b);
+int64_t __ayanami_mul_overflow(int64_t a, int64_t b);
+int64_t __ayanami_saturating_add(int64_t a, int64_t b);
+int64_t __ayanami_saturating_sub(int64_t a, int64_t b);
+int64_t __ayanami_saturating_mul(int64_t a, int64_t b);

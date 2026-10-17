@@ -1,0 +1,160 @@
+// num — 显式溢出算术（wrapping / saturating / overflowing / checked）
+//
+// 默认 `+`/`-`/`*` 溢出时 panic；本模块提供显式语义的替代。
+// 底层由运行时无检查算术助手实现（机器相关）。
+import "option";
+
+#[pure]
+#[no_error]
+extern "C" fn __ayanami_wrapping_add(int a, int b) -> int;
+
+#[pure]
+#[no_error]
+extern "C" fn __ayanami_wrapping_sub(int a, int b) -> int;
+
+#[pure]
+#[no_error]
+extern "C" fn __ayanami_wrapping_mul(int a, int b) -> int;
+
+#[pure]
+#[no_error]
+extern "C" fn __ayanami_wrapping_neg(int a) -> int;
+
+#[pure]
+#[no_error]
+extern "C" fn __ayanami_add_overflow(int a, int b) -> int;
+
+#[pure]
+#[no_error]
+extern "C" fn __ayanami_sub_overflow(int a, int b) -> int;
+
+#[pure]
+#[no_error]
+extern "C" fn __ayanami_mul_overflow(int a, int b) -> int;
+
+#[pure]
+#[no_error]
+extern "C" fn __ayanami_saturating_add(int a, int b) -> int;
+
+#[pure]
+#[no_error]
+extern "C" fn __ayanami_saturating_sub(int a, int b) -> int;
+
+#[pure]
+#[no_error]
+extern "C" fn __ayanami_saturating_mul(int a, int b) -> int;
+
+/// 溢出结果：`value` 为环绕值，`overflow` 为是否发生溢出
+pub struct Overflowing {
+    int value
+    bool overflow
+}
+
+/// 环绕加法（溢出回绕）
+#[pure]
+pub fn wrapping_add(int a, int b) -> int {
+    return __ayanami_wrapping_add(a, b);
+}
+
+/// 环绕减法
+#[pure]
+pub fn wrapping_sub(int a, int b) -> int {
+    return __ayanami_wrapping_sub(a, b);
+}
+
+/// 环绕乘法
+#[pure]
+pub fn wrapping_mul(int a, int b) -> int {
+    return __ayanami_wrapping_mul(a, b);
+}
+
+/// 环绕取负
+#[pure]
+pub fn wrapping_neg(int a) -> int {
+    return __ayanami_wrapping_neg(a);
+}
+
+/// 加法是否溢出
+#[pure]
+pub fn add_overflow(int a, int b) -> bool {
+    return __ayanami_add_overflow(a, b) == 1;
+}
+
+/// 减法是否溢出
+#[pure]
+pub fn sub_overflow(int a, int b) -> bool {
+    return __ayanami_sub_overflow(a, b) == 1;
+}
+
+/// 乘法是否溢出
+#[pure]
+pub fn mul_overflow(int a, int b) -> bool {
+    return __ayanami_mul_overflow(a, b) == 1;
+}
+
+/// 饱和加法（溢出取边界值）
+#[pure]
+pub fn saturating_add(int a, int b) -> int {
+    return __ayanami_saturating_add(a, b);
+}
+
+/// 饱和减法
+#[pure]
+pub fn saturating_sub(int a, int b) -> int {
+    return __ayanami_saturating_sub(a, b);
+}
+
+/// 饱和乘法
+#[pure]
+pub fn saturating_mul(int a, int b) -> int {
+    return __ayanami_saturating_mul(a, b);
+}
+
+/// 环绕加法（带溢出标记）
+#[pure]
+pub fn overflowing_add(int a, int b) -> Overflowing {
+    // #182：比较结果先入局部变量（bool 字段直接赋比较表达式会 llc 报错）
+    ov = __ayanami_add_overflow(a, b) == 1;
+    return Overflowing { value = __ayanami_wrapping_add(a, b), overflow = ov };
+}
+
+/// 环绕减法（带溢出标记）
+#[pure]
+pub fn overflowing_sub(int a, int b) -> Overflowing {
+    ov = __ayanami_sub_overflow(a, b) == 1;  // #182
+    return Overflowing { value = __ayanami_wrapping_sub(a, b), overflow = ov };
+}
+
+/// 环绕乘法（带溢出标记）
+#[pure]
+pub fn overflowing_mul(int a, int b) -> Overflowing {
+    ov = __ayanami_mul_overflow(a, b) == 1;  // #182
+    return Overflowing { value = __ayanami_wrapping_mul(a, b), overflow = ov };
+}
+
+/// 检查加法（溢出返回 None）
+#[pure]
+pub fn checked_add(int a, int b) -> Option[int] {
+    if add_overflow(a, b) {
+        return Option::None();
+    }
+    return Option::Some(wrapping_add(a, b));
+}
+
+/// 检查减法
+#[pure]
+pub fn checked_sub(int a, int b) -> Option[int] {
+    if sub_overflow(a, b) {
+        return Option::None();
+    }
+    return Option::Some(wrapping_sub(a, b));
+}
+
+/// 检查乘法
+#[pure]
+pub fn checked_mul(int a, int b) -> Option[int] {
+    if mul_overflow(a, b) {
+        return Option::None();
+    }
+    return Option::Some(wrapping_mul(a, b));
+}

@@ -1,0 +1,55 @@
+import "num";
+
+import "test";
+
+#[test]
+fn test_wrapping() {
+    max = 9223372036854775807;
+    min = 0 - max - 1;
+    #assert_eq(wrapping_add(2147483647, 1), 2147483648);
+    #assert_eq(wrapping_add(max, 1), min);
+    #assert_eq(wrapping_sub(min, 1), max);
+    #assert_eq(wrapping_mul(max, 2), 0 - 2);
+    #assert_eq(wrapping_neg(min), min)
+}
+
+#[test]
+fn test_overflow_flags() {
+    max = 9223372036854775807;
+    min = 0 - max - 1;
+    #assert(add_overflow(max, 1));
+    #assert(!add_overflow(1, 2));
+    #assert(sub_overflow(min, 1));
+    #assert(!sub_overflow(1, 2));
+    #assert(mul_overflow(max, 2));
+    #assert(!mul_overflow(3, 4))
+}
+
+#[test]
+fn test_saturating() {
+    max = 9223372036854775807;
+    min = 0 - max - 1;
+    #assert_eq(saturating_add(max, 1), max);
+    #assert_eq(saturating_add(min, 0 - 1), min);
+    #assert_eq(saturating_sub(min, 1), min);
+    #assert_eq(saturating_sub(max, 0 - 1), max);
+    #assert_eq(saturating_mul(max, 2), max);
+    #assert_eq(saturating_mul(min, 2), min);
+    #assert_eq(saturating_add(1, 2), 3)
+}
+
+#[test]
+fn test_checked_overflowing() {
+    max = 9223372036854775807;
+    min = 0 - max - 1;
+    #assert(checked_add(max, 1).is_none());
+    #assert_eq(checked_add(1, 2).unwrap_or(0), 3);
+    #assert(checked_sub(min, 1).is_none());
+    #assert(checked_mul(max, 2).is_none());
+    o = overflowing_add(max, 1);
+    #assert(o.overflow);
+    #assert_eq(o.value, min);
+    o2 = overflowing_add(1, 2);
+    #assert(!o2.overflow);
+    #assert_eq(o2.value, 3)
+}
