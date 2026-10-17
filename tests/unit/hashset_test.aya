@@ -263,3 +263,15 @@ fn test_inplace_set_ops() {
     #assert(a.contains(1));
     #assert(!a.contains(3))
 }
+
+#[test]
+fn test_sorted_list() {
+    s = HashSet::new[String]();
+    s.insert("c");
+    s.insert("a");
+    s.insert("b");
+    ls = s.sorted_list();
+    #assert_eq(ls.len(), 3);
+    #assert_eq(ls.index(0), "a");
+    #assert_eq(ls.index(2), "c")
+}

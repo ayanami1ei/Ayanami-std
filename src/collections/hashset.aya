@@ -8,6 +8,8 @@ import "arraylist";
 
 import "iter";
 
+import "sort";
+
 pub struct HashSet[K: Hash] {
     [K] keys
     [int] state
@@ -434,5 +436,17 @@ impl[K: Hash] HashSet[K] {
             i = i + 1;
         }
         return Option::None();
+    }
+}
+
+/// 需要元素实现 Ord（排序视图）
+impl[K: Hash + Ord] HashSet[K] {
+    /// 排序后的元素列表（升序）
+    #[alloc]
+    #[state]
+    fn sorted_list(ref self) -> ArrayList[K] {
+        ls = self.to_list();
+        ls.sort();
+        return ls;
     }
 }

@@ -182,6 +182,7 @@ pub interface Hash {
 | `s.remove(k) -> bool` | 删除；不存在返回 false |
 | `s.take(k) -> Option[K]` | 删除并返回元素 |
 | `s.to_list() -> ArrayList[K]` | 所有元素（浅拷贝，顺序为实现相关） |
+| `s.sorted_list() -> ArrayList[K]`（`K: Ord`） | 升序元素列表 |
 | `s.for_each(Fn(K))` / `s.fold[U](init, Fn(U, K) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `s.retain(Fn(K) -> bool)` | 原地保留满足谓词的元素 |
 | `s.union(other)` / `s.intersection(other)` / `s.difference(other)` | 并 / 交 / 差（返回新集合） |
