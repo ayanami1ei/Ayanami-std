@@ -140,6 +140,21 @@ impl[K: Hash] HashSet[K] {
         }
     }
 
+    /// 是否子集（所有元素都在 other 中；空集为任何集合的子集）
+    pub fn is_subset_of(ref self, ref HashSet[K] other) -> bool {
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                k = self.keys[i]
+                if !other.contains(k) {
+                    return false
+                }
+            }
+            i = i + 1
+        }
+        return true
+    }
+
     /// 并集（新集合）
     ///
     /// 注：`union` 为语言关键字，成员位置允许（#172）故可直接用该名。

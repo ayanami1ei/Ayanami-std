@@ -147,3 +147,19 @@ fn test_set_into_iter() {
     }
     #assert_eq(n, 6)
 }
+
+#[test]
+fn test_subset() {
+    a = HashSet::new[int]()
+    a.insert(1)
+    a.insert(2)
+    b = HashSet::new[int]()
+    b.insert(1)
+    b.insert(2)
+    b.insert(3)
+    #assert(a.is_subset_of(b))
+    #assert(!b.is_subset_of(a))
+    e = HashSet::new[int]()
+    #assert(e.is_subset_of(a))
+    #assert(a.is_subset_of(a))
+}
