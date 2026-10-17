@@ -86,3 +86,18 @@ fn main() -> int {
 - 溢出：`try_parse_int` 对超出 i64 范围的输入返回 `None`（`i64::MIN` 也按溢出处理）。
 - 浮点解析无指数形式（`"1e3"` → `None`），需要时后续扩展。
 - `parse_int`（宽松、前缀解析）仍在 `string` 模块；本模块提供严格版与浮点/布尔对应物。
+
+## 示例：进制与无符号
+
+```ayanami
+import "convert"
+import "io"
+
+fn main() -> int {
+    println("ff".try_parse_int_radix(16).unwrap_or(-1))   // 255
+    println("101".try_parse_int_radix(2).unwrap_or(-1))    // 5
+    println("42".try_parse_uint().unwrap_or(0))            // 42
+    println("-1".try_parse_uint().is_none())               // true
+    return 0
+}
+```

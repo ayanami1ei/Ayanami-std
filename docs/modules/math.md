@@ -67,3 +67,22 @@ fn main() -> int {
 > `sqrt` / `exp` / `ln` / `log10` / `sin` / `cos` / `tan` / `atan2` / `floor` / `ceil` /
 > `round` / `trunc` / `is_nan` 均为**纯 Ayanami 实现**（牛顿迭代 / 级数 / 范围归约），
 > 不依赖 C libm；运行时仅保留机器相关基础件。
+
+## 示例（三角与对数）
+
+```ayanami
+import "math"
+import "io"
+
+fn main() -> int {
+    println(pi())                 // 3.14159
+    println(sin(pi() / 2.0))      // 1
+    println(cos(pi()))            // -1
+    println(atan2(1.0, 1.0))      // 0.785398
+    println(sqrt(2.0))            // 1.41421
+    println(exp(1.0))             // 2.71828
+    println(ln(exp(1.0)))         // 1
+    println(log10(1000.0))        // 3
+    return 0
+}
+```

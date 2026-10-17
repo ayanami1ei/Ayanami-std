@@ -32,3 +32,18 @@ fn main() -> int {
 - 单调时钟不受系统时间调整影响，适合计时；`now_unix` 是墙上时钟。
 - 精度为毫秒（运行时不保证纳秒）。
 - 由 C 运行时提供（`runtime/sys.c`）；替换运行时实现时需保持同名 ABI。
+
+## 示例：耗时格式化
+
+```ayanami
+import "time"
+import "io"
+
+fn main() -> int {
+    t0 = now_millis()
+    sleep_ms(20)
+    println(format_ms(now_millis() - t0))   // 形如 00:00:00.020
+    println(format_ms(3723004))             // 01:02:03.004
+    return 0
+}
+```
