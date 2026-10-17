@@ -229,6 +229,21 @@ impl[K: Hash, V] HashMap[K, V] {
         self.filled = 0
     }
 
+    /// 合并另一张表（同键以 other 覆盖；other 保留）
+    #[alloc]
+    #[state]
+    pub fn merge(ref mut self, ref HashMap[K, V] other) {
+        i = 0usize
+        while i < other.cap {
+            if other.state[i] == 1 {
+                k = other.keys[i]
+                v = other.vals[i]
+                self.insert(k, v)
+            }
+            i = i + 1
+        }
+    }
+
     /// 原地保留满足谓词的键值对
     #[state]
     pub fn retain(ref mut self, Fn(K, V) -> bool f) {

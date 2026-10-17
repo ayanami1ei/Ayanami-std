@@ -163,3 +163,18 @@ fn test_remove_get() {
     #assert(m.remove_get("a").is_none())
     #assert_eq(m.get("b").unwrap_or(0), 2)
 }
+
+#[test]
+fn test_merge() {
+    a = HashMap::new[String, int]()
+    a.insert("x", 1)
+    a.insert("y", 2)
+    b = HashMap::new[String, int]()
+    b.insert("y", 9)
+    b.insert("z", 3)
+    a.merge(b)
+    #assert_eq(a.len(), 3)
+    #assert_eq(a.get("y").unwrap_or(0), 9)
+    #assert_eq(a.get("z").unwrap_or(0), 3)
+    #assert_eq(b.len(), 2)
+}
