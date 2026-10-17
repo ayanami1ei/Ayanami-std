@@ -261,9 +261,8 @@ impl[K: Hash] HashSet[K] {
         i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                k = self.keys[i];
-                if other.contains(k) {
-                    res.insert(k)
+                if other.contains(self.keys[i]) {
+                    res.insert(self.keys[i])
                 }
             }
             i = i + 1;
@@ -278,9 +277,8 @@ impl[K: Hash] HashSet[K] {
         i = 0usize;
         while i < self.cap {
             if self.state[i] == 1 {
-                k = self.keys[i];
-                if !other.contains(k) {
-                    res.insert(k)
+                if !other.contains(self.keys[i]) {
+                    res.insert(self.keys[i])
                 }
             }
             i = i + 1;

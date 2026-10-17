@@ -1,0 +1,180 @@
+// mem_test — 拥有型元素清理语义回归（分配/释放必须配平）
+//
+// 覆盖：读取拷贝、pop/remove/remove_at/retain/reverse/dedup/filter/map/find、
+// 嵌套集合、LinkedList/HashMap/HashSet 常用路径。
+// 注意避免已知编译器问题触发形状（#184 循环内条件移动 / #185 Option::None 单态化 /
+// #186 字段访问临时），因此中间值一律先入本地变量。
+import "test";
+
+import "arraylist";
+
+import "linkedlist";
+
+import "hashmap";
+
+import "hashset";
+
+import "string";
+
+extern "C" fn __ayanami_live_allocs() -> int;
+
+fn churn_list() -> int {
+    a = ArrayList::new[String]();
+    a.push("a" + "1");
+    a.push("b" + "2");
+    a.push("c" + "3");
+    a.push("d" + "4");
+    x = a.pop();
+    a.reverse();
+    a.remove_at(0);
+    a.remove("c" + "3");
+    a.retain((String s) -> bool {
+        return s.len > 0;
+    });
+    y = a.index(0);
+    return x.len as int + y.len as int + a.len() as int;
+}
+
+fn churn_dedup() -> int {
+    a = ArrayList::new[String]();
+    a.push("x" + "1");
+    a.push("x" + "1");
+    a.push("y" + "2");
+    a.dedup();
+    return a.len() as int;
+}
+
+fn churn_filter_map() -> int {
+    a = ArrayList::new[String]();
+    a.push("f" + "1");
+    a.push("g" + "2");
+    b = a.filter((String s) -> bool {
+        return s.len > 0;
+    });
+    c = a.map((String s) -> String {
+        return s + "!";
+    });
+    f = a.find((String s) -> bool {
+        return s.len > 0;
+    });
+    u = f.unwrap_or("");
+    return b.len() as int + c.len() as int + u.len as int;
+}
+
+fn churn_linked() -> int {
+    l = LinkedList::new[String]();
+    l.push("l" + "1");
+    l.push("l" + "1");
+    l.push("l" + "2");
+    x = l.pop();
+    l.reverse();
+    l.remove_at(0);
+    l.dedup();
+    y = l.index(0);
+    return x.len as int + y.len as int + l.len() as int;
+}
+
+fn churn_sort() -> int {
+    a = ArrayList::new[String]();
+    a.push("c" + "3");
+    a.push("a" + "1");
+    a.push("b" + "2");
+    a.sort();
+    lo = a.min();
+    hi = a.max();
+    lv = lo.unwrap_or("");
+    hv = hi.unwrap_or("");
+    pos = a.binary_search("b" + "2");
+    return a.is_sorted() as int + lv.len as int + hv.len as int + pos;
+}
+
+fn churn_map2() -> int {
+    a = HashMap::new[String, String]();
+    a.insert("k" + "2", "v" + "2");
+    a.insert("k" + "1", "v" + "1");
+    b = HashMap::new[String, String]();
+    b.insert("k" + "3", "v" + "3");
+    a.merge(b);
+    ks = a.sorted_keys();
+    vs = a.sorted_values();
+    return ks.len() as int + vs.len() as int;
+}
+
+fn churn_map() -> int {
+    m = HashMap::new[String, String]();
+    m.insert("k" + "1", "v" + "1");
+    m.insert("k" + "2", "v" + "2");
+    g = m.get("k" + "1");
+    r = m.remove_get("k" + "2");
+    d = m.get_or_insert("k" + "3", "v" + "3");
+    n = m.map_values((String v) -> String {
+        return v + "!";
+    });
+    t = m.to_list();
+    s = 0;
+    for p in m.into_iter() {
+        s = s + p.first.len as int + p.second.len as int;
+    }
+    gu = g.unwrap_or("");
+    ru = r.unwrap_or("");
+    return gu.len as int + ru.len as int + d.len as int + n.len() as int + t.len() as int + s;
+}
+
+fn churn_set() -> int {
+    a = HashSet::new[String]();
+    a.insert("x" + "1");
+    a.insert("x" + "2");
+    a.insert("x" + "1");
+    b = HashSet::new[String]();
+    b.insert("x" + "2");
+    u = a.union(b);
+    i = a.intersection(b);
+    d = a.difference(b);
+    t = a.take("x" + "1");
+    a.remove("x" + "2");
+    a.retain((String s) -> bool {
+        return s.len > 0;
+    });
+    tu = t.unwrap_or("");
+    return u.len() as int + i.len() as int + d.len() as int + tu.len as int + a.len() as int;
+}
+
+fn churn_nested() -> int {
+    outer = ArrayList::new[ArrayList[String]]();
+    inner = ArrayList::new[String]();
+    inner.push("n" + "1");
+    inner.push("n" + "2");
+    outer.push(inner);
+    inner2 = ArrayList::new[String]();
+    inner2.push("m" + "1");
+    outer.push(inner2);
+    mapped = outer.map((ArrayList[String] x) -> int {
+        return x.len() as int;
+    });
+    return mapped.len() as int;
+}
+
+#[test]
+fn test_owned_cleanup() {
+    before = __ayanami_live_allocs();
+    n = churn_list() + churn_dedup() + churn_filter_map() + churn_linked() + churn_map() + churn_set() + churn_nested() + churn_sort() + churn_map2();
+    #assert_eq(__ayanami_live_allocs(), before);
+    #assert(n > 0)
+}
+
+#[test]
+fn test_owned_cleanup_cycles() {
+    before = __ayanami_live_allocs();
+    i = 0;
+    while i < 5 {
+        churn_list();
+        churn_dedup();
+        churn_filter_map();
+        churn_map();
+        churn_set();
+        churn_sort();
+        churn_map2();
+        i = i + 1;
+    }
+    #assert_eq(__ayanami_live_allocs(), before)
+}

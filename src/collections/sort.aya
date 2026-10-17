@@ -19,9 +19,8 @@ impl[T: Ord] ArrayList[T] {
         best = self.data[0];
         i = 1usize;
         while i < self.len {
-            v = self.data[i];
-            if v.cmp(ref best) < 0 {
-                best = v;
+            if self.data[i].cmp(ref best) < 0 {
+                best = self.data[i];
             }
             i = i + 1;
         }
@@ -35,9 +34,8 @@ impl[T: Ord] ArrayList[T] {
         best = self.data[0];
         i = 1usize;
         while i < self.len {
-            v = self.data[i];
-            if v.cmp(ref best) > 0 {
-                best = v;
+            if self.data[i].cmp(ref best) > 0 {
+                best = self.data[i];
             }
             i = i + 1;
         }

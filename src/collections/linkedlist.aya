@@ -20,7 +20,7 @@ pub namespace LinkedList {
     pub fn new[T]() -> LinkedList[T] {
         return LinkedList[T] { data = null, len = 0, capability = 0 };
     }
-    /// 预分配容量（cap <= 0 时等价于 new）
+    /// 预分配容量（cap == 0 时等价于 new）
     #[alloc]
     pub fn with_capacity[T](usize cap) -> LinkedList[T] {
         if cap == 0 {
@@ -49,7 +49,7 @@ impl[T] LinkedList[T] {
     #[alloc]
     #[state]
     fn push(ref mut self, T val) {
-        if self.len + 1 >= self.capability {
+        if self.len >= self.capability {
             self.expand()
         }
         self.data[self.len] = val;
@@ -63,6 +63,10 @@ impl[T] LinkedList[T] {
     }
     fn len(ref self) -> usize {
         return self.len;
+    }
+    /// 当前容量（已分配槽位数；`push`/`insert_at` 超出时翻倍扩容）
+    fn capacity(ref self) -> usize {
+        return self.capability;
     }
     #[state]
     fn set(ref mut self, usize i, T v, int __line, int __col, String __file) {
@@ -158,11 +162,9 @@ impl[T: Eq] LinkedList[T] {
         k = 0usize;
         i = 1usize;
         while i < self.len {
-            a = self.data[i];
-            b = self.data[k];
-            if !a.same(ref b) {
+            if !self.data[i].same(ref self.data[k]) {
                 k = k + 1;
-                self.data[k] = a;
+                self.data[k] = self.data[i];
             }
             i = i + 1;
         }
@@ -222,7 +224,7 @@ impl[T] LinkedList[T] {
         if idx > self.len {
             panic_bounds_at(__line, __col, __file, idx, self.len)
         }
-        if self.len + 1 >= self.capability {
+        if self.len >= self.capability {
             self.expand()
         }
         j = self.len;

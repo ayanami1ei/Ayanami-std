@@ -58,9 +58,14 @@ def discover():
 
 
 def run_case(binary, stem, fn_name, timeout=120):
+    # 驱动 = 测试文件本体 + 追加 main（同模块编译）：
+    # 编译器新策略下非 pub 定义按 internal 发射，跨模块 import 调用会链接失败。
     driver = os.path.join(UNIT, ".driver.aya")
+    with open(os.path.join(UNIT, f"{stem}.aya"), encoding="utf-8") as f:
+        src = f.read()
     with open(driver, "w", encoding="utf-8") as f:
-        f.write(f'import "{stem}"\n\nfn main() -> int {{\n    {fn_name}()\n    return 0\n}}\n')
+        f.write(src)
+        f.write(f"\n\nfn main() -> int {{\n    {fn_name}()\n    return 0\n}}\n")
     stdin_path = os.path.join(UNIT, f"{stem}.stdin")
     stdin = open(stdin_path, "rb") if os.path.exists(stdin_path) else None
     try:

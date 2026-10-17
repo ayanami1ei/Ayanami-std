@@ -30,6 +30,46 @@ fn test_capacity() {
 }
 
 #[test]
+fn test_capacity_boundary() {
+    a = ArrayList::with_capacity[int](4);
+    #assert_eq(a.capacity(), 4usize);
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    a.push(4);
+    #assert_eq(a.len(), 4);
+    #assert_eq(a.capacity(), 4usize);
+    a.push(5);
+    #assert_eq(a.capacity(), 8usize);
+    #assert_eq(a.index(4), 5);
+    b = ArrayList::with_capacity[int](2);
+    b.push(1);
+    b.push(2);
+    b.insert_at(1, 9);
+    #assert_eq(b.len(), 3);
+    #assert_eq(b.capacity(), 4usize)
+}
+
+#[test]
+fn test_capacity_growth() {
+    a = ArrayList::new[int]();
+    #assert_eq(a.capacity(), 0usize);
+    a.push(1);
+    #assert_eq(a.capacity(), 1usize);
+    a.push(2);
+    #assert_eq(a.capacity(), 2usize);
+    a.push(3);
+    #assert_eq(a.capacity(), 4usize);
+    a.push(4);
+    #assert_eq(a.capacity(), 4usize);
+    a.push(5);
+    #assert_eq(a.capacity(), 8usize);
+    a.clear();
+    #assert_eq(a.len(), 0);
+    #assert_eq(a.capacity(), 8usize)
+}
+
+#[test]
 fn test_contains_index_of() {
     a = ArrayList::new[int]();
     a.push(10);

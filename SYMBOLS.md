@@ -12,35 +12,36 @@ src/collections/arraylist.aya:35: fn expand(ref mut self)
 src/collections/arraylist.aya:50: fn push(ref mut self, T val)
 src/collections/arraylist.aya:57: fn index(ref self, usize index, int __line, int __col, String __file) -> T
 src/collections/arraylist.aya:63: fn len(ref self) -> usize
-src/collections/arraylist.aya:67: fn set(ref mut self, usize i, T v, int __line, int __col, String __file)
-src/collections/arraylist.aya:76: fn pop(ref mut self, int __line, int __col, String __file) -> T
-src/collections/arraylist.aya:83: fn is_empty(ref self) -> bool
-src/collections/arraylist.aya:88: fn clear(ref mut self)
-src/collections/arraylist.aya:91: fn iter(ref self, Fn(T) f)
-src/collections/arraylist.aya:99: impl[T: ToString] ArrayList[T]
-src/collections/arraylist.aya:102: fn to_string(ref self) -> String
-src/collections/arraylist.aya:116: impl[T: Eq] ArrayList[T]
-src/collections/arraylist.aya:118: fn contains(ref self, ref T v) -> bool
-src/collections/arraylist.aya:129: fn index_of(ref self, ref T v) -> int
-src/collections/arraylist.aya:140: fn last_index_of(ref self, ref T v) -> int
-src/collections/arraylist.aya:153: fn dedup(ref mut self)
-src/collections/arraylist.aya:172: fn remove(ref mut self, ref T v) -> bool
-src/collections/arraylist.aya:190: impl[T] ArrayList[T]
-src/collections/arraylist.aya:194: fn map[U](ref self, Fn(T)->U f) -> ArrayList[U]
-src/collections/arraylist.aya:206: fn filter(ref self, Fn(T)->bool f) -> ArrayList[T]
-src/collections/arraylist.aya:218: fn fold[U](ref self, U init, Fn(U,T)->U f) -> U
-src/collections/arraylist.aya:228: fn any(ref self, Fn(T)->bool f) -> bool
-src/collections/arraylist.aya:239: fn all(ref self, Fn(T)->bool f) -> bool
-src/collections/arraylist.aya:250: fn find(ref self, Fn(T)->bool f) -> Option[T]
-src/collections/arraylist.aya:262: fn retain(ref mut self, Fn(T)->bool f)
-src/collections/arraylist.aya:275: fn position(ref self, Fn(T)->bool f) -> int
-src/collections/arraylist.aya:286: fn count(ref self, Fn(T)->bool f) -> usize
-src/collections/arraylist.aya:299: fn reverse(ref mut self)
-src/collections/arraylist.aya:312: fn swap(ref mut self, usize i, usize j, int __line, int __col, String __file)
-src/collections/arraylist.aya:326: fn insert_at(ref mut self, usize idx, T v, int __line, int __col, String __file)
-src/collections/arraylist.aya:343: fn remove_at(ref mut self, usize idx, int __line, int __col, String __file)
-src/collections/arraylist.aya:355: fn first(ref self, int __line, int __col, String __file) -> T
-src/collections/arraylist.aya:362: fn last(ref self, int __line, int __col, String __file) -> T
+src/collections/arraylist.aya:67: fn capacity(ref self) -> usize
+src/collections/arraylist.aya:71: fn set(ref mut self, usize i, T v, int __line, int __col, String __file)
+src/collections/arraylist.aya:80: fn pop(ref mut self, int __line, int __col, String __file) -> T
+src/collections/arraylist.aya:87: fn is_empty(ref self) -> bool
+src/collections/arraylist.aya:92: fn clear(ref mut self)
+src/collections/arraylist.aya:95: fn iter(ref self, Fn(T) f)
+src/collections/arraylist.aya:103: impl[T: ToString] ArrayList[T]
+src/collections/arraylist.aya:106: fn to_string(ref self) -> String
+src/collections/arraylist.aya:120: impl[T: Eq] ArrayList[T]
+src/collections/arraylist.aya:122: fn contains(ref self, ref T v) -> bool
+src/collections/arraylist.aya:133: fn index_of(ref self, ref T v) -> int
+src/collections/arraylist.aya:144: fn last_index_of(ref self, ref T v) -> int
+src/collections/arraylist.aya:159: fn dedup(ref mut self)
+src/collections/arraylist.aya:176: fn remove(ref mut self, ref T v) -> bool
+src/collections/arraylist.aya:194: impl[T] ArrayList[T]
+src/collections/arraylist.aya:198: fn map[U](ref self, Fn(T)->U f) -> ArrayList[U]
+src/collections/arraylist.aya:210: fn filter(ref self, Fn(T)->bool f) -> ArrayList[T]
+src/collections/arraylist.aya:222: fn fold[U](ref self, U init, Fn(U,T)->U f) -> U
+src/collections/arraylist.aya:232: fn any(ref self, Fn(T)->bool f) -> bool
+src/collections/arraylist.aya:243: fn all(ref self, Fn(T)->bool f) -> bool
+src/collections/arraylist.aya:254: fn find(ref self, Fn(T)->bool f) -> Option[T]
+src/collections/arraylist.aya:266: fn retain(ref mut self, Fn(T)->bool f)
+src/collections/arraylist.aya:279: fn position(ref self, Fn(T)->bool f) -> int
+src/collections/arraylist.aya:290: fn count(ref self, Fn(T)->bool f) -> usize
+src/collections/arraylist.aya:303: fn reverse(ref mut self)
+src/collections/arraylist.aya:316: fn swap(ref mut self, usize i, usize j, int __line, int __col, String __file)
+src/collections/arraylist.aya:330: fn insert_at(ref mut self, usize idx, T v, int __line, int __col, String __file)
+src/collections/arraylist.aya:347: fn remove_at(ref mut self, usize idx, int __line, int __col, String __file)
+src/collections/arraylist.aya:359: fn first(ref self, int __line, int __col, String __file) -> T
+src/collections/arraylist.aya:366: fn last(ref self, int __line, int __col, String __file) -> T
 src/collections/hash.aya:7: interface Hash
 src/collections/hash.aya:8: fn hash(ref self) -> int;
 src/collections/hash.aya:9: fn hash_eq(ref self, ref Self other) -> bool;
@@ -110,26 +111,26 @@ src/collections/hashset.aya:205: fn remove_all(ref mut self, ref HashSet[K] othe
 src/collections/hashset.aya:220: fn retain_all(ref mut self, ref HashSet[K] other)
 src/collections/hashset.aya:238: fn union(ref self, ref HashSet[K] other) -> HashSet[K]
 src/collections/hashset.aya:259: fn intersection(ref self, ref HashSet[K] other) -> HashSet[K]
-src/collections/hashset.aya:276: fn difference(ref self, ref HashSet[K] other) -> HashSet[K]
-src/collections/hashset.aya:291: fn for_each(ref self, Fn(K) f)
-src/collections/hashset.aya:301: fn fold[U](ref self, U init, Fn(U,K)->U f) -> U
-src/collections/hashset.aya:315: fn to_list(ref self) -> ArrayList[K]
-src/collections/hashset.aya:326: fn len(ref self) -> usize
-src/collections/hashset.aya:329: fn is_empty(ref self) -> bool
-src/collections/hashset.aya:335: impl[K: Hash + ToString] HashSet[K]
-src/collections/hashset.aya:338: fn to_string(ref self) -> String
-src/collections/hashset.aya:358: pub struct HashSetIter[K: Hash]
-src/collections/hashset.aya:363: impl[K: Hash] HashSetIter[K]
-src/collections/hashset.aya:365: fn next(ref mut self) -> Option[K]
-src/collections/hashset.aya:378: impl[K: Hash] HashSet[K]
-src/collections/hashset.aya:380: fn into_iter(self) -> HashSetIter[K]
-src/collections/hashset.aya:386: impl[K: Hash] HashSet[K]
-src/collections/hashset.aya:388: fn any(ref self, Fn(K)->bool f) -> bool
-src/collections/hashset.aya:401: fn all(ref self, Fn(K)->bool f) -> bool
-src/collections/hashset.aya:414: fn count(ref self, Fn(K)->bool f) -> usize
-src/collections/hashset.aya:428: fn find(ref self, Fn(K)->bool f) -> Option[K]
-src/collections/hashset.aya:443: impl[K: Hash + Ord] HashSet[K]
-src/collections/hashset.aya:447: fn sorted_list(ref self) -> ArrayList[K]
+src/collections/hashset.aya:275: fn difference(ref self, ref HashSet[K] other) -> HashSet[K]
+src/collections/hashset.aya:289: fn for_each(ref self, Fn(K) f)
+src/collections/hashset.aya:299: fn fold[U](ref self, U init, Fn(U,K)->U f) -> U
+src/collections/hashset.aya:313: fn to_list(ref self) -> ArrayList[K]
+src/collections/hashset.aya:324: fn len(ref self) -> usize
+src/collections/hashset.aya:327: fn is_empty(ref self) -> bool
+src/collections/hashset.aya:333: impl[K: Hash + ToString] HashSet[K]
+src/collections/hashset.aya:336: fn to_string(ref self) -> String
+src/collections/hashset.aya:356: pub struct HashSetIter[K: Hash]
+src/collections/hashset.aya:361: impl[K: Hash] HashSetIter[K]
+src/collections/hashset.aya:363: fn next(ref mut self) -> Option[K]
+src/collections/hashset.aya:376: impl[K: Hash] HashSet[K]
+src/collections/hashset.aya:378: fn into_iter(self) -> HashSetIter[K]
+src/collections/hashset.aya:384: impl[K: Hash] HashSet[K]
+src/collections/hashset.aya:386: fn any(ref self, Fn(K)->bool f) -> bool
+src/collections/hashset.aya:399: fn all(ref self, Fn(K)->bool f) -> bool
+src/collections/hashset.aya:412: fn count(ref self, Fn(K)->bool f) -> usize
+src/collections/hashset.aya:426: fn find(ref self, Fn(K)->bool f) -> Option[K]
+src/collections/hashset.aya:441: impl[K: Hash + Ord] HashSet[K]
+src/collections/hashset.aya:445: fn sorted_list(ref self) -> ArrayList[K]
 src/collections/iter.aya:12: interface Iterator[T]
 src/collections/iter.aya:13: fn next(ref mut self) -> Option[T];
 src/collections/iter.aya:17: pub struct Pair[A, B]
@@ -177,36 +178,37 @@ src/collections/linkedlist.aya:36: fn expand(ref mut self)
 src/collections/linkedlist.aya:51: fn push(ref mut self, T val)
 src/collections/linkedlist.aya:58: fn index(ref self, usize index, int __line, int __col, String __file) -> T
 src/collections/linkedlist.aya:64: fn len(ref self) -> usize
-src/collections/linkedlist.aya:68: fn set(ref mut self, usize i, T v, int __line, int __col, String __file)
-src/collections/linkedlist.aya:77: fn pop(ref mut self, int __line, int __col, String __file) -> T
-src/collections/linkedlist.aya:84: fn is_empty(ref self) -> bool
-src/collections/linkedlist.aya:89: fn clear(ref mut self)
-src/collections/linkedlist.aya:92: fn iter(ref self, Fn(T) f)
-src/collections/linkedlist.aya:100: impl[T: ToString] LinkedList[T]
-src/collections/linkedlist.aya:103: fn to_string(ref self) -> String
-src/collections/linkedlist.aya:117: impl[T: Eq] LinkedList[T]
-src/collections/linkedlist.aya:119: fn contains(ref self, ref T v) -> bool
-src/collections/linkedlist.aya:130: fn index_of(ref self, ref T v) -> int
-src/collections/linkedlist.aya:141: fn last_index_of(ref self, ref T v) -> int
-src/collections/linkedlist.aya:154: fn dedup(ref mut self)
-src/collections/linkedlist.aya:173: fn remove(ref mut self, ref T v) -> bool
-src/collections/linkedlist.aya:191: impl[T] LinkedList[T]
-src/collections/linkedlist.aya:194: fn reverse(ref mut self)
-src/collections/linkedlist.aya:207: fn swap(ref mut self, usize i, usize j, int __line, int __col, String __file)
-src/collections/linkedlist.aya:221: fn insert_at(ref mut self, usize idx, T v, int __line, int __col, String __file)
-src/collections/linkedlist.aya:238: fn remove_at(ref mut self, usize idx, int __line, int __col, String __file)
-src/collections/linkedlist.aya:250: fn first(ref self, int __line, int __col, String __file) -> T
-src/collections/linkedlist.aya:257: fn last(ref self, int __line, int __col, String __file) -> T
-src/collections/linkedlist.aya:265: impl[T] LinkedList[T]
-src/collections/linkedlist.aya:269: fn map[U](ref self, Fn(T)->U f) -> LinkedList[U]
-src/collections/linkedlist.aya:281: fn filter(ref self, Fn(T)->bool f) -> LinkedList[T]
-src/collections/linkedlist.aya:293: fn fold[U](ref self, U init, Fn(U,T)->U f) -> U
-src/collections/linkedlist.aya:303: fn any(ref self, Fn(T)->bool f) -> bool
-src/collections/linkedlist.aya:314: fn all(ref self, Fn(T)->bool f) -> bool
-src/collections/linkedlist.aya:325: fn find(ref self, Fn(T)->bool f) -> Option[T]
-src/collections/linkedlist.aya:336: fn position(ref self, Fn(T)->bool f) -> int
-src/collections/linkedlist.aya:347: fn count(ref self, Fn(T)->bool f) -> usize
-src/collections/linkedlist.aya:360: fn retain(ref mut self, Fn(T)->bool f)
+src/collections/linkedlist.aya:68: fn capacity(ref self) -> usize
+src/collections/linkedlist.aya:72: fn set(ref mut self, usize i, T v, int __line, int __col, String __file)
+src/collections/linkedlist.aya:81: fn pop(ref mut self, int __line, int __col, String __file) -> T
+src/collections/linkedlist.aya:88: fn is_empty(ref self) -> bool
+src/collections/linkedlist.aya:93: fn clear(ref mut self)
+src/collections/linkedlist.aya:96: fn iter(ref self, Fn(T) f)
+src/collections/linkedlist.aya:104: impl[T: ToString] LinkedList[T]
+src/collections/linkedlist.aya:107: fn to_string(ref self) -> String
+src/collections/linkedlist.aya:121: impl[T: Eq] LinkedList[T]
+src/collections/linkedlist.aya:123: fn contains(ref self, ref T v) -> bool
+src/collections/linkedlist.aya:134: fn index_of(ref self, ref T v) -> int
+src/collections/linkedlist.aya:145: fn last_index_of(ref self, ref T v) -> int
+src/collections/linkedlist.aya:158: fn dedup(ref mut self)
+src/collections/linkedlist.aya:175: fn remove(ref mut self, ref T v) -> bool
+src/collections/linkedlist.aya:193: impl[T] LinkedList[T]
+src/collections/linkedlist.aya:196: fn reverse(ref mut self)
+src/collections/linkedlist.aya:209: fn swap(ref mut self, usize i, usize j, int __line, int __col, String __file)
+src/collections/linkedlist.aya:223: fn insert_at(ref mut self, usize idx, T v, int __line, int __col, String __file)
+src/collections/linkedlist.aya:240: fn remove_at(ref mut self, usize idx, int __line, int __col, String __file)
+src/collections/linkedlist.aya:252: fn first(ref self, int __line, int __col, String __file) -> T
+src/collections/linkedlist.aya:259: fn last(ref self, int __line, int __col, String __file) -> T
+src/collections/linkedlist.aya:267: impl[T] LinkedList[T]
+src/collections/linkedlist.aya:271: fn map[U](ref self, Fn(T)->U f) -> LinkedList[U]
+src/collections/linkedlist.aya:283: fn filter(ref self, Fn(T)->bool f) -> LinkedList[T]
+src/collections/linkedlist.aya:295: fn fold[U](ref self, U init, Fn(U,T)->U f) -> U
+src/collections/linkedlist.aya:305: fn any(ref self, Fn(T)->bool f) -> bool
+src/collections/linkedlist.aya:316: fn all(ref self, Fn(T)->bool f) -> bool
+src/collections/linkedlist.aya:327: fn find(ref self, Fn(T)->bool f) -> Option[T]
+src/collections/linkedlist.aya:338: fn position(ref self, Fn(T)->bool f) -> int
+src/collections/linkedlist.aya:349: fn count(ref self, Fn(T)->bool f) -> usize
+src/collections/linkedlist.aya:362: fn retain(ref mut self, Fn(T)->bool f)
 src/collections/list.aya:2: interface List[T]
 src/collections/list.aya:3: fn push(ref mut self, T val);
 src/collections/list.aya:4: fn index(ref self, usize index) -> T;
@@ -214,13 +216,13 @@ src/collections/list.aya:5: fn len(ref self) -> usize;
 src/collections/list.aya:6: fn iter(ref self, Fn(T) f);
 src/collections/sort.aya:13: impl[T: Ord] ArrayList[T]
 src/collections/sort.aya:15: fn min(ref self) -> Option[T]
-src/collections/sort.aya:31: fn max(ref self) -> Option[T]
-src/collections/sort.aya:47: fn is_sorted(ref self) -> bool
-src/collections/sort.aya:60: fn binary_search(ref self, ref T v) -> int
-src/collections/sort.aya:79: fn sort(ref mut self)
-src/collections/sort.aya:102: pub fn sort[T: Ord](ref mut ArrayList[T] a)
-src/collections/sort.aya:108: pub fn sort_int(ref mut ArrayList[int] a)
-src/collections/sort.aya:114: pub fn sort_string(ref mut ArrayList[String] a)
+src/collections/sort.aya:30: fn max(ref self) -> Option[T]
+src/collections/sort.aya:45: fn is_sorted(ref self) -> bool
+src/collections/sort.aya:58: fn binary_search(ref self, ref T v) -> int
+src/collections/sort.aya:77: fn sort(ref mut self)
+src/collections/sort.aya:100: pub fn sort[T: Ord](ref mut ArrayList[T] a)
+src/collections/sort.aya:106: pub fn sort_int(ref mut ArrayList[int] a)
+src/collections/sort.aya:112: pub fn sort_string(ref mut ArrayList[String] a)
 src/collections/text.aya:11: pub struct Split
 src/collections/text.aya:18: pub struct LinesIter
 src/collections/text.aya:23: impl LinesIter
@@ -624,19 +626,21 @@ tests/golden/usize_print.aya:5: fn main() -> int
 tests/golden/word_count.aya:7: fn main() -> int
 tests/unit/arraylist_test.aya:6: fn test_basic()
 tests/unit/arraylist_test.aya:25: fn test_capacity()
-tests/unit/arraylist_test.aya:33: fn test_contains_index_of()
-tests/unit/arraylist_test.aya:49: fn test_contains_string()
-tests/unit/arraylist_test.aya:61: fn test_reverse()
-tests/unit/arraylist_test.aya:76: fn test_insert_remove_at()
-tests/unit/arraylist_test.aya:91: fn test_first_last()
-tests/unit/arraylist_test.aya:100: fn test_map_filter()
-tests/unit/arraylist_test.aya:119: fn test_fold_any_all_find()
-tests/unit/arraylist_test.aya:151: fn test_capture_filter()
-tests/unit/arraylist_test.aya:165: fn test_retain_position_count()
-tests/unit/arraylist_test.aya:189: fn test_fold_string()
-tests/unit/arraylist_test.aya:205: fn test_swap()
-tests/unit/arraylist_test.aya:218: fn test_dedup()
-tests/unit/arraylist_test.aya:241: fn test_last_index_of()
+tests/unit/arraylist_test.aya:33: fn test_capacity_boundary()
+tests/unit/arraylist_test.aya:54: fn test_capacity_growth()
+tests/unit/arraylist_test.aya:73: fn test_contains_index_of()
+tests/unit/arraylist_test.aya:89: fn test_contains_string()
+tests/unit/arraylist_test.aya:101: fn test_reverse()
+tests/unit/arraylist_test.aya:116: fn test_insert_remove_at()
+tests/unit/arraylist_test.aya:131: fn test_first_last()
+tests/unit/arraylist_test.aya:140: fn test_map_filter()
+tests/unit/arraylist_test.aya:159: fn test_fold_any_all_find()
+tests/unit/arraylist_test.aya:191: fn test_capture_filter()
+tests/unit/arraylist_test.aya:205: fn test_retain_position_count()
+tests/unit/arraylist_test.aya:229: fn test_fold_string()
+tests/unit/arraylist_test.aya:245: fn test_swap()
+tests/unit/arraylist_test.aya:258: fn test_dedup()
+tests/unit/arraylist_test.aya:281: fn test_last_index_of()
 tests/unit/assert_fail_test.aya:5: fn some3() -> Option[int]
 tests/unit/assert_fail_test.aya:10: fn test_lt_fail()
 tests/unit/assert_fail_test.aya:15: fn test_contains_fail()
@@ -728,8 +732,9 @@ tests/unit/linkedlist_test.aya:6: fn test_basic()
 tests/unit/linkedlist_test.aya:18: fn test_ll_eq_ops()
 tests/unit/linkedlist_test.aya:31: fn test_ll_mut_ops()
 tests/unit/linkedlist_test.aya:46: fn test_ll_misc()
-tests/unit/linkedlist_test.aya:59: fn test_ll_functional()
-tests/unit/linkedlist_test.aya:98: fn test_ll_more()
+tests/unit/linkedlist_test.aya:59: fn test_ll_capacity_boundary()
+tests/unit/linkedlist_test.aya:84: fn test_ll_functional()
+tests/unit/linkedlist_test.aya:123: fn test_ll_more()
 tests/unit/math_test.aya:6: fn test_int_ops()
 tests/unit/math_test.aya:17: fn test_float_ops()
 tests/unit/math_test.aya:29: fn test_gcd_lcm()
@@ -743,6 +748,17 @@ tests/unit/math_test.aya:97: fn test_usize_minmax()
 tests/unit/math_test.aya:106: fn test_abs_min_panics()
 tests/unit/math_test.aya:113: fn test_neg_min_panics()
 tests/unit/math_test.aya:120: fn test_float_special()
+tests/unit/mem_test.aya:21: fn churn_list() -> int
+tests/unit/mem_test.aya:38: fn churn_dedup() -> int
+tests/unit/mem_test.aya:47: fn churn_filter_map() -> int
+tests/unit/mem_test.aya:64: fn churn_linked() -> int
+tests/unit/mem_test.aya:77: fn churn_sort() -> int
+tests/unit/mem_test.aya:91: fn churn_map2() -> int
+tests/unit/mem_test.aya:103: fn churn_map() -> int
+tests/unit/mem_test.aya:123: fn churn_set() -> int
+tests/unit/mem_test.aya:142: fn churn_nested() -> int
+tests/unit/mem_test.aya:158: fn test_owned_cleanup()
+tests/unit/mem_test.aya:166: fn test_owned_cleanup_cycles()
 tests/unit/num_test.aya:6: fn test_wrapping()
 tests/unit/num_test.aya:17: fn test_overflow_flags()
 tests/unit/num_test.aya:29: fn test_saturating()
