@@ -47,6 +47,33 @@ pub fn clamp(int x, int lo, int hi) -> int {
 }
 
 #[pure]
+pub fn min(usize a, usize b) -> usize {
+    if a < b {
+        return a;
+    }
+    return b;
+}
+
+#[pure]
+pub fn max(usize a, usize b) -> usize {
+    if a > b {
+        return a;
+    }
+    return b;
+}
+
+#[pure]
+pub fn clamp(usize x, usize lo, usize hi) -> usize {
+    if x < lo {
+        return lo;
+    }
+    if x > hi {
+        return hi;
+    }
+    return x;
+}
+
+#[pure]
 pub fn pow(int base, int exp) -> int {
     result = 1;
     for i in (0, exp) {

@@ -88,7 +88,16 @@ fn test_sign() {
 
 #[test]
 fn test_pow_negative() {
-    #assert_close(pow(2.0, 0 - 2), 0.25, 0.0001)
-    #assert_close(pow(2.0, 0 - 1), 0.5, 0.0001)
+    #assert_close(pow(2.0, 0 - 2), 0.25, 0.0001);
+    #assert_close(pow(2.0, 0 - 1), 0.5, 0.0001);
     #assert_close(pow(2.0, 3), 8.0, 0.0001)
+}
+
+#[test]
+fn test_usize_minmax() {
+    a = 3usize;
+    b = 7usize;
+    #assert_eq(min(a, b), 3usize);
+    #assert_eq(max(a, b), 7usize);
+    #assert_eq(clamp(10usize, 0usize, 5usize), 5usize)
 }

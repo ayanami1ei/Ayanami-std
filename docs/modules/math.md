@@ -13,6 +13,7 @@ import "math";
 | `min(int a, int b)` / `max(int a, int b)` | 最小 / 最大 |
 | `clamp(int x, int lo, int hi)` | 夹取到 `[lo, hi]` |
 | `pow(int base, int exp)` | 整数幂（循环乘法，`exp >= 0`） |
+| `min` / `max` / `clamp`（`usize`） | `usize` 重载（长度比较用） |
 | `gcd(int a, int b)` / `lcm(int a, int b)` | 最大公约数 / 最小公倍数（0 的约定见下） |
 | `is_prime(int n)` | 是否素数（`n < 2` 为 `false`） |
 
