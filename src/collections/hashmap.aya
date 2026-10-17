@@ -283,3 +283,21 @@ impl[K: Hash, V] HashMap[K, V] {
         return HashMapIter[K, V] { map = self, index = 0 }
     }
 }
+
+/// 需要值实现 Eq
+impl[K: Hash, V: Eq] HashMap[K, V] {
+    /// 是否包含值（线性扫描）
+    pub fn contains_value(ref self, ref V v) -> bool {
+        i = 0usize
+        while i < self.cap {
+            if self.state[i] == 1 {
+                x = self.vals[i]
+                if x.same(v) {
+                    return true
+                }
+            }
+            i = i + 1
+        }
+        return false
+    }
+}

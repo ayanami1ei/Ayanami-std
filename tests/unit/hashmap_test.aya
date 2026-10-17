@@ -107,3 +107,12 @@ fn test_map_into_iter() {
     }
     #assert_eq(n, 3)
 }
+
+#[test]
+fn test_contains_value() {
+    m = HashMap::new[String, int]()
+    m.insert("a", 1)
+    m.insert("b", 2)
+    #assert(m.contains_value(2))
+    #assert(!m.contains_value(9))
+}
