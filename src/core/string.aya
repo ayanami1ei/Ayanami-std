@@ -37,10 +37,9 @@ impl int {
         digit_count = 0usize;
         if n < 0 {
             digit_count = 1usize;
-            n = -n;
         }
         temp = n;
-        while temp > 0 {
+        while temp != 0 {
             digit_count = digit_count + 1;
             temp = temp / 10;
         }
@@ -49,12 +48,15 @@ impl int {
         i = digit_count - 1;
         if self < 0 {
             buf[0] = '-';
-            n = -self;
-        } else {
-            n = self;
         }
-        while n > 0 {
-            buf[i] = digits[n % 10];
+        n = self;
+        while n != 0 {
+            // 不取负（避免 i64::MIN 溢出）：余数取绝对值
+            d = n % 10;
+            if d < 0 {
+                d = 0 - d;
+            }
+            buf[i] = digits[d];
             n = n / 10;
             if i > 0 {
                 i = i - 1;
@@ -70,15 +72,15 @@ impl int {
             return "0";
         }
         n = self;
-        neg = false;
-        if n < 0 {
-            neg = true;
-            n = 0 - n;
-        }
+        neg = self < 0;
         buf = [char; 66];
         i = 66usize;
-        while n > 0 {
+        while n != 0 {
+            // 不取负（避免 i64::MIN 溢出）：余数取绝对值
             d = n % base;
+            if d < 0 {
+                d = 0 - d;
+            }
             du = d as usize;
             i = i - 1;
             buf[i] = digits.data[du];
