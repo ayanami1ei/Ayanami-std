@@ -26,3 +26,9 @@ fn main() -> int {
     return 0
 }
 ```
+
+## 实现
+
+- x86-64：`core/arch_x86_64.aya` **内联汇编**（wrapping 直译寄存器运算；overflow 用 OF 标志；
+  saturating 用条件跳转取边界值）。
+- 运行时的同名 `__ayanami_{wrapping_*,*_overflow,saturating_*}` 保留为 ABI 兼容层（std 不再调用）。

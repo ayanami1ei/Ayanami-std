@@ -46,5 +46,7 @@ path = "/path/to/libruntime.a"     # 支持 .c / .o / .a
 - `core.s`：`__ayanami_runtime_abi`、`__ayanami_default_alloc/free`（malloc/free）、
   `__ayanami_unique_alloc/free`（弱符号，计数）、`__ayanami_counted_alloc/free`、`__ayanami_live_allocs`。
 - `arith.s`：`wrapping_*`（回绕）、`*_overflow`（OF 标志）、`saturating_*`（边界值）。
+  注：std `core/num.aya` 已改用 `core/arch_x86_64.aya` 内联汇编（程序自带），
+  运行时这组符号保留为 ABI 兼容层。
 - 其余部分暂用 C（`runtime.c` 以 `-DAYANAMI_ASM_PORT` 排除已汇编段），按需继续迁移
   （panic/IO/fs/时间/熵）。

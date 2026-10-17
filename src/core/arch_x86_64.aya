@@ -1,0 +1,130 @@
+// arch_x86_64 — x86-64 机器级助手（Ayanami 内联汇编）
+//
+// 试验：把运行时中短小的汇编助手迁到 Ayanami 内联汇编（std 自带实现，不再经运行时 extern）。
+// 语义与 runtime 的 __ayanami_{wrapping_*, *_overflow, saturating_*} 完全一致（见 core/num.aya）。
+//
+// 内联汇编约定（本编译器）：
+// - 单个 out(reg) 输出（多输出见 #196）；$0=输出，$1..=输入（输出在前编号）；
+// - 立即数写作 $$N（$$ 为 $ 转义）；8 位寄存器写作 %al（单百分号）；
+// - 唯一标签用 ${:uid} 前缀（LLVM 原生机制）；
+// - 输出寄存器可当中转寄存器复用（独立临时寄存器需等 #196）。
+//
+// 目标平台：x86-64（System V）。其他架构需提供对应 arch_* 模块。
+pub namespace ArchX86_64 {
+    /// 环绕加法
+    pub fn wrapping_add(int a, int b) -> int {
+        r = 0;
+        unsafe {
+            asm("leaq ($1,$2), $0", out(reg) r, in(reg) a, in(reg) b)
+        }
+        return r;
+    }
+    /// 环绕减法
+    pub fn wrapping_sub(int a, int b) -> int {
+        r = 0;
+        unsafe {
+            asm("movq $1, $0
+ subq $2, $0", out(reg) r, in(reg) a, in(reg) b)
+        }
+        return r;
+    }
+    /// 环绕乘法
+    pub fn wrapping_mul(int a, int b) -> int {
+        r = 0;
+        unsafe {
+            asm("movq $1, $0
+ imulq $2, $0", out(reg) r, in(reg) a, in(reg) b)
+        }
+        return r;
+    }
+    /// 环绕取负
+    pub fn wrapping_neg(int a) -> int {
+        r = 0;
+        unsafe {
+            asm("xorq $0, $0
+ subq $1, $0", out(reg) r, in(reg) a)
+        }
+        return r;
+    }
+    /// 加法溢出（1/0）
+    pub fn add_overflow(int a, int b) -> int {
+        r = 0;
+        unsafe {
+            asm("movq $1, $0
+ addq $2, $0
+ seto %al
+ movzbq %al, $0", out(reg) r, in(reg) a, in(reg) b)
+        }
+        return r;
+    }
+    /// 减法溢出（1/0）
+    pub fn sub_overflow(int a, int b) -> int {
+        r = 0;
+        unsafe {
+            asm("movq $1, $0
+ subq $2, $0
+ seto %al
+ movzbq %al, $0", out(reg) r, in(reg) a, in(reg) b)
+        }
+        return r;
+    }
+    /// 乘法溢出（1/0）
+    pub fn mul_overflow(int a, int b) -> int {
+        r = 0;
+        unsafe {
+            asm("movq $1, $0
+ imulq $2, $0
+ seto %al
+ movzbq %al, $0", out(reg) r, in(reg) a, in(reg) b)
+        }
+        return r;
+    }
+    /// 饱和加法（溢出取边界：a>0 → MAX，否则 MIN）
+    pub fn saturating_add(int a, int b) -> int {
+        r = 0;
+        unsafe {
+            asm("movq $1, $0
+ addq $2, $0
+ jno ${:uid}1f
+ movabsq $$0x7fffffffffffffff, $0
+ testq $1, $1
+ jg ${:uid}1f
+ movabsq $$0x8000000000000000, $0
+${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
+        }
+        return r;
+    }
+    /// 饱和减法（溢出取边界：a>0 → MAX，否则 MIN）
+    pub fn saturating_sub(int a, int b) -> int {
+        r = 0;
+        unsafe {
+            asm("movq $1, $0
+ subq $2, $0
+ jno ${:uid}1f
+ movabsq $$0x7fffffffffffffff, $0
+ testq $1, $1
+ jg ${:uid}1f
+ movabsq $$0x8000000000000000, $0
+${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
+        }
+        return r;
+    }
+    /// 饱和乘法（溢出方向按符号异或判定）
+    pub fn saturating_mul(int a, int b) -> int {
+        r = 0;
+        unsafe {
+            asm("movq $1, $0
+ imulq $2, $0
+ jno ${:uid}1f
+ movq $1, $0
+ xorq $2, $0
+ js ${:uid}2f
+ movabsq $$0x7fffffffffffffff, $0
+ jmp ${:uid}1f
+${:uid}2:
+ movabsq $$0x8000000000000000, $0
+${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
+        }
+        return r;
+    }
+}

@@ -255,6 +255,17 @@ src/collections/text.aya:275: pub fn split_whitespace(ref String s) -> ArrayList
 src/collections/text.aya:285: pub fn count(ref String s, ref String needle) -> int
 src/collections/text.aya:313: pub fn count_lines(ref String s) -> int
 src/collections/text.aya:334: pub fn truncate(ref String s, usize n) -> String
+src/core/arch_x86_64.aya:13: pub namespace ArchX86_64
+src/core/arch_x86_64.aya:15: pub fn wrapping_add(int a, int b) -> int
+src/core/arch_x86_64.aya:23: pub fn wrapping_sub(int a, int b) -> int
+src/core/arch_x86_64.aya:32: pub fn wrapping_mul(int a, int b) -> int
+src/core/arch_x86_64.aya:41: pub fn wrapping_neg(int a) -> int
+src/core/arch_x86_64.aya:50: pub fn add_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:61: pub fn sub_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:72: pub fn mul_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:83: pub fn saturating_add(int a, int b) -> int
+src/core/arch_x86_64.aya:98: pub fn saturating_sub(int a, int b) -> int
+src/core/arch_x86_64.aya:113: pub fn saturating_mul(int a, int b) -> int
 src/core/bitops.aya:4: pub fn popcount(int x) -> int
 src/core/bitops.aya:18: pub fn leading_zeros(int x) -> int
 src/core/bitops.aya:34: pub fn trailing_zeros(int x) -> int
@@ -346,27 +357,27 @@ src/core/math.aya:465: fn is_even(self) -> bool
 src/core/math.aya:470: fn is_odd(self) -> bool
 src/core/math.aya:475: impl float
 src/core/math.aya:478: fn is_nan(self) -> bool
-src/core/num.aya:48: pub struct Overflowing
-src/core/num.aya:55: pub fn wrapping_add(int a, int b) -> int
-src/core/num.aya:61: pub fn wrapping_sub(int a, int b) -> int
-src/core/num.aya:67: pub fn wrapping_mul(int a, int b) -> int
-src/core/num.aya:73: pub fn wrapping_neg(int a) -> int
-src/core/num.aya:79: pub fn add_overflow(int a, int b) -> bool
-src/core/num.aya:85: pub fn sub_overflow(int a, int b) -> bool
-src/core/num.aya:91: pub fn mul_overflow(int a, int b) -> bool
-src/core/num.aya:97: pub fn saturating_add(int a, int b) -> int
-src/core/num.aya:103: pub fn saturating_sub(int a, int b) -> int
-src/core/num.aya:109: pub fn saturating_mul(int a, int b) -> int
-src/core/num.aya:115: pub fn overflowing_add(int a, int b) -> Overflowing
-src/core/num.aya:121: pub fn overflowing_sub(int a, int b) -> Overflowing
-src/core/num.aya:127: pub fn overflowing_mul(int a, int b) -> Overflowing
-src/core/num.aya:133: pub fn neg_overflow(int a) -> bool
-src/core/num.aya:139: pub fn saturating_neg(int a) -> int
-src/core/num.aya:148: pub fn overflowing_neg(int a) -> Overflowing
-src/core/num.aya:154: pub fn checked_neg(int a) -> Option[int]
-src/core/num.aya:163: pub fn checked_add(int a, int b) -> Option[int]
-src/core/num.aya:172: pub fn checked_sub(int a, int b) -> Option[int]
-src/core/num.aya:181: pub fn checked_mul(int a, int b) -> Option[int]
+src/core/num.aya:10: pub struct Overflowing
+src/core/num.aya:17: pub fn wrapping_add(int a, int b) -> int
+src/core/num.aya:23: pub fn wrapping_sub(int a, int b) -> int
+src/core/num.aya:29: pub fn wrapping_mul(int a, int b) -> int
+src/core/num.aya:35: pub fn wrapping_neg(int a) -> int
+src/core/num.aya:41: pub fn add_overflow(int a, int b) -> bool
+src/core/num.aya:47: pub fn sub_overflow(int a, int b) -> bool
+src/core/num.aya:53: pub fn mul_overflow(int a, int b) -> bool
+src/core/num.aya:59: pub fn saturating_add(int a, int b) -> int
+src/core/num.aya:65: pub fn saturating_sub(int a, int b) -> int
+src/core/num.aya:71: pub fn saturating_mul(int a, int b) -> int
+src/core/num.aya:77: pub fn overflowing_add(int a, int b) -> Overflowing
+src/core/num.aya:83: pub fn overflowing_sub(int a, int b) -> Overflowing
+src/core/num.aya:89: pub fn overflowing_mul(int a, int b) -> Overflowing
+src/core/num.aya:95: pub fn neg_overflow(int a) -> bool
+src/core/num.aya:101: pub fn saturating_neg(int a) -> int
+src/core/num.aya:110: pub fn overflowing_neg(int a) -> Overflowing
+src/core/num.aya:116: pub fn checked_neg(int a) -> Option[int]
+src/core/num.aya:125: pub fn checked_add(int a, int b) -> Option[int]
+src/core/num.aya:134: pub fn checked_sub(int a, int b) -> Option[int]
+src/core/num.aya:143: pub fn checked_mul(int a, int b) -> Option[int]
 src/core/option.aya:7: interface Error
 src/core/option.aya:8: fn what(ref self) -> String;
 src/core/option.aya:11: pub enum Result[T, E]
