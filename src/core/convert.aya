@@ -4,16 +4,30 @@
 // - 严格解析（try_parse_*）要求整串合法、不允许首尾空白；宽松版（parse_float）失败返回 0.0。
 // - `Into[T]` 接口按“自然转换”提供（每个类型至多一个目标）；显式目标用 `to_*` 方法。
 // - 泛型约束 `[U: Into[float]]` 暂不支持（编译器限制），接口先供动态分发与文档使用。
-// - `Result` 版解析（parse_int_result -> Result[int, ParseError]）待编译器 #68/#69 修复后追加。
+// - `Result` 版解析（parse_int_result 等）已提供；`ParseError` 实现 `Error` 接口（what() 消息）。
 import "string";
 
 import "option";
 
-/// 解析错误类别（为 Result 版解析预留）
+/// 解析错误类别（Result 版解析的 Err 载荷）
 pub enum ParseError {
     Empty,
     Invalid,
     Overflow,
+}
+
+impl ParseError {
+    /// 错误消息（`Error` 接口：what()）
+    ///
+    /// 注：`match self` + 字面量臂当前触发编译器 #187（悬垂 + double free），修复前勿调用
+    #[alloc]
+    fn what(ref self) -> String {
+        match self {
+            ParseError::Empty => "empty input",
+            ParseError::Invalid => "invalid character",
+            ParseError::Overflow => "number out of range",
+        }
+    }
 }
 
 /// 数字字符 → 数值（0-9 / a-z / A-Z → 0..35；非法返回 -1）
@@ -249,6 +263,10 @@ pub fn parse_int_result(ref String s) -> Result[int, ParseError] {
     v = s.try_parse_int();
     if v._tag == 0 {
         return Result::Ok(v._data_Some._0);
+    }
+    if s.is_int() {
+        // 格式合法但超范围
+        return Result::Err(ParseError::Overflow);
     }
     return Result::Err(ParseError::Invalid);
 }

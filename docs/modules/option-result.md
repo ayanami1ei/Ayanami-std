@@ -18,6 +18,8 @@ import "std";
 | 方法 | 说明 |
 |---|---|
 | `o.is_some() -> bool` | 是否有值（消费 `self`） |
+| `o.unwrap() -> T` | 有值取值；`None` 触发 panic（退出码 101） |
+| `o.expect(msg) -> T` | 同上，panic 消息为 `msg` |
 | `o.unwrap_or(default) -> T` | 有值取值，否则返回默认值（消费 `self`） |
 | `o.or(other) -> Option[T]` | `Some` 返回自身，`None` 返回 `other` |
 | `o.map[U](Fn(T) -> U)` | `Some(v)` → `Some(f(v))`，`None` 不变 |
@@ -55,7 +57,8 @@ fn main() -> int {
 | `r.is_ok()` / `r.is_err()` | 判断 |
 | `r.unwrap_or(default) -> T` | `Ok` 取值，`Err` 返回默认值 |
 | `r.ok() -> Option[T]` | `Ok(v)` → `Some(v)`，`Err` → `None` |
-| `r.try_unwrap() -> T` | 兼容旧行为（`Err` → `0`） |
+| `r.unwrap() -> T` | `Ok` 取值；`Err` 触发 panic（退出码 101） |
+| `r.expect(msg) -> T` | 同上，panic 消息为 `msg` |
 | `r.map[U](Fn(T) -> U)` | 映射 `Ok` 值，`Err` 原样 |
 | `r.map_err[F](Fn(E) -> F)` | 映射 `Err` 值，`Ok` 原样 |
 | `r.unwrap_or_else(Fn(E) -> T)` | `Ok` 取值，`Err` 用 `f(e)` |
@@ -69,7 +72,7 @@ fn parse(int x) -> Result[int, int] {
 ```
 
 - 构造 `Result::Ok(v)` / `Result::Err(e)` 可用（泛型实参由返回类型推导）。
-- `try_unwrap` 用 `match` 实现，`match` 观测可用。
+- `unwrap` / `expect` 失败时走 `panic_at`（退出码 101，带调用点位置与消息）。
 
 ## 组合子示例
 

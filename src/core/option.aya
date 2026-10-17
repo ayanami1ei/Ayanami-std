@@ -2,6 +2,8 @@
 // 独立成模块以打破依赖环：std 与 convert 等共享，不反向依赖 io/std。
 import "string";
 
+import "panic";
+
 interface Error {
     fn what(ref self) -> String;
 }
@@ -35,6 +37,22 @@ impl[T] Option[T] {
             return self;
         }
         return other;
+    }
+    /// Some 取值；None 触发 panic（退出码 101）
+    fn unwrap(self, int __line, int __col, String __file) -> T {
+        if self._tag == 0 {
+            return self._data_Some._0;
+        }
+        panic_at(__line, __col, __file, "called `Option::unwrap` on a None value");
+        return self._data_Some._0;
+    }
+    /// Some 取值；None 触发带自定义消息的 panic
+    fn expect(self, String msg, int __line, int __col, String __file) -> T {
+        if self._tag == 0 {
+            return self._data_Some._0;
+        }
+        panic_at(__line, __col, __file, msg);
+        return self._data_Some._0;
     }
     /// 有值取值，否则用 `f()` 生成
     fn unwrap_or_else(self, Fn()->T f) -> T {
@@ -126,10 +144,20 @@ impl[T, E] Result[T, E] {
             Err(e) => Result::Err(f(e)),
         }
     }
-    fn try_unwrap(self) -> T {
-        match self {
-            Ok(v) => v,
-            Err(_) => 0,
+    /// Ok 取值；Err 触发 panic（退出码 101）
+    fn unwrap(self, int __line, int __col, String __file) -> T {
+        if self._tag == 0 {
+            return self._data_Ok._0;
         }
+        panic_at(__line, __col, __file, "called `Result::unwrap` on an Err value");
+        return self._data_Ok._0;
+    }
+    /// Ok 取值；Err 触发带自定义消息的 panic
+    fn expect(self, String msg, int __line, int __col, String __file) -> T {
+        if self._tag == 0 {
+            return self._data_Ok._0;
+        }
+        panic_at(__line, __col, __file, msg);
+        return self._data_Ok._0;
     }
 }

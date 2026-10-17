@@ -402,8 +402,7 @@ impl int {
         return self >= other;
     }
     fn neg(self) -> int {
-        // 0 - self：与二元减法一致带溢出检查（i64::MIN 取负 panic，而非静默回绕）
-        return 0 - self;
+        return -self;
     }
 }
 

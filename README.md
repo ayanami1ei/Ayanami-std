@@ -103,8 +103,8 @@ struct String {
 ## std — 主入口
 
 文件：`std/std.lcl`，等价于导入 `io`、`string`、`math`，并包含
-`Error` 接口、`Result[T, E]`（`try_unwrap(self)`）与 `Option[T]`
-（`unwrap_or(self, default)` / `is_some(self)`）枚举。
+`Error` 接口、`Result[T, E]`（`unwrap(self)` / `expect(self, msg)`）与 `Option[T]`
+（`unwrap(self)` / `unwrap_or(self, default)` / `is_some(self)`）枚举。
 
 ## 构造函数（显式泛型调用）
 

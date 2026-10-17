@@ -255,39 +255,41 @@ src/core/bitops.aya:18: pub fn leading_zeros(int x) -> int
 src/core/bitops.aya:34: pub fn trailing_zeros(int x) -> int
 src/core/bitops.aya:50: pub fn is_power_of_two(int x) -> bool
 src/core/convert.aya:13: pub enum ParseError
-src/core/convert.aya:21: pub fn digit_value(char c) -> int
-src/core/convert.aya:35: impl String
-src/core/convert.aya:38: fn try_parse_int(ref self) -> Option[int]
-src/core/convert.aya:90: fn try_parse_uint(ref self) -> Option[usize]
-src/core/convert.aya:103: fn try_parse_float(ref self) -> Option[float]
-src/core/convert.aya:163: fn try_parse_bool(ref self) -> Option[bool]
-src/core/convert.aya:176: fn try_parse_int_radix(ref self, int base) -> Option[int]
-src/core/convert.aya:227: fn parse_int_radix(ref self, int base) -> int
-src/core/convert.aya:232: fn is_float(ref self) -> bool
-src/core/convert.aya:237: fn parse_float(ref self) -> float
-src/core/convert.aya:245: pub fn parse_int_result(ref String s) -> Result[int, ParseError]
-src/core/convert.aya:258: pub fn parse_float_result(ref String s) -> Result[float, ParseError]
-src/core/convert.aya:272: pub fn parse_bool_result(ref String s) -> Result[bool, ParseError]
-src/core/convert.aya:286: pub fn parse_int_or(ref String s, int fallback) -> int
-src/core/convert.aya:292: pub fn parse_float_or(ref String s, float fallback) -> float
-src/core/convert.aya:299: pub fn parse_bool_or(ref String s, bool fallback) -> bool
-src/core/convert.aya:304: impl int
-src/core/convert.aya:306: fn to_float(self) -> float
-src/core/convert.aya:310: fn to_char(self) -> char
-src/core/convert.aya:315: impl float
-src/core/convert.aya:318: fn to_int(self) -> int
-src/core/convert.aya:323: impl char
-src/core/convert.aya:325: fn to_int(self) -> int
-src/core/convert.aya:330: impl bool
-src/core/convert.aya:332: fn to_int(self) -> int
-src/core/convert.aya:341: interface Into[T]
-src/core/convert.aya:342: fn into(self) -> T;
-src/core/convert.aya:345: impl int
-src/core/convert.aya:347: fn into(self) -> float
-src/core/convert.aya:352: impl char
-src/core/convert.aya:354: fn into(self) -> int
-src/core/convert.aya:359: impl bool
-src/core/convert.aya:361: fn into(self) -> int
+src/core/convert.aya:19: impl ParseError
+src/core/convert.aya:24: fn what(ref self) -> String
+src/core/convert.aya:35: pub fn digit_value(char c) -> int
+src/core/convert.aya:49: impl String
+src/core/convert.aya:52: fn try_parse_int(ref self) -> Option[int]
+src/core/convert.aya:104: fn try_parse_uint(ref self) -> Option[usize]
+src/core/convert.aya:117: fn try_parse_float(ref self) -> Option[float]
+src/core/convert.aya:177: fn try_parse_bool(ref self) -> Option[bool]
+src/core/convert.aya:190: fn try_parse_int_radix(ref self, int base) -> Option[int]
+src/core/convert.aya:241: fn parse_int_radix(ref self, int base) -> int
+src/core/convert.aya:246: fn is_float(ref self) -> bool
+src/core/convert.aya:251: fn parse_float(ref self) -> float
+src/core/convert.aya:259: pub fn parse_int_result(ref String s) -> Result[int, ParseError]
+src/core/convert.aya:276: pub fn parse_float_result(ref String s) -> Result[float, ParseError]
+src/core/convert.aya:290: pub fn parse_bool_result(ref String s) -> Result[bool, ParseError]
+src/core/convert.aya:304: pub fn parse_int_or(ref String s, int fallback) -> int
+src/core/convert.aya:310: pub fn parse_float_or(ref String s, float fallback) -> float
+src/core/convert.aya:317: pub fn parse_bool_or(ref String s, bool fallback) -> bool
+src/core/convert.aya:322: impl int
+src/core/convert.aya:324: fn to_float(self) -> float
+src/core/convert.aya:328: fn to_char(self) -> char
+src/core/convert.aya:333: impl float
+src/core/convert.aya:336: fn to_int(self) -> int
+src/core/convert.aya:341: impl char
+src/core/convert.aya:343: fn to_int(self) -> int
+src/core/convert.aya:348: impl bool
+src/core/convert.aya:350: fn to_int(self) -> int
+src/core/convert.aya:359: interface Into[T]
+src/core/convert.aya:360: fn into(self) -> T;
+src/core/convert.aya:363: impl int
+src/core/convert.aya:365: fn into(self) -> float
+src/core/convert.aya:370: impl char
+src/core/convert.aya:372: fn into(self) -> int
+src/core/convert.aya:377: impl bool
+src/core/convert.aya:379: fn into(self) -> int
 src/core/eq.aya:7: interface Eq
 src/core/eq.aya:8: fn same(ref self, ref Self other) -> bool;
 src/core/eq.aya:11: impl int
@@ -299,46 +301,46 @@ src/core/eq.aya:27: fn same(ref self, ref bool other) -> bool
 src/core/eq.aya:32: impl char
 src/core/eq.aya:34: fn same(ref self, ref char other) -> bool
 src/core/math.aya:4: pub fn abs(int x) -> int
-src/core/math.aya:13: pub fn min(int a, int b) -> int
-src/core/math.aya:21: pub fn max(int a, int b) -> int
-src/core/math.aya:29: pub fn sign(int x) -> int
-src/core/math.aya:40: pub fn clamp(int x, int lo, int hi) -> int
-src/core/math.aya:51: pub fn min(usize a, usize b) -> usize
-src/core/math.aya:59: pub fn max(usize a, usize b) -> usize
-src/core/math.aya:67: pub fn clamp(usize x, usize lo, usize hi) -> usize
-src/core/math.aya:79: pub fn pow(int base, int exp) -> int
-src/core/math.aya:90: pub fn pi() -> float
-src/core/math.aya:95: fn ln2() -> float
-src/core/math.aya:100: fn two_pi() -> float
-src/core/math.aya:105: fn half_pi() -> float
-src/core/math.aya:110: fn quarter_pi() -> float
-src/core/math.aya:115: pub fn abs(float x) -> float
-src/core/math.aya:123: pub fn min(float a, float b) -> float
-src/core/math.aya:131: pub fn max(float a, float b) -> float
-src/core/math.aya:139: pub fn clamp(float x, float lo, float hi) -> float
-src/core/math.aya:151: pub fn trunc(float x) -> float
-src/core/math.aya:157: pub fn floor(float x) -> float
-src/core/math.aya:171: pub fn ceil(float x) -> float
-src/core/math.aya:185: pub fn round(float x) -> float
-src/core/math.aya:194: pub fn sqrt(float x) -> float
-src/core/math.aya:227: pub fn exp(float x) -> float
-src/core/math.aya:271: pub fn ln(float x) -> float
-src/core/math.aya:307: pub fn log10(float x) -> float
-src/core/math.aya:313: pub fn sin(float x) -> float
-src/core/math.aya:329: pub fn cos(float x) -> float
-src/core/math.aya:345: pub fn tan(float x) -> float
-src/core/math.aya:350: fn atan_series(float z) -> float
-src/core/math.aya:364: fn atan1(float x) -> float
-src/core/math.aya:380: pub fn atan2(float y, float x) -> float
-src/core/math.aya:400: pub fn pow(float base, int exp) -> float
-src/core/math.aya:420: pub fn gcd(int a, int b) -> int
-src/core/math.aya:433: pub fn lcm(int a, int b) -> int
-src/core/math.aya:445: pub fn is_prime(int n) -> bool
-src/core/math.aya:463: impl int
-src/core/math.aya:466: fn is_even(self) -> bool
-src/core/math.aya:471: fn is_odd(self) -> bool
-src/core/math.aya:476: impl float
-src/core/math.aya:479: fn is_nan(self) -> bool
+src/core/math.aya:12: pub fn min(int a, int b) -> int
+src/core/math.aya:20: pub fn max(int a, int b) -> int
+src/core/math.aya:28: pub fn sign(int x) -> int
+src/core/math.aya:39: pub fn clamp(int x, int lo, int hi) -> int
+src/core/math.aya:50: pub fn min(usize a, usize b) -> usize
+src/core/math.aya:58: pub fn max(usize a, usize b) -> usize
+src/core/math.aya:66: pub fn clamp(usize x, usize lo, usize hi) -> usize
+src/core/math.aya:78: pub fn pow(int base, int exp) -> int
+src/core/math.aya:89: pub fn pi() -> float
+src/core/math.aya:94: fn ln2() -> float
+src/core/math.aya:99: fn two_pi() -> float
+src/core/math.aya:104: fn half_pi() -> float
+src/core/math.aya:109: fn quarter_pi() -> float
+src/core/math.aya:114: pub fn abs(float x) -> float
+src/core/math.aya:122: pub fn min(float a, float b) -> float
+src/core/math.aya:130: pub fn max(float a, float b) -> float
+src/core/math.aya:138: pub fn clamp(float x, float lo, float hi) -> float
+src/core/math.aya:150: pub fn trunc(float x) -> float
+src/core/math.aya:156: pub fn floor(float x) -> float
+src/core/math.aya:170: pub fn ceil(float x) -> float
+src/core/math.aya:184: pub fn round(float x) -> float
+src/core/math.aya:193: pub fn sqrt(float x) -> float
+src/core/math.aya:226: pub fn exp(float x) -> float
+src/core/math.aya:270: pub fn ln(float x) -> float
+src/core/math.aya:306: pub fn log10(float x) -> float
+src/core/math.aya:312: pub fn sin(float x) -> float
+src/core/math.aya:328: pub fn cos(float x) -> float
+src/core/math.aya:344: pub fn tan(float x) -> float
+src/core/math.aya:349: fn atan_series(float z) -> float
+src/core/math.aya:363: fn atan1(float x) -> float
+src/core/math.aya:379: pub fn atan2(float y, float x) -> float
+src/core/math.aya:399: pub fn pow(float base, int exp) -> float
+src/core/math.aya:419: pub fn gcd(int a, int b) -> int
+src/core/math.aya:432: pub fn lcm(int a, int b) -> int
+src/core/math.aya:444: pub fn is_prime(int n) -> bool
+src/core/math.aya:462: impl int
+src/core/math.aya:465: fn is_even(self) -> bool
+src/core/math.aya:470: fn is_odd(self) -> bool
+src/core/math.aya:475: impl float
+src/core/math.aya:478: fn is_nan(self) -> bool
 src/core/num.aya:48: pub struct Overflowing
 src/core/num.aya:55: pub fn wrapping_add(int a, int b) -> int
 src/core/num.aya:61: pub fn wrapping_sub(int a, int b) -> int
@@ -360,30 +362,33 @@ src/core/num.aya:154: pub fn checked_neg(int a) -> Option[int]
 src/core/num.aya:163: pub fn checked_add(int a, int b) -> Option[int]
 src/core/num.aya:172: pub fn checked_sub(int a, int b) -> Option[int]
 src/core/num.aya:181: pub fn checked_mul(int a, int b) -> Option[int]
-src/core/option.aya:5: interface Error
-src/core/option.aya:6: fn what(ref self) -> String;
-src/core/option.aya:9: pub enum Result[T, E]
-src/core/option.aya:14: pub enum Option[T]
-src/core/option.aya:19: impl[T] Option[T]
-src/core/option.aya:20: fn unwrap_or(self, T default) -> T
-src/core/option.aya:26: fn is_some(self) -> bool
-src/core/option.aya:29: fn is_none(self) -> bool
-src/core/option.aya:33: fn or(self, Option[T] other) -> Option[T]
-src/core/option.aya:40: fn unwrap_or_else(self, Fn()->T f) -> T
-src/core/option.aya:47: fn map_or[U](self, U default, Fn(T)->U f) -> U
-src/core/option.aya:54: fn map[U](self, Fn(T)->U f) -> Option[U]
-src/core/option.aya:61: fn and_then[U](self, Fn(T)->Option[U] f) -> Option[U]
-src/core/option.aya:68: fn filter(self, Fn(T)->bool f) -> Option[T]
-src/core/option.aya:80: impl[T, E] Result[T, E]
-src/core/option.aya:81: fn is_ok(self) -> bool
-src/core/option.aya:84: fn is_err(self) -> bool
-src/core/option.aya:88: fn unwrap_or(self, T default) -> T
-src/core/option.aya:95: fn ok(self) -> Option[T]
-src/core/option.aya:102: fn unwrap_or_else(self, Fn(E)->T f) -> T
-src/core/option.aya:109: fn map_or[U](self, U default, Fn(T)->U f) -> U
-src/core/option.aya:116: fn map[U](self, Fn(T)->U f) -> Result[U, E]
-src/core/option.aya:123: fn map_err[F](self, Fn(E)->F f) -> Result[T, F]
-src/core/option.aya:129: fn try_unwrap(self) -> T
+src/core/option.aya:7: interface Error
+src/core/option.aya:8: fn what(ref self) -> String;
+src/core/option.aya:11: pub enum Result[T, E]
+src/core/option.aya:16: pub enum Option[T]
+src/core/option.aya:21: impl[T] Option[T]
+src/core/option.aya:22: fn unwrap_or(self, T default) -> T
+src/core/option.aya:28: fn is_some(self) -> bool
+src/core/option.aya:31: fn is_none(self) -> bool
+src/core/option.aya:35: fn or(self, Option[T] other) -> Option[T]
+src/core/option.aya:42: fn unwrap(self, int __line, int __col, String __file) -> T
+src/core/option.aya:50: fn expect(self, String msg, int __line, int __col, String __file) -> T
+src/core/option.aya:58: fn unwrap_or_else(self, Fn()->T f) -> T
+src/core/option.aya:65: fn map_or[U](self, U default, Fn(T)->U f) -> U
+src/core/option.aya:72: fn map[U](self, Fn(T)->U f) -> Option[U]
+src/core/option.aya:79: fn and_then[U](self, Fn(T)->Option[U] f) -> Option[U]
+src/core/option.aya:86: fn filter(self, Fn(T)->bool f) -> Option[T]
+src/core/option.aya:98: impl[T, E] Result[T, E]
+src/core/option.aya:99: fn is_ok(self) -> bool
+src/core/option.aya:102: fn is_err(self) -> bool
+src/core/option.aya:106: fn unwrap_or(self, T default) -> T
+src/core/option.aya:113: fn ok(self) -> Option[T]
+src/core/option.aya:120: fn unwrap_or_else(self, Fn(E)->T f) -> T
+src/core/option.aya:127: fn map_or[U](self, U default, Fn(T)->U f) -> U
+src/core/option.aya:134: fn map[U](self, Fn(T)->U f) -> Result[U, E]
+src/core/option.aya:141: fn map_err[F](self, Fn(E)->F f) -> Result[T, F]
+src/core/option.aya:148: fn unwrap(self, int __line, int __col, String __file) -> T
+src/core/option.aya:156: fn expect(self, String msg, int __line, int __col, String __file) -> T
 src/core/ord.aya:7: interface Ord
 src/core/ord.aya:8: fn cmp(ref self, ref Self other) -> int;
 src/core/ord.aya:11: impl int
@@ -431,72 +436,72 @@ src/core/string.aya:395: fn gt(self, int other) -> bool
 src/core/string.aya:398: fn le(self, int other) -> bool
 src/core/string.aya:401: fn ge(self, int other) -> bool
 src/core/string.aya:404: fn neg(self) -> int
-src/core/string.aya:410: impl float
-src/core/string.aya:411: fn add(self, float other) -> float
-src/core/string.aya:414: fn sub(self, float other) -> float
-src/core/string.aya:417: fn mul(self, float other) -> float
-src/core/string.aya:420: fn div(self, float other) -> float
-src/core/string.aya:423: fn eq(self, float other) -> bool
-src/core/string.aya:426: fn ne(self, float other) -> bool
-src/core/string.aya:429: fn lt(self, float other) -> bool
-src/core/string.aya:432: fn gt(self, float other) -> bool
-src/core/string.aya:435: fn le(self, float other) -> bool
-src/core/string.aya:438: fn ge(self, float other) -> bool
-src/core/string.aya:441: fn neg(self) -> float
-src/core/string.aya:446: impl char
-src/core/string.aya:447: fn eq(self, char other) -> bool
-src/core/string.aya:450: fn ne(self, char other) -> bool
-src/core/string.aya:453: fn lt(self, char other) -> bool
-src/core/string.aya:456: fn gt(self, char other) -> bool
-src/core/string.aya:459: fn le(self, char other) -> bool
-src/core/string.aya:462: fn ge(self, char other) -> bool
-src/core/string.aya:466: fn is_digit(self) -> bool
-src/core/string.aya:471: fn is_alpha(self) -> bool
-src/core/string.aya:482: fn is_alnum(self) -> bool
-src/core/string.aya:489: fn is_space(self) -> bool
-src/core/string.aya:500: fn is_upper(self) -> bool
-src/core/string.aya:505: fn is_lower(self) -> bool
-src/core/string.aya:510: fn to_digit(self) -> int
-src/core/string.aya:515: fn to_upper(self) -> char
-src/core/string.aya:523: fn to_lower(self) -> char
-src/core/string.aya:532: impl bool
-src/core/string.aya:533: fn eq(self, bool other) -> bool
-src/core/string.aya:536: fn ne(self, bool other) -> bool
-src/core/string.aya:541: pub namespace String
-src/core/string.aya:543: pub fn empty() -> String
-src/core/string.aya:547: pub fn new() -> String
-src/core/string.aya:551: pub fn new([char] data, usize len) -> String
-src/core/string.aya:556: impl String
-src/core/string.aya:557: fn to_string(self) -> String
-src/core/string.aya:560: fn index(ref self, usize i, int __line, int __col, String __file) -> char
-src/core/string.aya:566: fn len(ref self) -> usize
-src/core/string.aya:571: fn add(ref self, ref String other) -> String
-src/core/string.aya:584: fn add[T: ToString](ref self, T a) -> String
-src/core/string.aya:588: fn eq(ref self, ref String other) -> bool
-src/core/string.aya:599: fn ne(ref self, ref String other) -> bool
-src/core/string.aya:604: fn lt(ref self, ref String other) -> bool
-src/core/string.aya:621: fn gt(ref self, ref String other) -> bool
-src/core/string.aya:625: fn le(ref self, ref String other) -> bool
-src/core/string.aya:629: fn ge(ref self, ref String other) -> bool
-src/core/string.aya:634: fn copy(ref self) -> String
-src/core/string.aya:642: fn is_empty(ref self) -> bool
-src/core/string.aya:646: fn index_of(ref self, ref String needle) -> int
-src/core/string.aya:669: fn contains(ref self, ref String needle) -> bool
-src/core/string.aya:676: fn starts_with(ref self, ref String prefix) -> bool
-src/core/string.aya:688: fn ends_with(ref self, ref String suffix) -> bool
-src/core/string.aya:702: fn substring(ref self, usize start, usize end) -> String
-src/core/string.aya:720: fn trim(ref self) -> String
-src/core/string.aya:741: fn count_char(ref self, char c) -> int
-src/core/string.aya:754: fn is_whitespace(ref self) -> bool
-src/core/string.aya:770: fn remove_prefix(ref self, ref String prefix) -> String
-src/core/string.aya:779: fn remove_suffix(ref self, ref String suffix) -> String
-src/core/string.aya:788: fn trim_start(ref self) -> String
-src/core/string.aya:802: fn trim_end(ref self) -> String
-src/core/string.aya:815: fn to_upper(ref self) -> String
-src/core/string.aya:824: fn to_lower(ref self) -> String
-src/core/string.aya:833: fn repeat(ref self, usize times) -> String
-src/core/string.aya:844: fn parse_int(ref self) -> int
-src/core/string.aya:882: fn is_int(ref self) -> bool
+src/core/string.aya:409: impl float
+src/core/string.aya:410: fn add(self, float other) -> float
+src/core/string.aya:413: fn sub(self, float other) -> float
+src/core/string.aya:416: fn mul(self, float other) -> float
+src/core/string.aya:419: fn div(self, float other) -> float
+src/core/string.aya:422: fn eq(self, float other) -> bool
+src/core/string.aya:425: fn ne(self, float other) -> bool
+src/core/string.aya:428: fn lt(self, float other) -> bool
+src/core/string.aya:431: fn gt(self, float other) -> bool
+src/core/string.aya:434: fn le(self, float other) -> bool
+src/core/string.aya:437: fn ge(self, float other) -> bool
+src/core/string.aya:440: fn neg(self) -> float
+src/core/string.aya:445: impl char
+src/core/string.aya:446: fn eq(self, char other) -> bool
+src/core/string.aya:449: fn ne(self, char other) -> bool
+src/core/string.aya:452: fn lt(self, char other) -> bool
+src/core/string.aya:455: fn gt(self, char other) -> bool
+src/core/string.aya:458: fn le(self, char other) -> bool
+src/core/string.aya:461: fn ge(self, char other) -> bool
+src/core/string.aya:465: fn is_digit(self) -> bool
+src/core/string.aya:470: fn is_alpha(self) -> bool
+src/core/string.aya:481: fn is_alnum(self) -> bool
+src/core/string.aya:488: fn is_space(self) -> bool
+src/core/string.aya:499: fn is_upper(self) -> bool
+src/core/string.aya:504: fn is_lower(self) -> bool
+src/core/string.aya:509: fn to_digit(self) -> int
+src/core/string.aya:514: fn to_upper(self) -> char
+src/core/string.aya:522: fn to_lower(self) -> char
+src/core/string.aya:531: impl bool
+src/core/string.aya:532: fn eq(self, bool other) -> bool
+src/core/string.aya:535: fn ne(self, bool other) -> bool
+src/core/string.aya:540: pub namespace String
+src/core/string.aya:542: pub fn empty() -> String
+src/core/string.aya:546: pub fn new() -> String
+src/core/string.aya:550: pub fn new([char] data, usize len) -> String
+src/core/string.aya:555: impl String
+src/core/string.aya:556: fn to_string(self) -> String
+src/core/string.aya:559: fn index(ref self, usize i, int __line, int __col, String __file) -> char
+src/core/string.aya:565: fn len(ref self) -> usize
+src/core/string.aya:570: fn add(ref self, ref String other) -> String
+src/core/string.aya:583: fn add[T: ToString](ref self, T a) -> String
+src/core/string.aya:587: fn eq(ref self, ref String other) -> bool
+src/core/string.aya:598: fn ne(ref self, ref String other) -> bool
+src/core/string.aya:603: fn lt(ref self, ref String other) -> bool
+src/core/string.aya:620: fn gt(ref self, ref String other) -> bool
+src/core/string.aya:624: fn le(ref self, ref String other) -> bool
+src/core/string.aya:628: fn ge(ref self, ref String other) -> bool
+src/core/string.aya:633: fn copy(ref self) -> String
+src/core/string.aya:641: fn is_empty(ref self) -> bool
+src/core/string.aya:645: fn index_of(ref self, ref String needle) -> int
+src/core/string.aya:668: fn contains(ref self, ref String needle) -> bool
+src/core/string.aya:675: fn starts_with(ref self, ref String prefix) -> bool
+src/core/string.aya:687: fn ends_with(ref self, ref String suffix) -> bool
+src/core/string.aya:701: fn substring(ref self, usize start, usize end) -> String
+src/core/string.aya:719: fn trim(ref self) -> String
+src/core/string.aya:740: fn count_char(ref self, char c) -> int
+src/core/string.aya:753: fn is_whitespace(ref self) -> bool
+src/core/string.aya:769: fn remove_prefix(ref self, ref String prefix) -> String
+src/core/string.aya:778: fn remove_suffix(ref self, ref String suffix) -> String
+src/core/string.aya:787: fn trim_start(ref self) -> String
+src/core/string.aya:801: fn trim_end(ref self) -> String
+src/core/string.aya:814: fn to_upper(ref self) -> String
+src/core/string.aya:823: fn to_lower(ref self) -> String
+src/core/string.aya:832: fn repeat(ref self, usize times) -> String
+src/core/string.aya:843: fn parse_int(ref self) -> int
+src/core/string.aya:881: fn is_int(ref self) -> bool
 src/dev/test.aya:24: pub fn test(String input) -> String
 src/dev/test.aya:30: pub fn should_panic(String input) -> String
 src/dev/test.aya:36: pub fn check(bool failed, int line, int col, String file, String msg) -> int
@@ -775,6 +780,12 @@ tests/unit/option_test.aya:64: fn err_int(int v) -> Result[int, int]
 tests/unit/option_test.aya:69: fn test_result_map()
 tests/unit/option_test.aya:88: fn test_unwrap_or_else_map_or()
 tests/unit/option_test.aya:106: fn test_result_unwrap_or_else_map_or()
+tests/unit/option_test.aya:126: fn test_option_unwrap_expect()
+tests/unit/option_test.aya:134: fn test_option_unwrap_none_panics()
+tests/unit/option_test.aya:140: fn test_option_expect_none_panics()
+tests/unit/option_test.aya:146: fn test_result_unwrap_expect()
+tests/unit/option_test.aya:154: fn test_result_unwrap_err_panics()
+tests/unit/option_test.aya:160: fn test_result_expect_err_panics()
 tests/unit/panic_test.aya:6: fn test_index_oob()
 tests/unit/panic_test.aya:13: fn test_pop_empty()
 tests/unit/panic_test.aya:19: fn test_panic_macro()
