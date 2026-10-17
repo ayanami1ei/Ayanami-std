@@ -240,3 +240,26 @@ fn test_set_predicates() {
     });
     #assert(e.is_none())
 }
+
+#[test]
+fn test_inplace_set_ops() {
+    a = HashSet::new[int]();
+    a.insert(1);
+    a.insert(2);
+    a.insert(3);
+    b = HashSet::new[int]();
+    b.insert(2);
+    b.insert(4);
+    a.remove_all(b);
+    #assert_eq(a.len(), 2);
+    #assert(a.contains(1));
+    #assert(!a.contains(2));
+    #assert(a.contains(3));
+    c = HashSet::new[int]();
+    c.insert(1);
+    c.insert(9);
+    a.retain_all(c);
+    #assert_eq(a.len(), 1);
+    #assert(a.contains(1));
+    #assert(!a.contains(3))
+}

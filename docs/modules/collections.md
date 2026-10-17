@@ -185,6 +185,7 @@ pub interface Hash {
 | `s.for_each(Fn(K))` / `s.fold[U](init, Fn(U, K) -> U)` | 遍历 / 折叠（顺序为实现相关） |
 | `s.retain(Fn(K) -> bool)` | 原地保留满足谓词的元素 |
 | `s.union(other)` / `s.intersection(other)` / `s.difference(other)` | 并 / 交 / 差（返回新集合） |
+| `s.remove_all(other)` / `s.retain_all(other)` | 原地差集 / 原地交集 |
 | `s.is_subset_of(other) -> bool` | 是否子集（空集恒真） |
 | `s.is_superset_of(other) -> bool` | 是否超集 |
 | `s.any/all(Fn(K) -> bool)` / `s.count(...) -> usize` / `s.find(...) -> Option[K]` | 谓词族（与 ArrayList/HashMap 对齐） |

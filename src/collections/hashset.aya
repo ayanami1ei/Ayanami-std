@@ -198,6 +198,36 @@ impl[K: Hash] HashSet[K] {
     fn is_superset_of(ref self, ref HashSet[K] other) -> bool {
         return other.is_subset_of(self);
     }
+    /// 原地删除 other 中的元素（差集）
+    #[state]
+    fn remove_all(ref mut self, ref HashSet[K] other) {
+        i = 0usize;
+        while i < self.cap {
+            if self.state[i] == 1 {
+                k = self.keys[i];
+                if other.contains(k) {
+                    self.state[i] = 2;
+                    self.len = self.len - 1;
+                }
+            }
+            i = i + 1;
+        }
+    }
+    /// 原地仅保留 other 中的元素（交集）
+    #[state]
+    fn retain_all(ref mut self, ref HashSet[K] other) {
+        i = 0usize;
+        while i < self.cap {
+            if self.state[i] == 1 {
+                k = self.keys[i];
+                if !other.contains(k) {
+                    self.state[i] = 2;
+                    self.len = self.len - 1;
+                }
+            }
+            i = i + 1;
+        }
+    }
     /// 并集（新集合）
     ///
     /// 注：`union` 为语言关键字，成员位置允许（#172）故可直接用该名。
