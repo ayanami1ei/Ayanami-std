@@ -35,4 +35,10 @@ if [[ "${SKIP_INSTALL:-0}" != "1" ]]; then
     AYANAMI_BIN="$BIN" ./packaging/build.sh --install "$(dirname "$BIN")/std" || exit 1
 fi
 
+# 符号地图过期检查（改过 API 后需 ./scripts/gen_symbols.sh 重新生成）
+if ! ./scripts/gen_symbols.sh --check >/dev/null; then
+    echo "error: SYMBOLS.md 已过期，请运行 ./scripts/gen_symbols.sh 重新生成" >&2
+    exit 1
+fi
+
 exec python3 scripts/run_tests.py --bin "$BIN" "${ARGS[@]}"
