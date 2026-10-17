@@ -40,11 +40,6 @@ pub fn println(ref String s) {
 
 #[io]
 extern "C" fn __ayanami_print_int(int n);
-#[io]
-extern "C" fn __ayanami_float_len(float n) -> int;
-#[io]
-extern "C" fn __ayanami_float_str(float n, int len) -> [char];
-
 #[alloc]
 #[io]
 pub fn print(int n) {
@@ -58,11 +53,10 @@ pub fn print(usize n) {
 }
 
 #[alloc]
+#[state]
 #[io]
 pub fn print(float f) {
-    n = __ayanami_float_len(f)
-    data = __ayanami_float_str(f, n)
-    __ayanami_print_str(data, n)
+    print(f.to_string())
 }
 
 #[alloc]
@@ -97,6 +91,7 @@ pub fn println(usize n) {
 }
 
 #[alloc]
+#[state]
 #[io]
 pub fn println(float f) {
     print(f)

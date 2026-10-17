@@ -129,37 +129,228 @@ impl int {
     }
 }
 
-extern "C" fn __ayanami_float_len(float n) -> int;
+// ── 浮点格式化（纯 Ayanami 实现：%g-6 / 定点 / 科学计数） ──
 
-extern "C" fn __ayanami_float_str(float n, int len) -> [char];
-extern "C" fn __ayanami_float_fixed_len(float n, int digits) -> int;
-extern "C" fn __ayanami_float_fixed_str(float n, int digits, int len) -> [char];
-extern "C" fn __ayanami_float_sci_len(float n, int digits) -> int;
-extern "C" fn __ayanami_float_sci_str(float n, int digits, int len) -> [char];
+/// 10 的 n 次幂（n >= 0）
+#[pure]
+fn pow10(int n) -> int {
+    r = 1
+    i = 0
+    while i < n {
+        r = r * 10
+        i = i + 1
+    }
+    return r
+}
+
+/// 非负整数零填充到 width 位
+#[alloc]
+#[state]
+fn pad_int(int v, int width) -> String {
+    s = v.to_string()
+    k = width - s.len as int
+    while k > 0 {
+        s = "0" + s
+        k = k - 1
+    }
+    return s
+}
+
+/// n 个 '0'
+#[alloc]
+#[state]
+fn zeros(int n) -> String {
+    s = ""
+    i = 0
+    while i < n {
+        s = s + "0"
+        i = i + 1
+    }
+    return s
+}
+
+/// 去尾零
+#[alloc]
+#[state]
+fn trim_zeros(ref String s) -> String {
+    n = s.len as int
+    while n > 0 {
+        if s.data[n - 1] != '0' {
+            break
+        }
+        n = n - 1
+    }
+    return s.substring(0, n as usize)
+}
+
+/// %g-6 风格（6 位有效数字、去尾零；NaN → `nan`、Inf → `inf`）
+#[alloc]
+#[state]
+fn fmt_g(float x) -> String {
+    if !(x >= 0.0) {
+        if !(x < 0.0) {
+            return "nan"
+        }
+    }
+    if x > 1.0e308 {
+        return "inf"
+    }
+    if x < 0.0 - 1.0e308 {
+        return "-inf"
+    }
+    if x == 0.0 {
+        return "0"
+    }
+    neg = x < 0.0
+    y = x
+    if neg {
+        y = 0.0 - y
+    }
+    e = 0
+    while y >= 10.0 {
+        y = y / 10.0
+        e = e + 1
+    }
+    while y < 1.0 {
+        y = y * 10.0
+        e = e - 1
+    }
+    m = (y * 100000.0 + 0.5) as int
+    if m >= 1000000 {
+        m = m / 10
+        e = e + 1
+    }
+    ds = pad_int(m, 6)
+    res = ""
+    if e >= 6 {
+        frac = trim_zeros(ds.substring(1, 6usize))
+        res = ds.substring(0, 1usize)
+        if frac.len > 0 {
+            res = res + "." + frac
+        }
+        res = res + "e+" + pad_int(e, 2)
+    } else {
+        if e < 0 - 4 {
+            frac = trim_zeros(ds.substring(1, 6usize))
+            res = ds.substring(0, 1usize)
+            if frac.len > 0 {
+                res = res + "." + frac
+            }
+            res = res + "e-" + pad_int(0 - e, 2)
+        } else {
+            if e >= 0 {
+                ip = ds.substring(0, (e + 1) as usize)
+                fp = trim_zeros(ds.substring((e + 1) as usize, 6usize))
+                res = ip
+                if fp.len > 0 {
+                    res = res + "." + fp
+                }
+            } else {
+                fp = trim_zeros(zeros(0 - e - 1) + ds)
+                res = "0"
+                if fp.len > 0 {
+                    res = res + "." + fp
+                }
+            }
+        }
+    }
+    if neg {
+        res = "-" + res
+    }
+    return res
+}
 
 impl float {
+    /// 最短可读形式（%g-6 风格；整值不带 `.0`）
+    #[alloc]
+    #[state]
     pub fn to_string(self) -> String {
-        n = __ayanami_float_len(self);
-        data = __ayanami_float_str(self, n);
-        return String { data = data, len = n as usize };
+        return fmt_g(self)
     }
 
-    /// 定点格式化（保留 digits 位小数，digits 夹取到 [0, 17]）
+    /// 定点格式化（digits 位小数，夹取 [0, 17]）
     #[alloc]
     #[state]
     pub fn to_fixed(self, int digits) -> String {
-        n = __ayanami_float_fixed_len(self, digits)
-        data = __ayanami_float_fixed_str(self, digits, n)
-        return String { data = data, len = n as usize }
+        d = digits
+        if d < 0 {
+            d = 0
+        }
+        if d > 17 {
+            d = 17
+        }
+        neg = self < 0.0
+        x = self
+        if neg {
+            x = 0.0 - x
+        }
+        scale = pow10(d)
+        scaled = (x * (scale as float) + 0.5) as int
+        ip = scaled / scale
+        fp = scaled % scale
+        res = ip.to_string()
+        if d > 0 {
+            res = res + "." + pad_int(fp, d)
+        }
+        if neg && scaled != 0 {
+            res = "-" + res
+        }
+        return res
     }
 
-    /// 科学计数法（保留 digits 位小数，如 `1.23e+03`）
+    /// 科学计数法（digits 位小数，如 `1.23e+03`）
     #[alloc]
     #[state]
     pub fn to_sci(self, int digits) -> String {
-        n = __ayanami_float_sci_len(self, digits)
-        data = __ayanami_float_sci_str(self, digits, n)
-        return String { data = data, len = n as usize }
+        d = digits
+        if d < 0 {
+            d = 0
+        }
+        if d > 17 {
+            d = 17
+        }
+        neg = self < 0.0
+        x = self
+        if neg {
+            x = 0.0 - x
+        }
+        if x == 0.0 {
+            res = "0"
+            if d > 0 {
+                res = res + "." + zeros(d)
+            }
+            return res + "e+00"
+        }
+        e = 0
+        while x >= 10.0 {
+            x = x / 10.0
+            e = e + 1
+        }
+        while x < 1.0 {
+            x = x * 10.0
+            e = e - 1
+        }
+        scale = pow10(d)
+        m = (x * (scale as float) + 0.5) as int
+        if m >= 10 * scale {
+            m = m / 10
+            e = e + 1
+        }
+        ip = m / scale
+        fp = m % scale
+        res = ip.to_string()
+        if d > 0 {
+            res = res + "." + pad_int(fp, d)
+        }
+        if e < 0 {
+            res = res + "e-" + pad_int(0 - e, 2)
+        } else {
+            res = res + "e+" + pad_int(e, 2)
+        }
+        if neg {
+            res = "-" + res
+        }
+        return res
     }
 }
 

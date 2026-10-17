@@ -46,6 +46,9 @@ import "string";
 | `3.5.to_string()` | `"3.5"` |
 | `3.14159.to_fixed(2)` | `"3.14"`（定点，digits 位小数） |
 | `1234.5.to_sci(2)` | `"1.23e+03"`（科学计数法） |
+
+> 浮点格式化（`to_string` / `to_fixed` / `to_sci`）为**纯 Ayanami 实现**
+> （%g-6 语义：6 位有效数字、去尾零、整值不带 `.0`）。
 | `true.to_string()` | `"true"` |
 | `'x'.to_string()` | `"x"` |
 | `s.to_string()` | `s` 自身 |
