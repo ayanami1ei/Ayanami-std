@@ -113,3 +113,10 @@ fn test_is_whitespace() {
     #assert(!"".is_whitespace())
     #assert(!" a ".is_whitespace())
 }
+
+#[test]
+fn test_count_char() {
+    #assert_eq("banana".count_char('a'), 3)
+    #assert_eq("".count_char('a'), 0)
+    #assert_eq("abc".count_char('x'), 0)
+}

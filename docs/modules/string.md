@@ -31,6 +31,7 @@ import "string";
 | `s.trim() -> String` | 去掉首尾空白 |
 | `s.trim_start() / s.trim_end() -> String` | 去掉首部 / 尾部空白 |
 | `s.is_whitespace() -> bool` | 是否全为空白（空串为 `false`） |
+| `s.count_char(char c) -> int` | 字符出现次数 |
 | `s.remove_prefix(prefix) / s.remove_suffix(suffix) -> String` | 有则去掉，无则返回拷贝 |
 | `s.to_upper() / s.to_lower() -> String` | 大小写转换 |
 | `s.repeat(usize n) -> String` | 重复 `n` 次 |

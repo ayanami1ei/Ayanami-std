@@ -552,6 +552,20 @@ impl String {
         }
         return self.substring(s as usize, e as usize);
     }
+    /// 字符出现次数
+    #[pure]
+    pub fn count_char(ref self, char c) -> int {
+        n = 0
+        i = 0usize
+        while i < self.len {
+            if self.data[i] == c {
+                n = n + 1
+            }
+            i = i + 1
+        }
+        return n
+    }
+
     /// 是否全为空白（空串为 false）
     #[pure]
     pub fn is_whitespace(ref self) -> bool {
