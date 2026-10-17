@@ -18,6 +18,7 @@ import "io";
 | `try_read_float() -> Option[float]` | 读取一行并严格解析（失败 `None`） |
 | `read_bool() -> bool` | 读取一行并宽松解析（失败 `false`） |
 | `try_read_bool() -> Option[bool]` | 读取一行并严格解析（失败 `None`） |
+| `try_read_uint() -> Option[usize]` | 读取一行并严格解析为 `usize`（负数/失败 `None`） |
 
 ## 示例（输出即注释）
 

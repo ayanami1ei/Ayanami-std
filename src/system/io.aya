@@ -184,3 +184,19 @@ pub fn read_bool() -> bool {
 pub fn try_read_bool() -> Option[bool] {
     return read_line().trim().try_parse_bool()
 }
+
+/// 读取一行并严格解析为 usize（失败 None；负数拒绝）
+#[alloc]
+#[state]
+#[io]
+pub fn try_read_uint() -> Option[usize] {
+    v = read_line().trim().try_parse_int()
+    if v._tag != 0 {
+        return Option::None()
+    }
+    n = v._data_Some._0
+    if n < 0 {
+        return Option::None()
+    }
+    return Option::Some(n as usize)
+}
