@@ -347,8 +347,17 @@ pub fn atan2(float y, float x) -> float {
 #[pure]
 pub fn pow(float base, int exp) -> float {
     result = 1.0;
-    for i in (0, exp) {
+    e = exp;
+    if e < 0 {
+        e = 0 - e;
+    }
+    i = 0;
+    while i < e {
         result = result * base;
+        i = i + 1;
+    }
+    if exp < 0 {
+        return 1.0 / result;
     }
     return result;
 }
