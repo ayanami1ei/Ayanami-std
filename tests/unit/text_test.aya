@@ -151,3 +151,11 @@ fn test_count_lines() {
     #assert_eq(count_lines("\n"), 1);
     #assert_eq(count_lines("x"), 1)
 }
+
+#[test]
+fn test_truncate() {
+    #assert_eq(truncate("hello", 10usize), "hello");
+    #assert_eq(truncate("hello", 5usize), "hello");
+    #assert_eq(truncate("hello world", 8usize), "hello...");
+    #assert_eq(truncate("hello", 3usize), "hel")
+}

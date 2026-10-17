@@ -15,6 +15,7 @@ import "text";
 | `split_whitespace(ref String s) -> ArrayList[String]` | 按空白拆分（连续空白视为一个；忽略首尾） |
 | `count(ref String s, ref String needle) -> int` | 非重叠出现次数（needle 为空返回 0） |
 | `count_lines(ref String s) -> int` | 行数（`lines()` 语义；空串 0） |
+| `truncate(ref String s, usize n) -> String` | 截断到至多 `n` 字符（超出加 `...`） |
 | `s.lines_iter() -> LinesIter` | 惰性按行迭代（消费 `s`；`lines` 基于它实现） |
 | `s.split_whitespace_iter() -> SplitWhitespaceIter` | 惰性按空白迭代（消费 `s`；`split_whitespace` 基于它实现） |
 | `s.split_iter(sep) -> SplitIter` | 惰性按分隔符迭代（消费 `s`；`split` 基于它实现） |

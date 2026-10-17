@@ -327,3 +327,16 @@ pub fn count_lines(ref String s) -> int {
     }
     return n;
 }
+
+/// 截断到至多 n 个字符（超出加 `...`；n <= 3 时直接截断）
+#[alloc]
+#[state]
+pub fn truncate(ref String s, usize n) -> String {
+    if s.len <= n {
+        return s.copy();
+    }
+    if n <= 3usize {
+        return s.substring(0, n);
+    }
+    return s.substring(0, n - 3usize) + "...";
+}
