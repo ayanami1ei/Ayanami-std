@@ -8,13 +8,17 @@ import "string";
 
 import "text";
 
-extern "C" fn __ayanami_time_millis() -> int;
+#[extern]
+fn __ayanami_time_millis() -> int;
 
-extern "C" fn __ayanami_time_micros() -> int;
+#[extern]
+fn __ayanami_time_micros() -> int;
 
-extern "C" fn __ayanami_time_unix() -> int;
+#[extern]
+fn __ayanami_time_unix() -> int;
 
-extern "C" fn __ayanami_time_sleep_ms(int ms);
+#[extern]
+fn __ayanami_time_sleep_ms(int ms);
 
 /// 单调毫秒（计时用）
 #[io]

@@ -63,7 +63,8 @@ pub fn scan_effects(ref MirFunction f) -> bool {
 }
 
 // ── 检查注解诊断通道（由插件 shim 提供实现）──
-extern "C" fn __ayanami_diag_emit(int level, String msg);
+#[extern]
+fn __ayanami_diag_emit(int level, String msg);
 
 /// 上报 warning 级诊断（1）
 pub fn warn(String msg) {

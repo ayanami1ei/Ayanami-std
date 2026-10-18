@@ -255,17 +255,17 @@ src/collections/text.aya:275: pub fn split_whitespace(ref String s) -> ArrayList
 src/collections/text.aya:285: pub fn count(ref String s, ref String needle) -> int
 src/collections/text.aya:313: pub fn count_lines(ref String s) -> int
 src/collections/text.aya:334: pub fn truncate(ref String s, usize n) -> String
-src/core/arch_x86_64.aya:16: pub namespace ArchX86_64
-src/core/arch_x86_64.aya:18: pub fn wrapping_add(int a, int b) -> int
-src/core/arch_x86_64.aya:26: pub fn wrapping_sub(int a, int b) -> int
-src/core/arch_x86_64.aya:34: pub fn wrapping_mul(int a, int b) -> int
-src/core/arch_x86_64.aya:42: pub fn wrapping_neg(int a) -> int
-src/core/arch_x86_64.aya:50: pub fn add_overflow(int a, int b) -> int
-src/core/arch_x86_64.aya:58: pub fn sub_overflow(int a, int b) -> int
-src/core/arch_x86_64.aya:66: pub fn mul_overflow(int a, int b) -> int
-src/core/arch_x86_64.aya:74: pub fn saturating_add(int a, int b) -> int
-src/core/arch_x86_64.aya:82: pub fn saturating_sub(int a, int b) -> int
-src/core/arch_x86_64.aya:90: pub fn saturating_mul(int a, int b) -> int
+src/core/arch_x86_64.aya:13: pub namespace ArchX86_64
+src/core/arch_x86_64.aya:15: pub fn wrapping_add(int a, int b) -> int
+src/core/arch_x86_64.aya:23: pub fn wrapping_sub(int a, int b) -> int
+src/core/arch_x86_64.aya:31: pub fn wrapping_mul(int a, int b) -> int
+src/core/arch_x86_64.aya:39: pub fn wrapping_neg(int a) -> int
+src/core/arch_x86_64.aya:47: pub fn add_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:55: pub fn sub_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:63: pub fn mul_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:71: pub fn saturating_add(int a, int b) -> int
+src/core/arch_x86_64.aya:81: pub fn saturating_sub(int a, int b) -> int
+src/core/arch_x86_64.aya:91: pub fn saturating_mul(int a, int b) -> int
 src/core/bitops.aya:4: pub fn popcount(int x) -> int
 src/core/bitops.aya:18: pub fn leading_zeros(int x) -> int
 src/core/bitops.aya:34: pub fn trailing_zeros(int x) -> int
@@ -411,113 +411,116 @@ src/core/ord.aya:11: impl int
 src/core/ord.aya:14: fn cmp(ref self, ref int other) -> int
 src/core/ord.aya:25: impl String
 src/core/ord.aya:28: fn cmp(ref self, ref String other) -> int
-src/core/panic.aya:10: pub fn panic_at(int line, int col, String file, String msg) -> void
-src/core/panic.aya:19: pub fn panic(String input, String msg, int __line, int __col, String __file) -> String
-src/core/panic.aya:35: pub fn panic_bounds(String input, String index, String len, int __line, int __col, String __file) -> String
-src/core/string.aya:12: pub fn panic_bounds_at(int line, int col, String file, usize index, usize len) -> void
-src/core/string.aya:16: pub fn char_code(char c) -> int
-src/core/string.aya:20: pub struct String
-src/core/string.aya:25: interface ToString
-src/core/string.aya:26: fn to_string(self) -> String;
-src/core/string.aya:29: impl int
-src/core/string.aya:32: fn to_string(self) -> String
-src/core/string.aya:70: fn to_base(self, int base, ref String digits) -> String
-src/core/string.aya:105: fn to_hex(self) -> String
-src/core/string.aya:111: fn to_hex_upper(self) -> String
-src/core/string.aya:117: fn to_bin(self) -> String
-src/core/string.aya:123: fn to_oct(self) -> String
-src/core/string.aya:131: fn pow10(int n) -> int
-src/core/string.aya:144: fn pad_int(int v, int width) -> String
-src/core/string.aya:157: fn zeros(int n) -> String
-src/core/string.aya:170: fn trim_zeros(ref String s) -> String
-src/core/string.aya:184: fn fmt_g(float x) -> String
-src/core/string.aya:258: impl float
-src/core/string.aya:262: fn to_string(self) -> String
-src/core/string.aya:268: fn to_fixed(self, int digits) -> String
-src/core/string.aya:297: fn to_sci(self, int digits) -> String
-src/core/string.aya:350: impl char
-src/core/string.aya:353: fn to_string(self) -> String
-src/core/string.aya:358: impl bool
-src/core/string.aya:361: fn to_string(self) -> String
-src/core/string.aya:370: impl int
-src/core/string.aya:371: fn add(self, int other) -> int
-src/core/string.aya:374: fn sub(self, int other) -> int
-src/core/string.aya:377: fn mul(self, int other) -> int
-src/core/string.aya:380: fn div(self, int other) -> int
-src/core/string.aya:383: fn rem(self, int other) -> int
-src/core/string.aya:386: fn eq(self, int other) -> bool
-src/core/string.aya:389: fn ne(self, int other) -> bool
-src/core/string.aya:392: fn lt(self, int other) -> bool
-src/core/string.aya:395: fn gt(self, int other) -> bool
-src/core/string.aya:398: fn le(self, int other) -> bool
-src/core/string.aya:401: fn ge(self, int other) -> bool
-src/core/string.aya:404: fn neg(self) -> int
-src/core/string.aya:409: impl float
-src/core/string.aya:410: fn add(self, float other) -> float
-src/core/string.aya:413: fn sub(self, float other) -> float
-src/core/string.aya:416: fn mul(self, float other) -> float
-src/core/string.aya:419: fn div(self, float other) -> float
-src/core/string.aya:422: fn eq(self, float other) -> bool
-src/core/string.aya:425: fn ne(self, float other) -> bool
-src/core/string.aya:428: fn lt(self, float other) -> bool
-src/core/string.aya:431: fn gt(self, float other) -> bool
-src/core/string.aya:434: fn le(self, float other) -> bool
-src/core/string.aya:437: fn ge(self, float other) -> bool
-src/core/string.aya:440: fn neg(self) -> float
-src/core/string.aya:445: impl char
-src/core/string.aya:446: fn eq(self, char other) -> bool
-src/core/string.aya:449: fn ne(self, char other) -> bool
-src/core/string.aya:452: fn lt(self, char other) -> bool
-src/core/string.aya:455: fn gt(self, char other) -> bool
-src/core/string.aya:458: fn le(self, char other) -> bool
-src/core/string.aya:461: fn ge(self, char other) -> bool
-src/core/string.aya:465: fn is_digit(self) -> bool
-src/core/string.aya:470: fn is_alpha(self) -> bool
-src/core/string.aya:481: fn is_alnum(self) -> bool
-src/core/string.aya:488: fn is_space(self) -> bool
-src/core/string.aya:499: fn is_upper(self) -> bool
-src/core/string.aya:504: fn is_lower(self) -> bool
-src/core/string.aya:509: fn to_digit(self) -> int
-src/core/string.aya:514: fn to_upper(self) -> char
-src/core/string.aya:522: fn to_lower(self) -> char
-src/core/string.aya:531: impl bool
-src/core/string.aya:532: fn eq(self, bool other) -> bool
-src/core/string.aya:535: fn ne(self, bool other) -> bool
-src/core/string.aya:540: pub namespace String
-src/core/string.aya:542: pub fn empty() -> String
-src/core/string.aya:546: pub fn new() -> String
-src/core/string.aya:550: pub fn new([char] data, usize len) -> String
-src/core/string.aya:555: impl String
-src/core/string.aya:556: fn to_string(self) -> String
-src/core/string.aya:559: fn index(ref self, usize i, int __line, int __col, String __file) -> char
-src/core/string.aya:565: fn len(ref self) -> usize
-src/core/string.aya:570: fn add(ref self, ref String other) -> String
-src/core/string.aya:583: fn add[T: ToString](ref self, T a) -> String
-src/core/string.aya:587: fn eq(ref self, ref String other) -> bool
-src/core/string.aya:598: fn ne(ref self, ref String other) -> bool
-src/core/string.aya:603: fn lt(ref self, ref String other) -> bool
-src/core/string.aya:620: fn gt(ref self, ref String other) -> bool
-src/core/string.aya:624: fn le(ref self, ref String other) -> bool
-src/core/string.aya:628: fn ge(ref self, ref String other) -> bool
-src/core/string.aya:633: fn copy(ref self) -> String
-src/core/string.aya:641: fn is_empty(ref self) -> bool
-src/core/string.aya:645: fn index_of(ref self, ref String needle) -> int
-src/core/string.aya:668: fn contains(ref self, ref String needle) -> bool
-src/core/string.aya:675: fn starts_with(ref self, ref String prefix) -> bool
-src/core/string.aya:687: fn ends_with(ref self, ref String suffix) -> bool
-src/core/string.aya:701: fn substring(ref self, usize start, usize end) -> String
-src/core/string.aya:719: fn trim(ref self) -> String
-src/core/string.aya:740: fn count_char(ref self, char c) -> int
-src/core/string.aya:753: fn is_whitespace(ref self) -> bool
-src/core/string.aya:769: fn remove_prefix(ref self, ref String prefix) -> String
-src/core/string.aya:778: fn remove_suffix(ref self, ref String suffix) -> String
-src/core/string.aya:787: fn trim_start(ref self) -> String
-src/core/string.aya:801: fn trim_end(ref self) -> String
-src/core/string.aya:814: fn to_upper(ref self) -> String
-src/core/string.aya:823: fn to_lower(ref self) -> String
-src/core/string.aya:832: fn repeat(ref self, usize times) -> String
-src/core/string.aya:843: fn parse_int(ref self) -> int
-src/core/string.aya:881: fn is_int(ref self) -> bool
+src/core/panic.aya:7: fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
+src/core/panic.aya:11: pub fn panic_at(int line, int col, String file, String msg) -> void
+src/core/panic.aya:20: pub fn panic(String input, String msg, int __line, int __col, String __file) -> String
+src/core/panic.aya:36: pub fn panic_bounds(String input, String index, String len, int __line, int __col, String __file) -> String
+src/core/string.aya:5: fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
+src/core/string.aya:10: fn __ayanami_panic_bounds_at(int line, int col, String file, int index, int len) -> void;
+src/core/string.aya:14: pub fn panic_bounds_at(int line, int col, String file, usize index, usize len) -> void
+src/core/string.aya:18: pub fn char_code(char c) -> int
+src/core/string.aya:22: pub struct String
+src/core/string.aya:27: interface ToString
+src/core/string.aya:28: fn to_string(self) -> String;
+src/core/string.aya:31: impl int
+src/core/string.aya:34: fn to_string(self) -> String
+src/core/string.aya:72: fn to_base(self, int base, ref String digits) -> String
+src/core/string.aya:107: fn to_hex(self) -> String
+src/core/string.aya:113: fn to_hex_upper(self) -> String
+src/core/string.aya:119: fn to_bin(self) -> String
+src/core/string.aya:125: fn to_oct(self) -> String
+src/core/string.aya:133: fn pow10(int n) -> int
+src/core/string.aya:146: fn pad_int(int v, int width) -> String
+src/core/string.aya:159: fn zeros(int n) -> String
+src/core/string.aya:172: fn trim_zeros(ref String s) -> String
+src/core/string.aya:186: fn fmt_g(float x) -> String
+src/core/string.aya:260: impl float
+src/core/string.aya:264: fn to_string(self) -> String
+src/core/string.aya:270: fn to_fixed(self, int digits) -> String
+src/core/string.aya:299: fn to_sci(self, int digits) -> String
+src/core/string.aya:352: impl char
+src/core/string.aya:355: fn to_string(self) -> String
+src/core/string.aya:360: impl bool
+src/core/string.aya:363: fn to_string(self) -> String
+src/core/string.aya:372: impl int
+src/core/string.aya:373: fn add(self, int other) -> int
+src/core/string.aya:376: fn sub(self, int other) -> int
+src/core/string.aya:379: fn mul(self, int other) -> int
+src/core/string.aya:382: fn div(self, int other) -> int
+src/core/string.aya:385: fn rem(self, int other) -> int
+src/core/string.aya:388: fn eq(self, int other) -> bool
+src/core/string.aya:391: fn ne(self, int other) -> bool
+src/core/string.aya:394: fn lt(self, int other) -> bool
+src/core/string.aya:397: fn gt(self, int other) -> bool
+src/core/string.aya:400: fn le(self, int other) -> bool
+src/core/string.aya:403: fn ge(self, int other) -> bool
+src/core/string.aya:406: fn neg(self) -> int
+src/core/string.aya:411: impl float
+src/core/string.aya:412: fn add(self, float other) -> float
+src/core/string.aya:415: fn sub(self, float other) -> float
+src/core/string.aya:418: fn mul(self, float other) -> float
+src/core/string.aya:421: fn div(self, float other) -> float
+src/core/string.aya:424: fn eq(self, float other) -> bool
+src/core/string.aya:427: fn ne(self, float other) -> bool
+src/core/string.aya:430: fn lt(self, float other) -> bool
+src/core/string.aya:433: fn gt(self, float other) -> bool
+src/core/string.aya:436: fn le(self, float other) -> bool
+src/core/string.aya:439: fn ge(self, float other) -> bool
+src/core/string.aya:442: fn neg(self) -> float
+src/core/string.aya:447: impl char
+src/core/string.aya:448: fn eq(self, char other) -> bool
+src/core/string.aya:451: fn ne(self, char other) -> bool
+src/core/string.aya:454: fn lt(self, char other) -> bool
+src/core/string.aya:457: fn gt(self, char other) -> bool
+src/core/string.aya:460: fn le(self, char other) -> bool
+src/core/string.aya:463: fn ge(self, char other) -> bool
+src/core/string.aya:467: fn is_digit(self) -> bool
+src/core/string.aya:472: fn is_alpha(self) -> bool
+src/core/string.aya:483: fn is_alnum(self) -> bool
+src/core/string.aya:490: fn is_space(self) -> bool
+src/core/string.aya:501: fn is_upper(self) -> bool
+src/core/string.aya:506: fn is_lower(self) -> bool
+src/core/string.aya:511: fn to_digit(self) -> int
+src/core/string.aya:516: fn to_upper(self) -> char
+src/core/string.aya:524: fn to_lower(self) -> char
+src/core/string.aya:533: impl bool
+src/core/string.aya:534: fn eq(self, bool other) -> bool
+src/core/string.aya:537: fn ne(self, bool other) -> bool
+src/core/string.aya:542: pub namespace String
+src/core/string.aya:544: pub fn empty() -> String
+src/core/string.aya:548: pub fn new() -> String
+src/core/string.aya:552: pub fn new([char] data, usize len) -> String
+src/core/string.aya:557: impl String
+src/core/string.aya:558: fn to_string(self) -> String
+src/core/string.aya:561: fn index(ref self, usize i, int __line, int __col, String __file) -> char
+src/core/string.aya:567: fn len(ref self) -> usize
+src/core/string.aya:572: fn add(ref self, ref String other) -> String
+src/core/string.aya:585: fn add[T: ToString](ref self, T a) -> String
+src/core/string.aya:589: fn eq(ref self, ref String other) -> bool
+src/core/string.aya:600: fn ne(ref self, ref String other) -> bool
+src/core/string.aya:605: fn lt(ref self, ref String other) -> bool
+src/core/string.aya:622: fn gt(ref self, ref String other) -> bool
+src/core/string.aya:626: fn le(ref self, ref String other) -> bool
+src/core/string.aya:630: fn ge(ref self, ref String other) -> bool
+src/core/string.aya:635: fn copy(ref self) -> String
+src/core/string.aya:643: fn is_empty(ref self) -> bool
+src/core/string.aya:647: fn index_of(ref self, ref String needle) -> int
+src/core/string.aya:670: fn contains(ref self, ref String needle) -> bool
+src/core/string.aya:677: fn starts_with(ref self, ref String prefix) -> bool
+src/core/string.aya:689: fn ends_with(ref self, ref String suffix) -> bool
+src/core/string.aya:703: fn substring(ref self, usize start, usize end) -> String
+src/core/string.aya:721: fn trim(ref self) -> String
+src/core/string.aya:742: fn count_char(ref self, char c) -> int
+src/core/string.aya:755: fn is_whitespace(ref self) -> bool
+src/core/string.aya:771: fn remove_prefix(ref self, ref String prefix) -> String
+src/core/string.aya:780: fn remove_suffix(ref self, ref String suffix) -> String
+src/core/string.aya:789: fn trim_start(ref self) -> String
+src/core/string.aya:803: fn trim_end(ref self) -> String
+src/core/string.aya:816: fn to_upper(ref self) -> String
+src/core/string.aya:825: fn to_lower(ref self) -> String
+src/core/string.aya:834: fn repeat(ref self, usize times) -> String
+src/core/string.aya:845: fn parse_int(ref self) -> int
+src/core/string.aya:883: fn is_int(ref self) -> bool
 src/dev/test.aya:24: pub fn test(String input) -> String
 src/dev/test.aya:30: pub fn should_panic(String input) -> String
 src/dev/test.aya:36: pub fn check(bool failed, int line, int col, String file, String msg) -> int
@@ -540,110 +543,149 @@ src/dev/test.aya:178: pub fn fail(String input, String msg, int __line, int __co
 src/meta/mir.aya:17: pub struct MirFunction
 src/meta/mir.aya:39: pub fn schema_version() -> int
 src/meta/mir.aya:45: pub fn scan_effects(ref MirFunction f) -> bool
-src/meta/mir.aya:69: pub fn warn(String msg)
-src/meta/mir.aya:74: pub fn error(String msg)
-src/meta/mir.aya:81: pub fn replace_int(ref mut MirFunction f, int idx, int value)
-src/meta/mir.aya:88: pub fn replace_float(ref mut MirFunction f, int idx, int bits)
-src/meta/mir.aya:95: pub fn replace_bool(ref mut MirFunction f, int idx, int value)
-src/meta/mir.aya:102: pub fn replace_char(ref mut MirFunction f, int idx, int code)
-src/meta/mir.aya:109: pub fn replace_with(ref mut MirFunction f, int idx, int src)
-src/meta/mir.aya:116: pub fn delete_stmt(ref mut MirFunction f, int idx)
-src/meta/mir.aya:123: pub fn subtree_sizes(ref MirFunction f) -> [int]
-src/meta/mir.aya:141: pub fn stmt_is_assign(int k) -> bool
-src/meta/mir.aya:145: pub fn stmt_is_return(int k) -> bool
-src/meta/mir.aya:149: pub fn stmt_is_if(int k) -> bool
-src/meta/mir.aya:153: pub fn stmt_is_while(int k) -> bool
-src/meta/mir.aya:157: pub fn stmt_is_break(int k) -> bool
-src/meta/mir.aya:161: pub fn stmt_is_continue(int k) -> bool
-src/meta/mir.aya:166: pub fn op_is_add(int op) -> bool
-src/meta/mir.aya:170: pub fn op_is_sub(int op) -> bool
-src/meta/mir.aya:174: pub fn op_is_mul(int op) -> bool
-src/meta/mir.aya:178: pub fn op_is_eq(int op) -> bool
-src/meta/mir.aya:182: pub fn op_is_neq(int op) -> bool
-src/meta/mir.aya:186: pub fn op_is_lt(int op) -> bool
-src/meta/mir.aya:190: pub fn op_is_gt(int op) -> bool
-src/meta/mir.aya:196: pub fn is_int_literal(ref MirFunction f, int idx) -> bool
-src/meta/mir.aya:204: pub fn folded_int(ref MirFunction f, int idx) -> int
-src/system/alloc.aya:26: interface Allocator
-src/system/alloc.aya:27: fn alloc(ref self, usize size) -> usize;
-src/system/alloc.aya:28: fn free(ref self, usize addr);
-src/system/alloc.aya:32: pub struct DefaultAllocator {}
-src/system/alloc.aya:34: impl DefaultAllocator
-src/system/alloc.aya:36: fn alloc(ref self, usize size) -> usize
-src/system/alloc.aya:40: fn free(ref self, usize addr)
-src/system/alloc.aya:46: pub fn live_allocs() -> int
-src/system/alloc.aya:51: pub fn default_alloc(usize size) -> usize
-src/system/alloc.aya:56: pub fn default_free(usize addr)
-src/system/env.aya:20: pub fn arg_count() -> int
-src/system/env.aya:26: pub fn arg(int i) -> String
-src/system/env.aya:40: pub fn get_env(String name) -> Option[String]
-src/system/env.aya:56: pub fn args() -> ArrayList[String]
-src/system/env.aya:69: pub fn get_env_or(String name, String fallback) -> String
-src/system/env.aya:79: pub fn has_env(String name) -> bool
-src/system/fs.aya:40: pub fn exists(String path) -> bool
-src/system/fs.aya:46: pub fn read_file(String path) -> Option[String]
-src/system/fs.aya:60: pub fn write_file(String path, String data) -> bool
-src/system/fs.aya:70: pub fn read_lines(String path) -> Option[ArrayList[String]]
-src/system/fs.aya:81: pub fn append_file(String path, String data) -> bool
-src/system/fs.aya:87: pub fn remove_file(String path) -> bool
-src/system/fs.aya:93: pub fn is_dir(String path) -> bool
-src/system/fs.aya:101: pub fn list_dir(String path) -> Option[ArrayList[String]]
-src/system/fs.aya:114: pub fn mkdir(String path) -> bool
-src/system/fs.aya:120: pub fn rmdir(String path) -> bool
-src/system/fs.aya:126: pub fn mtime(String path) -> Option[int]
-src/system/fs.aya:136: pub fn is_file(String path) -> bool
-src/system/fs.aya:142: pub fn copy_file(String src, String dst) -> bool
-src/system/fs.aya:148: pub fn rename_file(String from, String to) -> bool
-src/system/fs.aya:154: pub fn size(String path) -> Option[int]
-src/system/fs.aya:166: pub fn copy_tree(String src, String dst) -> int
-src/system/fs.aya:170: fn copy_tree_impl(String src, String dst, int depth) -> int
-src/system/fs.aya:218: pub enum IoErrorKind
-src/system/fs.aya:230: pub struct IoError
-src/system/fs.aya:236: fn classify_kind(int code) -> IoErrorKind
-src/system/fs.aya:249: impl IoError
-src/system/fs.aya:253: fn message(ref self) -> String
-src/system/fs.aya:262: fn what(ref self) -> String
-src/system/fs.aya:269: pub fn last_error(String path) -> IoError
-src/system/fs.aya:276: pub fn read_file_result(String path) -> Result[String, IoError]
-src/system/io.aya:20: pub fn getchar() -> int
-src/system/io.aya:25: pub fn putchar(int c)
-src/system/io.aya:31: pub fn print(ref String n)
-src/system/io.aya:37: pub fn println()
-src/system/io.aya:43: pub fn println(ref String s)
-src/system/io.aya:54: pub fn print(int n)
-src/system/io.aya:60: pub fn print(usize n)
-src/system/io.aya:67: pub fn print(float f)
-src/system/io.aya:73: pub fn print(bool b)
-src/system/io.aya:83: pub fn print(char c)
-src/system/io.aya:90: pub fn println(int n)
-src/system/io.aya:97: pub fn println(usize n)
-src/system/io.aya:105: pub fn println(float f)
-src/system/io.aya:112: pub fn println(bool b)
-src/system/io.aya:119: pub fn println(char c)
-src/system/io.aya:129: pub fn read_line() -> String
-src/system/io.aya:147: pub fn read_int() -> int
-src/system/io.aya:155: pub fn try_read_int() -> Option[int]
-src/system/io.aya:163: pub fn read_float() -> float
-src/system/io.aya:171: pub fn try_read_float() -> Option[float]
-src/system/io.aya:179: pub fn read_bool() -> bool
-src/system/io.aya:187: pub fn try_read_bool() -> Option[bool]
-src/system/io.aya:195: pub fn try_read_uint() -> Option[usize]
-src/system/rand.aya:10: pub struct Rng
-src/system/rand.aya:14: pub namespace Rng
-src/system/rand.aya:17: pub fn from_entropy() -> Rng
-src/system/rand.aya:21: pub fn new(int seed) -> Rng
-src/system/rand.aya:33: impl Rng
-src/system/rand.aya:36: fn next_int(ref mut self) -> int
-src/system/rand.aya:42: fn next_range(ref mut self, int lo, int hi) -> int
-src/system/rand.aya:52: fn next_bool(ref mut self) -> bool
-src/system/rand.aya:58: fn next_float01(ref mut self) -> float
-src/system/rand.aya:67: pub fn shuffle[T](ref mut ArrayList[T] a, ref mut Rng r)
-src/system/time.aya:21: pub fn now_millis() -> int
-src/system/time.aya:27: pub fn now_micros() -> int
-src/system/time.aya:33: pub fn now_unix() -> int
-src/system/time.aya:40: pub fn format_ms(int ms) -> String
-src/system/time.aya:60: pub fn elapsed_ms(int start) -> int
-src/system/time.aya:66: pub fn sleep_ms(int ms)
+src/meta/mir.aya:67: fn __ayanami_diag_emit(int level, String msg);
+src/meta/mir.aya:70: pub fn warn(String msg)
+src/meta/mir.aya:75: pub fn error(String msg)
+src/meta/mir.aya:82: pub fn replace_int(ref mut MirFunction f, int idx, int value)
+src/meta/mir.aya:89: pub fn replace_float(ref mut MirFunction f, int idx, int bits)
+src/meta/mir.aya:96: pub fn replace_bool(ref mut MirFunction f, int idx, int value)
+src/meta/mir.aya:103: pub fn replace_char(ref mut MirFunction f, int idx, int code)
+src/meta/mir.aya:110: pub fn replace_with(ref mut MirFunction f, int idx, int src)
+src/meta/mir.aya:117: pub fn delete_stmt(ref mut MirFunction f, int idx)
+src/meta/mir.aya:124: pub fn subtree_sizes(ref MirFunction f) -> [int]
+src/meta/mir.aya:142: pub fn stmt_is_assign(int k) -> bool
+src/meta/mir.aya:146: pub fn stmt_is_return(int k) -> bool
+src/meta/mir.aya:150: pub fn stmt_is_if(int k) -> bool
+src/meta/mir.aya:154: pub fn stmt_is_while(int k) -> bool
+src/meta/mir.aya:158: pub fn stmt_is_break(int k) -> bool
+src/meta/mir.aya:162: pub fn stmt_is_continue(int k) -> bool
+src/meta/mir.aya:167: pub fn op_is_add(int op) -> bool
+src/meta/mir.aya:171: pub fn op_is_sub(int op) -> bool
+src/meta/mir.aya:175: pub fn op_is_mul(int op) -> bool
+src/meta/mir.aya:179: pub fn op_is_eq(int op) -> bool
+src/meta/mir.aya:183: pub fn op_is_neq(int op) -> bool
+src/meta/mir.aya:187: pub fn op_is_lt(int op) -> bool
+src/meta/mir.aya:191: pub fn op_is_gt(int op) -> bool
+src/meta/mir.aya:197: pub fn is_int_literal(ref MirFunction f, int idx) -> bool
+src/meta/mir.aya:205: pub fn folded_int(ref MirFunction f, int idx) -> int
+src/system/alloc.aya:16: fn __ayanami_default_alloc(usize size) -> usize;
+src/system/alloc.aya:19: fn __ayanami_default_free(usize addr);
+src/system/alloc.aya:22: fn __ayanami_counted_alloc(usize size) -> usize;
+src/system/alloc.aya:25: fn __ayanami_counted_free(usize addr);
+src/system/alloc.aya:28: fn __ayanami_live_allocs() -> int;
+src/system/alloc.aya:31: interface Allocator
+src/system/alloc.aya:32: fn alloc(ref self, usize size) -> usize;
+src/system/alloc.aya:33: fn free(ref self, usize addr);
+src/system/alloc.aya:37: pub struct DefaultAllocator {}
+src/system/alloc.aya:39: impl DefaultAllocator
+src/system/alloc.aya:41: fn alloc(ref self, usize size) -> usize
+src/system/alloc.aya:45: fn free(ref self, usize addr)
+src/system/alloc.aya:51: pub fn live_allocs() -> int
+src/system/alloc.aya:56: pub fn default_alloc(usize size) -> usize
+src/system/alloc.aya:61: pub fn default_free(usize addr)
+src/system/env.aya:9: fn __ayanami_arg_count() -> int;
+src/system/env.aya:12: fn __ayanami_arg_len(int i) -> int;
+src/system/env.aya:15: fn __ayanami_arg_data(int i) -> [char];
+src/system/env.aya:18: fn __ayanami_env_len(String name) -> int;
+src/system/env.aya:21: fn __ayanami_env_data(String name) -> [char];
+src/system/env.aya:25: pub fn arg_count() -> int
+src/system/env.aya:31: pub fn arg(int i) -> String
+src/system/env.aya:45: pub fn get_env(String name) -> Option[String]
+src/system/env.aya:61: pub fn args() -> ArrayList[String]
+src/system/env.aya:74: pub fn get_env_or(String name, String fallback) -> String
+src/system/env.aya:84: pub fn has_env(String name) -> bool
+src/system/fs.aya:11: fn __ayanami_fs_size(String path) -> int;
+src/system/fs.aya:14: fn __ayanami_fs_read(String path) -> [char];
+src/system/fs.aya:17: fn __ayanami_fs_write(String path, String data) -> int;
+src/system/fs.aya:20: fn __ayanami_fs_append(String path, String data) -> int;
+src/system/fs.aya:23: fn __ayanami_fs_remove(String path) -> int;
+src/system/fs.aya:26: fn __ayanami_fs_copy(String src, String dst) -> int;
+src/system/fs.aya:29: fn __ayanami_fs_rename(String from, String to) -> int;
+src/system/fs.aya:32: fn __ayanami_fs_is_dir(String path) -> int;
+src/system/fs.aya:35: fn __ayanami_fs_mkdir(String path) -> int;
+src/system/fs.aya:38: fn __ayanami_fs_rmdir(String path) -> int;
+src/system/fs.aya:41: fn __ayanami_fs_mtime(String path) -> int;
+src/system/fs.aya:44: fn __ayanami_fs_is_file(String path) -> int;
+src/system/fs.aya:47: fn __ayanami_fs_list_data(String path) -> [char];
+src/system/fs.aya:50: fn __ayanami_fs_list_len() -> int;
+src/system/fs.aya:54: pub fn exists(String path) -> bool
+src/system/fs.aya:60: pub fn read_file(String path) -> Option[String]
+src/system/fs.aya:74: pub fn write_file(String path, String data) -> bool
+src/system/fs.aya:84: pub fn read_lines(String path) -> Option[ArrayList[String]]
+src/system/fs.aya:95: pub fn append_file(String path, String data) -> bool
+src/system/fs.aya:101: pub fn remove_file(String path) -> bool
+src/system/fs.aya:107: pub fn is_dir(String path) -> bool
+src/system/fs.aya:115: pub fn list_dir(String path) -> Option[ArrayList[String]]
+src/system/fs.aya:128: pub fn mkdir(String path) -> bool
+src/system/fs.aya:134: pub fn rmdir(String path) -> bool
+src/system/fs.aya:140: pub fn mtime(String path) -> Option[int]
+src/system/fs.aya:150: pub fn is_file(String path) -> bool
+src/system/fs.aya:156: pub fn copy_file(String src, String dst) -> bool
+src/system/fs.aya:162: pub fn rename_file(String from, String to) -> bool
+src/system/fs.aya:168: pub fn size(String path) -> Option[int]
+src/system/fs.aya:180: pub fn copy_tree(String src, String dst) -> int
+src/system/fs.aya:184: fn copy_tree_impl(String src, String dst, int depth) -> int
+src/system/fs.aya:224: fn __ayanami_fs_errno() -> int;
+src/system/fs.aya:227: fn __ayanami_fs_errno_kind(int e) -> int;
+src/system/fs.aya:230: fn __ayanami_fs_strerror(int e) -> [char];
+src/system/fs.aya:233: fn __ayanami_cstr_len([char] s) -> int;
+src/system/fs.aya:236: pub enum IoErrorKind
+src/system/fs.aya:248: pub struct IoError
+src/system/fs.aya:254: fn classify_kind(int code) -> IoErrorKind
+src/system/fs.aya:267: impl IoError
+src/system/fs.aya:271: fn message(ref self) -> String
+src/system/fs.aya:280: fn what(ref self) -> String
+src/system/fs.aya:287: pub fn last_error(String path) -> IoError
+src/system/fs.aya:294: pub fn read_file_result(String path) -> Result[String, IoError]
+src/system/io.aya:9: fn __ayanami_getchar() -> int;
+src/system/io.aya:13: fn __ayanami_putchar(int c);
+src/system/io.aya:17: fn __ayanami_print_str([char] s, int len);
+src/system/io.aya:21: fn __ayanami_print_ln();
+src/system/io.aya:24: pub fn getchar() -> int
+src/system/io.aya:29: pub fn putchar(int c)
+src/system/io.aya:35: pub fn print(ref String n)
+src/system/io.aya:41: pub fn println()
+src/system/io.aya:47: pub fn println(ref String s)
+src/system/io.aya:55: fn __ayanami_print_int(int n);
+src/system/io.aya:59: pub fn print(int n)
+src/system/io.aya:65: pub fn print(usize n)
+src/system/io.aya:72: pub fn print(float f)
+src/system/io.aya:78: pub fn print(bool b)
+src/system/io.aya:88: pub fn print(char c)
+src/system/io.aya:95: pub fn println(int n)
+src/system/io.aya:102: pub fn println(usize n)
+src/system/io.aya:110: pub fn println(float f)
+src/system/io.aya:117: pub fn println(bool b)
+src/system/io.aya:124: pub fn println(char c)
+src/system/io.aya:134: pub fn read_line() -> String
+src/system/io.aya:152: pub fn read_int() -> int
+src/system/io.aya:160: pub fn try_read_int() -> Option[int]
+src/system/io.aya:168: pub fn read_float() -> float
+src/system/io.aya:176: pub fn try_read_float() -> Option[float]
+src/system/io.aya:184: pub fn read_bool() -> bool
+src/system/io.aya:192: pub fn try_read_bool() -> Option[bool]
+src/system/io.aya:200: pub fn try_read_uint() -> Option[usize]
+src/system/rand.aya:9: fn __ayanami_random_u64() -> int;
+src/system/rand.aya:11: pub struct Rng
+src/system/rand.aya:15: pub namespace Rng
+src/system/rand.aya:18: pub fn from_entropy() -> Rng
+src/system/rand.aya:22: pub fn new(int seed) -> Rng
+src/system/rand.aya:34: impl Rng
+src/system/rand.aya:37: fn next_int(ref mut self) -> int
+src/system/rand.aya:43: fn next_range(ref mut self, int lo, int hi) -> int
+src/system/rand.aya:53: fn next_bool(ref mut self) -> bool
+src/system/rand.aya:59: fn next_float01(ref mut self) -> float
+src/system/rand.aya:68: pub fn shuffle[T](ref mut ArrayList[T] a, ref mut Rng r)
+src/system/time.aya:12: fn __ayanami_time_millis() -> int;
+src/system/time.aya:15: fn __ayanami_time_micros() -> int;
+src/system/time.aya:18: fn __ayanami_time_unix() -> int;
+src/system/time.aya:21: fn __ayanami_time_sleep_ms(int ms);
+src/system/time.aya:25: pub fn now_millis() -> int
+src/system/time.aya:31: pub fn now_micros() -> int
+src/system/time.aya:37: pub fn now_unix() -> int
+src/system/time.aya:44: pub fn format_ms(int ms) -> String
+src/system/time.aya:64: pub fn elapsed_ms(int start) -> int
+src/system/time.aya:70: pub fn sleep_ms(int ms)
 tests/bench/iter_chain.aya:26: fn build(int n, int seed) -> ArrayList[int]
 tests/bench/iter_chain.aya:37: fn sum_index(ref ArrayList[int] a) -> int
 tests/bench/iter_chain.aya:51: fn sum_iter(ArrayList[int] a) -> int
@@ -672,7 +714,11 @@ tests/golden/callback_dispatch.aya:5: fn triple(int x) -> int
 tests/golden/callback_dispatch.aya:9: fn main() -> int
 tests/golden/checksum.aya:8: fn rolling_hash(ref String s) -> int
 tests/golden/checksum.aya:18: fn main() -> int
-tests/golden/custom_alloc.aya:25: fn main() -> int
+tests/golden/custom_alloc.aya:13: fn __ayanami_default_alloc(usize size) -> usize;
+tests/golden/custom_alloc.aya:16: fn __ayanami_default_free(usize addr);
+tests/golden/custom_alloc.aya:19: fn __ayanami_unique_alloc(usize size) -> usize
+tests/golden/custom_alloc.aya:24: fn __ayanami_unique_free(usize addr)
+tests/golden/custom_alloc.aya:28: fn main() -> int
 tests/golden/dir_copy.aya:10: fn main() -> int
 tests/golden/dir_walk.aya:10: struct Counts
 tests/golden/dir_walk.aya:15: fn walk(String path, int depth) -> Counts
@@ -824,17 +870,18 @@ tests/unit/math_test.aya:97: fn test_usize_minmax()
 tests/unit/math_test.aya:106: fn test_abs_min_panics()
 tests/unit/math_test.aya:113: fn test_neg_min_panics()
 tests/unit/math_test.aya:120: fn test_float_special()
-tests/unit/mem_test.aya:21: fn churn_list() -> int
-tests/unit/mem_test.aya:38: fn churn_dedup() -> int
-tests/unit/mem_test.aya:47: fn churn_filter_map() -> int
-tests/unit/mem_test.aya:64: fn churn_linked() -> int
-tests/unit/mem_test.aya:77: fn churn_sort() -> int
-tests/unit/mem_test.aya:91: fn churn_map2() -> int
-tests/unit/mem_test.aya:103: fn churn_map() -> int
-tests/unit/mem_test.aya:123: fn churn_set() -> int
-tests/unit/mem_test.aya:142: fn churn_nested() -> int
-tests/unit/mem_test.aya:158: fn test_owned_cleanup()
-tests/unit/mem_test.aya:166: fn test_owned_cleanup_cycles()
+tests/unit/mem_test.aya:20: fn __ayanami_live_allocs() -> int;
+tests/unit/mem_test.aya:22: fn churn_list() -> int
+tests/unit/mem_test.aya:39: fn churn_dedup() -> int
+tests/unit/mem_test.aya:48: fn churn_filter_map() -> int
+tests/unit/mem_test.aya:65: fn churn_linked() -> int
+tests/unit/mem_test.aya:78: fn churn_sort() -> int
+tests/unit/mem_test.aya:92: fn churn_map2() -> int
+tests/unit/mem_test.aya:104: fn churn_map() -> int
+tests/unit/mem_test.aya:124: fn churn_set() -> int
+tests/unit/mem_test.aya:143: fn churn_nested() -> int
+tests/unit/mem_test.aya:159: fn test_owned_cleanup()
+tests/unit/mem_test.aya:167: fn test_owned_cleanup_cycles()
 tests/unit/mir_test.aya:8: fn mk(int n) -> MirFunction
 tests/unit/mir_test.aya:32: fn test_schema_version()
 tests/unit/mir_test.aya:37: fn test_scan_effects()

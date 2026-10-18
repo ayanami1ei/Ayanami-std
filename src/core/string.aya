@@ -1,11 +1,13 @@
 // A5c-2：运行时 panic（越界检查用；用户可见的 #panic 在 panic 模块）
 #[pure]
 #[noreturn]
-extern "C" fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
+#[extern]
+fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
 
 #[pure]
 #[noreturn]
-extern "C" fn __ayanami_panic_bounds_at(int line, int col, String file, int index, int len) -> void;
+#[extern]
+fn __ayanami_panic_bounds_at(int line, int col, String file, int index, int len) -> void;
 
 #[pure]
 #[noreturn]

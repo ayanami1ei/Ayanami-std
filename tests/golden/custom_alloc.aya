@@ -9,17 +9,20 @@ import "io";
 
 import "string";
 
-extern "C" fn __ayanami_default_alloc(usize size) -> usize;
+#[extern]
+fn __ayanami_default_alloc(usize size) -> usize;
 
-extern "C" fn __ayanami_default_free(usize addr);
+#[extern]
+fn __ayanami_default_free(usize addr);
 
-extern "C" fn __ayanami_unique_alloc(usize size) -> usize {
+#[extern]
+fn __ayanami_unique_alloc(usize size) -> usize {
     return __ayanami_default_alloc(size);
 }
 
-// 注：体末分号形态（#199：无分号的顶层 extern "C" 定义会被 fmt 丢体）
-extern "C" fn __ayanami_unique_free(usize addr) {
-    __ayanami_default_free(addr);
+#[extern]
+fn __ayanami_unique_free(usize addr) {
+    __ayanami_default_free(addr)
 }
 
 fn main() -> int {

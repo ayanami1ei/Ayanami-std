@@ -12,15 +12,20 @@
 //   int    __ayanami_live_allocs()               存活分配数（计数分配维护）
 //
 // 详见 docs/modules/alloc.md。
-extern "C" fn __ayanami_default_alloc(usize size) -> usize;
+#[extern]
+fn __ayanami_default_alloc(usize size) -> usize;
 
-extern "C" fn __ayanami_default_free(usize addr);
+#[extern]
+fn __ayanami_default_free(usize addr);
 
-extern "C" fn __ayanami_counted_alloc(usize size) -> usize;
+#[extern]
+fn __ayanami_counted_alloc(usize size) -> usize;
 
-extern "C" fn __ayanami_counted_free(usize addr);
+#[extern]
+fn __ayanami_counted_free(usize addr);
 
-extern "C" fn __ayanami_live_allocs() -> int;
+#[extern]
+fn __ayanami_live_allocs() -> int;
 
 /// 分配器接口（地址用 usize 表示；0 表示失败/空）
 interface Allocator {

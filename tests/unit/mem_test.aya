@@ -16,7 +16,8 @@ import "hashset";
 
 import "string";
 
-extern "C" fn __ayanami_live_allocs() -> int;
+#[extern]
+fn __ayanami_live_allocs() -> int;
 
 fn churn_list() -> int {
     a = ArrayList::new[String]();

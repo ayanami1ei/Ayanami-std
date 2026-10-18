@@ -5,16 +5,20 @@ import "convert";
 import "option";
 
 #[io]
-extern "C" fn __ayanami_getchar() -> int;
+#[extern]
+fn __ayanami_getchar() -> int;
 
 #[io]
-extern "C" fn __ayanami_putchar(int c);
+#[extern]
+fn __ayanami_putchar(int c);
 
 #[io]
-extern "C" fn __ayanami_print_str([char] s, int len);
+#[extern]
+fn __ayanami_print_str([char] s, int len);
 
 #[io]
-extern "C" fn __ayanami_print_ln();
+#[extern]
+fn __ayanami_print_ln();
 
 #[io]
 pub fn getchar() -> int {
@@ -47,7 +51,8 @@ pub fn println(ref String s) {
 
 // ── A6：常用类型的 print/println 重载 ──
 #[io]
-extern "C" fn __ayanami_print_int(int n);
+#[extern]
+fn __ayanami_print_int(int n);
 
 #[alloc]
 #[io]

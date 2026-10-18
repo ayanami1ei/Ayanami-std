@@ -3,7 +3,8 @@ import "string";
 // A5c-2：用户侧 panic（函数宏 `#panic("msg")`，调用点位置 + 退出码 101）
 #[pure]
 #[noreturn]
-extern "C" fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
+#[extern]
+fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
 
 #[pure]
 #[noreturn]

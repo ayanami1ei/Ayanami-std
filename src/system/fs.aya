@@ -7,33 +7,47 @@ import "arraylist";
 
 import "text";
 
-extern "C" fn __ayanami_fs_size(String path) -> int;
+#[extern]
+fn __ayanami_fs_size(String path) -> int;
 
-extern "C" fn __ayanami_fs_read(String path) -> [char];
+#[extern]
+fn __ayanami_fs_read(String path) -> [char];
 
-extern "C" fn __ayanami_fs_write(String path, String data) -> int;
+#[extern]
+fn __ayanami_fs_write(String path, String data) -> int;
 
-extern "C" fn __ayanami_fs_append(String path, String data) -> int;
+#[extern]
+fn __ayanami_fs_append(String path, String data) -> int;
 
-extern "C" fn __ayanami_fs_remove(String path) -> int;
+#[extern]
+fn __ayanami_fs_remove(String path) -> int;
 
-extern "C" fn __ayanami_fs_copy(String src, String dst) -> int;
+#[extern]
+fn __ayanami_fs_copy(String src, String dst) -> int;
 
-extern "C" fn __ayanami_fs_rename(String from, String to) -> int;
+#[extern]
+fn __ayanami_fs_rename(String from, String to) -> int;
 
-extern "C" fn __ayanami_fs_is_dir(String path) -> int;
+#[extern]
+fn __ayanami_fs_is_dir(String path) -> int;
 
-extern "C" fn __ayanami_fs_mkdir(String path) -> int;
+#[extern]
+fn __ayanami_fs_mkdir(String path) -> int;
 
-extern "C" fn __ayanami_fs_rmdir(String path) -> int;
+#[extern]
+fn __ayanami_fs_rmdir(String path) -> int;
 
-extern "C" fn __ayanami_fs_mtime(String path) -> int;
+#[extern]
+fn __ayanami_fs_mtime(String path) -> int;
 
-extern "C" fn __ayanami_fs_is_file(String path) -> int;
+#[extern]
+fn __ayanami_fs_is_file(String path) -> int;
 
-extern "C" fn __ayanami_fs_list_data(String path) -> [char];
+#[extern]
+fn __ayanami_fs_list_data(String path) -> [char];
 
-extern "C" fn __ayanami_fs_list_len() -> int;
+#[extern]
+fn __ayanami_fs_list_len() -> int;
 
 /// 文件是否存在
 #[io]
@@ -206,13 +220,17 @@ fn copy_tree_impl(String src, String dst, int depth) -> int {
 }
 
 // ── 错误模型（errno 捕获 + strerror 消息） ──
-extern "C" fn __ayanami_fs_errno() -> int;
+#[extern]
+fn __ayanami_fs_errno() -> int;
 
-extern "C" fn __ayanami_fs_errno_kind(int e) -> int;
+#[extern]
+fn __ayanami_fs_errno_kind(int e) -> int;
 
-extern "C" fn __ayanami_fs_strerror(int e) -> [char];
+#[extern]
+fn __ayanami_fs_strerror(int e) -> [char];
 
-extern "C" fn __ayanami_cstr_len([char] s) -> int;
+#[extern]
+fn __ayanami_cstr_len([char] s) -> int;
 
 /// IO 错误类别（由 errno 归类）
 pub enum IoErrorKind {

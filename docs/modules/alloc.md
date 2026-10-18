@@ -5,7 +5,7 @@ import "alloc";
 ```
 
 默认实现由运行时提供（`malloc`/`free` + `live_allocs` 计数）。用户可在程序中导出
-同名 `extern "C"` 定义**覆盖**运行时弱符号：整个程序（含编译器生成的分配调用——
+同名 `#[extern]` 定义**覆盖**运行时弱符号：整个程序（含编译器生成的分配调用——
 `String` 拼接、数组、集合缓冲等）都会走自定义实现。这是 Rust `#[global_allocator]`
 在 Ayanami 的对应物。
 
@@ -20,7 +20,7 @@ import "alloc";
 | `int __ayanami_live_allocs()` | 存活分配数（计数分配维护） |
 
 > 编译器生成的分配调用走 `__ayanami_unique_alloc/free`（**弱符号**）。
-> 在 Ayanami 内导出同名 `extern "C"` 定义即可覆盖（#195 修复后可用）；C/汇编实现可经 runtime 归档覆盖。
+> 在 Ayanami 内导出同名 `#[extern]` 定义即可覆盖；C/汇编实现可经 runtime 归档覆盖。
 
 ## 自定义分配器
 
@@ -28,14 +28,18 @@ import "alloc";
 
 ```ayanami
 // 转发默认实现（例如做记账/池化的基础）
-extern "C" fn __ayanami_default_alloc(usize size) -> usize;
-extern "C" fn __ayanami_default_free(usize addr);
+#[extern]
+fn __ayanami_default_alloc(usize size) -> usize;
+#[extern]
+fn __ayanami_default_free(usize addr);
 
-extern "C" fn __ayanami_unique_alloc(usize size) -> usize {
+#[extern]
+fn __ayanami_unique_alloc(usize size) -> usize {
     return __ayanami_default_alloc(size)
 }
 
-extern "C" fn __ayanami_unique_free(usize addr) {
+#[extern]
+fn __ayanami_unique_free(usize addr) {
     __ayanami_default_free(addr)
 }
 ```

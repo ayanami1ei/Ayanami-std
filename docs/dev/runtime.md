@@ -12,7 +12,7 @@
   `install/runtime.c`。
 - 修改本文件后**无需重编编译器**：下一次链接程序时生效。
 
-## 对外符号（ABI，`extern "C"`）
+## 对外符号（ABI，`#[extern]` / `extern "C"`）
 
 | 符号 | 说明 |
 |---|---|
@@ -39,7 +39,7 @@
 ## 扩展步骤
 
 1. 在 `runtime.c` 增加 `__ayanami_*` 函数（保持 C ABI 与 64 位整型约定）。
-2. 在相应 std 模块中 `extern "C" fn __ayanami_xxx(...)` 声明，再包一层 `pub fn`。
+2. 在相应 std 模块中 `#[extern] fn __ayanami_xxx(...)` 声明（等价 `extern "C"`；fmt 输出为 `#[extern]`），再包一层 `pub fn`。
 3. 跑 `./scripts/test.sh` 回归；新增用例按 [testing.md](testing.md) 登记。
 
 > 规划中的运行时扩展（随教程需要排期）：文件 IO、时间、随机熵源、命令行参数 / 环境变量。
