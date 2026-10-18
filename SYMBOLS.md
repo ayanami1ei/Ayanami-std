@@ -387,24 +387,24 @@ src/core/option.aya:22: fn unwrap_or(self, T default) -> T
 src/core/option.aya:28: fn is_some(self) -> bool
 src/core/option.aya:31: fn is_none(self) -> bool
 src/core/option.aya:35: fn or(self, Option[T] other) -> Option[T]
-src/core/option.aya:42: fn unwrap(self, int __line, int __col, String __file) -> T
-src/core/option.aya:50: fn expect(self, String msg, int __line, int __col, String __file) -> T
-src/core/option.aya:58: fn unwrap_or_else(self, Fn()->T f) -> T
-src/core/option.aya:65: fn map_or[U](self, U default, Fn(T)->U f) -> U
-src/core/option.aya:72: fn map[U](self, Fn(T)->U f) -> Option[U]
-src/core/option.aya:79: fn and_then[U](self, Fn(T)->Option[U] f) -> Option[U]
-src/core/option.aya:86: fn filter(self, Fn(T)->bool f) -> Option[T]
-src/core/option.aya:98: impl[T, E] Result[T, E]
-src/core/option.aya:99: fn is_ok(self) -> bool
-src/core/option.aya:102: fn is_err(self) -> bool
-src/core/option.aya:106: fn unwrap_or(self, T default) -> T
-src/core/option.aya:113: fn ok(self) -> Option[T]
-src/core/option.aya:120: fn unwrap_or_else(self, Fn(E)->T f) -> T
-src/core/option.aya:127: fn map_or[U](self, U default, Fn(T)->U f) -> U
-src/core/option.aya:134: fn map[U](self, Fn(T)->U f) -> Result[U, E]
-src/core/option.aya:141: fn map_err[F](self, Fn(E)->F f) -> Result[T, F]
-src/core/option.aya:148: fn unwrap(self, int __line, int __col, String __file) -> T
-src/core/option.aya:156: fn expect(self, String msg, int __line, int __col, String __file) -> T
+src/core/option.aya:43: fn unwrap(self, int __line, int __col, String __file) -> T
+src/core/option.aya:52: fn expect(self, String msg, int __line, int __col, String __file) -> T
+src/core/option.aya:60: fn unwrap_or_else(self, Fn()->T f) -> T
+src/core/option.aya:67: fn map_or[U](self, U default, Fn(T)->U f) -> U
+src/core/option.aya:74: fn map[U](self, Fn(T)->U f) -> Option[U]
+src/core/option.aya:81: fn and_then[U](self, Fn(T)->Option[U] f) -> Option[U]
+src/core/option.aya:88: fn filter(self, Fn(T)->bool f) -> Option[T]
+src/core/option.aya:100: impl[T, E] Result[T, E]
+src/core/option.aya:101: fn is_ok(self) -> bool
+src/core/option.aya:104: fn is_err(self) -> bool
+src/core/option.aya:108: fn unwrap_or(self, T default) -> T
+src/core/option.aya:115: fn ok(self) -> Option[T]
+src/core/option.aya:122: fn unwrap_or_else(self, Fn(E)->T f) -> T
+src/core/option.aya:129: fn map_or[U](self, U default, Fn(T)->U f) -> U
+src/core/option.aya:136: fn map[U](self, Fn(T)->U f) -> Result[U, E]
+src/core/option.aya:143: fn map_err[F](self, Fn(E)->F f) -> Result[T, F]
+src/core/option.aya:151: fn unwrap(self, int __line, int __col, String __file) -> T
+src/core/option.aya:160: fn expect(self, String msg, int __line, int __col, String __file) -> T
 src/core/ord.aya:7: interface Ord
 src/core/ord.aya:8: fn cmp(ref self, ref Self other) -> int;
 src/core/ord.aya:11: impl int
@@ -521,25 +521,57 @@ src/core/string.aya:825: fn to_lower(ref self) -> String
 src/core/string.aya:834: fn repeat(ref self, usize times) -> String
 src/core/string.aya:845: fn parse_int(ref self) -> int
 src/core/string.aya:883: fn is_int(ref self) -> bool
-src/dev/test.aya:24: pub fn test(String input) -> String
-src/dev/test.aya:30: pub fn should_panic(String input) -> String
-src/dev/test.aya:36: pub fn check(bool failed, int line, int col, String file, String msg) -> int
-src/dev/test.aya:45: pub fn check_close(float a, float b, float eps, int line, int col, String file, String msg) -> int
-src/dev/test.aya:61: fn loc(int line, int col) -> String
-src/dev/test.aya:68: fn escape_from(String s, usize i) -> String
-src/dev/test.aya:85: fn escape(String s) -> String
-src/dev/test.aya:94: pub fn assert(String input, String cond, int __line, int __col, String __file) -> String
-src/dev/test.aya:102: pub fn assert_eq(String input, String a, String b, int __line, int __col, String __file) -> String
-src/dev/test.aya:110: pub fn assert_ne(String input, String a, String b, int __line, int __col, String __file) -> String
-src/dev/test.aya:118: pub fn assert_lt(String input, String a, String b, int __line, int __col, String __file) -> String
-src/dev/test.aya:125: pub fn assert_le(String input, String a, String b, int __line, int __col, String __file) -> String
-src/dev/test.aya:132: pub fn assert_gt(String input, String a, String b, int __line, int __col, String __file) -> String
-src/dev/test.aya:139: pub fn assert_ge(String input, String a, String b, int __line, int __col, String __file) -> String
-src/dev/test.aya:147: pub fn assert_contains(String input, String s, String sub, int __line, int __col, String __file) -> String
-src/dev/test.aya:155: pub fn assert_some(String input, String opt, int __line, int __col, String __file) -> String
-src/dev/test.aya:162: pub fn assert_none(String input, String opt, int __line, int __col, String __file) -> String
-src/dev/test.aya:170: pub fn assert_close(String input, String a, String b, String eps, int __line, int __col, String __file) -> String
-src/dev/test.aya:178: pub fn fail(String input, String msg, int __line, int __col, String __file) -> String
+src/dev/test.aya:26: pub fn test(String input) -> String
+src/dev/test.aya:32: pub fn should_panic(String input) -> String
+src/dev/test.aya:38: pub fn check(bool failed, int line, int col, String file, String msg) -> int
+src/dev/test.aya:47: pub fn check_close(float a, float b, float eps, int line, int col, String file, String msg) -> int
+src/dev/test.aya:63: fn escape_from(String s, usize i) -> String
+src/dev/test.aya:80: fn escape(String s) -> String
+src/dev/test.aya:89: pub fn assert_eq(String input, String a, String b, int __line, int __col, String __file) -> String
+src/dev/test.aya:123: pub fn assert(String input, String cond, int __line, int __col, String __file) -> String
+src/dev/test.aya:149: pub fn assert_ne(String input, String a, String b, int __line, int __col, String __file) -> String
+src/dev/test.aya:183: pub fn assert_lt(String input, String a, String b, int __line, int __col, String __file) -> String
+src/dev/test.aya:217: pub fn assert_le(String input, String a, String b, int __line, int __col, String __file) -> String
+src/dev/test.aya:251: pub fn assert_gt(String input, String a, String b, int __line, int __col, String __file) -> String
+src/dev/test.aya:285: pub fn assert_ge(String input, String a, String b, int __line, int __col, String __file) -> String
+src/dev/test.aya:319: pub fn assert_contains(String input, String s, String sub, int __line, int __col, String __file) -> String
+src/dev/test.aya:354: pub fn assert_some(String input, String opt, int __line, int __col, String __file) -> String
+src/dev/test.aya:386: pub fn assert_none(String input, String opt, int __line, int __col, String __file) -> String
+src/dev/test.aya:415: pub fn assert_close(String input, String a, String b, String eps, int __line, int __col, String __file) -> String
+src/dev/test.aya:451: pub fn fail(String input, String msg, int __line, int __col, String __file) -> String
+src/meta/macros.aya:25: pub struct Span
+src/meta/macros.aya:32: pub struct Token
+src/meta/macros.aya:39: pub struct TokenStream
+src/meta/macros.aya:45: fn byte_at(ref String b, int i) -> int
+src/meta/macros.aya:49: fn read_u32(ref String b, int i) -> int
+src/meta/macros.aya:55: fn slice_string(ref String b, int start, int n) -> String
+src/meta/macros.aya:71: fn chars_to_string(ref ArrayList[char] buf) -> String
+src/meta/macros.aya:84: fn push_u32(ref mut ArrayList[char] buf, int v)
+src/meta/macros.aya:91: pub namespace TokenStream
+src/meta/macros.aya:94: pub fn new() -> TokenStream
+src/meta/macros.aya:101: pub fn from_bytes(String bytes) -> TokenStream
+src/meta/macros.aya:159: pub fn to_bytes(ref TokenStream ts) -> String
+src/meta/macros.aya:182: pub fn to_source(ref TokenStream ts) -> String
+src/meta/macros.aya:203: pub fn append(ref mut TokenStream ts, ref TokenStream other)
+src/meta/macros.aya:211: pub fn len(ref TokenStream ts) -> usize
+src/meta/macros.aya:216: pub fn index(ref TokenStream ts, usize i) -> Token
+src/meta/macros.aya:222: pub fn push_ident(ref mut TokenStream ts, String name)
+src/meta/macros.aya:229: pub fn push_literal(ref mut TokenStream ts, String text)
+src/meta/macros.aya:236: pub fn push_punct(ref mut TokenStream ts, String p)
+src/meta/macros.aya:243: pub fn push_keyword(ref mut TokenStream ts, String kw)
+src/meta/macros.aya:250: pub fn push_group_open(ref mut TokenStream ts, String open)
+src/meta/macros.aya:257: pub fn push_group_close(ref mut TokenStream ts, String close)
+src/meta/macros.aya:264: pub fn is_ident(ref Token t) -> bool
+src/meta/macros.aya:269: pub fn is_literal(ref Token t) -> bool
+src/meta/macros.aya:274: pub fn is_punct(ref Token t) -> bool
+src/meta/macros.aya:279: pub fn is_keyword(ref Token t) -> bool
+src/meta/macros.aya:284: pub fn is_group_open(ref Token t) -> bool
+src/meta/macros.aya:293: pub fn is_group_close(ref Token t) -> bool
+src/meta/macros.aya:304: fn __ayanami_macro_diag(int level, String msg);
+src/meta/macros.aya:307: fn __ayanami_macro_hygienic(String name) -> String;
+src/meta/macros.aya:310: pub fn diag_warn(String msg)
+src/meta/macros.aya:315: pub fn diag_error(String msg)
+src/meta/macros.aya:321: pub fn hygienic_ident(String name) -> String
 src/meta/mir.aya:17: pub struct MirFunction
 src/meta/mir.aya:39: pub fn schema_version() -> int
 src/meta/mir.aya:45: pub fn scan_effects(ref MirFunction f) -> bool
@@ -857,6 +889,15 @@ tests/unit/linkedlist_test.aya:46: fn test_ll_misc()
 tests/unit/linkedlist_test.aya:59: fn test_ll_capacity_boundary()
 tests/unit/linkedlist_test.aya:84: fn test_ll_functional()
 tests/unit/linkedlist_test.aya:123: fn test_ll_more()
+tests/unit/macros_test.aya:11: fn push_byte(ref mut ArrayList[char] b, int v)
+tests/unit/macros_test.aya:16: fn push_u32le(ref mut ArrayList[char] b, int v)
+tests/unit/macros_test.aya:25: fn to_str(ref ArrayList[char] b) -> String
+tests/unit/macros_test.aya:39: fn enc_token(int kind, int line, int col, String payload) -> String
+tests/unit/macros_test.aya:55: fn test_decode_single_ident()
+tests/unit/macros_test.aya:70: fn test_decode_group_flatten()
+tests/unit/macros_test.aya:96: fn test_roundtrip()
+tests/unit/macros_test.aya:122: fn test_truncated_prefix()
+tests/unit/macros_test.aya:136: fn test_literal_and_punct()
 tests/unit/math_test.aya:6: fn test_int_ops()
 tests/unit/math_test.aya:17: fn test_float_ops()
 tests/unit/math_test.aya:29: fn test_gcd_lcm()

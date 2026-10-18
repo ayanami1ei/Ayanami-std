@@ -1,0 +1,323 @@
+// macros — 宏 TokenStream API（编译器 ABI v6 的 std 侧）
+//
+// 编码（小端，与 compiler/macro_expand/token_stream.rs 逐字节一致）：
+//   [kind:u8][file:u32][line:u32][col:u32][len:u32][payload...]（头 17 字节）
+//   kind：0=标识符 1=字面量 2=标点 3=关键字 4=分组
+//   分组 payload = [code:u8] + 递归子流；code：0='(' 1='[' 2='{' 3=其他
+//
+// 扁平视图：解码时分组展开为「开符 + 子 token + 闭符」（均为 kind=2 标点）；
+// 编码为扁平形式（每个 token 独立，含开/闭符标点）。
+//
+// 用法（token 宏，`#[macro(tokens)]` 输入/输出为 ABI 字节流）：
+//   #[macro(tokens)]
+//   fn m(String input) -> String {
+//       ts = TokenStream::from_bytes(input)
+//       ... 读/改（push_* / index / len）...
+//       return TokenStream::to_bytes(ts)
+//   }
+import "string";
+
+import "arraylist";
+
+import "convert";
+
+/// 源码位置（file 为预留索引，当前恒为 0）
+pub struct Span {
+    int file
+    int line
+    int col
+}
+
+/// token（扁平视图；分组以开/闭符标点表示）
+pub struct Token {
+    int kind
+    Span span
+    String text
+}
+
+/// token 流（扁平）
+pub struct TokenStream {
+    ArrayList[Token] tokens
+}
+
+// ── 字节层助手 ──
+
+fn byte_at(ref String b, int i) -> int {
+    return char_code(b.data[i]);
+}
+
+fn read_u32(ref String b, int i) -> int {
+    return byte_at(b, i) | (byte_at(b, i + 1) << 8) | (byte_at(b, i + 2) << 16) | (byte_at(b, i + 3) << 24);
+}
+
+/// 取字节区间为 String（n <= 0 返回空串）
+#[alloc]
+fn slice_string(ref String b, int start, int n) -> String {
+    if n <= 0 {
+        return String::new([char; 1], 0);
+    }
+    buf = [char; n as usize];
+    i = 0;
+    while i < n {
+        buf[i] = b.data[start + i];
+        i = i + 1;
+    }
+    return String::new(buf, n as usize);
+}
+
+/// ArrayList[char] → String
+#[alloc]
+#[state]
+fn chars_to_string(ref ArrayList[char] buf) -> String {
+    n = buf.len();
+    res = [char; n];
+    i = 0usize;
+    while i < n {
+        res[i] = buf.index(i);
+        i = i + 1;
+    }
+    return String::new(res, n);
+}
+
+/// 小端写 u32
+#[state]
+fn push_u32(ref mut ArrayList[char] buf, int v) {
+    buf.push((v & 0xff).to_char());
+    buf.push(((v >> 8) & 0xff).to_char());
+    buf.push(((v >> 16) & 0xff).to_char());
+    buf.push(((v >> 24) & 0xff).to_char());
+}
+
+pub namespace TokenStream {
+    /// 空流
+    #[alloc]
+    pub fn new() -> TokenStream {
+        return TokenStream { tokens = ArrayList::new[Token]() };
+    }
+
+    /// 解码 ABI v6 字节流（非法 kind / 截断处停止，返回已解码前缀）
+    #[alloc]
+    #[state]
+    pub fn from_bytes(String bytes) -> TokenStream {
+        ts = TokenStream::new();
+        len = bytes.len as int;
+        i = 0;
+        while i < len {
+            if i + 17 > len {
+                break;
+            }
+            kind = byte_at(bytes, i);
+            if kind > 4 {
+                break;
+            }
+            file = read_u32(bytes, i + 1);
+            line = read_u32(bytes, i + 5);
+            col = read_u32(bytes, i + 9);
+            payload_len = read_u32(bytes, i + 13);
+            i = i + 17;
+            if payload_len < 0 || i + payload_len > len {
+                break;
+            }
+            span = Span { file = file, line = line, col = col };
+            if kind == 4 {
+                if payload_len < 1 {
+                    break;
+                }
+                code = byte_at(bytes, i);
+                open = "(";
+                close = ")";
+                if code == 1 {
+                    open = "[";
+                    close = "]";
+                } else {
+                    if code == 2 {
+                        open = "{";
+                        close = "}";
+                    }
+                }
+                ts.tokens.push(Token { kind = 2, span = span, text = open });
+                sub = slice_string(bytes, i + 1, payload_len - 1);
+                sub_ts = TokenStream::from_bytes(sub);
+                j = 0usize;
+                while j < sub_ts.tokens.len() {
+                    ts.tokens.push(sub_ts.tokens.index(j));
+                    j = j + 1;
+                }
+                span2 = Span { file = file, line = line, col = col };
+                ts.tokens.push(Token { kind = 2, span = span2, text = close });
+            } else {
+                ts.tokens.push(Token { kind = kind, span = span, text = slice_string(bytes, i, payload_len) });
+            }
+            i = i + payload_len;
+        }
+        return ts;
+    }
+
+    /// 编码为 ABI v6 字节流（扁平形式）
+    #[alloc]
+    #[state]
+    pub fn to_bytes(ref TokenStream ts) -> String {
+        buf = ArrayList::new[char]();
+        i = 0usize;
+        while i < ts.tokens.len() {
+            t = ts.tokens.index(i);
+            buf.push((t.kind & 0xff).to_char());
+            push_u32(buf, t.span.file);
+            push_u32(buf, t.span.line);
+            push_u32(buf, t.span.col);
+            push_u32(buf, t.text.len as int);
+            j = 0usize;
+            while j < t.text.len {
+                buf.push(t.text.data[j]);
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+        return chars_to_string(buf);
+    }
+
+    /// 还原源码文本（单空格连接；与编译器 to_source 的扁平输出一致）
+    #[alloc]
+    #[state]
+    pub fn to_source(ref TokenStream ts) -> String {
+        buf = ArrayList::new[char]();
+        i = 0usize;
+        while i < ts.tokens.len() {
+            if i != 0 {
+                buf.push(' ');
+            }
+            t = ts.tokens.index(i);
+            j = 0usize;
+            while j < t.text.len {
+                buf.push(t.text.data[j]);
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+        return chars_to_string(buf);
+    }
+
+    /// 追加另一个流的全部 token（深拷贝）
+    #[alloc]
+    #[state]
+    pub fn append(ref mut TokenStream ts, ref TokenStream other) {
+        i = 0usize;
+        while i < other.tokens.len() {
+            ts.tokens.push(other.tokens.index(i));
+            i = i + 1;
+        }
+    }
+
+    pub fn len(ref TokenStream ts) -> usize {
+        return ts.tokens.len();
+    }
+
+    #[alloc]
+    pub fn index(ref TokenStream ts, usize i) -> Token {
+        return ts.tokens.index(i);
+    }
+
+    #[alloc]
+    #[state]
+    pub fn push_ident(ref mut TokenStream ts, String name) {
+        span = Span { file = 0, line = 0, col = 0 };
+        ts.tokens.push(Token { kind = 0, span = span, text = name });
+    }
+
+    #[alloc]
+    #[state]
+    pub fn push_literal(ref mut TokenStream ts, String text) {
+        span = Span { file = 0, line = 0, col = 0 };
+        ts.tokens.push(Token { kind = 1, span = span, text = text });
+    }
+
+    #[alloc]
+    #[state]
+    pub fn push_punct(ref mut TokenStream ts, String p) {
+        span = Span { file = 0, line = 0, col = 0 };
+        ts.tokens.push(Token { kind = 2, span = span, text = p });
+    }
+
+    #[alloc]
+    #[state]
+    pub fn push_keyword(ref mut TokenStream ts, String kw) {
+        span = Span { file = 0, line = 0, col = 0 };
+        ts.tokens.push(Token { kind = 3, span = span, text = kw });
+    }
+
+    #[alloc]
+    #[state]
+    pub fn push_group_open(ref mut TokenStream ts, String open) {
+        span = Span { file = 0, line = 0, col = 0 };
+        ts.tokens.push(Token { kind = 2, span = span, text = open });
+    }
+
+    #[alloc]
+    #[state]
+    pub fn push_group_close(ref mut TokenStream ts, String close) {
+        span = Span { file = 0, line = 0, col = 0 };
+        ts.tokens.push(Token { kind = 2, span = span, text = close });
+    }
+}
+
+#[pure]
+pub fn is_ident(ref Token t) -> bool {
+    return t.kind == 0;
+}
+
+#[pure]
+pub fn is_literal(ref Token t) -> bool {
+    return t.kind == 1;
+}
+
+#[pure]
+pub fn is_punct(ref Token t) -> bool {
+    return t.kind == 2;
+}
+
+#[pure]
+pub fn is_keyword(ref Token t) -> bool {
+    return t.kind == 3;
+}
+
+#[pure]
+pub fn is_group_open(ref Token t) -> bool {
+    if t.kind != 2 {
+        return false;
+    }
+    c = t.text.data[0];
+    return c == '(' || c == '[' || c == '{';
+}
+
+#[pure]
+pub fn is_group_close(ref Token t) -> bool {
+    if t.kind != 2 {
+        return false;
+    }
+    c = t.text.data[0];
+    return c == ')' || c == ']' || c == '}';
+}
+
+// ── 宏诊断与 hygiene（编译器 shim 提供；调用点由编译器附加） ──
+
+#[extern]
+fn __ayanami_macro_diag(int level, String msg);
+
+#[extern]
+fn __ayanami_macro_hygienic(String name) -> String;
+
+/// 上报 warning（编译继续）
+pub fn diag_warn(String msg) {
+    __ayanami_macro_diag(1, msg);
+}
+
+/// 上报 error（编译失败）
+pub fn diag_error(String msg) {
+    __ayanami_macro_diag(2, msg);
+}
+
+/// 生成 hygienic 标识符（宏内定义名加后缀：不捕获、不泄漏）
+#[alloc]
+pub fn hygienic_ident(String name) -> String {
+    return __ayanami_macro_hygienic(name);
+}

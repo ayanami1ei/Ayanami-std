@@ -19,14 +19,16 @@ import "string";
 
 import "panic";
 
-/// 标记一个应通过的测试函数（identity 宏；运行器按标注发现用例）
-#[macro]
+import "macros";
+
+/// 标记一个应通过的测试函数（identity token 宏；运行器按标注发现用例）
+#[macro(tokens)]
 pub fn test(String input) -> String {
     return input;
 }
 
 /// 标记一个应当 panic 的测试函数（运行器期望退出码 101）
-#[macro]
+#[macro(tokens)]
 pub fn should_panic(String input) -> String {
     return input;
 }
@@ -55,13 +57,6 @@ pub fn check_close(float a, float b, float eps, int line, int col, String file, 
 }
 
 // ── 宏辅助（编译期执行） ──
-/// "line, col" 文本
-#[alloc]
-#[state]
-fn loc(int line, int col) -> String {
-    return line.to_string() + ", " + col.to_string();
-}
-
 /// 把源码文本转义进生成代码的字符串字面量
 #[alloc]
 #[state]
@@ -86,95 +81,385 @@ fn escape(String s) -> String {
     return escape_from(s, 0);
 }
 
-// ── assert 系列宏 ──
-/// `#assert(cond)`：条件为假时抛断言
+// ── assert 系列宏（token 宏：实参为 token 流，见 meta/macros.aya） ──
+/// `#assert_eq(a, b)`：`a == b` 不成立时抛断言（token 宏：实参为 token 流）
 #[alloc]
 #[state]
-#[macro]
-pub fn assert(String input, String cond, int __line, int __col, String __file) -> String {
-    return "check(!(" + cond + "), " + loc(__line, __col) + ", \"" + __file + "\", \"assertion failed: " + escape(cond) + "\")";
-}
-
-/// `#assert_eq(a, b)`：`a == b` 不成立时抛断言
-#[alloc]
-#[state]
-#[macro]
+#[macro(tokens)]
 pub fn assert_eq(String input, String a, String b, int __line, int __col, String __file) -> String {
-    return "check(!((" + a + ") == (" + b + ")), " + loc(__line, __col) + ", \"" + __file + "\", \"assert_eq failed: " + escape(a) + " == " + escape(b) + "\")";
+    at = TokenStream::from_bytes(a);
+    bt = TokenStream::from_bytes(b);
+    src_a = TokenStream::to_source(at);
+    src_b = TokenStream::to_source(bt);
+    ts = TokenStream::new();
+    TokenStream::push_ident(ts, "check");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "!");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, at);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, "==");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, bt);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assert_eq failed: " + escape(src_a) + " == " + escape(src_b) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }
 
-/// `#assert_ne(a, b)`：`a != b` 不成立时抛断言
+/// `#assert(a)`：`!<cond>` 不成立时抛断言（token 宏：实参为 token 流）
 #[alloc]
 #[state]
-#[macro]
+#[macro(tokens)]
+pub fn assert(String input, String cond, int __line, int __col, String __file) -> String {
+    ts = TokenStream::new();
+    at = TokenStream::from_bytes(cond);
+    src_a = TokenStream::to_source(at);
+    TokenStream::push_ident(ts, "check");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "!");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, at);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assertion failed: " + escape(src_a) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
+}
+
+/// `#assert_ne(a, b)`：`!(a != b)` 不成立时抛断言（token 宏：实参为 token 流）
+#[alloc]
+#[state]
+#[macro(tokens)]
 pub fn assert_ne(String input, String a, String b, int __line, int __col, String __file) -> String {
-    return "check(!((" + a + ") != (" + b + ")), " + loc(__line, __col) + ", \"" + __file + "\", \"assert_ne failed: " + escape(a) + " != " + escape(b) + "\")";
+    ts = TokenStream::new();
+    at = TokenStream::from_bytes(a);
+    bt = TokenStream::from_bytes(b);
+    src_a = TokenStream::to_source(at);
+    src_b = TokenStream::to_source(bt);
+    TokenStream::push_ident(ts, "check");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "!");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, at);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, "!=");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, bt);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assert_ne failed: " + escape(src_a) + " != " + escape(src_b) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }
 
-/// `#assert_lt(a, b)`：`a < b` 不成立时抛断言（le/gt/ge 同理）
+/// `#assert_lt(a, b)`：`!(a < b)` 不成立时抛断言（token 宏：实参为 token 流）
 #[alloc]
 #[state]
-#[macro]
+#[macro(tokens)]
 pub fn assert_lt(String input, String a, String b, int __line, int __col, String __file) -> String {
-    return "check(!((" + a + ") < (" + b + ")), " + loc(__line, __col) + ", \"" + __file + "\", \"assert_lt failed: " + escape(a) + " < " + escape(b) + "\")";
+    ts = TokenStream::new();
+    at = TokenStream::from_bytes(a);
+    bt = TokenStream::from_bytes(b);
+    src_a = TokenStream::to_source(at);
+    src_b = TokenStream::to_source(bt);
+    TokenStream::push_ident(ts, "check");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "!");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, at);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, "<");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, bt);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assert_lt failed: " + escape(src_a) + " < " + escape(src_b) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }
 
+/// `#assert_le(a, b)`：`!(a <= b)` 不成立时抛断言（token 宏：实参为 token 流）
 #[alloc]
 #[state]
-#[macro]
+#[macro(tokens)]
 pub fn assert_le(String input, String a, String b, int __line, int __col, String __file) -> String {
-    return "check(!((" + a + ") <= (" + b + ")), " + loc(__line, __col) + ", \"" + __file + "\", \"assert_le failed: " + escape(a) + " <= " + escape(b) + "\")";
+    ts = TokenStream::new();
+    at = TokenStream::from_bytes(a);
+    bt = TokenStream::from_bytes(b);
+    src_a = TokenStream::to_source(at);
+    src_b = TokenStream::to_source(bt);
+    TokenStream::push_ident(ts, "check");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "!");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, at);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, "<=");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, bt);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assert_le failed: " + escape(src_a) + " <= " + escape(src_b) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }
 
+/// `#assert_gt(a, b)`：`!(a > b)` 不成立时抛断言（token 宏：实参为 token 流）
 #[alloc]
 #[state]
-#[macro]
+#[macro(tokens)]
 pub fn assert_gt(String input, String a, String b, int __line, int __col, String __file) -> String {
-    return "check(!((" + a + ") > (" + b + ")), " + loc(__line, __col) + ", \"" + __file + "\", \"assert_gt failed: " + escape(a) + " > " + escape(b) + "\")";
+    ts = TokenStream::new();
+    at = TokenStream::from_bytes(a);
+    bt = TokenStream::from_bytes(b);
+    src_a = TokenStream::to_source(at);
+    src_b = TokenStream::to_source(bt);
+    TokenStream::push_ident(ts, "check");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "!");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, at);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ">");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, bt);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assert_gt failed: " + escape(src_a) + " > " + escape(src_b) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }
 
+/// `#assert_ge(a, b)`：`!(a >= b)` 不成立时抛断言（token 宏：实参为 token 流）
 #[alloc]
 #[state]
-#[macro]
+#[macro(tokens)]
 pub fn assert_ge(String input, String a, String b, int __line, int __col, String __file) -> String {
-    return "check(!((" + a + ") >= (" + b + ")), " + loc(__line, __col) + ", \"" + __file + "\", \"assert_ge failed: " + escape(a) + " >= " + escape(b) + "\")";
+    ts = TokenStream::new();
+    at = TokenStream::from_bytes(a);
+    bt = TokenStream::from_bytes(b);
+    src_a = TokenStream::to_source(at);
+    src_b = TokenStream::to_source(bt);
+    TokenStream::push_ident(ts, "check");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "!");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, at);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ">=");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, bt);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assert_ge failed: " + escape(src_a) + " >= " + escape(src_b) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }
 
-/// `#assert_contains(s, sub)`：字符串不包含子串时抛断言
+/// `#assert_contains(s, sub)`：`!s.contains(sub)` 不成立时抛断言（token 宏：实参为 token 流）
 #[alloc]
 #[state]
-#[macro]
+#[macro(tokens)]
 pub fn assert_contains(String input, String s, String sub, int __line, int __col, String __file) -> String {
-    return "check(!((" + s + ").contains(" + sub + ")), " + loc(__line, __col) + ", \"" + __file + "\", \"assert_contains failed: " + escape(s) + " contains " + escape(sub) + "\")";
+    ts = TokenStream::new();
+    st = TokenStream::from_bytes(s);
+    subt = TokenStream::from_bytes(sub);
+    src_s = TokenStream::to_source(st);
+    src_sub = TokenStream::to_source(subt);
+    TokenStream::push_ident(ts, "check");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "!");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, st);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ".");
+    TokenStream::push_ident(ts, "contains");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, subt);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assert_contains failed: " + escape(src_s) + " contains " + escape(src_sub) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }
 
-/// `#assert_some(opt)` / `#assert_none(opt)`：Option 期望（消费该值一次）
+/// `#assert_some(opt)`：`!opt.is_some()` 不成立时抛断言（token 宏：实参为 token 流）
 #[alloc]
 #[state]
-#[macro]
+#[macro(tokens)]
 pub fn assert_some(String input, String opt, int __line, int __col, String __file) -> String {
-    return "check(!((" + opt + ").is_some()), " + loc(__line, __col) + ", \"" + __file + "\", \"assert_some failed: " + escape(opt) + "\")";
+    ts = TokenStream::new();
+    ot = TokenStream::from_bytes(opt);
+    src_opt = TokenStream::to_source(ot);
+    TokenStream::push_ident(ts, "check");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "!");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, ot);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ".");
+    TokenStream::push_ident(ts, "is_some");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assert_some failed: " + escape(src_opt) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }
 
+/// `#assert_none(opt)`：`opt.is_some()` 不成立时抛断言（token 宏：实参为 token 流）
 #[alloc]
 #[state]
-#[macro]
+#[macro(tokens)]
 pub fn assert_none(String input, String opt, int __line, int __col, String __file) -> String {
-    return "check((" + opt + ").is_some(), " + loc(__line, __col) + ", \"" + __file + "\", \"assert_none failed: " + escape(opt) + "\")";
+    ts = TokenStream::new();
+    ot = TokenStream::from_bytes(opt);
+    src_opt = TokenStream::to_source(ot);
+    TokenStream::push_ident(ts, "check");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, ot);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ".");
+    TokenStream::push_ident(ts, "is_some");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assert_none failed: " + escape(src_opt) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }
 
-/// `#assert_close(a, b, eps)`：浮点近似相等（|a-b| <= eps）
+/// `#assert_close(a, b, eps)`：`check_close(a, b, eps, L, C, "F", "assert_close failed: A ~ B")`（token 宏）
 #[alloc]
 #[state]
-#[macro]
+#[macro(tokens)]
 pub fn assert_close(String input, String a, String b, String eps, int __line, int __col, String __file) -> String {
-    return "check_close((" + a + "), (" + b + "), (" + eps + "), " + loc(__line, __col) + ", \"" + __file + "\", \"assert_close failed: " + escape(a) + " ~ " + escape(b) + "\")";
+    ts = TokenStream::new();
+    at = TokenStream::from_bytes(a);
+    bt = TokenStream::from_bytes(b);
+    et = TokenStream::from_bytes(eps);
+    src_a = TokenStream::to_source(at);
+    src_b = TokenStream::to_source(bt);
+    TokenStream::push_ident(ts, "check_close");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, at);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, bt);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::append(ts, et);
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"assert_close failed: " + escape(src_a) + " ~ " + escape(src_b) + "\"");
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }
 
-/// `#fail(msg)`：无条件失败（msg 为字符串表达式）
+/// `#fail(msg)`：抛 panic（token 宏：实参为 token 流）
 #[alloc]
 #[state]
-#[macro]
+#[macro(tokens)]
 pub fn fail(String input, String msg, int __line, int __col, String __file) -> String {
-    return "panic_at(" + loc(__line, __col) + ", \"" + __file + "\", " + msg + ")";
+    ts = TokenStream::new();
+    mt = TokenStream::from_bytes(msg);
+    TokenStream::push_ident(ts, "panic_at");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_literal(ts, __line.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, __col.to_string());
+    TokenStream::push_punct(ts, ",");
+    TokenStream::push_literal(ts, "\"" + __file + "\"");
+    TokenStream::push_punct(ts, ",");
+    TokenStream::append(ts, mt);
+    TokenStream::push_punct(ts, ")");
+    return TokenStream::to_bytes(ts);
 }

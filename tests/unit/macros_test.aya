@@ -1,0 +1,148 @@
+// macros_test — 宏 TokenStream API（ABI v6 编解码）
+import "macros";
+
+import "arraylist";
+
+import "convert";
+
+import "test";
+
+#[state]
+fn push_byte(ref mut ArrayList[char] b, int v) {
+    b.push((v & 255).to_char());
+}
+
+#[state]
+fn push_u32le(ref mut ArrayList[char] b, int v) {
+    push_byte(b, v & 255);
+    push_byte(b, v >> 8 & 255);
+    push_byte(b, v >> 16 & 255);
+    push_byte(b, v >> 24 & 255);
+}
+
+#[alloc]
+#[state]
+fn to_str(ref ArrayList[char] b) -> String {
+    n = b.len();
+    res = [char; n];
+    i = 0usize;
+    while i < n {
+        res[i] = b.index(i);
+        i = i + 1;
+    }
+    return String::new(res, n);
+}
+
+/// 手工编码一个 token（kind/line/col/payload）
+#[alloc]
+#[state]
+fn enc_token(int kind, int line, int col, String payload) -> String {
+    b = ArrayList::new[char]();
+    push_byte(b, kind);
+    push_u32le(b, 0);
+    push_u32le(b, line);
+    push_u32le(b, col);
+    push_u32le(b, payload.len as int);
+    i = 0usize;
+    while i < payload.len {
+        push_byte(b, char_code(payload.data[i]));
+        i = i + 1;
+    }
+    return to_str(b);
+}
+
+#[test]
+fn test_decode_single_ident() {
+    bytes = enc_token(0, 1, 2, "x");
+    ts = TokenStream::from_bytes(bytes);
+    #assert_eq(TokenStream::len(ts), 1usize);
+    t = TokenStream::index(ts, 0usize);
+    #assert_eq(t.kind, 0);
+    #assert_eq(t.span.file, 0);
+    #assert_eq(t.span.line, 1);
+    #assert_eq(t.span.col, 2);
+    #assert_eq(t.text, "x");
+    #assert(is_ident(t));
+    #assert(!is_keyword(t))
+}
+
+#[test]
+fn test_decode_group_flatten() {
+    // 分组 payload = [code=0] + 子 token（ident "a"）
+    b = ArrayList::new[char]();
+    push_byte(b, 0);
+    sub = enc_token(0, 3, 4, "a");
+    i = 0usize;
+    while i < sub.len {
+        push_byte(b, char_code(sub.data[i]));
+        i = i + 1;
+    }
+    bytes = enc_token(4, 3, 3, to_str(b));
+    ts = TokenStream::from_bytes(bytes);
+    #assert_eq(TokenStream::len(ts), 3usize);
+    o = TokenStream::index(ts, 0usize);
+    c = TokenStream::index(ts, 1usize);
+    cl = TokenStream::index(ts, 2usize);
+    #assert(is_group_open(o));
+    #assert_eq(o.text, "(");
+    #assert_eq(c.text, "a");
+    #assert_eq(c.span.line, 3);
+    #assert_eq(c.span.col, 4);
+    #assert(is_group_close(cl));
+    #assert_eq(cl.text, ")")
+}
+
+#[test]
+fn test_roundtrip() {
+    ts = TokenStream::new();
+    TokenStream::push_keyword(ts, "fn");
+    TokenStream::push_ident(ts, "f");
+    TokenStream::push_punct(ts, "(");
+    TokenStream::push_punct(ts, ")");
+    TokenStream::push_punct(ts, "->");
+    TokenStream::push_ident(ts, "int");
+    TokenStream::push_group_open(ts, "{");
+    TokenStream::push_ident(ts, "x");
+    TokenStream::push_group_close(ts, "}");
+    #assert_eq(TokenStream::to_source(ts), "fn f ( ) -> int { x }");
+    bytes = TokenStream::to_bytes(ts);
+    back = TokenStream::from_bytes(bytes);
+    #assert_eq(TokenStream::len(back), 9usize);
+    #assert_eq(TokenStream::to_source(back), "fn f ( ) -> int { x }");
+    t0 = TokenStream::index(back, 0usize);
+    #assert(is_keyword(t0));
+    #assert_eq(t0.text, "fn");
+    t1 = TokenStream::index(back, 1usize);
+    #assert(is_ident(t1));
+    t2 = TokenStream::index(back, 2usize);
+    #assert(is_punct(t2))
+}
+
+#[test]
+fn test_truncated_prefix() {
+    b = ArrayList::new[char]();
+    push_byte(b, 0);
+    push_u32le(b, 0);
+    push_u32le(b, 0);
+    push_u32le(b, 0);
+    push_u32le(b, 10);  // 声明 10 字节 payload
+    push_byte(b, 120);  // 只给 2 字节
+    push_byte(b, 121);
+    ts = TokenStream::from_bytes(to_str(b));
+    #assert_eq(TokenStream::len(ts), 0usize)
+}
+
+#[test]
+fn test_literal_and_punct() {
+    ts = TokenStream::new();
+    TokenStream::push_literal(ts, "42");
+    TokenStream::push_punct(ts, ">=");
+    #assert_eq(TokenStream::len(ts), 2usize);
+    a = TokenStream::index(ts, 0usize);
+    b = TokenStream::index(ts, 1usize);
+    #assert(is_literal(a));
+    #assert_eq(a.text, "42");
+    #assert(is_punct(b));
+    #assert_eq(b.text, ">=");
+    #assert_eq(TokenStream::to_source(ts), "42 >=")
+}

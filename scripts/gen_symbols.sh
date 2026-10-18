@@ -39,7 +39,7 @@ if [[ "$check_mode" == true ]]; then
         echo "Error: SYMBOLS.md 不存在，跑 ./scripts/gen_symbols.sh" >&2
         exit 1
     fi
-    diff -u "SYMBOLS.md" "$tmpfile" >&2 || {
+    /usr/bin/diff -u "SYMBOLS.md" "$tmpfile" >&2 || {
         echo "Error: SYMBOLS.md 已过期，跑 ./scripts/gen_symbols.sh" >&2
         exit 1
     }

@@ -26,6 +26,17 @@ running 6 golden-output tests
 test result: ok. 82/82 passed
 ```
 
+## 宏形态（token 宏）
+
+`test` 模块的标注与断言宏均为 **token 宏**（`#[macro(tokens)]`，ABI v6）：
+
+- `#[test]` / `#[should_panic]`：item 级恒等 token 宏（原样返回 token 流）；
+- `#assert*` / `#fail`：表达式级 token 宏，实参为 token 流，经
+  `meta/macros.aya` 的 `TokenStream` API 解码/拼接/编码（消息里的实参源码由 `to_source` 还原）。
+
+即：宏不再拼源码文本，而是结构化 token 流（转义/空格问题消失）。`panic` 模块的
+`#panic` / `#panic_bounds` 仍为文本宏（构建顺序：core/panic 早于 macros 模块）。
+
 ## 写用例（类似 Rust 的 `#[test]`）
 
 ```ayanami

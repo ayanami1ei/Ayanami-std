@@ -48,6 +48,7 @@ impl[T] Option[T] {
         return self._data_Some._0;
     }
     /// Some 取值；None 触发带自定义消息的 panic
+    #[alloc]
     fn expect(self, String msg, int __line, int __col, String __file) -> T {
         if self._tag == 0 {
             return self._data_Some._0;
@@ -155,6 +156,7 @@ impl[T, E] Result[T, E] {
         return self._data_Ok._0;
     }
     /// Ok 取值；Err 触发带自定义消息的 panic
+    #[alloc]
     fn expect(self, String msg, int __line, int __col, String __file) -> T {
         if self._tag == 0 {
             return self._data_Ok._0;
