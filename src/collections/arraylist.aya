@@ -356,6 +356,7 @@ impl[T] ArrayList[T] {
         self.len = self.len - 1;
     }
     /// 首元素（空表 panic 101）
+    #[alloc]
     fn first(ref self, int __line, int __col, String __file) -> T {
         if self.len == 0 {
             panic_at(__line, __col, __file, "first from empty ArrayList")
@@ -363,6 +364,7 @@ impl[T] ArrayList[T] {
         return self.data[0];
     }
     /// 末元素（空表 panic 101）
+    #[alloc]
     fn last(ref self, int __line, int __col, String __file) -> T {
         if self.len == 0 {
             panic_at(__line, __col, __file, "last from empty ArrayList")
