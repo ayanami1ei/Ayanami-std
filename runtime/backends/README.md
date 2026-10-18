@@ -42,11 +42,20 @@ path = "/path/to/libruntime.a"     # 支持 .c / .o / .a
 
 ## 汇编后端说明（asm-x86_64）
 
-- 目标平台：Linux x86-64（System V ABI）；调用前 16 字节栈对齐。
-- `core.s`：`__ayanami_runtime_abi`、`__ayanami_default_alloc/free`（malloc/free）、
-  `__ayanami_unique_alloc/free`（弱符号，计数）、`__ayanami_counted_alloc/free`、`__ayanami_live_allocs`。
-- `arith.s`：`wrapping_*`（回绕）、`*_overflow`（OF 标志）、`saturating_*`（边界值）。
-  注：std `core/num.aya` 已改用 `core/arch_x86_64.aya` 内联汇编（程序自带），
-  运行时这组符号保留为 ABI 兼容层。
-- 其余部分暂用 C（`runtime.c` 以 `-DAYANAMI_ASM_PORT` 排除已汇编段），按需继续迁移
-  （panic/IO/fs/时间/熵）。
+- 目标平台：Linux x86-64（System V ABI）；调用前 16 字节栈对齐；实现走**原始系统调用**
+  （read/write/openat/newfstatat/getdents64/clock_gettime/nanosleep/getrandom/exit_group 等）。
+- 已汇编实现（本目录）：
+  | 文件 | 内容 |
+  |---|---|
+  | `core.s` | `__ayanami_runtime_abi`、`default/unique/counted_alloc/free`、`live_allocs` |
+  | `arith.s` | `wrapping_*`、`*_overflow`、`saturating_*`（std 已改用内联汇编，保留为 ABI 兼容层） |
+  | `io.s` | `getchar/putchar/print_str/print_int（INT64_MIN 安全）/print_ln` |
+  | `time.s` | `time_millis/micros/unix/sleep_ms`（EINTR 续睡） |
+  | `rand.s` | `random_u64`（getrandom → /dev/urandom → rdtsc） |
+  | `fs.s` | 路径助手、`fs_errno/errno_kind/strerror/cstr_len`、`size/mtime/is_file/is_dir/rename/remove/mkdir/rmdir` |
+  | `fs_io.s` | `fs_read/write/append/copy/list_data/list_len` |
+  | `args_env.s` | `arg_count/arg_len/arg_data`（/proc/self/cmdline）、`env_len/env_data`（environ） |
+  | `panic.s` | `panic_print_msg/panic_at/panic_bounds_at`、契约失败、`ovf_{add,sub,mul}_{i8..i64,u8..u64}`、`diag_emit` 弱符号 |
+- 仅存的 C 实现：`__ayanami_ovf_{add,sub,mul}_{i128,u128}`（128 位溢出检查，见 `c_rest.o`）。
+- C 侧对应段以 `-DAYANAMI_ASM_PORT` 排除（`runtime.c`/`runtime/sys.c`）；C 后端不受影响。
+- panic 输出为纯文本（C 版的 TTY 彩色未实现）。

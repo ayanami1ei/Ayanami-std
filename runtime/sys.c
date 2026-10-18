@@ -11,7 +11,8 @@
 #include <sys/random.h>
 #endif
 
-// ── 文件操作 errno 捕获（std fs 错误模型） ──
+#ifndef AYANAMI_ASM_PORT
+// ── 文件操作 errno 捕获（std fs 错误模型） ──（汇编后端提供：fs.s）
 //
 // 约定：g_fs_errno 记录最近一次 fs 调用的失败 errno（成功后不保证清零，
 // 调用方仅在失败分支读取）。
@@ -63,6 +64,8 @@ int64_t __ayanami_cstr_len(const char *s) {
 }
 
 #ifndef AYANAMI_ASM_PORT
+#endif // AYANAMI_ASM_PORT（errno 助手由汇编后端提供）
+
 // 系统熵源：优先 getrandom，退回 /dev/urandom，最后退回 time()
 int64_t __ayanami_random_u64(void) {
     uint64_t v = 0;
@@ -115,14 +118,16 @@ int64_t __ayanami_time_sleep_ms(int64_t ms) {
 
 #endif // AYANAMI_ASM_PORT（熵源与时间由汇编后端提供）
 
-// ── 文件 ──
-
 static int path_cstr(__ayanami_str_view path, char *out, size_t cap) {
     if (path.len <= 0 || path.len >= (long)cap) { errno = EINVAL; return 0; }
     memcpy(out, path.data, (size_t)path.len);
     out[path.len] = 0;
     return 1;
 }
+
+// ── 文件 ──（汇编后端提供：runtime/backends/asm-x86_64/fs.s + fs_io.s）
+
+#ifndef AYANAMI_ASM_PORT
 
 int64_t __ayanami_fs_size(__ayanami_str_view path) {
     char p[4096];
@@ -281,7 +286,11 @@ char *__ayanami_fs_list_data(__ayanami_str_view path) {
     return buf;
 }
 
-// ── 命令行参数（/proc/self/cmdline，惰性解析） ──
+#endif // AYANAMI_ASM_PORT（文件系统由汇编后端提供）
+
+// ── 命令行参数（/proc/self/cmdline，惰性解析） ──（汇编后端提供：args_env.s）
+
+#ifndef AYANAMI_ASM_PORT
 
 static char **g_args = NULL;
 static int64_t g_argc = 0;
@@ -366,5 +375,7 @@ char *__ayanami_env_data(__ayanami_str_view name) {
     memcpy(copy, v, n + 1);
     return copy;
 }
+
+#endif // AYANAMI_ASM_PORT（参数与环境变量由汇编后端提供）
 
 #endif

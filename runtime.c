@@ -65,11 +65,13 @@ int64_t __ayanami_saturating_mul(int64_t a, int64_t b) {
 
 #endif // AYANAMI_ASM_PORT（算术助手由汇编后端提供）
 
+#ifndef AYANAMI_ASM_PORT
 /* A5d-3b：诊断通道弱符号（可执行文件里为 no-op；插件 shim 提供强定义） */
 __attribute__((weak)) void __ayanami_diag_emit(long long level, __ayanami_diag_buf msg) {
     (void)level;
     (void)msg;
 }
+#endif // AYANAMI_ASM_PORT（弱符号空实现由汇编后端提供）
 
 #ifndef AYANAMI_ASM_PORT
 // 默认分配原语（供自定义分配器包装；不经计数）
@@ -102,6 +104,7 @@ int64_t __ayanami_live_allocs(void) {
 //  A5c-2：运行时 panic（退出码 101，Rust 风格输出）
 // ──────────────────────────────────────────────
 
+#ifndef AYANAMI_ASM_PORT
 static void __ayanami_print_view(const char* data, long len) {
     if (data && len > 0) fwrite(data, 1, (size_t)len, stderr);
 }
@@ -150,6 +153,8 @@ void __ayanami_panic_bounds_at(long long line, long long col, __ayanami_str_view
 }
 
 
+#endif // AYANAMI_ASM_PORT（panic 由汇编后端提供）
+
 // ──────────────────────────────────────────────
 //  Overflow checks (M1.7, debug builds)
 //  `a + b` 等降级为 __ayanami_ovf_{add,sub,mul}_{iN,uN}(a, b, line, col, file)
@@ -164,37 +169,85 @@ void __ayanami_panic_bounds_at(long long line, long long col, __ayanami_str_view
         return r; \
     }
 
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_i8, int8_t, add, "attempt to add with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_i16, int16_t, add, "attempt to add with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_i32, int32_t, add, "attempt to add with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_i64, int64_t, add, "attempt to add with overflow")
+#endif
 __AYANAMI_OVF(add_i128, __int128, add, "attempt to add with overflow")
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_u8, uint8_t, add, "attempt to add with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_u16, uint16_t, add, "attempt to add with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_u32, uint32_t, add, "attempt to add with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_u64, uint64_t, add, "attempt to add with overflow")
+#endif
 __AYANAMI_OVF(add_u128, unsigned __int128, add, "attempt to add with overflow")
 
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_i8, int8_t, sub, "attempt to subtract with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_i16, int16_t, sub, "attempt to subtract with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_i32, int32_t, sub, "attempt to subtract with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_i64, int64_t, sub, "attempt to subtract with overflow")
+#endif
 __AYANAMI_OVF(sub_i128, __int128, sub, "attempt to subtract with overflow")
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_u8, uint8_t, sub, "attempt to subtract with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_u16, uint16_t, sub, "attempt to subtract with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_u32, uint32_t, sub, "attempt to subtract with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_u64, uint64_t, sub, "attempt to subtract with overflow")
+#endif
 __AYANAMI_OVF(sub_u128, unsigned __int128, sub, "attempt to subtract with overflow")
 
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_i8, int8_t, mul, "attempt to multiply with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_i16, int16_t, mul, "attempt to multiply with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_i32, int32_t, mul, "attempt to multiply with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_i64, int64_t, mul, "attempt to multiply with overflow")
+#endif
 __AYANAMI_OVF(mul_i128, __int128, mul, "attempt to multiply with overflow")
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_u8, uint8_t, mul, "attempt to multiply with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_u16, uint16_t, mul, "attempt to multiply with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_u32, uint32_t, mul, "attempt to multiply with overflow")
+#endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_u64, uint64_t, mul, "attempt to multiply with overflow")
+#endif
 __AYANAMI_OVF(mul_u128, unsigned __int128, mul, "attempt to multiply with overflow")
 
 #undef __AYANAMI_OVF
@@ -203,6 +256,7 @@ __AYANAMI_OVF(mul_u128, unsigned __int128, mul, "attempt to multiply with overfl
 //  Contracts (A2d)
 // ──────────────────────────────────────────────
 
+#ifndef AYANAMI_ASM_PORT
 void __ayanami_require_fail(int64_t line, int64_t col) {
     fprintf(stderr, "requires failed at %ld:%ld\n", (long)line, (long)col);
     abort();
@@ -217,6 +271,7 @@ void __ayanami_invariant_fail(int64_t line, int64_t col) {
     fprintf(stderr, "invariant failed at %ld:%ld\n", (long)line, (long)col);
     abort();
 }
+#endif // AYANAMI_ASM_PORT（契约失败由汇编后端提供）
 
 // ──────────────────────────────────────────────
 //  I/O

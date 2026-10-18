@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "../../abi.h"
 
@@ -72,6 +73,96 @@ int main(void) {
     int64_t r2 = __ayanami_random_u64();
     assert(r1 != 0 && r2 != 0);
     assert(r1 != r2);
+
+    // fs：写/追加/读/复制/重命名/删除 + errno + 目录列举
+    {
+        const char *fp = "/tmp/ayanami_asm_fs.txt";
+        __ayanami_str_view path = { fp, (long)strlen(fp) };
+        __ayanami_str_view data = { "hello ", 6 };
+        __ayanami_str_view more = { "world", 5 };
+        assert(__ayanami_fs_write(path, data) == 0);
+        assert(__ayanami_fs_append(path, more) == 0);
+        assert(__ayanami_fs_size(path) == 11);
+        char *content = __ayanami_fs_read(path);
+        assert(content != NULL);
+        assert(__ayanami_cstr_len(content) == 11);
+        assert(content[0] == 'h' && content[10] == 'd');
+        __ayanami_unique_free(content);
+        assert(__ayanami_fs_is_file(path) == 1);
+        assert(__ayanami_fs_is_dir(path) == 0);
+        assert(__ayanami_fs_mtime(path) > 0);
+
+        const char *cp = "/tmp/ayanami_asm_fs_copy.txt";
+        __ayanami_str_view copy = { cp, (long)strlen(cp) };
+        assert(__ayanami_fs_copy(path, copy) == 0);
+        assert(__ayanami_fs_size(copy) == 11);
+        const char *rp = "/tmp/ayanami_asm_fs_rn.txt";
+        __ayanami_str_view renamed = { rp, (long)strlen(rp) };
+        assert(__ayanami_fs_rename(copy, renamed) == 0);
+        assert(__ayanami_fs_size(copy) == -1);
+        assert(__ayanami_fs_remove(renamed) == 0);
+        assert(__ayanami_fs_remove(path) == 0);
+
+        const char *mp = "/tmp/ayanami_no_such_xyz";
+        __ayanami_str_view missing = { mp, (long)strlen(mp) };
+        assert(__ayanami_fs_read(missing) == NULL);
+        assert(__ayanami_fs_errno() == 2);
+        assert(__ayanami_fs_errno_kind(2) == 0);
+        assert(__ayanami_fs_errno_kind(13) == 1);
+        assert(__ayanami_fs_errno_kind(999) == 7);
+        char *emsg = __ayanami_fs_strerror(2);
+        assert(emsg != NULL && __ayanami_cstr_len(emsg) > 0);
+        __ayanami_unique_free(emsg);
+
+        const char *dp = "/tmp/ayanami_asm_dir";
+        __ayanami_str_view dir = { dp, (long)strlen(dp) };
+        assert(__ayanami_fs_mkdir(dir) == 0);
+        assert(__ayanami_fs_is_dir(dir) == 1);
+        const char *ip = "/tmp/ayanami_asm_dir/a.txt";
+        __ayanami_str_view inner = { ip, (long)strlen(ip) };
+        assert(__ayanami_fs_write(inner, data) == 0);
+        char *list = __ayanami_fs_list_data(dir);
+        assert(list != NULL);
+        assert(__ayanami_fs_list_len() > 0);
+        assert(strstr(list, "a.txt") != NULL);
+        __ayanami_unique_free(list);
+        assert(__ayanami_fs_remove(inner) == 0);
+        assert(__ayanami_fs_rmdir(dir) == 0);
+    }
+
+    // args：argv[0] 存在
+    assert(__ayanami_arg_count() >= 1);
+    assert(__ayanami_arg_len(0) > 0);
+    assert(__ayanami_arg_len(-1) == -1);
+    assert(__ayanami_arg_len(999999) == -1);
+    char *arg0 = __ayanami_arg_data(0);
+    assert(arg0 != NULL && __ayanami_cstr_len(arg0) > 0);
+    __ayanami_unique_free(arg0);
+    assert(__ayanami_arg_data(999999) == NULL);
+
+    // env：AYANAMI_ASM_SELFTEST（build.sh 导出）
+    {
+        const char *en = "AYANAMI_ASM_SELFTEST";
+        __ayanami_str_view key = { en, (long)strlen(en) };
+        assert(__ayanami_env_len(key) == 2);
+        char *v = __ayanami_env_data(key);
+        assert(v != NULL && v[0] == '4' && v[1] == '2' && v[2] == 0);
+        __ayanami_unique_free(v);
+    }
+
+    // ovf：非溢出路径（溢出路径由 std 的 should_panic 用例覆盖；助手负责释放 file 缓冲）
+    {
+        char *fb = (char *)__ayanami_unique_alloc(8);
+        assert(fb != NULL);
+        __ayanami_str_view fv = { fb, 8 };
+        assert(__ayanami_ovf_add_i64(2, 3, 0, 0, fv) == 5);
+        char *fb2 = (char *)__ayanami_unique_alloc(8);
+        __ayanami_str_view fv2 = { fb2, 8 };
+        assert(__ayanami_ovf_mul_u8(20, 10, 0, 0, fv2) == 200);
+        char *fb3 = (char *)__ayanami_unique_alloc(8);
+        __ayanami_str_view fv3 = { fb3, 8 };
+        assert(__ayanami_ovf_sub_i32(100, 58, 0, 0, fv3) == 42);
+    }
 
     printf("asm-x86_64 runtime self-test ok (ABI %lld)\n",
            (long long)__ayanami_runtime_abi());

@@ -29,7 +29,7 @@ trap 'rm -f "$tmpfile"' EXIT
 
 rg --line-number --sort path --no-heading --color never \
     '^[[:space:]]*(pub[[:space:]]+)?(fn|struct|enum|interface|impl|type|namespace)([^A-Za-z0-9_]|$)' \
-    --glob '*.aya' \
+    --glob '*.aya' --glob '!.driver.aya' \
     src tests \
     | sed -E 's/^([^:]+:[0-9]+:)[[:space:]]*/\1 /; s/[[:space:]]+$//; s/[[:space:]]*\{$//' \
     >> "$tmpfile" || true
