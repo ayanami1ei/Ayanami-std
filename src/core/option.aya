@@ -39,6 +39,7 @@ impl[T] Option[T] {
         return other;
     }
     /// Some 取值；None 触发 panic（退出码 101）
+    #[alloc]
     fn unwrap(self, int __line, int __col, String __file) -> T {
         if self._tag == 0 {
             return self._data_Some._0;
@@ -145,6 +146,7 @@ impl[T, E] Result[T, E] {
         }
     }
     /// Ok 取值；Err 触发 panic（退出码 101）
+    #[alloc]
     fn unwrap(self, int __line, int __col, String __file) -> T {
         if self._tag == 0 {
             return self._data_Ok._0;
