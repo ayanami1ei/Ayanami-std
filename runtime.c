@@ -222,6 +222,7 @@ void __ayanami_invariant_fail(int64_t line, int64_t col) {
 //  I/O
 // ──────────────────────────────────────────────
 
+#ifndef AYANAMI_ASM_PORT
 int64_t __ayanami_getchar(void) {
     // 返回 int64 与 Ayanami 的 `int`（i64）ABI 对齐；-1（EOF）必须符号扩展。
     // 注意：不要调用 libc 的 `getchar`（历史符号插入问题），用 fgetc(stdin)。
@@ -243,6 +244,7 @@ void __ayanami_print_str(const char *s, int64_t len) {
 void __ayanami_print_ln(void) {
     printf("\n");
 }
+#endif // AYANAMI_ASM_PORT（I/O 由汇编后端提供）
 
 // 浮点格式化已迁移为纯 Ayanami 实现（std/src/core/string.aya：fmt_g/to_fixed/to_sci）。
 

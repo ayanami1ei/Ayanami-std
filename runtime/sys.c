@@ -62,6 +62,7 @@ int64_t __ayanami_cstr_len(const char *s) {
     return s ? (int64_t)strlen(s) : 0;
 }
 
+#ifndef AYANAMI_ASM_PORT
 // 系统熵源：优先 getrandom，退回 /dev/urandom，最后退回 time()
 int64_t __ayanami_random_u64(void) {
     uint64_t v = 0;
@@ -111,6 +112,8 @@ int64_t __ayanami_time_sleep_ms(int64_t ms) {
     }
     return 0;
 }
+
+#endif // AYANAMI_ASM_PORT（熵源与时间由汇编后端提供）
 
 // ── 文件 ──
 

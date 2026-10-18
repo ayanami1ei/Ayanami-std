@@ -50,6 +50,29 @@ int main(void) {
     assert(__ayanami_saturating_mul(INT64_MIN, 2) == INT64_MIN);
     assert(__ayanami_saturating_mul(INT64_MAX, -2) == INT64_MIN);
 
+    // io：print_str / print_int / putchar / print_ln（冒烟：不崩溃即可）
+    __ayanami_print_str("io: ", 4);
+    __ayanami_print_int(12345);
+    __ayanami_putchar(' ');
+    __ayanami_print_int(-42);
+    __ayanami_print_ln();
+
+    // time：单调 + unix + sleep
+    int64_t t1 = __ayanami_time_millis();
+    int64_t t2 = __ayanami_time_millis();
+    assert(t2 >= t1);
+    assert(__ayanami_time_micros() > 0);
+    assert(__ayanami_time_unix() > 1600000000);
+    assert(__ayanami_time_sleep_ms(0) == 0);
+    __ayanami_time_sleep_ms(5);
+    assert(__ayanami_time_millis() - t2 >= 3);
+
+    // rand：非零且两次不同
+    int64_t r1 = __ayanami_random_u64();
+    int64_t r2 = __ayanami_random_u64();
+    assert(r1 != 0 && r2 != 0);
+    assert(r1 != r2);
+
     printf("asm-x86_64 runtime self-test ok (ABI %lld)\n",
            (long long)__ayanami_runtime_abi());
     return 0;
