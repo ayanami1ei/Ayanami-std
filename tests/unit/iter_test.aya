@@ -204,6 +204,23 @@ fn test_method_chain_enumerate() {
 }
 
 #[test]
+fn test_method_chain_map_filter() {
+    a = ArrayList::new[int]();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    s = 0;
+    for x in a.into_iter().map((int v) -> int {
+        return v * 10;
+    }).filter((int v) -> bool {
+        return v > 10;
+    }) {
+        s = s + x;
+    }
+    #assert_eq(s, 50)
+}
+
+#[test]
 fn test_method_chain_take_zip() {
     a = ArrayList::new[int]();
     a.push(1);

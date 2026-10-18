@@ -109,8 +109,7 @@ for p in a.into_iter().take(2usize).zip(b.into_iter()) { ... }
 | `it.enumerate()` | `EnumerateIter::new(it)` |
 | `it.zip(other)` | `ZipIter::new(it, other)` |
 
-> 注：`map` / `filter`（以及导入 `hashset` 时的 `take`）与同名方法存在解析冲突（编译器 #189），
-> 修复前请用 `XxxIter::new` 构造，或仅链 `enumerate` / `zip` / `take`（无冲突时）。
+> 同名方法解析冲突（编译器 #189）已修复：`map` / `filter` / `take` 等均可直接方法语法链式。
 
 ## 基准
 

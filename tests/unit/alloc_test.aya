@@ -23,11 +23,12 @@ impl WrapperAlloc {
 
 #[test]
 fn test_default_allocator() {
+    a = DefaultAllocator {  };
     before = live_allocs();
-    p = DefaultAllocator::alloc(32usize);
+    p = use_allocator(a, 32usize);
     #assert(p != 0usize);
     #assert_eq(live_allocs(), before + 1);
-    DefaultAllocator::free(p);
+    a.free(p);
     #assert_eq(live_allocs(), before)
 }
 

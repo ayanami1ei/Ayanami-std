@@ -255,17 +255,17 @@ src/collections/text.aya:275: pub fn split_whitespace(ref String s) -> ArrayList
 src/collections/text.aya:285: pub fn count(ref String s, ref String needle) -> int
 src/collections/text.aya:313: pub fn count_lines(ref String s) -> int
 src/collections/text.aya:334: pub fn truncate(ref String s, usize n) -> String
-src/core/arch_x86_64.aya:13: pub namespace ArchX86_64
-src/core/arch_x86_64.aya:15: pub fn wrapping_add(int a, int b) -> int
-src/core/arch_x86_64.aya:23: pub fn wrapping_sub(int a, int b) -> int
-src/core/arch_x86_64.aya:32: pub fn wrapping_mul(int a, int b) -> int
-src/core/arch_x86_64.aya:41: pub fn wrapping_neg(int a) -> int
+src/core/arch_x86_64.aya:16: pub namespace ArchX86_64
+src/core/arch_x86_64.aya:18: pub fn wrapping_add(int a, int b) -> int
+src/core/arch_x86_64.aya:26: pub fn wrapping_sub(int a, int b) -> int
+src/core/arch_x86_64.aya:34: pub fn wrapping_mul(int a, int b) -> int
+src/core/arch_x86_64.aya:42: pub fn wrapping_neg(int a) -> int
 src/core/arch_x86_64.aya:50: pub fn add_overflow(int a, int b) -> int
-src/core/arch_x86_64.aya:61: pub fn sub_overflow(int a, int b) -> int
-src/core/arch_x86_64.aya:72: pub fn mul_overflow(int a, int b) -> int
-src/core/arch_x86_64.aya:83: pub fn saturating_add(int a, int b) -> int
-src/core/arch_x86_64.aya:98: pub fn saturating_sub(int a, int b) -> int
-src/core/arch_x86_64.aya:113: pub fn saturating_mul(int a, int b) -> int
+src/core/arch_x86_64.aya:58: pub fn sub_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:66: pub fn mul_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:74: pub fn saturating_add(int a, int b) -> int
+src/core/arch_x86_64.aya:82: pub fn saturating_sub(int a, int b) -> int
+src/core/arch_x86_64.aya:90: pub fn saturating_mul(int a, int b) -> int
 src/core/bitops.aya:4: pub fn popcount(int x) -> int
 src/core/bitops.aya:18: pub fn leading_zeros(int x) -> int
 src/core/bitops.aya:34: pub fn trailing_zeros(int x) -> int
@@ -567,12 +567,13 @@ src/meta/mir.aya:204: pub fn folded_int(ref MirFunction f, int idx) -> int
 src/system/alloc.aya:26: interface Allocator
 src/system/alloc.aya:27: fn alloc(ref self, usize size) -> usize;
 src/system/alloc.aya:28: fn free(ref self, usize addr);
-src/system/alloc.aya:32: pub namespace DefaultAllocator
-src/system/alloc.aya:34: pub fn alloc(usize size) -> usize
-src/system/alloc.aya:38: pub fn free(usize addr)
-src/system/alloc.aya:44: pub fn live_allocs() -> int
-src/system/alloc.aya:49: pub fn default_alloc(usize size) -> usize
-src/system/alloc.aya:54: pub fn default_free(usize addr)
+src/system/alloc.aya:32: pub struct DefaultAllocator {}
+src/system/alloc.aya:34: impl DefaultAllocator
+src/system/alloc.aya:36: fn alloc(ref self, usize size) -> usize
+src/system/alloc.aya:40: fn free(ref self, usize addr)
+src/system/alloc.aya:46: pub fn live_allocs() -> int
+src/system/alloc.aya:51: pub fn default_alloc(usize size) -> usize
+src/system/alloc.aya:56: pub fn default_free(usize addr)
 src/system/env.aya:20: pub fn arg_count() -> int
 src/system/env.aya:26: pub fn arg(int i) -> String
 src/system/env.aya:40: pub fn get_env(String name) -> Option[String]
@@ -671,12 +672,7 @@ tests/golden/callback_dispatch.aya:5: fn triple(int x) -> int
 tests/golden/callback_dispatch.aya:9: fn main() -> int
 tests/golden/checksum.aya:8: fn rolling_hash(ref String s) -> int
 tests/golden/checksum.aya:18: fn main() -> int
-tests/golden/custom_alloc.aya:12: struct WrapAlloc
-tests/golden/custom_alloc.aya:16: impl WrapAlloc
-tests/golden/custom_alloc.aya:17: fn alloc(ref self, usize size) -> usize
-tests/golden/custom_alloc.aya:20: fn free(ref self, usize addr)
-tests/golden/custom_alloc.aya:25: fn alloc_size[A: Allocator](ref A a, usize size) -> usize
-tests/golden/custom_alloc.aya:29: fn main() -> int
+tests/golden/custom_alloc.aya:25: fn main() -> int
 tests/golden/dir_copy.aya:10: fn main() -> int
 tests/golden/dir_walk.aya:10: struct Counts
 tests/golden/dir_walk.aya:15: fn walk(String path, int depth) -> Counts
@@ -698,8 +694,8 @@ tests/unit/alloc_test.aya:15: impl WrapperAlloc
 tests/unit/alloc_test.aya:16: fn alloc(ref self, usize size) -> usize
 tests/unit/alloc_test.aya:19: fn free(ref self, usize addr)
 tests/unit/alloc_test.aya:25: fn test_default_allocator()
-tests/unit/alloc_test.aya:35: fn test_allocator_interface()
-tests/unit/alloc_test.aya:46: fn test_default_wrappers()
+tests/unit/alloc_test.aya:36: fn test_allocator_interface()
+tests/unit/alloc_test.aya:47: fn test_default_wrappers()
 tests/unit/arraylist_test.aya:6: fn test_basic()
 tests/unit/arraylist_test.aya:25: fn test_capacity()
 tests/unit/arraylist_test.aya:33: fn test_capacity_boundary()
@@ -806,7 +802,8 @@ tests/unit/iter_test.aya:130: fn test_map_filter_take()
 tests/unit/iter_test.aya:152: fn test_enumerate_zip()
 tests/unit/iter_test.aya:178: fn test_string_adapters()
 tests/unit/iter_test.aya:195: fn test_method_chain_enumerate()
-tests/unit/iter_test.aya:207: fn test_method_chain_take_zip()
+tests/unit/iter_test.aya:207: fn test_method_chain_map_filter()
+tests/unit/iter_test.aya:224: fn test_method_chain_take_zip()
 tests/unit/linkedlist_test.aya:6: fn test_basic()
 tests/unit/linkedlist_test.aya:18: fn test_ll_eq_ops()
 tests/unit/linkedlist_test.aya:31: fn test_ll_mut_ops()

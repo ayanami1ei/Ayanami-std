@@ -4,10 +4,13 @@
 // 语义与 runtime 的 __ayanami_{wrapping_*, *_overflow, saturating_*} 完全一致（见 core/num.aya）。
 //
 // 内联汇编约定（本编译器）：
-// - 单个 out(reg) 输出（多输出见 #196）；$0=输出，$1..=输入（输出在前编号）；
+// - 单个 out(reg) 输出；$0=输出，$1..=输入（输出在前编号，与源码顺序无关）；
 // - 立即数写作 $$N（$$ 为 $ 转义）；8 位寄存器写作 %al（单百分号）；
 // - 唯一标签用 ${:uid} 前缀（LLVM 原生机制）；
-// - 输出寄存器可当中转寄存器复用（独立临时寄存器需等 #196）。
+// - 输出寄存器可当中转寄存器复用。
+//
+// 寄存器别名（#198）：无 early-clobber，输出可能与输入分配同一寄存器；
+// 模板保持单输出形态并尽量「先读输入、后写输出」；临时寄存器版（更自然的 cmov 写法）待 #198。
 //
 // 目标平台：x86-64（System V）。其他架构需提供对应 arch_* 模块。
 pub namespace ArchX86_64 {
@@ -23,8 +26,7 @@ pub namespace ArchX86_64 {
     pub fn wrapping_sub(int a, int b) -> int {
         r = 0;
         unsafe {
-            asm("movq $1, $0
- subq $2, $0", out(reg) r, in(reg) a, in(reg) b)
+            asm("movq $1, $0\n subq $2, $0", out(reg) r, in(reg) a, in(reg) b)
         }
         return r;
     }
@@ -32,8 +34,7 @@ pub namespace ArchX86_64 {
     pub fn wrapping_mul(int a, int b) -> int {
         r = 0;
         unsafe {
-            asm("movq $1, $0
- imulq $2, $0", out(reg) r, in(reg) a, in(reg) b)
+            asm("movq $1, $0\n imulq $2, $0", out(reg) r, in(reg) a, in(reg) b)
         }
         return r;
     }
@@ -41,8 +42,7 @@ pub namespace ArchX86_64 {
     pub fn wrapping_neg(int a) -> int {
         r = 0;
         unsafe {
-            asm("xorq $0, $0
- subq $1, $0", out(reg) r, in(reg) a)
+            asm("xorq $0, $0\n subq $1, $0", out(reg) r, in(reg) a)
         }
         return r;
     }
@@ -50,10 +50,7 @@ pub namespace ArchX86_64 {
     pub fn add_overflow(int a, int b) -> int {
         r = 0;
         unsafe {
-            asm("movq $1, $0
- addq $2, $0
- seto %al
- movzbq %al, $0", out(reg) r, in(reg) a, in(reg) b)
+            asm("movq $1, $0\n addq $2, $0\n seto %al\n movzbq %al, $0", out(reg) r, in(reg) a, in(reg) b)
         }
         return r;
     }
@@ -61,10 +58,7 @@ pub namespace ArchX86_64 {
     pub fn sub_overflow(int a, int b) -> int {
         r = 0;
         unsafe {
-            asm("movq $1, $0
- subq $2, $0
- seto %al
- movzbq %al, $0", out(reg) r, in(reg) a, in(reg) b)
+            asm("movq $1, $0\n subq $2, $0\n seto %al\n movzbq %al, $0", out(reg) r, in(reg) a, in(reg) b)
         }
         return r;
     }
@@ -72,10 +66,7 @@ pub namespace ArchX86_64 {
     pub fn mul_overflow(int a, int b) -> int {
         r = 0;
         unsafe {
-            asm("movq $1, $0
- imulq $2, $0
- seto %al
- movzbq %al, $0", out(reg) r, in(reg) a, in(reg) b)
+            asm("movq $1, $0\n imulq $2, $0\n seto %al\n movzbq %al, $0", out(reg) r, in(reg) a, in(reg) b)
         }
         return r;
     }
@@ -83,14 +74,7 @@ pub namespace ArchX86_64 {
     pub fn saturating_add(int a, int b) -> int {
         r = 0;
         unsafe {
-            asm("movq $1, $0
- addq $2, $0
- jno ${:uid}1f
- movabsq $$0x7fffffffffffffff, $0
- testq $1, $1
- jg ${:uid}1f
- movabsq $$0x8000000000000000, $0
-${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
+            asm("movq $1, $0\n addq $2, $0\n jno ${:uid}1f\n movabsq $$0x7fffffffffffffff, $0\n testq $1, $1\n jg ${:uid}1f\n movabsq $$0x8000000000000000, $0\n${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
         }
         return r;
     }
@@ -98,14 +82,7 @@ ${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
     pub fn saturating_sub(int a, int b) -> int {
         r = 0;
         unsafe {
-            asm("movq $1, $0
- subq $2, $0
- jno ${:uid}1f
- movabsq $$0x7fffffffffffffff, $0
- testq $1, $1
- jg ${:uid}1f
- movabsq $$0x8000000000000000, $0
-${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
+            asm("movq $1, $0\n subq $2, $0\n jno ${:uid}1f\n movabsq $$0x7fffffffffffffff, $0\n testq $1, $1\n jg ${:uid}1f\n movabsq $$0x8000000000000000, $0\n${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
         }
         return r;
     }
@@ -113,17 +90,7 @@ ${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
     pub fn saturating_mul(int a, int b) -> int {
         r = 0;
         unsafe {
-            asm("movq $1, $0
- imulq $2, $0
- jno ${:uid}1f
- movq $1, $0
- xorq $2, $0
- js ${:uid}2f
- movabsq $$0x7fffffffffffffff, $0
- jmp ${:uid}1f
-${:uid}2:
- movabsq $$0x8000000000000000, $0
-${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
+            asm("movq $1, $0\n imulq $2, $0\n jno ${:uid}1f\n movq $1, $0\n xorq $2, $0\n js ${:uid}2f\n movabsq $$0x7fffffffffffffff, $0\n jmp ${:uid}1f\n${:uid}2:\n movabsq $$0x8000000000000000, $0\n${:uid}1:", out(reg) r, in(reg) a, in(reg) b)
         }
         return r;
     }

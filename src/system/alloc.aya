@@ -28,14 +28,16 @@ interface Allocator {
     fn free(ref self, usize addr);
 }
 
-/// 默认分配器（运行时 malloc/free；计入 live_allocs）—— 无状态，命名空间形式
-pub namespace DefaultAllocator {
+/// 默认分配器（运行时 malloc/free；计入 live_allocs）
+pub struct DefaultAllocator {}
+
+impl DefaultAllocator {
     /// 分配（失败返回 0）
-    pub fn alloc(usize size) -> usize {
+    fn alloc(ref self, usize size) -> usize {
         return __ayanami_counted_alloc(size);
     }
     /// 释放（0 安全）
-    pub fn free(usize addr) {
+    fn free(ref self, usize addr) {
         __ayanami_counted_free(addr)
     }
 }

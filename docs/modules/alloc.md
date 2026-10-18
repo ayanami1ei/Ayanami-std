@@ -19,8 +19,8 @@ import "alloc";
 | `void __ayanami_counted_free(usize addr)` | 计数释放（std 入口；转发 `unique_free`） |
 | `int __ayanami_live_allocs()` | 存活分配数（计数分配维护） |
 
-> 编译器生成的分配调用走 `__ayanami_unique_alloc/free`（**弱符号**，运行时可被强符号覆盖）。
-> 当前 Ayanami 内定义同名符号被编译器限制阻断（#195）：自定义分配器暂经 C/汇编实现并归档接入。
+> 编译器生成的分配调用走 `__ayanami_unique_alloc/free`（**弱符号**）。
+> 在 Ayanami 内导出同名 `extern "C"` 定义即可覆盖（#195 修复后可用）；C/汇编实现可经 runtime 归档覆盖。
 
 ## 自定义分配器
 
@@ -40,10 +40,10 @@ extern "C" fn __ayanami_unique_free(usize addr) {
 }
 ```
 
-完整可运行示例：`tests/golden/custom_alloc.aya`（自定义实现绕过计数 → `live_allocs` 差值为 0）。
+完整可运行示例：`tests/golden/custom_alloc.aya`（Ayanami 内定义覆盖，绕过计数 → `live_allocs` 差值为 0）。
 
-带状态的分配器（统计/arena）用 C 或汇编实现后与运行时一并归档，经 `AYANAMI_RUNTIME`
-接入（见 `runtime/backends/README.md`）。
+带状态的分配器（统计/arena）可用 C 或汇编实现后与运行时一并归档，经 `AYANAMI_RUNTIME`
+接入（见 `runtime/backends/README.md`）；Ayanami 侧无全局可变状态，暂只适合无状态转发/包装。
 
 ## std 级接口
 
@@ -56,7 +56,7 @@ fn use_allocator[A: Allocator](ref A a, usize size) -> usize {
 | 项 | 说明 |
 |---|---|
 | `interface Allocator` | `alloc(ref self, usize) -> usize` / `free(ref self, usize)` |
-| `DefaultAllocator` | 默认实现（运行时计数分配） |
+| `DefaultAllocator { }` | 默认实现（运行时计数分配） |
 | `live_allocs() -> int` | 存活分配数（诊断/测试） |
 | `default_alloc(size) -> usize` / `default_free(addr)` | 默认原语包装 |
 
