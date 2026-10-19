@@ -266,6 +266,13 @@ src/core/arch_x86_64.aya:63: pub fn mul_overflow(int a, int b) -> int
 src/core/arch_x86_64.aya:71: pub fn saturating_add(int a, int b) -> int
 src/core/arch_x86_64.aya:81: pub fn saturating_sub(int a, int b) -> int
 src/core/arch_x86_64.aya:91: pub fn saturating_mul(int a, int b) -> int
+src/core/arch_x86_64.aya:106: pub fn atomic_load(ref int p) -> int
+src/core/arch_x86_64.aya:115: pub fn atomic_store(ref int p, int v)
+src/core/arch_x86_64.aya:122: pub fn atomic_swap(ref int p, int v) -> int
+src/core/arch_x86_64.aya:131: pub fn atomic_fetch_add(ref int p, int v) -> int
+src/core/arch_x86_64.aya:140: pub fn atomic_fetch_sub(ref int p, int v) -> int
+src/core/arch_x86_64.aya:149: pub fn fence()
+src/core/arch_x86_64.aya:156: pub fn cpu_relax()
 src/core/bitops.aya:4: pub fn popcount(int x) -> int
 src/core/bitops.aya:18: pub fn leading_zeros(int x) -> int
 src/core/bitops.aya:34: pub fn trailing_zeros(int x) -> int
@@ -708,6 +715,17 @@ src/system/rand.aya:43: fn next_range(ref mut self, int lo, int hi) -> int
 src/system/rand.aya:53: fn next_bool(ref mut self) -> bool
 src/system/rand.aya:59: fn next_float01(ref mut self) -> float
 src/system/rand.aya:68: pub fn shuffle[T](ref mut ArrayList[T] a, ref mut Rng r)
+src/system/sync.aya:12: pub struct AtomicInt
+src/system/sync.aya:16: pub namespace AtomicInt
+src/system/sync.aya:18: pub fn new(int v) -> AtomicInt
+src/system/sync.aya:23: impl AtomicInt
+src/system/sync.aya:25: pub fn load(ref self) -> int
+src/system/sync.aya:30: pub fn store(ref self, int v)
+src/system/sync.aya:35: pub fn swap(ref self, int v) -> int
+src/system/sync.aya:40: pub fn fetch_add(ref self, int v) -> int
+src/system/sync.aya:45: pub fn fetch_sub(ref self, int v) -> int
+src/system/sync.aya:51: pub fn fence()
+src/system/sync.aya:56: pub fn cpu_relax()
 src/system/time.aya:12: fn __ayanami_time_millis() -> int;
 src/system/time.aya:15: fn __ayanami_time_micros() -> int;
 src/system/time.aya:18: fn __ayanami_time_unix() -> int;
@@ -995,6 +1013,13 @@ tests/unit/string_test.aya:97: fn test_self_append()
 tests/unit/string_test.aya:111: fn test_is_whitespace()
 tests/unit/string_test.aya:119: fn test_count_char()
 tests/unit/string_test.aya:126: fn test_int_format_edges()
+tests/unit/sync_test.aya:6: fn test_atomic_load_store()
+tests/unit/sync_test.aya:14: fn test_atomic_swap()
+tests/unit/sync_test.aya:21: fn test_atomic_fetch_add_sub()
+tests/unit/sync_test.aya:32: fn test_atomic_field_of_struct()
+tests/unit/sync_test.aya:39: fn test_fence_and_relax()
+tests/unit/sync_test.aya:46: fn test_spinlock_from_swap()
+tests/unit/sync_test.aya:59: struct Holder
 tests/unit/text_test.aya:6: fn test_split()
 tests/unit/text_test.aya:20: fn test_join()
 tests/unit/text_test.aya:31: fn test_replace()

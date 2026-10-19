@@ -98,4 +98,64 @@ pub namespace ArchX86_64 {
         }
         return r;
     }
+
+    // ── 原子操作（顺序一致；只使用声明操作数，不依赖 clobber，见 issue #200） ──
+    // x86-64：对齐读写即原子；xchg/lock xadd 自带全栅栏（TSO + lock 前缀）。
+
+    /// 原子加载（顺序一致）
+    pub fn atomic_load(ref int p) -> int {
+        r = 0;
+        unsafe {
+            asm("movq ($1), $0", in(reg) p, out(reg) r)
+        }
+        return r;
+    }
+
+    /// 原子存储（顺序一致）
+    pub fn atomic_store(ref int p, int v) {
+        unsafe {
+            asm("movq $1, ($0)", in(reg) p, in(reg) v)
+        }
+    }
+
+    /// 原子交换（返回旧值；xchg 隐含 lock）
+    pub fn atomic_swap(ref int p, int v) -> int {
+        old = 0;
+        unsafe {
+            asm("movq $2, $0\n xchgq $0, ($1)", out(early reg) old, in(reg) p, in(reg) v)
+        }
+        return old;
+    }
+
+    /// 原子加（返回旧值）
+    pub fn atomic_fetch_add(ref int p, int v) -> int {
+        old = 0;
+        unsafe {
+            asm("movq $2, $0\n lock xaddq $0, ($1)", out(early reg) old, in(reg) p, in(reg) v)
+        }
+        return old;
+    }
+
+    /// 原子减（返回旧值）
+    pub fn atomic_fetch_sub(ref int p, int v) -> int {
+        old = 0;
+        unsafe {
+            asm("movq $2, $0\n negq $0\n lock xaddq $0, ($1)", out(early reg) old, in(reg) p, in(reg) v)
+        }
+        return old;
+    }
+
+    /// 全内存栅栏
+    pub fn fence() {
+        unsafe {
+            asm("mfence")
+        }
+    }
+
+    /// 自旋提示（pause；降低争用功耗与总线压力）
+    pub fn cpu_relax() {
+        unsafe {
+            asm("pause")
+        }
+    }
 }

@@ -16,6 +16,7 @@
 | [convert.md](modules/convert.md) | 解析与转换：`try_parse_*`、`parse_*_or`、`to_*`、`Into[T]` |
 | [rand.md](modules/rand.md) | 伪随机数：`Rng`（LCG，确定性） |
 | [time.md](modules/time.md) | 时间：`now_millis`（单调）/ `now_unix` |
+| [sync.md](modules/sync.md) | 并发原语：`AtomicInt`（顺序一致）、`fence` / `cpu_relax`（S1；锁/线程/通道见 [concurrency.md](dev/concurrency.md)） |
 | [alloc.md](modules/alloc.md) | 全局分配器：可替换后端接口与自定义分配器（覆盖弱符号） |
 | [macros.md](modules/macros.md) | 宏 TokenStream API（ABI v6 编解码、诊断、hygiene） |
 | [fs.md](modules/fs.md) | 文件读写：`exists` / `read_file` / `write_file` |
@@ -28,6 +29,7 @@
 | [runtime.md](dev/runtime.md) | C 运行时：ABI、约定与扩展步骤 |
 | [testing.md](dev/testing.md) | 测试框架：运行方式与新增用例 |
 | [plugins.md](dev/plugins.md) | 插件契约：MIR pass/check、标注验证责任、schema 版本与回归测试要求 |
+| [concurrency.md](dev/concurrency.md) | 并发设计：原子/线程/锁/通道接口、机器层 ABI、Send/Sync-lite 规则、分阶段计划 |
 
 ## 引入与运行
 

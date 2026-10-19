@@ -1,0 +1,58 @@
+import "arch_x86_64";
+
+// sync — 并发原语（S1：原子；锁/线程/通道见 docs/dev/concurrency.md）
+//
+// 设计（M7 038.1）：docs/dev/concurrency.md。
+// - 原子操作为顺序一致语义，由 core/arch_x86_64.aya 内联汇编实现（无运行时依赖）；
+// - 无 Drop → 锁采用回调式 with_lock（S3）；线程/通道按 S2/S4 落地；
+// - 内存序模型：x86-64 TSO，lock 前缀操作 = 全栅栏。
+//
+// 注意：AtomicInt 操作均需 ref self（可取地址的值），共享时经 ref 传递。
+
+pub struct AtomicInt {
+    int value
+}
+
+pub namespace AtomicInt {
+    /// 新建（初值）
+    pub fn new(int v) -> AtomicInt {
+        return AtomicInt { value = v };
+    }
+}
+
+impl AtomicInt {
+    /// 原子加载（顺序一致）
+    pub fn load(ref self) -> int {
+        return ArchX86_64::atomic_load(ref self.value);
+    }
+
+    /// 原子存储（顺序一致）
+    pub fn store(ref self, int v) {
+        ArchX86_64::atomic_store(ref self.value, v);
+    }
+
+    /// 原子交换（返回旧值）
+    pub fn swap(ref self, int v) -> int {
+        return ArchX86_64::atomic_swap(ref self.value, v);
+    }
+
+    /// 原子加（返回旧值）
+    pub fn fetch_add(ref self, int v) -> int {
+        return ArchX86_64::atomic_fetch_add(ref self.value, v);
+    }
+
+    /// 原子减（返回旧值）
+    pub fn fetch_sub(ref self, int v) -> int {
+        return ArchX86_64::atomic_fetch_sub(ref self.value, v);
+    }
+}
+
+/// 全内存栅栏（mfence）
+pub fn fence() {
+    ArchX86_64::fence();
+}
+
+/// 自旋提示（pause）
+pub fn cpu_relax() {
+    ArchX86_64::cpu_relax();
+}
