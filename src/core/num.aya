@@ -13,91 +13,91 @@ pub struct Overflowing {
 }
 
 /// 环绕加法（溢出回绕）
-#[pure]
+#[state]
 pub fn wrapping_add(int a, int b) -> int {
     return ArchX86_64::wrapping_add(a, b);
 }
 
 /// 环绕减法
-#[pure]
+#[state]
 pub fn wrapping_sub(int a, int b) -> int {
     return ArchX86_64::wrapping_sub(a, b);
 }
 
 /// 环绕乘法
-#[pure]
+#[state]
 pub fn wrapping_mul(int a, int b) -> int {
     return ArchX86_64::wrapping_mul(a, b);
 }
 
 /// 环绕取负
-#[pure]
+#[state]
 pub fn wrapping_neg(int a) -> int {
     return ArchX86_64::wrapping_neg(a);
 }
 
 /// 加法是否溢出
-#[pure]
+#[state]
 pub fn add_overflow(int a, int b) -> bool {
     return ArchX86_64::add_overflow(a, b) == 1;
 }
 
 /// 减法是否溢出
-#[pure]
+#[state]
 pub fn sub_overflow(int a, int b) -> bool {
     return ArchX86_64::sub_overflow(a, b) == 1;
 }
 
 /// 乘法是否溢出
-#[pure]
+#[state]
 pub fn mul_overflow(int a, int b) -> bool {
     return ArchX86_64::mul_overflow(a, b) == 1;
 }
 
 /// 饱和加法（溢出取边界值）
-#[pure]
+#[state]
 pub fn saturating_add(int a, int b) -> int {
     return ArchX86_64::saturating_add(a, b);
 }
 
 /// 饱和减法
-#[pure]
+#[state]
 pub fn saturating_sub(int a, int b) -> int {
     return ArchX86_64::saturating_sub(a, b);
 }
 
 /// 饱和乘法
-#[pure]
+#[state]
 pub fn saturating_mul(int a, int b) -> int {
     return ArchX86_64::saturating_mul(a, b);
 }
 
 /// 环绕加法（带溢出标记）
-#[pure]
+#[state]
 pub fn overflowing_add(int a, int b) -> Overflowing {
     return Overflowing { value = ArchX86_64::wrapping_add(a, b), overflow = ArchX86_64::add_overflow(a, b) == 1 };
 }
 
 /// 环绕减法（带溢出标记）
-#[pure]
+#[state]
 pub fn overflowing_sub(int a, int b) -> Overflowing {
     return Overflowing { value = ArchX86_64::wrapping_sub(a, b), overflow = ArchX86_64::sub_overflow(a, b) == 1 };
 }
 
 /// 环绕乘法（带溢出标记）
-#[pure]
+#[state]
 pub fn overflowing_mul(int a, int b) -> Overflowing {
     return Overflowing { value = ArchX86_64::wrapping_mul(a, b), overflow = ArchX86_64::mul_overflow(a, b) == 1 };
 }
 
 /// 取负是否溢出（仅 `i64::MIN`）
-#[pure]
+#[state]
 pub fn neg_overflow(int a) -> bool {
     return a == 0 - 9223372036854775807 - 1;
 }
 
 /// 饱和取负（`i64::MIN` 饱和为 `i64::MAX`）
-#[pure]
+#[state]
 pub fn saturating_neg(int a) -> int {
     if neg_overflow(a) {
         return 9223372036854775807;
@@ -106,13 +106,13 @@ pub fn saturating_neg(int a) -> int {
 }
 
 /// 环绕取负（带溢出标记）
-#[pure]
+#[state]
 pub fn overflowing_neg(int a) -> Overflowing {
     return Overflowing { value = wrapping_neg(a), overflow = neg_overflow(a) };
 }
 
 /// 检查取负（`i64::MIN` 返回 None）
-#[pure]
+#[state]
 pub fn checked_neg(int a) -> Option[int] {
     if neg_overflow(a) {
         return Option::None();
@@ -121,7 +121,7 @@ pub fn checked_neg(int a) -> Option[int] {
 }
 
 /// 检查加法（溢出返回 None）
-#[pure]
+#[state]
 pub fn checked_add(int a, int b) -> Option[int] {
     if add_overflow(a, b) {
         return Option::None();
@@ -130,7 +130,7 @@ pub fn checked_add(int a, int b) -> Option[int] {
 }
 
 /// 检查减法
-#[pure]
+#[state]
 pub fn checked_sub(int a, int b) -> Option[int] {
     if sub_overflow(a, b) {
         return Option::None();
@@ -139,7 +139,7 @@ pub fn checked_sub(int a, int b) -> Option[int] {
 }
 
 /// 检查乘法
-#[pure]
+#[state]
 pub fn checked_mul(int a, int b) -> Option[int] {
     if mul_overflow(a, b) {
         return Option::None();

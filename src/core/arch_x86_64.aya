@@ -12,6 +12,7 @@
 // 目标平台：x86-64（System V）。其他架构需提供对应 arch_* 模块。
 pub namespace ArchX86_64 {
     /// 环绕加法
+    #[state]
     pub fn wrapping_add(int a, int b) -> int {
         r = 0;
         unsafe {
@@ -20,6 +21,7 @@ pub namespace ArchX86_64 {
         return r;
     }
     /// 环绕减法
+    #[state]
     pub fn wrapping_sub(int a, int b) -> int {
         r = 0;
         unsafe {
@@ -28,6 +30,7 @@ pub namespace ArchX86_64 {
         return r;
     }
     /// 环绕乘法
+    #[state]
     pub fn wrapping_mul(int a, int b) -> int {
         r = 0;
         unsafe {
@@ -36,6 +39,7 @@ pub namespace ArchX86_64 {
         return r;
     }
     /// 环绕取负
+    #[state]
     pub fn wrapping_neg(int a) -> int {
         r = 0;
         unsafe {
@@ -44,6 +48,7 @@ pub namespace ArchX86_64 {
         return r;
     }
     /// 加法溢出（1/0）
+    #[state]
     pub fn add_overflow(int a, int b) -> int {
         r = 0;
         unsafe {
@@ -52,6 +57,7 @@ pub namespace ArchX86_64 {
         return r;
     }
     /// 减法溢出（1/0）
+    #[state]
     pub fn sub_overflow(int a, int b) -> int {
         r = 0;
         unsafe {
@@ -60,6 +66,7 @@ pub namespace ArchX86_64 {
         return r;
     }
     /// 乘法溢出（1/0）
+    #[state]
     pub fn mul_overflow(int a, int b) -> int {
         r = 0;
         unsafe {
@@ -68,6 +75,7 @@ pub namespace ArchX86_64 {
         return r;
     }
     /// 饱和加法（溢出取边界：a>0 → MAX，否则 MIN；无分支 cmov）
+    #[state]
     pub fn saturating_add(int a, int b) -> int {
         r = 0;
         t = 0;
@@ -78,6 +86,7 @@ pub namespace ArchX86_64 {
         return r;
     }
     /// 饱和减法（溢出取边界：a>0 → MAX，否则 MIN；无分支 cmov）
+    #[state]
     pub fn saturating_sub(int a, int b) -> int {
         r = 0;
         t = 0;
@@ -88,6 +97,7 @@ pub namespace ArchX86_64 {
         return r;
     }
     /// 饱和乘法（溢出方向按符号异或判定；无分支 cmov）
+    #[state]
     pub fn saturating_mul(int a, int b) -> int {
         r = 0;
         s = 0;
@@ -103,6 +113,7 @@ pub namespace ArchX86_64 {
     // x86-64：对齐读写即原子；xchg/lock xadd 自带全栅栏（TSO + lock 前缀）。
 
     /// 原子加载（顺序一致）
+    #[state]
     pub fn atomic_load(ref int p) -> int {
         r = 0;
         unsafe {
@@ -112,6 +123,7 @@ pub namespace ArchX86_64 {
     }
 
     /// 原子存储（顺序一致）
+    #[state]
     pub fn atomic_store(ref int p, int v) {
         unsafe {
             asm("movq $1, ($0)", in(reg) p, in(reg) v)
@@ -119,6 +131,7 @@ pub namespace ArchX86_64 {
     }
 
     /// 原子交换（返回旧值；xchg 隐含 lock）
+    #[state]
     pub fn atomic_swap(ref int p, int v) -> int {
         old = 0;
         unsafe {
@@ -128,6 +141,7 @@ pub namespace ArchX86_64 {
     }
 
     /// 原子加（返回旧值）
+    #[state]
     pub fn atomic_fetch_add(ref int p, int v) -> int {
         old = 0;
         unsafe {
@@ -137,6 +151,7 @@ pub namespace ArchX86_64 {
     }
 
     /// 原子减（返回旧值）
+    #[state]
     pub fn atomic_fetch_sub(ref int p, int v) -> int {
         old = 0;
         unsafe {
@@ -146,6 +161,7 @@ pub namespace ArchX86_64 {
     }
 
     /// 原子比较交换：`*p == expected` 时写入 `new`；返回旧值（old == expected 表示成功）
+    #[state]
     pub fn atomic_compare_exchange(ref int p, int expected, int new) -> int {
         old = 0;
         unsafe {
@@ -155,6 +171,7 @@ pub namespace ArchX86_64 {
     }
 
     /// 全内存栅栏
+    #[state]
     pub fn fence() {
         unsafe {
             asm("mfence")
@@ -162,6 +179,7 @@ pub namespace ArchX86_64 {
     }
 
     /// 自旋提示（pause；降低争用功耗与总线压力）
+    #[state]
     pub fn cpu_relax() {
         unsafe {
             asm("pause")

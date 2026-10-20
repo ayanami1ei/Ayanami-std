@@ -256,24 +256,24 @@ src/collections/text.aya:285: pub fn count(ref String s, ref String needle) -> i
 src/collections/text.aya:313: pub fn count_lines(ref String s) -> int
 src/collections/text.aya:334: pub fn truncate(ref String s, usize n) -> String
 src/core/arch_x86_64.aya:13: pub namespace ArchX86_64
-src/core/arch_x86_64.aya:15: pub fn wrapping_add(int a, int b) -> int
-src/core/arch_x86_64.aya:23: pub fn wrapping_sub(int a, int b) -> int
-src/core/arch_x86_64.aya:31: pub fn wrapping_mul(int a, int b) -> int
-src/core/arch_x86_64.aya:39: pub fn wrapping_neg(int a) -> int
-src/core/arch_x86_64.aya:47: pub fn add_overflow(int a, int b) -> int
-src/core/arch_x86_64.aya:55: pub fn sub_overflow(int a, int b) -> int
-src/core/arch_x86_64.aya:63: pub fn mul_overflow(int a, int b) -> int
-src/core/arch_x86_64.aya:71: pub fn saturating_add(int a, int b) -> int
-src/core/arch_x86_64.aya:81: pub fn saturating_sub(int a, int b) -> int
-src/core/arch_x86_64.aya:91: pub fn saturating_mul(int a, int b) -> int
-src/core/arch_x86_64.aya:106: pub fn atomic_load(ref int p) -> int
-src/core/arch_x86_64.aya:115: pub fn atomic_store(ref int p, int v)
-src/core/arch_x86_64.aya:122: pub fn atomic_swap(ref int p, int v) -> int
-src/core/arch_x86_64.aya:131: pub fn atomic_fetch_add(ref int p, int v) -> int
-src/core/arch_x86_64.aya:140: pub fn atomic_fetch_sub(ref int p, int v) -> int
-src/core/arch_x86_64.aya:149: pub fn atomic_compare_exchange(ref int p, int expected, int new) -> int
-src/core/arch_x86_64.aya:158: pub fn fence()
-src/core/arch_x86_64.aya:165: pub fn cpu_relax()
+src/core/arch_x86_64.aya:16: pub fn wrapping_add(int a, int b) -> int
+src/core/arch_x86_64.aya:25: pub fn wrapping_sub(int a, int b) -> int
+src/core/arch_x86_64.aya:34: pub fn wrapping_mul(int a, int b) -> int
+src/core/arch_x86_64.aya:43: pub fn wrapping_neg(int a) -> int
+src/core/arch_x86_64.aya:52: pub fn add_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:61: pub fn sub_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:70: pub fn mul_overflow(int a, int b) -> int
+src/core/arch_x86_64.aya:79: pub fn saturating_add(int a, int b) -> int
+src/core/arch_x86_64.aya:90: pub fn saturating_sub(int a, int b) -> int
+src/core/arch_x86_64.aya:101: pub fn saturating_mul(int a, int b) -> int
+src/core/arch_x86_64.aya:117: pub fn atomic_load(ref int p) -> int
+src/core/arch_x86_64.aya:127: pub fn atomic_store(ref int p, int v)
+src/core/arch_x86_64.aya:135: pub fn atomic_swap(ref int p, int v) -> int
+src/core/arch_x86_64.aya:145: pub fn atomic_fetch_add(ref int p, int v) -> int
+src/core/arch_x86_64.aya:155: pub fn atomic_fetch_sub(ref int p, int v) -> int
+src/core/arch_x86_64.aya:165: pub fn atomic_compare_exchange(ref int p, int expected, int new) -> int
+src/core/arch_x86_64.aya:175: pub fn fence()
+src/core/arch_x86_64.aya:183: pub fn cpu_relax()
 src/core/bitops.aya:4: pub fn popcount(int x) -> int
 src/core/bitops.aya:18: pub fn leading_zeros(int x) -> int
 src/core/bitops.aya:34: pub fn trailing_zeros(int x) -> int
@@ -720,28 +720,23 @@ src/system/sync.aya:12: pub struct AtomicInt
 src/system/sync.aya:16: pub namespace AtomicInt
 src/system/sync.aya:18: pub fn new(int v) -> AtomicInt
 src/system/sync.aya:23: impl AtomicInt
-src/system/sync.aya:25: pub fn load(ref self) -> int
-src/system/sync.aya:30: pub fn store(ref self, int v)
-src/system/sync.aya:35: pub fn swap(ref self, int v) -> int
-src/system/sync.aya:40: pub fn fetch_add(ref self, int v) -> int
-src/system/sync.aya:45: pub fn fetch_sub(ref self, int v) -> int
-src/system/sync.aya:51: pub fn fence()
-src/system/sync.aya:56: pub fn cpu_relax()
-src/system/sync.aya:61: fn __ayanami_futex_wait(*int addr, int expected) -> int;
-src/system/sync.aya:64: fn __ayanami_futex_wake(*int addr, int n) -> int;
-src/system/sync.aya:67: pub struct Slot[T]
-src/system/sync.aya:71: impl[T] Slot[T]
-src/system/sync.aya:73: pub fn get(ref self) -> ref T
-src/system/sync.aya:79: pub fn set(ref mut self, T v)
-src/system/sync.aya:87: pub struct Mutex[T]
-src/system/sync.aya:92: pub namespace Mutex
-src/system/sync.aya:93: pub fn new[T](T v) -> Mutex[T]
-src/system/sync.aya:98: impl[T] Mutex[T]
-src/system/sync.aya:101: pub fn with_lock(ref mut self, Fn(ref mut Slot[T]) -> void f) -> void
-src/system/sync.aya:109: pub fn with_lock_get[U](ref mut self, Fn(ref mut Slot[T]) -> U f) -> U
-src/system/sync.aya:118: pub fn lock(ref self) -> void
-src/system/sync.aya:137: pub fn unlock(ref self) -> void
-src/system/sync.aya:146: pub fn data(ref mut self) -> ref mut Slot[T]
+src/system/sync.aya:26: pub fn load(ref self) -> int
+src/system/sync.aya:32: pub fn store(ref self, int v)
+src/system/sync.aya:38: pub fn swap(ref self, int v) -> int
+src/system/sync.aya:44: pub fn fetch_add(ref self, int v) -> int
+src/system/sync.aya:50: pub fn fetch_sub(ref self, int v) -> int
+src/system/sync.aya:57: pub fn fence()
+src/system/sync.aya:63: pub fn cpu_relax()
+src/system/sync.aya:68: fn __ayanami_futex_wait(*int addr, int expected) -> int;
+src/system/sync.aya:71: fn __ayanami_futex_wake(*int addr, int n) -> int;
+src/system/sync.aya:76: pub struct Mutex[T]
+src/system/sync.aya:81: pub namespace Mutex
+src/system/sync.aya:82: pub fn new[T](T v) -> Mutex[T]
+src/system/sync.aya:87: impl[T] Mutex[T]
+src/system/sync.aya:91: pub fn with_lock[U](ref mut self, Fn(ref mut T) -> U f) -> U
+src/system/sync.aya:101: pub fn lock(ref self) -> void
+src/system/sync.aya:121: pub fn unlock(ref self) -> void
+src/system/sync.aya:130: pub fn data(ref mut self) -> ref mut T
 src/system/thread.aya:10: fn __ayanami_thread_spawn(Job job) -> usize;
 src/system/thread.aya:13: fn __ayanami_thread_join(usize handle) -> int;
 src/system/thread.aya:16: fn __ayanami_thread_id() -> int;
@@ -758,12 +753,12 @@ src/system/time.aya:12: fn __ayanami_time_millis() -> int;
 src/system/time.aya:15: fn __ayanami_time_micros() -> int;
 src/system/time.aya:18: fn __ayanami_time_unix() -> int;
 src/system/time.aya:21: fn __ayanami_time_sleep_ms(int ms);
-src/system/time.aya:25: pub fn now_millis() -> int
-src/system/time.aya:31: pub fn now_micros() -> int
-src/system/time.aya:37: pub fn now_unix() -> int
-src/system/time.aya:44: pub fn format_ms(int ms) -> String
-src/system/time.aya:64: pub fn elapsed_ms(int start) -> int
-src/system/time.aya:70: pub fn sleep_ms(int ms)
+src/system/time.aya:26: pub fn now_millis() -> int
+src/system/time.aya:33: pub fn now_micros() -> int
+src/system/time.aya:40: pub fn now_unix() -> int
+src/system/time.aya:47: pub fn format_ms(int ms) -> String
+src/system/time.aya:68: pub fn elapsed_ms(int start) -> int
+src/system/time.aya:75: pub fn sleep_ms(int ms)
 tests/bench/iter_chain.aya:26: fn build(int n, int seed) -> ArrayList[int]
 tests/bench/iter_chain.aya:37: fn sum_index(ref ArrayList[int] a) -> int
 tests/bench/iter_chain.aya:51: fn sum_iter(ArrayList[int] a) -> int
@@ -977,9 +972,8 @@ tests/unit/mir_test.aya:71: fn test_edit_helpers()
 tests/unit/mir_test.aya:98: fn test_stmt_op_predicates()
 tests/unit/mutex_test.aya:8: fn test_mutex_single_thread()
 tests/unit/mutex_test.aya:16: fn test_mutex_explicit_lock_unlock()
-tests/unit/mutex_test.aya:25: fn test_mutex_string_payload_drop()
-tests/unit/mutex_test.aya:33: fn contention_run() -> int
-tests/unit/mutex_test.aya:59: fn test_mutex_contention()
+tests/unit/mutex_test.aya:25: fn test_mutex_string_payload()
+tests/unit/mutex_test.aya:34: fn test_mutex_contention()
 tests/unit/num_test.aya:6: fn test_wrapping()
 tests/unit/num_test.aya:17: fn test_overflow_flags()
 tests/unit/num_test.aya:29: fn test_saturating()

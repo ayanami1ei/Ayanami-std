@@ -22,37 +22,44 @@ pub namespace AtomicInt {
 
 impl AtomicInt {
     /// 原子加载（顺序一致）
+    #[state]
     pub fn load(ref self) -> int {
         return ArchX86_64::atomic_load(ref self.value);
     }
 
     /// 原子存储（顺序一致）
+    #[state]
     pub fn store(ref self, int v) {
         ArchX86_64::atomic_store(ref self.value, v);
     }
 
     /// 原子交换（返回旧值）
+    #[state]
     pub fn swap(ref self, int v) -> int {
         return ArchX86_64::atomic_swap(ref self.value, v);
     }
 
     /// 原子加（返回旧值）
+    #[state]
     pub fn fetch_add(ref self, int v) -> int {
         return ArchX86_64::atomic_fetch_add(ref self.value, v);
     }
 
     /// 原子减（返回旧值）
+    #[state]
     pub fn fetch_sub(ref self, int v) -> int {
         return ArchX86_64::atomic_fetch_sub(ref self.value, v);
     }
 }
 
 /// 全内存栅栏（mfence）
+#[state]
 pub fn fence() {
     ArchX86_64::fence();
 }
 
 /// 自旋提示（pause）
+#[state]
 pub fn cpu_relax() {
     ArchX86_64::cpu_relax();
 }
@@ -63,58 +70,34 @@ fn __ayanami_futex_wait(*int addr, int expected) -> int;
 #[extern]
 fn __ayanami_futex_wake(*int addr, int n) -> int;
 
-/// 锁载荷槽（闭包经 `get`/`set` 读写；`ref mut` 参数支持字段写、不支持整体写）
-pub struct Slot[T] {
-    T value
-}
-
-impl[T] Slot[T] {
-    /// 读取载荷（借用；配合 `*` 解引用读值）
-    pub fn get(ref self) -> ref T {
-        return ref self.value;
-    }
-
-    /// 替换载荷（旧值按值 drop）
-    #[state]
-    pub fn set(ref mut self, T v) {
-        self.value = v;
-    }
-}
-
 /// 互斥锁（futex；无 Drop → 回调式 with_lock，或显式 lock/unlock 配对）
 ///
 /// state：0 空闲 / 1 占用 / 2 占用且有等待者（futex 等待字）。
 pub struct Mutex[T] {
     int state
-    Slot[T] slot
+    T payload
 }
 
 pub namespace Mutex {
     pub fn new[T](T v) -> Mutex[T] {
-        return Mutex[T] { state = 0, slot = Slot[T] { value = v } };
+        return Mutex[T] { state = 0, payload = v };
     }
 }
 
 impl[T] Mutex[T] {
-    /// 加锁 → 以 `ref mut Slot[T]` 传入载荷 → 解锁（RAII 守卫的替代）
+    /// 加锁 → 以 `ref mut` 传入载荷 → 解锁；返回回调结果（void 回调可作语句）
     #[io]
-    pub fn with_lock(ref mut self, Fn(ref mut Slot[T]) -> void f) -> void {
+    #[state]
+    pub fn with_lock[U](ref mut self, Fn(ref mut T) -> U f) -> U {
         self.lock();
-        f(ref mut self.slot);
-        self.unlock();
-    }
-
-    /// 同 `with_lock`，但返回回调结果（读取载荷用）
-    #[io]
-    pub fn with_lock_get[U](ref mut self, Fn(ref mut Slot[T]) -> U f) -> U {
-        self.lock();
-        r = f(ref mut self.slot);
+        r = f(ref mut self.payload);
         self.unlock();
         return r;
     }
 
     /// 显式加锁（必须配对 unlock）
     #[io]
+    #[state]
     pub fn lock(ref self) -> void {
         if ArchX86_64::atomic_compare_exchange(ref self.state, 0, 1) == 0 {
             return
@@ -134,6 +117,7 @@ impl[T] Mutex[T] {
 
     /// 解锁；若有等待者则唤醒一个
     #[io]
+    #[state]
     pub fn unlock(ref self) -> void {
         if ArchX86_64::atomic_swap(ref self.state, 0) == 2 {
             unsafe {
@@ -142,8 +126,8 @@ impl[T] Mutex[T] {
         }
     }
 
-    /// 载荷槽（仅在持锁期间使用；文档约定）
-    pub fn data(ref mut self) -> ref mut Slot[T] {
-        return ref mut self.slot
+    /// 载荷（仅在持锁期间使用；文档约定）
+    pub fn data(ref mut self) -> ref mut T {
+        return ref mut self.payload
     }
 }

@@ -22,18 +22,21 @@ fn __ayanami_time_sleep_ms(int ms);
 
 /// 单调毫秒（计时用）
 #[io]
+#[state]
 pub fn now_millis() -> int {
     return __ayanami_time_millis();
 }
 
 /// 单调微秒（计时用）
 #[io]
+#[state]
 pub fn now_micros() -> int {
     return __ayanami_time_micros();
 }
 
 /// Unix 秒
 #[io]
+#[state]
 pub fn now_unix() -> int {
     return __ayanami_time_unix();
 }
@@ -61,12 +64,14 @@ pub fn format_ms(int ms) -> String {
 
 /// 自 `start`（来自 `now_millis`）起的毫秒差
 #[io]
+#[state]
 pub fn elapsed_ms(int start) -> int {
     return now_millis() - start;
 }
 
 /// 睡眠 `ms` 毫秒（`<= 0` 直接返回）
 #[io]
+#[state]
 pub fn sleep_ms(int ms) {
     if ms <= 0 {
         return;

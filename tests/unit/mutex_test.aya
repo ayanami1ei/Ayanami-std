@@ -7,8 +7,8 @@ import "test";
 #[test]
 fn test_mutex_single_thread() {
     m = Mutex::new[int](41);
-    m.with_lock((ref mut Slot[int] s) -> void { s.set(s.get() + 1) });
-    r = m.with_lock_get((ref mut Slot[int] s) -> int { s.get() });
+    m.with_lock((ref mut int v) -> void { *v = *v + 1 });
+    r = m.with_lock((ref mut int v) -> int { *v });
     #assert_eq(r, 42)
 }
 
@@ -17,20 +17,22 @@ fn test_mutex_explicit_lock_unlock() {
     m = Mutex::new[int](3);
     m.lock();
     m.unlock();
-    r = m.with_lock_get((ref mut Slot[int] s) -> int { s.get() });
+    r = m.with_lock((ref mut int v) -> int { *v });
     #assert_eq(r, 3)
 }
 
 #[test]
-fn test_mutex_string_payload_drop() {
-    // 拥有型载荷随 Mutex 析构（泄漏由 mem 门禁间接覆盖）
+fn test_mutex_string_payload() {
+    // 拥有型载荷：替换后旧值 drop（泄漏由 mem 门禁间接覆盖）
     m = Mutex::new[String]("hello");
-    m.with_lock((ref mut Slot[String] s) -> void { s.set("world") });
-    #assert_eq(1, 1)
+    m.with_lock((ref mut String s) -> void { *s = "world" });
+    n = m.with_lock((ref mut String s) -> int { (*s).len() as int });
+    #assert_eq(n, 5)
 }
 
-// 并发争用体放在普通函数中（#[test] 函数体内直接写会触发编译器 #206）
-fn contention_run() -> int {
+#[test]
+fn test_mutex_contention() {
+    // 8 线程并发争用（futex 等待/唤醒路径）
     m = Mutex::new[int](0);
     done = AtomicInt::new(0);
     n = 8;
@@ -41,7 +43,7 @@ fn contention_run() -> int {
         while i < n {
             Thread::spawn(() -> void {
                 unsafe {
-                    (*pm).with_lock((ref mut Slot[int] s) -> void { s.set(s.get() + 1) });
+                    (*pm).with_lock((ref mut int v) -> void { *v = *v + 1 });
                     (*pd).fetch_add(1)
                 }
             })
@@ -51,11 +53,6 @@ fn contention_run() -> int {
             cpu_relax()
         }
     }
-    total = m.with_lock_get((ref mut Slot[int] s) -> int { s.get() });
-    return total
-}
-
-#[test]
-fn test_mutex_contention() {
-    #assert_eq(contention_run(), 8)
+    total = m.with_lock((ref mut int v) -> int { *v });
+    #assert_eq(total, n)
 }

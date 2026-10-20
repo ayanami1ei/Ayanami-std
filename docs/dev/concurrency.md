@@ -69,28 +69,21 @@ pub fn sleep_ms(int)            // 复用 system/time
 ### 3.3 互斥/读写锁 — `system/sync.aya`
 
 ```ayanami
-pub struct Slot[T] { T value }
-impl[T] Slot[T] {
-    pub fn get(ref self) -> ref T        // 借用读（值上下文自动解引用）
-    pub fn set(ref mut self, T v)        // 替换（旧值 drop）
-}
-
-pub struct Mutex[T] { int state; Slot[T] slot }
+pub struct Mutex[T] { int state; T payload }
 
 impl[T] Mutex[T] {
-    pub fn with_lock(ref mut self, Fn(ref mut Slot[T]) -> void f)      // 回调式（推荐）
-    pub fn with_lock_get[U](ref mut self, Fn(ref mut Slot[T]) -> U f) -> U  // 带返回值
+    pub fn new(T v) -> Mutex[T]
+    pub fn with_lock[U](ref mut self, Fn(ref mut T) -> U f) -> U   // 回调式（void 可作语句）
     pub fn lock(ref self)        // 显式式（无 Drop 的折中）
     pub fn unlock(ref self)
-    pub fn data(ref mut self) -> ref mut Slot[T]   // 仅持锁期间调用（文档约定）
+    pub fn data(ref mut self) -> ref mut T   // 仅持锁期间调用（文档约定）
 }
 
 // RwLock[T]（S3 后续增量）：with_read / with_write 回调式
 ```
 
-> 说明：`ref mut` 形参只支持**字段写**（不支持整体 `*v = ...`），故载荷经 `Slot[T]`
-> 包装、用 `get`/`set` 访问；闭包按值捕获（不能回写外层变量），读取结果用
-> `with_lock_get` 返回（编译器 #205/#206 修复后可再简化）。
+> 回调直接收到 `ref mut T`（编译器 #205 修复后可安全解引用/整体写）；闭包按值捕获
+> （不能回写外层变量），需要读取结果时用 `with_lock` 的返回值（`U`）。
 
 ### 3.4 通道 — `system/channel.aya`（后续）
 

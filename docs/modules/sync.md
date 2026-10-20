@@ -39,23 +39,18 @@ lock.store(0);
 
 | API | 说明 |
 |---|---|
-| `Mutex::new[T](T v)` | 新建（载荷存入 `Slot[T]`） |
-| `m.with_lock((ref mut Slot[T] s) -> void { ... })` | 加锁 → 回调 → 解锁 |
-| `m.with_lock_get[U]((ref mut Slot[T] s) -> U { ... }) -> U` | 同上，返回回调结果（读取用） |
+| `Mutex::new[T](T v)` | 新建 |
+| `m.with_lock((ref mut T v) -> U { ... }) -> U` | 加锁 → 回调 → 解锁；返回回调结果（void 可作语句） |
 | `m.lock()` / `m.unlock()` | 显式加锁/解锁（必须配对） |
-| `s.get() -> ref T` | 载荷读（值上下文自动解引用） |
-| `s.set(T v)` | 替换载荷（旧值 drop） |
+| `m.data() -> ref mut T` | 载荷（仅持锁期间使用） |
 
 实现：futex（0 空闲 / 1 占用 / 2 有等待者）。示例：
 
 ```ayanami
 m = Mutex::new[int](0);
-m.with_lock((ref mut Slot[int] s) -> void { s.set(s.get() + 1) });
-v = m.with_lock_get((ref mut Slot[int] s) -> int { s.get() });
+m.with_lock((ref mut int v) -> void { *v = *v + 1 });
+v = m.with_lock((ref mut int v) -> int { *v });
 ```
-
-> `ref mut` 形参只支持字段写（不支持 `*v = ...` 整体写），故载荷用 `Slot.get/set`；
-> 闭包按值捕获，读取结果经 `with_lock_get` 返回。
 
 ## 待落地（见设计文档 §6）
 
