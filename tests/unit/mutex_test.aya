@@ -1,0 +1,61 @@
+import "sync";
+
+import "thread";
+
+import "test";
+
+#[test]
+fn test_mutex_single_thread() {
+    m = Mutex::new[int](41);
+    m.with_lock((ref mut Slot[int] s) -> void { s.set(s.get() + 1) });
+    r = m.with_lock_get((ref mut Slot[int] s) -> int { s.get() });
+    #assert_eq(r, 42)
+}
+
+#[test]
+fn test_mutex_explicit_lock_unlock() {
+    m = Mutex::new[int](3);
+    m.lock();
+    m.unlock();
+    r = m.with_lock_get((ref mut Slot[int] s) -> int { s.get() });
+    #assert_eq(r, 3)
+}
+
+#[test]
+fn test_mutex_string_payload_drop() {
+    // 拥有型载荷随 Mutex 析构（泄漏由 mem 门禁间接覆盖）
+    m = Mutex::new[String]("hello");
+    m.with_lock((ref mut Slot[String] s) -> void { s.set("world") });
+    #assert_eq(1, 1)
+}
+
+// 并发争用体放在普通函数中（#[test] 函数体内直接写会触发编译器 #206）
+fn contention_run() -> int {
+    m = Mutex::new[int](0);
+    done = AtomicInt::new(0);
+    n = 8;
+    unsafe {
+        pm = ref m as *Mutex[int]
+        pd = ref done as *AtomicInt
+        i = 0;
+        while i < n {
+            Thread::spawn(() -> void {
+                unsafe {
+                    (*pm).with_lock((ref mut Slot[int] s) -> void { s.set(s.get() + 1) });
+                    (*pd).fetch_add(1)
+                }
+            })
+            i = i + 1
+        }
+        while done.load() < n {
+            cpu_relax()
+        }
+    }
+    total = m.with_lock_get((ref mut Slot[int] s) -> int { s.get() });
+    return total
+}
+
+#[test]
+fn test_mutex_contention() {
+    #assert_eq(contention_run(), 8)
+}

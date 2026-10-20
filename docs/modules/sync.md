@@ -35,9 +35,30 @@ while lock.swap(1) != 0 {
 lock.store(0);
 ```
 
+## 互斥锁（S3）
+
+| API | 说明 |
+|---|---|
+| `Mutex::new[T](T v)` | 新建（载荷存入 `Slot[T]`） |
+| `m.with_lock((ref mut Slot[T] s) -> void { ... })` | 加锁 → 回调 → 解锁 |
+| `m.with_lock_get[U]((ref mut Slot[T] s) -> U { ... }) -> U` | 同上，返回回调结果（读取用） |
+| `m.lock()` / `m.unlock()` | 显式加锁/解锁（必须配对） |
+| `s.get() -> ref T` | 载荷读（值上下文自动解引用） |
+| `s.set(T v)` | 替换载荷（旧值 drop） |
+
+实现：futex（0 空闲 / 1 占用 / 2 有等待者）。示例：
+
+```ayanami
+m = Mutex::new[int](0);
+m.with_lock((ref mut Slot[int] s) -> void { s.set(s.get() + 1) });
+v = m.with_lock_get((ref mut Slot[int] s) -> int { s.get() });
+```
+
+> `ref mut` 形参只支持字段写（不支持 `*v = ...` 整体写），故载荷用 `Slot.get/set`；
+> 闭包按值捕获，读取结果经 `with_lock_get` 返回。
+
 ## 待落地（见设计文档 §6）
 
-- **S2 线程**：`Thread::spawn/join`、`current_id`、`yield_now`（运行时 `clone`+futex）；
-- **S3 锁**：`Mutex[T]`（`with_lock` 回调式，无 Drop 约束）、`RwLock[T]`；
 - **S4 通道**：`Channel[T]`（mpsc）；
-- `compare_exchange`/`fetch_and` 等需 clobber 支持（编译器 issue #200）。
+- **S5 执行器**：`block_on` + 多线程执行器（衔接编译器 `docs/async.md`）；
+- `RwLock[T]`（`with_read`/`with_write` 回调式）与 `fetch_and/or/xor`（cmpxchg 循环）。

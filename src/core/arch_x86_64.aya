@@ -145,6 +145,15 @@ pub namespace ArchX86_64 {
         return old;
     }
 
+    /// 原子比较交换：`*p == expected` 时写入 `new`；返回旧值（old == expected 表示成功）
+    pub fn atomic_compare_exchange(ref int p, int expected, int new) -> int {
+        old = 0;
+        unsafe {
+            asm("movq $2, %rax\n lock cmpxchgq $3, ($1)\n movq %rax, $0", out(reg) old, in(reg) p, in(reg) expected, in(reg) new, clobbers(rax))
+        }
+        return old;
+    }
+
     /// 全内存栅栏
     pub fn fence() {
         unsafe {

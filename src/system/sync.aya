@@ -56,3 +56,94 @@ pub fn fence() {
 pub fn cpu_relax() {
     ArchX86_64::cpu_relax();
 }
+
+#[extern]
+fn __ayanami_futex_wait(*int addr, int expected) -> int;
+
+#[extern]
+fn __ayanami_futex_wake(*int addr, int n) -> int;
+
+/// 锁载荷槽（闭包经 `get`/`set` 读写；`ref mut` 参数支持字段写、不支持整体写）
+pub struct Slot[T] {
+    T value
+}
+
+impl[T] Slot[T] {
+    /// 读取载荷（借用；配合 `*` 解引用读值）
+    pub fn get(ref self) -> ref T {
+        return ref self.value;
+    }
+
+    /// 替换载荷（旧值按值 drop）
+    #[state]
+    pub fn set(ref mut self, T v) {
+        self.value = v;
+    }
+}
+
+/// 互斥锁（futex；无 Drop → 回调式 with_lock，或显式 lock/unlock 配对）
+///
+/// state：0 空闲 / 1 占用 / 2 占用且有等待者（futex 等待字）。
+pub struct Mutex[T] {
+    int state
+    Slot[T] slot
+}
+
+pub namespace Mutex {
+    pub fn new[T](T v) -> Mutex[T] {
+        return Mutex[T] { state = 0, slot = Slot[T] { value = v } };
+    }
+}
+
+impl[T] Mutex[T] {
+    /// 加锁 → 以 `ref mut Slot[T]` 传入载荷 → 解锁（RAII 守卫的替代）
+    #[io]
+    pub fn with_lock(ref mut self, Fn(ref mut Slot[T]) -> void f) -> void {
+        self.lock();
+        f(ref mut self.slot);
+        self.unlock();
+    }
+
+    /// 同 `with_lock`，但返回回调结果（读取载荷用）
+    #[io]
+    pub fn with_lock_get[U](ref mut self, Fn(ref mut Slot[T]) -> U f) -> U {
+        self.lock();
+        r = f(ref mut self.slot);
+        self.unlock();
+        return r;
+    }
+
+    /// 显式加锁（必须配对 unlock）
+    #[io]
+    pub fn lock(ref self) -> void {
+        if ArchX86_64::atomic_compare_exchange(ref self.state, 0, 1) == 0 {
+            return
+        }
+        while true {
+            if ArchX86_64::atomic_load(ref self.state) == 1 {
+                ArchX86_64::atomic_compare_exchange(ref self.state, 1, 2);
+            }
+            unsafe {
+                __ayanami_futex_wait(ref self.state as *int, 2)
+            }
+            if ArchX86_64::atomic_compare_exchange(ref self.state, 0, 2) == 0 {
+                return
+            }
+        }
+    }
+
+    /// 解锁；若有等待者则唤醒一个
+    #[io]
+    pub fn unlock(ref self) -> void {
+        if ArchX86_64::atomic_swap(ref self.state, 0) == 2 {
+            unsafe {
+                __ayanami_futex_wake(ref self.state as *int, 1)
+            }
+        }
+    }
+
+    /// 载荷槽（仅在持锁期间使用；文档约定）
+    pub fn data(ref mut self) -> ref mut Slot[T] {
+        return ref mut self.slot
+    }
+}

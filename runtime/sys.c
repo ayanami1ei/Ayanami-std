@@ -161,6 +161,22 @@ int64_t __ayanami_thread_yield(void) {
 
 #endif // AYANAMI_ASM_PORT（线程由汇编后端提供）
 
+// ── futex（C 后端：syscall(2)；EINTR 视为 0，由调用方重查状态） ──
+#ifndef AYANAMI_ASM_PORT
+#include <linux/futex.h>
+
+int64_t __ayanami_futex_wait(int32_t *addr, int32_t expected) {
+    long r = syscall(SYS_futex, addr, FUTEX_WAIT, expected, NULL, NULL, 0);
+    if (r == -1 && errno == EINTR) return 0;
+    return r == 0 ? 0 : -1;
+}
+
+int64_t __ayanami_futex_wake(int32_t *addr, int32_t n) {
+    long r = syscall(SYS_futex, addr, FUTEX_WAKE, n, NULL, NULL, 0);
+    return r < 0 ? -1 : (int64_t)r;
+}
+#endif // AYANAMI_ASM_PORT（futex 由汇编后端提供）
+
 static int path_cstr(__ayanami_str_view path, char *out, size_t cap) {
     if (path.len <= 0 || path.len >= (long)cap) { errno = EINVAL; return 0; }
     memcpy(out, path.data, (size_t)path.len);

@@ -196,6 +196,13 @@ int main(void) {
         assert(__ayanami_thread_yield() == 0);
     }
 
+    // futex：值不匹配立即返回 -1（EAGAIN）；无等待者时 wake 返回 0
+    {
+        static int32_t fw = 0;
+        assert(__ayanami_futex_wait(&fw, 1) == -1);
+        assert(__ayanami_futex_wake(&fw, 1) == 0);
+    }
+
     printf("asm-x86_64 runtime self-test ok (ABI %lld)\n",
            (long long)__ayanami_runtime_abi());
     return 0;

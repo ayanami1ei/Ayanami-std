@@ -69,19 +69,28 @@ pub fn sleep_ms(int)            // 复用 system/time
 ### 3.3 互斥/读写锁 — `system/sync.aya`
 
 ```ayanami
-pub struct Mutex[T] { int state; T payload }
-
-impl[T] Mutex[T] {
-    pub fn new(T v) -> Mutex[T]
-    pub fn with_lock[F: Fn(ref mut T) -> void](ref self, F f)   // 回调式（推荐）
-    pub fn lock(ref self)        // 显式式（无 Drop 的折中）
-    pub fn unlock(ref self)
-    pub fn data(ref mut self) -> ref mut T                      // 仅持锁期间调用（文档约定）
+pub struct Slot[T] { T value }
+impl[T] Slot[T] {
+    pub fn get(ref self) -> ref T        // 借用读（值上下文自动解引用）
+    pub fn set(ref mut self, T v)        // 替换（旧值 drop）
 }
 
-pub struct RwLock[T] { int state; T payload }
-// with_read[F: Fn(ref T) -> void] / with_write[F: Fn(ref mut T) -> void]
+pub struct Mutex[T] { int state; Slot[T] slot }
+
+impl[T] Mutex[T] {
+    pub fn with_lock(ref mut self, Fn(ref mut Slot[T]) -> void f)      // 回调式（推荐）
+    pub fn with_lock_get[U](ref mut self, Fn(ref mut Slot[T]) -> U f) -> U  // 带返回值
+    pub fn lock(ref self)        // 显式式（无 Drop 的折中）
+    pub fn unlock(ref self)
+    pub fn data(ref mut self) -> ref mut Slot[T]   // 仅持锁期间调用（文档约定）
+}
+
+// RwLock[T]（S3 后续增量）：with_read / with_write 回调式
 ```
+
+> 说明：`ref mut` 形参只支持**字段写**（不支持整体 `*v = ...`），故载荷经 `Slot[T]`
+> 包装、用 `get`/`set` 访问；闭包按值捕获（不能回写外层变量），读取结果用
+> `with_lock_get` 返回（编译器 #205/#206 修复后可再简化）。
 
 ### 3.4 通道 — `system/channel.aya`（后续）
 
@@ -107,12 +116,16 @@ pub fn try_recv(ref self) -> Option[T]
 
 `cmpxchg`（固定 `%rax`）与 `syscall`（破坏 `%rcx/%r11`）需 clobber 支持（#200）。
 
-### 4.2 futex（锁/通道/唤醒的等待原语）
+### 4.2 futex（锁/通道/唤醒的等待原语）— S3 已落地
 
 ```c
-int64_t __ayanami_futex_wait(int32_t *addr, int32_t expected);  // FUTEX_WAIT
-int64_t __ayanami_futex_wake(int32_t *addr, int32_t n);         // FUTEX_WAKE
+int64_t __ayanami_futex_wait(int32_t *addr, int32_t expected);  // FUTEX_WAIT；EINTR→0
+int64_t __ayanami_futex_wake(int32_t *addr, int32_t n);         // FUTEX_WAKE；返回唤醒数
 ```
+
+实现：C 后端 `syscall(SYS_futex, ...)`；汇编后端 `futex.s`（raw syscall 202）。
+`Mutex` 状态机：0 空闲 / 1 占用 / 2 占用且有等待者；`lock` = 快速 CAS 0→1，
+慢路径 1→2 + FUTEX_WAIT，`unlock` = xchg 0 且旧值为 2 时唤醒一个。
 
 - C 后端：`syscall(SYS_futex, ...)`；汇编后端：raw syscall（202）。EINTR 返回 0（调用方自旋重查）。
 - std 侧封装：`wait(state, expected)` / `wake(n)`（`ref int` → 地址经 `*T`/`reinterpret`）。
@@ -160,7 +173,7 @@ int64_t __ayanami_thread_yield(void);                     // sched_yield
 |---|---|---|---|
 | **S1** | `AtomicInt` + `fence`/`cpu_relax`（纯内联汇编） | 单线程语义测试（load/store/swap/fetch_*/自旋锁）；零运行时依赖 | ✅ 本批 |
 | **S2** | 线程：`spawn`/`join`/`current_id`/`yield_now`（pthread；asm 后端 raw syscall + pthread） | 多线程计数器（原子累加）、闭包捕获析构、join 语义、`thread_test` | ✅ 本批 |
-| **S3** | `Mutex[T]`/`RwLock[T]`（futex + 自旋退化） | 多线程互斥累加、`with_lock` 回调、争用基准 | 待做 |
+| **S3** | `Mutex[T]`（futex；`Slot[T]` 载荷访问）＋ `futex_wait/wake` 两后端 | 单线程语义、显式 lock/unlock、8 线程争用累加 | ✅ 本批（RwLock 待做） |
 | **S4** | `Channel[T]`（mpsc；Mutex + futex 等待队列） | 生产者/消费者、关闭语义、`try_recv` | 待做 |
 | **S5** | 最简 `block_on` + 多线程执行器（衔接 `038.4`） | 跨线程轮询、`Waker` = 原子 + futex wake | 待做（依赖编译器 async） |
 

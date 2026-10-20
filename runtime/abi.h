@@ -106,6 +106,10 @@ int64_t __ayanami_thread_join(int64_t handle); // 0 成功 / -1
 int64_t __ayanami_thread_id(void);             // 内核 tid
 int64_t __ayanami_thread_yield(void);          // sched_yield
 
+// ── futex（锁/通道等待原语；*addr 指向 int 字） ──
+int64_t __ayanami_futex_wait(int32_t *addr, int32_t expected); // 0（含 EINTR）/ -1
+int64_t __ayanami_futex_wake(int32_t *addr, int32_t n);        // 唤醒数 / -1
+
 // ── 文件（缓冲区由 unique_alloc 分配，调用方用 unique_free 释放） ──
 int64_t __ayanami_fs_size(__ayanami_str_view path);   // 字节数；-1 不存在/出错
 char *__ayanami_fs_read(__ayanami_str_view path);     // unique_alloc 缓冲（NUL 结尾）；NULL 出错
