@@ -726,6 +726,18 @@ src/system/sync.aya:40: pub fn fetch_add(ref self, int v) -> int
 src/system/sync.aya:45: pub fn fetch_sub(ref self, int v) -> int
 src/system/sync.aya:51: pub fn fence()
 src/system/sync.aya:56: pub fn cpu_relax()
+src/system/thread.aya:10: fn __ayanami_thread_spawn(Job job) -> usize;
+src/system/thread.aya:13: fn __ayanami_thread_join(usize handle) -> int;
+src/system/thread.aya:16: fn __ayanami_thread_id() -> int;
+src/system/thread.aya:19: fn __ayanami_thread_yield() -> int;
+src/system/thread.aya:22: struct Job
+src/system/thread.aya:26: pub struct Thread
+src/system/thread.aya:30: pub namespace Thread
+src/system/thread.aya:33: pub fn spawn(Fn() -> void f) -> Thread
+src/system/thread.aya:38: impl Thread
+src/system/thread.aya:41: pub fn join(self) -> void
+src/system/thread.aya:48: pub fn current_id() -> int
+src/system/thread.aya:54: pub fn yield_now() -> int
 src/system/time.aya:12: fn __ayanami_time_millis() -> int;
 src/system/time.aya:15: fn __ayanami_time_micros() -> int;
 src/system/time.aya:18: fn __ayanami_time_unix() -> int;
@@ -1032,6 +1044,10 @@ tests/unit/text_test.aya:99: fn test_text_iters()
 tests/unit/text_test.aya:118: fn test_split_iter()
 tests/unit/text_test.aya:147: fn test_count_lines()
 tests/unit/text_test.aya:156: fn test_truncate()
+tests/unit/thread_test.aya:8: fn test_thread_spawn_join()
+tests/unit/thread_test.aya:19: fn test_thread_current_id_and_yield()
+tests/unit/thread_test.aya:33: fn test_thread_many()
+tests/unit/thread_test.aya:48: fn test_thread_captured_string()
 tests/unit/time_test.aya:6: fn test_time()
 tests/unit/time_test.aya:14: fn test_sleep()
 tests/unit/time_test.aya:22: fn test_elapsed()

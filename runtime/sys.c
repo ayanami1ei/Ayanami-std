@@ -5,6 +5,10 @@
 
 #include <time.h>
 #include <errno.h>
+#include <pthread.h>
+#include <sched.h>
+#include <unistd.h>
+#include <sys/syscall.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #if defined(__linux__)
@@ -63,8 +67,6 @@ int64_t __ayanami_cstr_len(const char *s) {
     return s ? (int64_t)strlen(s) : 0;
 }
 
-#ifndef AYANAMI_ASM_PORT
-#endif // AYANAMI_ASM_PORT（errno 助手由汇编后端提供）
 
 // 系统熵源：优先 getrandom，退回 /dev/urandom，最后退回 time()
 int64_t __ayanami_random_u64(void) {
@@ -117,6 +119,47 @@ int64_t __ayanami_time_sleep_ms(int64_t ms) {
 }
 
 #endif // AYANAMI_ASM_PORT（熵源与时间由汇编后端提供）
+
+// ── 线程（pthread；Job 按值传入，运行时接管闭包所有权） ──
+#ifndef AYANAMI_ASM_PORT
+
+static void *ayanami_thread_entry(void *jobp) {
+    __ayanami_thread_job *job = (__ayanami_thread_job *)jobp;
+    void *env = job->env;
+    void **vt = (void **)job->vtable;
+    void (*trampoline)(void *) = (void (*)(void *))vt[1];
+    void (*drop)(void *) = (void (*)(void *))vt[0];
+    trampoline(env);
+    drop(env);
+    free(job);
+    return NULL;
+}
+
+int64_t __ayanami_thread_spawn(__ayanami_thread_job job) {
+    __ayanami_thread_job *slot = (__ayanami_thread_job *)malloc(sizeof *slot);
+    if (!slot) return 0;
+    *slot = job;
+    pthread_t t;
+    if (pthread_create(&t, NULL, ayanami_thread_entry, slot) != 0) {
+        free(slot);
+        return 0;
+    }
+    return (int64_t)(unsigned long)t;
+}
+
+int64_t __ayanami_thread_join(int64_t handle) {
+    return pthread_join((pthread_t)(unsigned long)handle, NULL) == 0 ? 0 : -1;
+}
+
+int64_t __ayanami_thread_id(void) {
+    return (int64_t)syscall(SYS_gettid);
+}
+
+int64_t __ayanami_thread_yield(void) {
+    return (int64_t)sched_yield();
+}
+
+#endif // AYANAMI_ASM_PORT（线程由汇编后端提供）
 
 static int path_cstr(__ayanami_str_view path, char *out, size_t cap) {
     if (path.len <= 0 || path.len >= (long)cap) { errno = EINVAL; return 0; }

@@ -17,14 +17,15 @@ $CC -c runtime/backends/asm-x86_64/fs.s -o "$OUT/fs.o"
 $CC -c runtime/backends/asm-x86_64/fs_io.s -o "$OUT/fs_io.o"
 $CC -c runtime/backends/asm-x86_64/args_env.s -o "$OUT/args_env.o"
 $CC -c runtime/backends/asm-x86_64/panic.s -o "$OUT/panic.o"
+$CC -c runtime/backends/asm-x86_64/thread.s -o "$OUT/thread.o"
 
 # 其余 C 运行时（排除已汇编实现的部分）
 $CC -O2 -DAYANAMI_ASM_PORT -c runtime.c -o "$OUT/c_rest.o"
 
-ar rcs "$OUT/libruntime.a" "$OUT/core.o" "$OUT/arith.o" "$OUT/io.o" "$OUT/time.o" "$OUT/rand.o" "$OUT/fs.o" "$OUT/fs_io.o" "$OUT/args_env.o" "$OUT/panic.o" "$OUT/c_rest.o"
+ar rcs "$OUT/libruntime.a" "$OUT/core.o" "$OUT/arith.o" "$OUT/io.o" "$OUT/time.o" "$OUT/rand.o" "$OUT/fs.o" "$OUT/fs_io.o" "$OUT/args_env.o" "$OUT/panic.o" "$OUT/thread.o" "$OUT/c_rest.o"
 
 # 自检（汇编实现 + 其余 C）
 $CC -O2 -DAYANAMI_ASM_PORT runtime/backends/asm-x86_64/selftest.c \
-    "$OUT/core.o" "$OUT/arith.o" "$OUT/io.o" "$OUT/time.o" "$OUT/rand.o" "$OUT/fs.o" "$OUT/fs_io.o" "$OUT/args_env.o" "$OUT/panic.o" "$OUT/c_rest.o" -o "$OUT/selftest"
+    "$OUT/core.o" "$OUT/arith.o" "$OUT/io.o" "$OUT/time.o" "$OUT/rand.o" "$OUT/fs.o" "$OUT/fs_io.o" "$OUT/args_env.o" "$OUT/panic.o" "$OUT/thread.o" "$OUT/c_rest.o" -o "$OUT/selftest"
 AYANAMI_ASM_SELFTEST=42 "$OUT/selftest"
 echo "backend asm-x86_64: $OUT/libruntime.a"

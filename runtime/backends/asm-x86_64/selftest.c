@@ -8,6 +8,22 @@
 
 #include "../../abi.h"
 
+static int g_child_ran = 0;
+static int64_t g_child_tid = 0;
+
+static void selftest_tramp(void *env) {
+    (void)env;
+    g_child_tid = __ayanami_thread_id();
+    g_child_ran = 1;
+}
+
+// 闭包 vtable：[drop, trampoline]
+static void *g_selftest_vtable[2];
+
+static void selftest_drop(void *env) {
+    (void)env;
+}
+
 int main(void) {
     assert(__ayanami_runtime_abi() == AYANAMI_RUNTIME_ABI);
 
@@ -162,6 +178,22 @@ int main(void) {
         char *fb3 = (char *)__ayanami_unique_alloc(8);
         __ayanami_str_view fv3 = { fb3, 8 };
         assert(__ayanami_ovf_sub_i32(100, 58, 0, 0, fv3) == 42);
+    }
+
+    // thread：spawn → 子线程运行 trampoline → join；tid 与主线程不同
+    {
+        __ayanami_thread_job job;
+        g_selftest_vtable[0] = (void *)selftest_drop;
+        g_selftest_vtable[1] = (void *)selftest_tramp;
+        job.env = (void *)0;
+        job.vtable = (void *)g_selftest_vtable;
+        int64_t h = __ayanami_thread_spawn(job);
+        assert(h != 0);
+        assert(__ayanami_thread_join(h) == 0);
+        assert(g_child_ran == 1);
+        assert(g_child_tid != 0);
+        assert(g_child_tid != __ayanami_thread_id());
+        assert(__ayanami_thread_yield() == 0);
     }
 
     printf("asm-x86_64 runtime self-test ok (ABI %lld)\n",

@@ -16,7 +16,8 @@
 | [convert.md](modules/convert.md) | 解析与转换：`try_parse_*`、`parse_*_or`、`to_*`、`Into[T]` |
 | [rand.md](modules/rand.md) | 伪随机数：`Rng`（LCG，确定性） |
 | [time.md](modules/time.md) | 时间：`now_millis`（单调）/ `now_unix` |
-| [sync.md](modules/sync.md) | 并发原语：`AtomicInt`（顺序一致）、`fence` / `cpu_relax`（S1；锁/线程/通道见 [concurrency.md](dev/concurrency.md)） |
+| [sync.md](modules/sync.md) | 并发原语：`AtomicInt`（顺序一致）、`fence` / `cpu_relax`（S1） |
+| [thread.md](modules/thread.md) | 线程：`Thread::spawn` / `join`、`current_id`、`yield_now`（S2） |
 | [alloc.md](modules/alloc.md) | 全局分配器：可替换后端接口与自定义分配器（覆盖弱符号） |
 | [macros.md](modules/macros.md) | 宏 TokenStream API（ABI v6 编解码、诊断、hygiene） |
 | [fs.md](modules/fs.md) | 文件读写：`exists` / `read_file` / `write_file` |

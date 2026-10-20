@@ -1,0 +1,56 @@
+// thread — 线程（S2；设计见 docs/dev/concurrency.md）
+//
+// - Job（单字段闭包，布局 = {env, vtable}）**按值**传给运行时；运行时接管所有权：
+//   线程入口调用 trampoline(env)，随后 drop(env) 回收捕获值（std 无 cell 管理）；
+// - 未 join 直接丢弃 Thread 只泄漏 pthread 可连接状态（线程自身仍会完成并清理），
+//   不会 use-after-free。
+// - 运行时：C 后端与汇编后端均为 pthread（asm 后端另用 raw syscall 取 tid/yield）。
+
+#[extern]
+fn __ayanami_thread_spawn(Job job) -> usize;
+
+#[extern]
+fn __ayanami_thread_join(usize handle) -> int;
+
+#[extern]
+fn __ayanami_thread_id() -> int;
+
+#[extern]
+fn __ayanami_thread_yield() -> int;
+
+/// 线程任务（单字段闭包；布局与运行时约定一致：{env, vtable}）
+struct Job {
+    Fn() -> void f
+}
+
+pub struct Thread {
+    usize handle
+}
+
+pub namespace Thread {
+    /// 创建并启动线程（闭包按值搬入运行时）。建议 join。
+    #[io]
+    pub fn spawn(Fn() -> void f) -> Thread {
+        return Thread { handle = __ayanami_thread_spawn(Job { f = f }) };
+    }
+}
+
+impl Thread {
+    /// 等待线程结束（闭包已由运行时析构并释放）
+    #[io]
+    pub fn join(self) -> void {
+        __ayanami_thread_join(self.handle);
+    }
+}
+
+/// 当前线程的内核 tid
+#[io]
+pub fn current_id() -> int {
+    return __ayanami_thread_id();
+}
+
+/// 让出 CPU（sched_yield）
+#[io]
+pub fn yield_now() -> int {
+    return __ayanami_thread_yield();
+}

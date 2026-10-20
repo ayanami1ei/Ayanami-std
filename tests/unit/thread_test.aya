@@ -1,0 +1,61 @@
+import "sync";
+
+import "thread";
+
+import "test";
+
+#[test]
+fn test_thread_spawn_join() {
+    a = AtomicInt::new(0);
+    unsafe {
+        p = ref a as *AtomicInt
+        t = Thread::spawn(() -> void { unsafe { (*p).fetch_add(1) } })
+        t.join()
+    }
+    #assert_eq(a.load(), 1)
+}
+
+#[test]
+fn test_thread_current_id_and_yield() {
+    a = AtomicInt::new(0);
+    main_id = current_id();
+    unsafe {
+        p = ref a as *AtomicInt
+        t = Thread::spawn(() -> void { unsafe { (*p).store(current_id()) } })
+        t.join()
+    }
+    #assert(a.load() != 0);
+    #assert(a.load() != main_id);
+    yield_now()
+}
+
+#[test]
+fn test_thread_many() {
+    a = AtomicInt::new(0);
+    unsafe {
+        p = ref a as *AtomicInt
+        i = 0;
+        while i < 16 {
+            t = Thread::spawn(() -> void { unsafe { (*p).fetch_add(1) } })
+            t.join()
+            i = i + 1
+        }
+    }
+    #assert_eq(a.load(), 16)
+}
+
+#[test]
+fn test_thread_captured_string() {
+    // 捕获拥有型 String（跨线程搬运）：join 前由运行时析构（捕获值回收）
+    a = AtomicInt::new(0);
+    s = "hello";
+    unsafe {
+        p = ref a as *AtomicInt
+        t = Thread::spawn(() -> void {
+            n = s.len();
+            unsafe { (*p).fetch_add(n as int) }
+        })
+        t.join()
+    }
+    #assert_eq(a.load(), 5)
+}

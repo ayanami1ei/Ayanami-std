@@ -52,11 +52,13 @@ pub fn cpu_relax()  // 自旋提示（pause）
 ### 3.2 线程 — `system/thread.aya`
 
 ```ayanami
-pub struct Thread { usize handle; usize cell }
+pub struct Thread { usize handle }
 
+pub namespace Thread {
+    pub fn spawn(Fn() -> void f) -> Thread   // 闭包按值搬入运行时（所有权转移）
+}
 impl Thread {
-    pub fn spawn[F: Fn() -> void](F f) -> Thread   // 闭包按值搬入线程
-    pub fn join(self) -> void                       // 等待 + 析构闭包（值 drop）
+    pub fn join(self) -> void                // 等待（闭包已由运行时析构）
 }
 
 pub fn current_id() -> int      // 线程 id（内核 tid）
@@ -115,26 +117,27 @@ int64_t __ayanami_futex_wake(int32_t *addr, int32_t n);         // FUTEX_WAKE
 - C 后端：`syscall(SYS_futex, ...)`；汇编后端：raw syscall（202）。EINTR 返回 0（调用方自旋重查）。
 - std 侧封装：`wait(state, expected)` / `wake(n)`（`ref int` → 地址经 `*T`/`reinterpret`）。
 
-### 4.3 线程（`clone` + futex，或 pthread 兜底）
+### 4.3 线程（pthread；闭包 Job 按值转移所有权）
 
 ```c
-usize __ayanami_thread_spawn(usize cell);   // 新线程运行 cell 中的闭包；返回 handle（tid）
-int64_t __ayanami_thread_join(usize handle); // 等待退出（futex on exit word）
-int64_t __ayanami_thread_id(void);           // gettid
-int64_t __ayanami_thread_yield(void);        // sched_yield
+typedef struct { void *env; void *vtable; } __ayanami_thread_job;  // = 闭包值两字
+int64_t __ayanami_thread_spawn(__ayanami_thread_job job); // 返回 pthread handle；失败 0
+int64_t __ayanami_thread_join(int64_t handle);            // 0 / -1
+int64_t __ayanami_thread_id(void);                        // gettid
+int64_t __ayanami_thread_yield(void);                     // sched_yield
 ```
 
-**闭包 cell 约定**（std 与运行时的唯一契约）：
+**Job 约定**（std 与运行时的唯一契约，S2 已落地）：
 
-1. std `spawn[F]` 用 `Ptr::new(f)`（或分配器）把闭包按值放到堆上，cell 起始即闭包值
-   `{env, vtable}`（16 字节；捕获型 env = 堆环境指针）；
-2. 运行时入口（汇编）读取 `env = [cell]`、`trampoline = [[cell+8]+8]`，调用
-   `trampoline(env)`（即闭包调用约定），随后写 exit word + futex wake；
-3. **析构归 std**：`join` 后把 cell 中的闭包按值 drop（捕获值回收），再释放 cell。
-   运行时不需要知道 `F`，也不需要 drop glue。
+1. std 的 `Job { Fn() -> void f }` 单字段结构与闭包值布局相同（`{env, vtable}`，16 字节），
+   **按值**传入 `__ayanami_thread_spawn`（`extern "C"` 允许按值结构体 → 两个寄存器）；
+2. 运行时把两字拷入自己的 slot，线程入口调用 `trampoline(env)`（`vtable[1]`），
+   随后 `drop(env)`（`vtable[0]`，闭包析构 → 捕获值回收）并 `free(slot)`；
+3. 所有权完全在运行时：std 不需要分配 cell，也不存在“未 join 导致 cell 被提前释放”的悬垂；
+   未 join 仅泄漏 pthread 可连接状态（线程本身仍会完成并清理）；
+4. `Thread` 仅持有 handle（`usize`），无字段析构；`join` 消费 `Thread`。
 
-> 说明：`extern "C"` 签名可写裸 `fn(...)` 且实参支持直接函数名（`docs/closures.md`），
-> 因此 `spawn` 内部可把入口函数名传给运行时；cell 指针经 `Ptr[T].as_ptr()` + `ptrtoint` 传递。
+> 说明：用单字段 `Job` 结构体承载闭包（布局等价于闭包值），按值传参即完成所有权转移。
 
 ### 4.4 内存序与可见性
 
@@ -156,7 +159,7 @@ int64_t __ayanami_thread_yield(void);        // sched_yield
 | 阶段 | 内容 | 验收 | 状态 |
 |---|---|---|---|
 | **S1** | `AtomicInt` + `fence`/`cpu_relax`（纯内联汇编） | 单线程语义测试（load/store/swap/fetch_*/自旋锁）；零运行时依赖 | ✅ 本批 |
-| **S2** | 线程：`spawn`/`join`/`current_id`/`yield_now`（运行时 `clone`+futex，asm 后端 raw syscall） | 多线程计数器（原子累加）、闭包捕获析构、join 语义、`thread_test` | 待做 |
+| **S2** | 线程：`spawn`/`join`/`current_id`/`yield_now`（pthread；asm 后端 raw syscall + pthread） | 多线程计数器（原子累加）、闭包捕获析构、join 语义、`thread_test` | ✅ 本批 |
 | **S3** | `Mutex[T]`/`RwLock[T]`（futex + 自旋退化） | 多线程互斥累加、`with_lock` 回调、争用基准 | 待做 |
 | **S4** | `Channel[T]`（mpsc；Mutex + futex 等待队列） | 生产者/消费者、关闭语义、`try_recv` | 待做 |
 | **S5** | 最简 `block_on` + 多线程执行器（衔接 `038.4`） | 跨线程轮询、`Waker` = 原子 + futex wake | 待做（依赖编译器 async） |

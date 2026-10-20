@@ -96,6 +96,16 @@ int64_t __ayanami_time_micros(void);  // 单调微秒
 int64_t __ayanami_time_unix(void);    // Unix 秒
 int64_t __ayanami_time_sleep_ms(int64_t ms); // 睡眠毫秒（<= 0 直接返回）
 
+// ── 线程（Job = 闭包两字 {env, vtable}，按值传入；运行时接管所有权） ──
+typedef struct {
+    void *env;
+    void *vtable;
+} __ayanami_thread_job;
+int64_t __ayanami_thread_spawn(__ayanami_thread_job job); // 返回 pthread handle；失败 0
+int64_t __ayanami_thread_join(int64_t handle); // 0 成功 / -1
+int64_t __ayanami_thread_id(void);             // 内核 tid
+int64_t __ayanami_thread_yield(void);          // sched_yield
+
 // ── 文件（缓冲区由 unique_alloc 分配，调用方用 unique_free 释放） ──
 int64_t __ayanami_fs_size(__ayanami_str_view path);   // 字节数；-1 不存在/出错
 char *__ayanami_fs_read(__ayanami_str_view path);     // unique_alloc 缓冲（NUL 结尾）；NULL 出错
