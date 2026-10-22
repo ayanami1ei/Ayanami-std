@@ -1,0 +1,96 @@
+import "channel";
+
+import "sync";
+
+import "thread";
+
+import "test";
+
+#[test]
+fn test_channel_fifo() {
+    c = Channel::new[int]();
+    #assert(c.try_recv().is_none());
+    c.send(1);
+    c.send(2);
+    c.send(3);
+    #assert_eq(c.try_recv().unwrap(), 1);
+    #assert_eq(c.try_recv().unwrap(), 2);
+    #assert_eq(c.try_recv().unwrap(), 3);
+    #assert(c.try_recv().is_none())
+}
+
+#[test]
+fn test_channel_many_items() {
+    c = Channel::new[int]();
+    i = 0;
+    while i < 100 {
+        c.send(i)
+        i = i + 1
+    }
+    j = 0;
+    sum = 0;
+    while j < 100 {
+        sum = sum + c.try_recv().unwrap()
+        j = j + 1
+    }
+    #assert_eq(sum, 4950)
+}
+
+#[test]
+fn test_channel_string_payload() {
+    c = Channel::new[String]();
+    c.send("hello");
+    c.send("world");
+    #assert_eq(c.try_recv().unwrap().len(), 5);
+    #assert_eq(c.try_recv().unwrap().len(), 5)
+}
+
+#[test]
+fn test_channel_recv_blocks_until_send() {
+    c = Channel::new[int]();
+    got = AtomicInt::new(0);
+    unsafe {
+        pc = ref c as *Channel[int]
+        pg = ref got as *AtomicInt
+        Thread::spawn(() -> void {
+            unsafe {
+                v = (*pc).recv();
+                (*pg).store(v)
+            }
+        });
+        (*pc).send(42)
+        while got.load() == 0 {
+            cpu_relax()
+        }
+    }
+    #assert_eq(got.load(), 42)
+}
+
+#[test]
+fn test_channel_mpsc() {
+    // 4 生产者 × 25 条；主线程阻塞接收 100 条（mpsc）
+    c = Channel::new[int]();
+    n = 4;
+    per = 25;
+    unsafe {
+        pc = ref c as *Channel[int]
+        i = 0;
+        while i < n {
+            Thread::spawn(() -> void {
+                j = 0;
+                while j < per {
+                    unsafe { (*pc).send(1) }
+                    j = j + 1
+                }
+            })
+            i = i + 1
+        }
+    }
+    sum = 0;
+    k = 0;
+    while k < n * per {
+        sum = sum + c.recv()
+        k = k + 1
+    }
+    #assert_eq(sum, n * per)
+}

@@ -623,6 +623,17 @@ src/system/alloc.aya:45: fn free(ref self, usize addr)
 src/system/alloc.aya:51: pub fn live_allocs() -> int
 src/system/alloc.aya:56: pub fn default_alloc(usize size) -> usize
 src/system/alloc.aya:61: pub fn default_free(usize addr)
+src/system/channel.aya:16: pub struct ChanState[T]
+src/system/channel.aya:21: pub struct Channel[T]
+src/system/channel.aya:26: pub namespace Channel
+src/system/channel.aya:27: pub fn new[T]() -> Channel[T]
+src/system/channel.aya:38: impl[T] Channel[T]
+src/system/channel.aya:42: pub fn send(ref self, T v) -> void
+src/system/channel.aya:53: pub fn try_recv(ref mut self) -> Option[T]
+src/system/channel.aya:63: pub fn recv(ref mut self) -> T
+src/system/channel.aya:87: fn pop_front[T](ref mut ChanState[T] s) -> Option[T]
+src/system/channel.aya:100: fn __ayanami_futex_wait(*int addr, int expected) -> int;
+src/system/channel.aya:103: fn __ayanami_futex_wake(*int addr, int n) -> int;
 src/system/env.aya:9: fn __ayanami_arg_count() -> int;
 src/system/env.aya:12: fn __ayanami_arg_len(int i) -> int;
 src/system/env.aya:15: fn __ayanami_arg_data(int i) -> [char];
@@ -845,6 +856,11 @@ tests/unit/assert_test.aya:22: fn test_other_asserts()
 tests/unit/bitops_test.aya:6: fn test_popcount()
 tests/unit/bitops_test.aya:14: fn test_zeros()
 tests/unit/bitops_test.aya:24: fn test_power_of_two()
+tests/unit/channel_test.aya:10: fn test_channel_fifo()
+tests/unit/channel_test.aya:23: fn test_channel_many_items()
+tests/unit/channel_test.aya:40: fn test_channel_string_payload()
+tests/unit/channel_test.aya:49: fn test_channel_recv_blocks_until_send()
+tests/unit/channel_test.aya:70: fn test_channel_mpsc()
 tests/unit/char_test.aya:4: fn test_classify()
 tests/unit/char_test.aya:17: fn test_convert()
 tests/unit/convert_test.aya:7: fn as_float[U: Into[float]](U x) -> float

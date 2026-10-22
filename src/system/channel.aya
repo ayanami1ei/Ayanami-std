@@ -1,0 +1,103 @@
+import "arraylist";
+
+import "arch_x86_64";
+
+import "sync";
+
+// channel — 多生产者单消费者通道（S4；设计见 docs/dev/concurrency.md）
+//
+// - mpsc：多个线程 send，一个接收者 recv；
+// - 队列：Mutex 保护的双栈（send 入 in_stack；recv 时倒到 out_stack → FIFO，均摊 O(1)）；
+// - 唤醒：Channel 内的 seq 原子字——send 后递增并 futex_wake；
+//   recv 在空队列时按「先取队列 → 再采样 seq → 等待」顺序避免丢失唤醒：
+//   若 send 发生在采样之后，futex 比较失败立即返回；发生在采样之前则 seq 不等而重试。
+// - 暂不提供 close（recv 阻塞至有数据）。
+
+pub struct ChanState[T] {
+    ArrayList[T] in_stack
+    ArrayList[T] out_stack
+}
+
+pub struct Channel[T] {
+    Mutex[ChanState[T]] state
+    int seq
+}
+
+pub namespace Channel {
+    pub fn new[T]() -> Channel[T] {
+        return Channel[T] {
+            state = Mutex::new[ChanState[T]](ChanState[T] {
+                in_stack = ArrayList::new[T](),
+                out_stack = ArrayList::new[T]()
+            }),
+            seq = 0
+        };
+    }
+}
+
+impl[T] Channel[T] {
+    /// 发送（多生产者安全；唤醒一个等待的接收者）
+    #[io]
+    #[state]
+    pub fn send(ref self, T v) -> void {
+        self.state.with_lock((ref mut ChanState[T] s) -> void { s.in_stack.push(v) });
+        ArchX86_64::atomic_fetch_add(ref self.seq, 1);
+        unsafe {
+            __ayanami_futex_wake(ref self.seq as *int, 1)
+        }
+    }
+
+    /// 非阻塞接收（无数据 → None）
+    #[io]
+    #[state]
+    pub fn try_recv(ref mut self) -> Option[T] {
+        return self.state.with_lock((ref mut ChanState[T] s) -> Option[T] {
+            return pop_front(s)
+        });
+    }
+
+    /// 阻塞接收（无数据时 futex 等待）
+    #[io]
+    #[state]
+    #[alloc]
+    pub fn recv(ref mut self) -> T {
+        while true {
+            seq0 = ArchX86_64::atomic_load(ref self.seq);
+            got = self.state.with_lock((ref mut ChanState[T] s) -> Option[T] {
+                return pop_front(s)
+            });
+            match got {
+                Option::Some(v) => {
+                    return v
+                }
+                Option::None() => { }
+            }
+            if ArchX86_64::atomic_load(ref self.seq) != seq0 {
+                continue
+            }
+            unsafe {
+                __ayanami_futex_wait(ref self.seq as *int, seq0)
+            }
+        }
+    }
+}
+
+/// 队列出队（双栈倒换；调用方持锁）
+#[state]
+fn pop_front[T](ref mut ChanState[T] s) -> Option[T] {
+    if s.out_stack.is_empty() {
+        while !s.in_stack.is_empty() {
+            s.out_stack.push(s.in_stack.pop())
+        }
+    }
+    if s.out_stack.is_empty() {
+        return Option::None()
+    }
+    return Option::Some(s.out_stack.pop())
+}
+
+#[extern]
+fn __ayanami_futex_wait(*int addr, int expected) -> int;
+
+#[extern]
+fn __ayanami_futex_wake(*int addr, int n) -> int;
