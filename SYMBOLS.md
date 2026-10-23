@@ -40,8 +40,8 @@ src/collections/arraylist.aya:303: fn reverse(ref mut self)
 src/collections/arraylist.aya:316: fn swap(ref mut self, usize i, usize j, int __line, int __col, String __file)
 src/collections/arraylist.aya:330: fn insert_at(ref mut self, usize idx, T v, int __line, int __col, String __file)
 src/collections/arraylist.aya:347: fn remove_at(ref mut self, usize idx, int __line, int __col, String __file)
-src/collections/arraylist.aya:359: fn first(ref self, int __line, int __col, String __file) -> T
-src/collections/arraylist.aya:366: fn last(ref self, int __line, int __col, String __file) -> T
+src/collections/arraylist.aya:360: fn first(ref self, int __line, int __col, String __file) -> T
+src/collections/arraylist.aya:368: fn last(ref self, int __line, int __col, String __file) -> T
 src/collections/hash.aya:7: interface Hash
 src/collections/hash.aya:8: fn hash(ref self) -> int;
 src/collections/hash.aya:9: fn hash_eq(ref self, ref Self other) -> bool;
@@ -202,18 +202,18 @@ src/collections/linkedlist.aya:196: fn reverse(ref mut self)
 src/collections/linkedlist.aya:209: fn swap(ref mut self, usize i, usize j, int __line, int __col, String __file)
 src/collections/linkedlist.aya:223: fn insert_at(ref mut self, usize idx, T v, int __line, int __col, String __file)
 src/collections/linkedlist.aya:240: fn remove_at(ref mut self, usize idx, int __line, int __col, String __file)
-src/collections/linkedlist.aya:252: fn first(ref self, int __line, int __col, String __file) -> T
-src/collections/linkedlist.aya:259: fn last(ref self, int __line, int __col, String __file) -> T
-src/collections/linkedlist.aya:267: impl[T] LinkedList[T]
-src/collections/linkedlist.aya:271: fn map[U](ref self, Fn(T)->U f) -> LinkedList[U]
-src/collections/linkedlist.aya:283: fn filter(ref self, Fn(T)->bool f) -> LinkedList[T]
-src/collections/linkedlist.aya:295: fn fold[U](ref self, U init, Fn(U,T)->U f) -> U
-src/collections/linkedlist.aya:305: fn any(ref self, Fn(T)->bool f) -> bool
-src/collections/linkedlist.aya:316: fn all(ref self, Fn(T)->bool f) -> bool
-src/collections/linkedlist.aya:327: fn find(ref self, Fn(T)->bool f) -> Option[T]
-src/collections/linkedlist.aya:338: fn position(ref self, Fn(T)->bool f) -> int
-src/collections/linkedlist.aya:349: fn count(ref self, Fn(T)->bool f) -> usize
-src/collections/linkedlist.aya:362: fn retain(ref mut self, Fn(T)->bool f)
+src/collections/linkedlist.aya:253: fn first(ref self, int __line, int __col, String __file) -> T
+src/collections/linkedlist.aya:261: fn last(ref self, int __line, int __col, String __file) -> T
+src/collections/linkedlist.aya:269: impl[T] LinkedList[T]
+src/collections/linkedlist.aya:273: fn map[U](ref self, Fn(T)->U f) -> LinkedList[U]
+src/collections/linkedlist.aya:285: fn filter(ref self, Fn(T)->bool f) -> LinkedList[T]
+src/collections/linkedlist.aya:297: fn fold[U](ref self, U init, Fn(U,T)->U f) -> U
+src/collections/linkedlist.aya:307: fn any(ref self, Fn(T)->bool f) -> bool
+src/collections/linkedlist.aya:318: fn all(ref self, Fn(T)->bool f) -> bool
+src/collections/linkedlist.aya:329: fn find(ref self, Fn(T)->bool f) -> Option[T]
+src/collections/linkedlist.aya:340: fn position(ref self, Fn(T)->bool f) -> int
+src/collections/linkedlist.aya:351: fn count(ref self, Fn(T)->bool f) -> usize
+src/collections/linkedlist.aya:364: fn retain(ref mut self, Fn(T)->bool f)
 src/collections/list.aya:2: interface List[T]
 src/collections/list.aya:3: fn push(ref mut self, T val);
 src/collections/list.aya:4: fn index(ref self, usize index) -> T;
