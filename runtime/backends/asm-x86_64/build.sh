@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# build.sh — asm-x86_64 后端：手写汇编（core/arith）+ 其余 C（-DAYANAMI_ASM_PORT）
+# build.sh — asm-x86_64 后端：纯手写汇编运行时（零 C 源）
 # 产物：build/runtime/asm-x86_64/libruntime.a（与 C 后端同 ABI，可互换）
 set -euo pipefail
 cd "$(dirname "$0")/../../.."          # std 根
@@ -20,13 +20,12 @@ $CC -c runtime/backends/asm-x86_64/panic.s -o "$OUT/panic.o"
 $CC -c runtime/backends/asm-x86_64/thread.s -o "$OUT/thread.o"
 $CC -c runtime/backends/asm-x86_64/futex.s -o "$OUT/futex.o"
 
-# 其余 C 运行时（排除已汇编实现的部分）
-$CC -O2 -DAYANAMI_ASM_PORT -c runtime.c -o "$OUT/c_rest.o"
+# 纯汇编运行时：无 C 对象（原 c_rest.o 已随 i128 助手汇编化而清空）
+rm -f "$OUT/libruntime.a"
+ar rcs "$OUT/libruntime.a" "$OUT/core.o" "$OUT/arith.o" "$OUT/io.o" "$OUT/time.o" "$OUT/rand.o" "$OUT/fs.o" "$OUT/fs_io.o" "$OUT/args_env.o" "$OUT/panic.o" "$OUT/thread.o" "$OUT/futex.o"
 
-ar rcs "$OUT/libruntime.a" "$OUT/core.o" "$OUT/arith.o" "$OUT/io.o" "$OUT/time.o" "$OUT/rand.o" "$OUT/fs.o" "$OUT/fs_io.o" "$OUT/args_env.o" "$OUT/panic.o" "$OUT/thread.o" "$OUT/futex.o" "$OUT/c_rest.o"
-
-# 自检（汇编实现 + 其余 C）
+# 自检（纯汇编运行时）
 $CC -O2 -DAYANAMI_ASM_PORT runtime/backends/asm-x86_64/selftest.c \
-    "$OUT/core.o" "$OUT/arith.o" "$OUT/io.o" "$OUT/time.o" "$OUT/rand.o" "$OUT/fs.o" "$OUT/fs_io.o" "$OUT/args_env.o" "$OUT/panic.o" "$OUT/thread.o" "$OUT/futex.o" "$OUT/c_rest.o" -o "$OUT/selftest"
+    "$OUT/core.o" "$OUT/arith.o" "$OUT/io.o" "$OUT/time.o" "$OUT/rand.o" "$OUT/fs.o" "$OUT/fs_io.o" "$OUT/args_env.o" "$OUT/panic.o" "$OUT/thread.o" "$OUT/futex.o" -o "$OUT/selftest"
 AYANAMI_ASM_SELFTEST=42 "$OUT/selftest"
 echo "backend asm-x86_64: $OUT/libruntime.a"

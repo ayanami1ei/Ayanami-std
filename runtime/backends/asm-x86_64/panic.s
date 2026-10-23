@@ -552,6 +552,244 @@ __ayanami_ovf_\name:
     movq %rax, %r15
     OVF_TAIL mul_u64, msg_ovf_mul, msg_ovf_mul_len
 
+
+# ── 128 位溢出助手（i128/u128 add/sub；mul 见下） ──
+# ABI：a = rdi:rsi（lo:hi），b = rdx:rcx，line = r8，col = r9，
+#       file（16 字节结构）= 栈上 [8(%rsp)]=data [16(%rsp)]=len；
+#       返回 rax:rdx = 结果（lo:hi）；成功时释放 file.data。
+
+.macro OVF128_PROLOG
+    pushq %rbx
+    pushq %r12
+    pushq %r13
+    pushq %r14
+    pushq %r15
+    movq 48(%rsp), %r13            # file.data
+    movq 56(%rsp), %r14            # file.len
+    movq %r8, %rbx                 # line
+    movq %r9, %r12                 # col
+    subq $16, %rsp                 # [rsp]=lo [rsp+8]=hi
+.endm
+
+.macro OVF128_SUCCESS
+    movq %r13, %rdi
+    call __ayanami_unique_free
+    movq (%rsp), %rax
+    movq 8(%rsp), %rdx
+    addq $16, %rsp
+    popq %r15
+    popq %r14
+    popq %r13
+    popq %r12
+    popq %rbx
+    ret
+.endm
+
+.macro OVF128_PANIC label, msg
+\label:
+    movq %rbx, %rdi
+    movq %r12, %rsi
+    movq %r13, %rdx
+    movq %r14, %rcx
+    leaq \msg(%rip), %r8
+    movq $\msg\()_len, %r9
+    call __ayanami_panic_print_msg
+    hlt
+.endm
+
+    .globl __ayanami_ovf_add_i128
+    .type  __ayanami_ovf_add_i128, @function
+__ayanami_ovf_add_i128:
+    OVF128_PROLOG
+    movq %rdi, %rax
+    addq %rdx, %rax
+    movq %rax, (%rsp)
+    movq %rsi, %rax
+    adcq %rcx, %rax
+    movq %rax, 8(%rsp)
+    movq %rsi, %rdx                # 有符号溢出：(a_hi ^ r_hi) & (b_hi ^ r_hi) < 0
+    xorq %rax, %rdx
+    movq %rcx, %r8
+    xorq %rax, %r8
+    andq %r8, %rdx
+    js .Lovf_add_i128_panic
+    OVF128_SUCCESS
+    OVF128_PANIC .Lovf_add_i128_panic, msg_ovf_add
+    .size __ayanami_ovf_add_i128, .-__ayanami_ovf_add_i128
+
+    .globl __ayanami_ovf_add_u128
+    .type  __ayanami_ovf_add_u128, @function
+__ayanami_ovf_add_u128:
+    OVF128_PROLOG
+    movq %rdi, %rax
+    addq %rdx, %rax
+    movq %rax, (%rsp)
+    movq %rsi, %rax
+    adcq %rcx, %rax
+    jc .Lovf_add_u128_panic
+    movq %rax, 8(%rsp)
+    OVF128_SUCCESS
+    OVF128_PANIC .Lovf_add_u128_panic, msg_ovf_add
+    .size __ayanami_ovf_add_u128, .-__ayanami_ovf_add_u128
+
+    .globl __ayanami_ovf_sub_i128
+    .type  __ayanami_ovf_sub_i128, @function
+__ayanami_ovf_sub_i128:
+    OVF128_PROLOG
+    movq %rdi, %rax
+    subq %rdx, %rax
+    movq %rax, (%rsp)
+    movq %rsi, %rax
+    sbbq %rcx, %rax
+    movq %rax, 8(%rsp)
+    movq %rsi, %rdx                # 有符号溢出：(a_hi ^ b_hi) & (a_hi ^ r_hi) < 0
+    xorq %rcx, %rdx
+    movq %rsi, %r8
+    xorq %rax, %r8
+    andq %r8, %rdx
+    js .Lovf_sub_i128_panic
+    OVF128_SUCCESS
+    OVF128_PANIC .Lovf_sub_i128_panic, msg_ovf_sub
+    .size __ayanami_ovf_sub_i128, .-__ayanami_ovf_sub_i128
+
+    .globl __ayanami_ovf_sub_u128
+    .type  __ayanami_ovf_sub_u128, @function
+__ayanami_ovf_sub_u128:
+    OVF128_PROLOG
+    movq %rdi, %rax
+    subq %rdx, %rax
+    movq %rax, (%rsp)
+    movq %rsi, %rax
+    sbbq %rcx, %rax
+    jc .Lovf_sub_u128_panic
+    movq %rax, 8(%rsp)
+    OVF128_SUCCESS
+    OVF128_PANIC .Lovf_sub_u128_panic, msg_ovf_sub
+    .size __ayanami_ovf_sub_u128, .-__ayanami_ovf_sub_u128
+
+
+# ── 128 位乘法：256 位乘积（a0/a1 × b0/b1 四段）→ 溢出判定 ──
+# 槽位（80 字节）：0=a0 8=a1 16=b0 24=b1 32=l1 40=h1 48=l2 56=h2 64=lo 72=mid
+
+.macro OVF128_MUL_PROLOG
+    pushq %rbx
+    pushq %r12
+    pushq %r13
+    pushq %r14
+    pushq %r15
+    movq 48(%rsp), %r13            # file.data
+    movq 56(%rsp), %r14            # file.len
+    movq %r8, %rbx                 # line
+    movq %r9, %r12                 # col
+    subq $80, %rsp
+    movq %rdi, (%rsp)              # a0
+    movq %rsi, 8(%rsp)             # a1
+    movq %rdx, 16(%rsp)            # b0
+    movq %rcx, 24(%rsp)            # b1
+.endm
+
+# 计算 256 位乘积：lo → 64(%rsp)，mid → %r9，hi → %r10，top → %r11
+.macro OVF128_MUL_PRODUCT
+    movq (%rsp), %rax
+    mulq 16(%rsp)                  # p0 = a0*b0
+    movq %rax, 64(%rsp)            # lo
+    movq %rdx, %r9                 # mid = h0
+    movq (%rsp), %rax
+    mulq 24(%rsp)                  # p1 = a0*b1
+    movq %rax, 32(%rsp)            # l1
+    movq %rdx, 40(%rsp)            # h1
+    movq 8(%rsp), %rax
+    mulq 16(%rsp)                  # p2 = a1*b0
+    movq %rax, 48(%rsp)            # l2
+    movq %rdx, 56(%rsp)            # h2
+    xorl %r10d, %r10d              # hi
+    xorl %r11d, %r11d              # top
+    addq 32(%rsp), %r9
+    adcq $0, %r10
+    adcq $0, %r11
+    addq 48(%rsp), %r9
+    adcq $0, %r10
+    adcq $0, %r11
+    movq 8(%rsp), %rax
+    mulq 24(%rsp)                  # p3 = a1*b1
+    addq %rax, %r10
+    adcq $0, %r11
+    addq %rdx, %r11
+    addq 40(%rsp), %r10
+    adcq $0, %r11
+    addq 56(%rsp), %r10
+    adcq $0, %r11
+.endm
+
+# 成功返回：free(file.data)，返回 lo:mid
+.macro OVF128_MUL_SUCCESS
+    movq %r9, 72(%rsp)
+    movq %r13, %rdi
+    call __ayanami_unique_free
+    movq 64(%rsp), %rax
+    movq 72(%rsp), %rdx
+    addq $80, %rsp
+    popq %r15
+    popq %r14
+    popq %r13
+    popq %r12
+    popq %rbx
+    ret
+.endm
+
+.macro OVF128_MUL_PANIC label, msg
+\label:
+    movq %rbx, %rdi
+    movq %r12, %rsi
+    movq %r13, %rdx
+    movq %r14, %rcx
+    leaq \msg(%rip), %r8
+    movq $\msg\()_len, %r9
+    call __ayanami_panic_print_msg
+    hlt
+.endm
+
+    .globl __ayanami_ovf_mul_u128
+    .type  __ayanami_ovf_mul_u128, @function
+__ayanami_ovf_mul_u128:
+    OVF128_MUL_PROLOG
+    OVF128_MUL_PRODUCT
+    movq %r10, %rax
+    orq %r11, %rax
+    jnz .Lovf_mul_u128_panic
+    OVF128_MUL_SUCCESS
+    OVF128_MUL_PANIC .Lovf_mul_u128_panic, msg_ovf_mul
+    .size __ayanami_ovf_mul_u128, .-__ayanami_ovf_mul_u128
+
+    .globl __ayanami_ovf_mul_i128
+    .type  __ayanami_ovf_mul_i128, @function
+__ayanami_ovf_mul_i128:
+    OVF128_MUL_PROLOG
+    OVF128_MUL_PRODUCT
+    # 有符号修正：乘积 = 无符号乘积 - sa*(b) - sb*(a)（高 128 位）
+    cmpq $0, 8(%rsp)               # a1 < 0 ?
+    jge 1f
+    subq 16(%rsp), %r10
+    sbbq 24(%rsp), %r11
+1:  cmpq $0, 24(%rsp)              # b1 < 0 ?
+    jge 2f
+    subq (%rsp), %r10
+    sbbq 8(%rsp), %r11
+2:  # 溢出：mid(结果符号) 与 hi/top 必须同号扩展
+    testq %r9, %r9
+    js 3f
+    movq %r10, %rax
+    orq %r11, %rax
+    jnz .Lovf_mul_i128_panic
+    jmp 4f
+3:  cmpq $-1, %r10
+    jne .Lovf_mul_i128_panic
+    cmpq $-1, %r11
+    jne .Lovf_mul_i128_panic
+4:  OVF128_MUL_SUCCESS
+    OVF128_MUL_PANIC .Lovf_mul_i128_panic, msg_ovf_mul
+    .size __ayanami_ovf_mul_i128, .-__ayanami_ovf_mul_i128
+
 # ── 诊断通道弱符号（可执行文件中为 no-op；插件 shim 提供强定义） ──
     .weak __ayanami_diag_emit
     .type __ayanami_diag_emit, @function

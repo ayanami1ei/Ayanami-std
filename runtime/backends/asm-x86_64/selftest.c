@@ -5,6 +5,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h>
 
 #include "../../abi.h"
 
@@ -22,6 +25,51 @@ static void *g_selftest_vtable[2];
 
 static void selftest_drop(void *env) {
     (void)env;
+}
+
+
+// 128 位溢出用例：子进程执行（panic → exit 101）
+static int ovf_child_exits_101(void (*fn)(void)) {
+    pid_t pid = fork();
+    if (pid == 0) {
+        int devnull = open("/dev/null", 1);
+        if (devnull >= 0) { dup2(devnull, 2); }
+        fn();
+        _exit(0);
+    }
+    int st = 0;
+    if (waitpid(pid, &st, 0) < 0) return 0;
+    return WIFEXITED(st) && WEXITSTATUS(st) == 101;
+}
+
+static void ovf_case_add_i128(void) {
+    __int128 m = (__int128)(((unsigned __int128)1 << 127) - 1);
+    __ayanami_str_view f = { (char *)__ayanami_unique_alloc(1), 1 };
+    (void)__ayanami_ovf_add_i128(m, 1, 0, 0, f);
+}
+static void ovf_case_sub_i128(void) {
+    __int128 m = -(__int128)((unsigned __int128)1 << 127);
+    __ayanami_str_view f = { (char *)__ayanami_unique_alloc(1), 1 };
+    (void)__ayanami_ovf_sub_i128(m, 1, 0, 0, f);
+}
+static void ovf_case_mul_i128(void) {
+    __int128 a = (__int128)1 << 100;
+    __ayanami_str_view f = { (char *)__ayanami_unique_alloc(1), 1 };
+    (void)__ayanami_ovf_mul_i128(a, a, 0, 0, f);
+}
+static void ovf_case_add_u128(void) {
+    unsigned __int128 m = ~(unsigned __int128)0;
+    __ayanami_str_view f = { (char *)__ayanami_unique_alloc(1), 1 };
+    (void)__ayanami_ovf_add_u128(m, 1, 0, 0, f);
+}
+static void ovf_case_sub_u128(void) {
+    __ayanami_str_view f = { (char *)__ayanami_unique_alloc(1), 1 };
+    (void)__ayanami_ovf_sub_u128(0, 1, 0, 0, f);
+}
+static void ovf_case_mul_u128(void) {
+    unsigned __int128 a = (unsigned __int128)1 << 100;
+    __ayanami_str_view f = { (char *)__ayanami_unique_alloc(1), 1 };
+    (void)__ayanami_ovf_mul_u128(a, a, 0, 0, f);
 }
 
 int main(void) {
@@ -201,6 +249,37 @@ int main(void) {
         static int32_t fw = 0;
         assert(__ayanami_futex_wait(&fw, 1) == -1);
         assert(__ayanami_futex_wake(&fw, 1) == 0);
+    }
+
+    // 128 位溢出助手：与 C __int128 语义对照（非溢出）+ 溢出 exit 101
+    {
+        __int128 a = ((__int128)1 << 60) + 7;
+        __int128 b = ((__int128)1 << 50) + 11;
+        __int128 na = -a;
+        __ayanami_str_view f1 = { (char *)__ayanami_unique_alloc(1), 1 };
+        assert(__ayanami_ovf_add_i128(a, b, 0, 0, f1) == a + b);
+        __ayanami_str_view f2 = { (char *)__ayanami_unique_alloc(1), 1 };
+        assert(__ayanami_ovf_sub_i128(a, b, 0, 0, f2) == a - b);
+        __ayanami_str_view f3 = { (char *)__ayanami_unique_alloc(1), 1 };
+        assert(__ayanami_ovf_mul_i128(a, b, 0, 0, f3) == a * b);
+        __ayanami_str_view f4 = { (char *)__ayanami_unique_alloc(1), 1 };
+        assert(__ayanami_ovf_mul_i128(na, b, 0, 0, f4) == na * b);
+        __ayanami_str_view f5 = { (char *)__ayanami_unique_alloc(1), 1 };
+        assert(__ayanami_ovf_add_i128(na, b, 0, 0, f5) == na + b);
+        unsigned __int128 ua = ((unsigned __int128)1 << 100) + 7;
+        unsigned __int128 ub = ((unsigned __int128)1 << 20) + 3;
+        __ayanami_str_view f6 = { (char *)__ayanami_unique_alloc(1), 1 };
+        assert(__ayanami_ovf_mul_u128(ua, ub, 0, 0, f6) == ua * ub);
+        __ayanami_str_view f7 = { (char *)__ayanami_unique_alloc(1), 1 };
+        assert(__ayanami_ovf_add_u128(ua, ub, 0, 0, f7) == ua + ub);
+        __ayanami_str_view f8 = { (char *)__ayanami_unique_alloc(1), 1 };
+        assert(__ayanami_ovf_sub_u128(ua, ub, 0, 0, f8) == ua - ub);
+        assert(ovf_child_exits_101(ovf_case_add_i128));
+        assert(ovf_child_exits_101(ovf_case_sub_i128));
+        assert(ovf_child_exits_101(ovf_case_mul_i128));
+        assert(ovf_child_exits_101(ovf_case_add_u128));
+        assert(ovf_child_exits_101(ovf_case_sub_u128));
+        assert(ovf_child_exits_101(ovf_case_mul_u128));
     }
 
     printf("asm-x86_64 runtime self-test ok (ABI %lld)\n",

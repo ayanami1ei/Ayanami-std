@@ -55,7 +55,8 @@ path = "/path/to/libruntime.a"     # 支持 .c / .o / .a
   | `fs.s` | 路径助手、`fs_errno/errno_kind/strerror/cstr_len`、`size/mtime/is_file/is_dir/rename/remove/mkdir/rmdir` |
   | `fs_io.s` | `fs_read/write/append/copy/list_data/list_len` |
   | `args_env.s` | `arg_count/arg_len/arg_data`（/proc/self/cmdline）、`env_len/env_data`（environ） |
-  | `panic.s` | `panic_print_msg/panic_at/panic_bounds_at`、契约失败、`ovf_{add,sub,mul}_{i8..i64,u8..u64}`、`diag_emit` 弱符号 |
-- 仅存的 C 实现：`__ayanami_ovf_{add,sub,mul}_{i128,u128}`（128 位溢出检查，见 `c_rest.o`）。
+  | `panic.s` | `panic_print_msg/panic_at/panic_bounds_at`、契约失败、`ovf_{add,sub,mul}_{i8..i64,u8..u64,i128,u128}`、`diag_emit` 弱符号 |
+  | `thread.s` / `futex.s` | 线程（pthread + raw syscall）、futex 等待/唤醒 |
+- **零 C**：归档仅含上表汇编对象（含 128 位 `ovf_{add,sub,mul}_{i128,u128}` 助手：256 位乘积 + 有符号修正）。
 - C 侧对应段以 `-DAYANAMI_ASM_PORT` 排除（`runtime.c`/`runtime/sys.c`）；C 后端不受影响。
 - panic 输出为纯文本（C 版的 TTY 彩色未实现）。

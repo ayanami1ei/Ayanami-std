@@ -181,7 +181,9 @@ __AYANAMI_OVF(add_i32, int32_t, add, "attempt to add with overflow")
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_i64, int64_t, add, "attempt to add with overflow")
 #endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_i128, __int128, add, "attempt to add with overflow")
+#endif
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_u8, uint8_t, add, "attempt to add with overflow")
 #endif
@@ -194,7 +196,9 @@ __AYANAMI_OVF(add_u32, uint32_t, add, "attempt to add with overflow")
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_u64, uint64_t, add, "attempt to add with overflow")
 #endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(add_u128, unsigned __int128, add, "attempt to add with overflow")
+#endif
 
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_i8, int8_t, sub, "attempt to subtract with overflow")
@@ -208,7 +212,9 @@ __AYANAMI_OVF(sub_i32, int32_t, sub, "attempt to subtract with overflow")
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_i64, int64_t, sub, "attempt to subtract with overflow")
 #endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_i128, __int128, sub, "attempt to subtract with overflow")
+#endif
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_u8, uint8_t, sub, "attempt to subtract with overflow")
 #endif
@@ -221,7 +227,9 @@ __AYANAMI_OVF(sub_u32, uint32_t, sub, "attempt to subtract with overflow")
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_u64, uint64_t, sub, "attempt to subtract with overflow")
 #endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(sub_u128, unsigned __int128, sub, "attempt to subtract with overflow")
+#endif
 
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_i8, int8_t, mul, "attempt to multiply with overflow")
@@ -235,7 +243,9 @@ __AYANAMI_OVF(mul_i32, int32_t, mul, "attempt to multiply with overflow")
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_i64, int64_t, mul, "attempt to multiply with overflow")
 #endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_i128, __int128, mul, "attempt to multiply with overflow")
+#endif
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_u8, uint8_t, mul, "attempt to multiply with overflow")
 #endif
@@ -248,7 +258,9 @@ __AYANAMI_OVF(mul_u32, uint32_t, mul, "attempt to multiply with overflow")
 #ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_u64, uint64_t, mul, "attempt to multiply with overflow")
 #endif
+#ifndef AYANAMI_ASM_PORT
 __AYANAMI_OVF(mul_u128, unsigned __int128, mul, "attempt to multiply with overflow")
+#endif
 
 #undef __AYANAMI_OVF
 
