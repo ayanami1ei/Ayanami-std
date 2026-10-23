@@ -131,3 +131,88 @@ impl[T] Mutex[T] {
         return ref mut self.payload
     }
 }
+
+/// 读写锁（futex；state：0 空闲 / n>0 读者数 / -1 写者持有；无 Drop → 回调式）
+///
+/// 语义：多读者并发；写者独占。写者饥饿未处理（S3 已知限制）。
+pub struct RwLock[T] {
+    int state
+    T payload
+}
+
+pub namespace RwLock {
+    pub fn new[T](T v) -> RwLock[T] {
+        return RwLock[T] { state = 0, payload = v };
+    }
+}
+
+impl[T] RwLock[T] {
+    /// 读锁 → 回调（`ref T`）；返回回调结果
+    #[io]
+    #[state]
+    pub fn with_read[U](ref self, Fn(ref T) -> U f) -> U {
+        self.acquire_read();
+        r = f(ref self.payload);
+        self.release_read();
+        return r
+    }
+
+    /// 写锁 → 回调（`ref mut T`）；返回回调结果
+    #[io]
+    #[state]
+    pub fn with_write[U](ref mut self, Fn(ref mut T) -> U f) -> U {
+        self.acquire_write();
+        r = f(ref mut self.payload);
+        self.release_write();
+        return r
+    }
+
+    #[io]
+    #[state]
+    fn acquire_read(ref self) -> void {
+        while true {
+            s = ArchX86_64::atomic_load(ref self.state);
+            if s >= 0 {
+                if ArchX86_64::atomic_compare_exchange(ref self.state, s, s + 1) == s {
+                    return
+                }
+            }
+            unsafe {
+                __ayanami_futex_wait(ref self.state as *int, s)
+            }
+        }
+    }
+
+    #[io]
+    #[state]
+    fn release_read(ref self) -> void {
+        if ArchX86_64::atomic_fetch_sub(ref self.state, 1) == 1 {
+            unsafe {
+                __ayanami_futex_wake(ref self.state as *int, 1)
+            }
+        }
+    }
+
+    #[io]
+    #[state]
+    fn acquire_write(ref self) -> void {
+        while true {
+            if ArchX86_64::atomic_compare_exchange(ref self.state, 0, -1) == 0 {
+                return
+            }
+            s = ArchX86_64::atomic_load(ref self.state);
+            unsafe {
+                __ayanami_futex_wait(ref self.state as *int, s)
+            }
+        }
+    }
+
+    #[io]
+    #[state]
+    fn release_write(ref self) -> void {
+        ArchX86_64::atomic_store(ref self.state, 0);
+        unsafe {
+            __ayanami_futex_wake(ref self.state as *int, 2147483647)
+        }
+    }
+}

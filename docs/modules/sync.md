@@ -52,8 +52,25 @@ m.with_lock((ref mut int v) -> void { *v = *v + 1 });
 v = m.with_lock((ref mut int v) -> int { *v });
 ```
 
+## 读写锁（S3）
+
+| API | 说明 |
+|---|---|
+| `RwLock::new[T](T v)` | 新建 |
+| `l.with_read((ref T v) -> U { ... }) -> U` | 读锁（多读者并发） |
+| `l.with_write((ref mut T v) -> U { ... }) -> U` | 写锁（独占） |
+
+状态字：`0` 空闲 / `n>0` 读者数 / `-1` 写者持有。读者释放最后一个时唤醒一个写者；
+写者释放时唤醒全部。**写者饥饿未处理**（S3 已知限制）。
+
+```ayanami
+l = RwLock::new[int](5);
+v = l.with_read((ref int x) -> int { *x });
+l.with_write((ref mut int x) -> void { *x = *x + 1 });
+```
+
 ## 待落地（见设计文档 §6）
 
 - **S4 通道**：`Channel[T]`（mpsc）；
 - **S5 执行器**：`block_on` + 多线程执行器（衔接编译器 `docs/async.md`）；
-- `RwLock[T]`（`with_read`/`with_write` 回调式）与 `fetch_and/or/xor`（cmpxchg 循环）。
+- `fetch_and/or/xor`（cmpxchg 循环）；写者饥饿策略（公平锁）。

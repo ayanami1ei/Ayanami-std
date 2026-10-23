@@ -748,6 +748,16 @@ src/system/sync.aya:91: pub fn with_lock[U](ref mut self, Fn(ref mut T) -> U f) 
 src/system/sync.aya:101: pub fn lock(ref self) -> void
 src/system/sync.aya:121: pub fn unlock(ref self) -> void
 src/system/sync.aya:130: pub fn data(ref mut self) -> ref mut T
+src/system/sync.aya:138: pub struct RwLock[T]
+src/system/sync.aya:143: pub namespace RwLock
+src/system/sync.aya:144: pub fn new[T](T v) -> RwLock[T]
+src/system/sync.aya:149: impl[T] RwLock[T]
+src/system/sync.aya:153: pub fn with_read[U](ref self, Fn(ref T) -> U f) -> U
+src/system/sync.aya:163: pub fn with_write[U](ref mut self, Fn(ref mut T) -> U f) -> U
+src/system/sync.aya:172: fn acquire_read(ref self) -> void
+src/system/sync.aya:188: fn release_read(ref self) -> void
+src/system/sync.aya:198: fn acquire_write(ref self) -> void
+src/system/sync.aya:212: fn release_write(ref self) -> void
 src/system/thread.aya:10: fn __ayanami_thread_spawn(Job job) -> usize;
 src/system/thread.aya:13: fn __ayanami_thread_join(usize handle) -> int;
 src/system/thread.aya:16: fn __ayanami_thread_id() -> int;
@@ -1022,6 +1032,11 @@ tests/unit/rand_test.aya:39: fn test_negative_seed()
 tests/unit/rand_test.aya:46: fn test_entropy()
 tests/unit/rand_test.aya:54: fn test_next_bool_float()
 tests/unit/rand_test.aya:72: fn test_shuffle()
+tests/unit/rwlock_test.aya:8: fn test_rwlock_single_thread()
+tests/unit/rwlock_test.aya:18: fn rw_write_run() -> int
+tests/unit/rwlock_test.aya:42: fn test_rwlock_concurrent_writers()
+tests/unit/rwlock_test.aya:46: fn rw_read_run() -> int
+tests/unit/rwlock_test.aya:72: fn test_rwlock_concurrent_readers()
 tests/unit/sort_test.aya:6: fn test_sort_int()
 tests/unit/sort_test.aya:18: fn test_sort_string()
 tests/unit/sort_test.aya:30: fn test_sort_edge()
