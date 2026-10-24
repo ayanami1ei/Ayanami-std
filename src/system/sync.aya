@@ -432,3 +432,52 @@ impl Once {
         }
     }
 }
+
+/// 条件变量：与 Mutex 配合的「释放锁 → 等待 → 重取锁」
+///
+/// seq：futex 字（每次 notify +1）。
+/// 契约：`wait` 必须在持锁时调用（内部会释放并重取）；通知方应在**持锁**时修改条件并 notify，
+/// 调用方用 `while !predicate { cv.wait(pm) }` 循环重查。
+pub struct Condvar {
+    int seq
+}
+
+pub namespace Condvar {
+    pub fn new() -> Condvar {
+        return Condvar { seq = 0 }
+    }
+}
+
+impl Condvar {
+    /// 释放互斥锁 → 等待通知 → 重新加锁（须持锁调用）
+    #[io]
+    #[state]
+    pub fn wait[T](ref self, *Mutex[T] m) -> void {
+        s = ArchX86_64::atomic_load(ref self.seq);
+        unsafe {
+            (*m).unlock();
+            __ayanami_futex_wait(ref self.seq as *int, s);
+            (*m).lock()
+        }
+    }
+
+    /// 唤醒一个等待者
+    #[io]
+    #[state]
+    pub fn notify_one(ref self) -> void {
+        ArchX86_64::atomic_fetch_add(ref self.seq, 1);
+        unsafe {
+            __ayanami_futex_wake(ref self.seq as *int, 1)
+        }
+    }
+
+    /// 唤醒全部等待者
+    #[io]
+    #[state]
+    pub fn notify_all(ref self) -> void {
+        ArchX86_64::atomic_fetch_add(ref self.seq, 1);
+        unsafe {
+            __ayanami_futex_wake(ref self.seq as *int, 2147483647)
+        }
+    }
+}

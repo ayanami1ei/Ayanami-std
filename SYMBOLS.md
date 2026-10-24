@@ -784,6 +784,13 @@ src/system/sync.aya:410: pub namespace Once
 src/system/sync.aya:411: pub fn new() -> Once
 src/system/sync.aya:416: impl Once
 src/system/sync.aya:419: pub fn call_once(ref self, Fn() -> void f) -> void
+src/system/sync.aya:441: pub struct Condvar
+src/system/sync.aya:445: pub namespace Condvar
+src/system/sync.aya:446: pub fn new() -> Condvar
+src/system/sync.aya:451: impl Condvar
+src/system/sync.aya:455: pub fn wait[T](ref self, *Mutex[T] m) -> void
+src/system/sync.aya:467: pub fn notify_one(ref self) -> void
+src/system/sync.aya:477: pub fn notify_all(ref self) -> void
 src/system/thread.aya:10: fn __ayanami_thread_spawn(Job job) -> usize;
 src/system/thread.aya:13: fn __ayanami_thread_join(usize handle) -> int;
 src/system/thread.aya:16: fn __ayanami_thread_id() -> int;
@@ -908,6 +915,10 @@ tests/unit/channel_test.aya:143: fn bounded_backpressure_run() -> int
 tests/unit/channel_test.aya:170: fn test_channel_bounded_backpressure()
 tests/unit/char_test.aya:4: fn test_classify()
 tests/unit/char_test.aya:17: fn test_convert()
+tests/unit/condvar_test.aya:7: fn condvar_handoff_run() -> int
+tests/unit/condvar_test.aya:51: fn test_condvar_handoff()
+tests/unit/condvar_test.aya:55: fn condvar_many_run() -> int
+tests/unit/condvar_test.aya:103: fn test_condvar_notify_all()
 tests/unit/convert_test.aya:7: fn as_float[U: Into[float]](U x) -> float
 tests/unit/convert_test.aya:12: fn test_parse_int()
 tests/unit/convert_test.aya:32: fn test_parse_float()

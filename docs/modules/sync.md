@@ -94,6 +94,24 @@ l.with_write((ref mut int x) -> void { *x = *x + 1 });
 
 state：`0` 未开始 / `1` 执行中 / `2` 完成。适合配合 `static mut` 做一次性初始化。
 
+## 条件变量（S3 补充）
+
+| API | 说明 |
+|---|---|
+| `Condvar::new()` | 新建 |
+| `cv.wait(*Mutex[T] m)` | **持锁调用**：释放锁 → 等待通知 → 重新加锁 |
+| `cv.notify_one()` / `cv.notify_all()` | 持锁修改条件后通知 |
+
+约定：`while !predicate { cv.wait(pm) }` 循环重查；通知方在**持锁**时修改条件并 notify
+（避免丢失唤醒）。示例：
+
+```ayanami
+(*pm).lock();
+while !ready { (*pcv).wait(pm); }
+// 持锁访问数据
+(*pm).unlock();
+```
+
 ## 待落地（见设计文档 §6）
 
 - **S4 通道**：`Channel[T]`（mpsc）；

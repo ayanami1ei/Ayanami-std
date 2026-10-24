@@ -1,0 +1,105 @@
+import "sync";
+
+import "thread";
+
+import "test";
+
+fn condvar_handoff_run() -> int {
+    m = Mutex::new[int](0);
+    cv = Condvar::new();
+    got = AtomicInt::new(0);
+    unsafe {
+        pm = ref m as *Mutex[int]
+        pc = ref cv as *Condvar
+        pg = ref got as *AtomicInt
+        Thread::spawn(() -> void {
+            unsafe {
+                lm = pm;
+                lc = pc;
+                lg = pg;
+                (*lm).lock();
+                ready = 0;
+                {
+                    d = (*lm).data();
+                    ready = *d
+                }
+                while ready == 0 {
+                    (*lc).wait(lm);
+                    {
+                        d2 = (*lm).data();
+                        ready = *d2
+                    }
+                }
+                (*lm).unlock();
+                (*lg).store(1)
+            }
+        });
+        // 主线程持锁修改条件并通知（契约：持锁 notify）
+        (*pm).lock();
+        d2 = (*pm).data();
+        *d2 = 1;
+        (*pc).notify_one();
+        (*pm).unlock();
+        while got.load() == 0 {
+            cpu_relax()
+        }
+    }
+    return got.load()
+}
+
+#[test]
+fn test_condvar_handoff() {
+    #assert_eq(condvar_handoff_run(), 1)
+}
+
+fn condvar_many_run() -> int {
+    // 4 个等待者；notify_all 全部唤醒
+    m = Mutex::new[int](0);
+    cv = Condvar::new();
+    woke = AtomicInt::new(0);
+    unsafe {
+        pm = ref m as *Mutex[int]
+        pc = ref cv as *Condvar
+        pw = ref woke as *AtomicInt
+        i = 0;
+        while i < 4 {
+            Thread::spawn(() -> void {
+                unsafe {
+                    lm = pm;
+                    lc = pc;
+                    lw = pw;
+                    (*lm).lock();
+                    ready = 0;
+                    {
+                        d = (*lm).data();
+                        ready = *d
+                    }
+                    while ready == 0 {
+                        (*lc).wait(lm);
+                        {
+                            d2 = (*lm).data();
+                            ready = *d2
+                        }
+                    }
+                    (*lm).unlock();
+                    (*lw).fetch_add(1)
+                }
+            })
+            i = i + 1
+        }
+        (*pm).lock();
+        d2 = (*pm).data();
+        *d2 = 1;
+        (*pc).notify_all();
+        (*pm).unlock();
+        while woke.load() < 4 {
+            cpu_relax()
+        }
+    }
+    return woke.load()
+}
+
+#[test]
+fn test_condvar_notify_all() {
+    #assert_eq(condvar_many_run(), 4)
+}

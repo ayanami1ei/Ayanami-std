@@ -81,6 +81,7 @@ impl[T] Mutex[T] {
 
 // Barrier：Barrier::new(n) / b.wait()（N 线程会合，可重复使用）
 // Once：Once::new() / o.call_once(f)（至多执行一次，并发等待）
+// Condvar：Condvar::new() / cv.wait(*Mutex[T]) / notify_one / notify_all（持锁调用）
 
 // RwLock[T]（S3 已落地）：with_read / with_write 回调式
 // state：0 空闲 / n>0 读者数 / -1 写者持有；writers：等待写者数（写者优先）
