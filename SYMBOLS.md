@@ -392,8 +392,8 @@ src/core/option.aya:11: pub enum Result[T, E]
 src/core/option.aya:16: pub enum Option[T]
 src/core/option.aya:21: impl[T] Option[T]
 src/core/option.aya:22: fn unwrap_or(self, T default) -> T
-src/core/option.aya:28: fn is_some(self) -> bool
-src/core/option.aya:31: fn is_none(self) -> bool
+src/core/option.aya:28: fn is_some(ref self) -> bool
+src/core/option.aya:31: fn is_none(ref self) -> bool
 src/core/option.aya:35: fn or(self, Option[T] other) -> Option[T]
 src/core/option.aya:43: fn unwrap(self, int __line, int __col, String __file) -> T
 src/core/option.aya:52: fn expect(self, String msg, int __line, int __col, String __file) -> T
@@ -632,10 +632,10 @@ src/system/channel.aya:44: pub fn send(ref self, T v) -> void
 src/system/channel.aya:55: pub fn try_recv(ref mut self) -> Option[T]
 src/system/channel.aya:65: pub fn recv(ref mut self) -> T
 src/system/channel.aya:73: pub fn recv_opt(ref mut self) -> Option[T]
-src/system/channel.aya:100: pub fn close(ref self) -> void
-src/system/channel.aya:111: fn pop_front[T](ref mut ChanState[T] s) -> Option[T]
-src/system/channel.aya:124: fn __ayanami_futex_wait(*int addr, int expected) -> int;
-src/system/channel.aya:127: fn __ayanami_futex_wake(*int addr, int n) -> int;
+src/system/channel.aya:97: pub fn close(ref self) -> void
+src/system/channel.aya:108: fn pop_front[T](ref mut ChanState[T] s) -> Option[T]
+src/system/channel.aya:121: fn __ayanami_futex_wait(*int addr, int expected) -> int;
+src/system/channel.aya:124: fn __ayanami_futex_wake(*int addr, int n) -> int;
 src/system/env.aya:9: fn __ayanami_arg_count() -> int;
 src/system/env.aya:12: fn __ayanami_arg_len(int i) -> int;
 src/system/env.aya:15: fn __ayanami_arg_data(int i) -> [char];

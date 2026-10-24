@@ -76,11 +76,8 @@ impl[T] Channel[T] {
             got = self.state.with_lock((ref mut ChanState[T] s) -> Option[T] {
                 return pop_front(s)
             });
-            match got {
-                Option::Some(v) => {
-                    return Option::Some(v)
-                }
-                Option::None() => { }
+            if got.is_some() {
+                return got
             }
             if ArchX86_64::atomic_load(ref self.closed) != 0 {
                 return Option::None()
