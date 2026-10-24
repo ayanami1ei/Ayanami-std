@@ -21,6 +21,7 @@ pub struct ChanState[T] {
 pub struct Channel[T] {
     Mutex[ChanState[T]] state
     int seq
+    int closed
 }
 
 pub namespace Channel {
@@ -30,7 +31,8 @@ pub namespace Channel {
                 in_stack = ArrayList::new[T](),
                 out_stack = ArrayList::new[T]()
             }),
-            seq = 0
+            seq = 0,
+            closed = 0
         };
     }
 }
@@ -56,11 +58,19 @@ impl[T] Channel[T] {
         });
     }
 
-    /// 阻塞接收（无数据时 futex 等待）
+    /// 阻塞接收（关闭且无数据 → panic；需要 Option 用 recv_opt）
     #[io]
     #[state]
     #[alloc]
     pub fn recv(ref mut self) -> T {
+        return self.recv_opt().unwrap()
+    }
+
+    /// 阻塞接收：返回 Some(值)；通道已关闭且已取空 → None
+    #[io]
+    #[state]
+    #[alloc]
+    pub fn recv_opt(ref mut self) -> Option[T] {
         while true {
             seq0 = ArchX86_64::atomic_load(ref self.seq);
             got = self.state.with_lock((ref mut ChanState[T] s) -> Option[T] {
@@ -68,9 +78,12 @@ impl[T] Channel[T] {
             });
             match got {
                 Option::Some(v) => {
-                    return v
+                    return Option::Some(v)
                 }
                 Option::None() => { }
+            }
+            if ArchX86_64::atomic_load(ref self.closed) != 0 {
+                return Option::None()
             }
             if ArchX86_64::atomic_load(ref self.seq) != seq0 {
                 continue
@@ -78,6 +91,17 @@ impl[T] Channel[T] {
             unsafe {
                 __ayanami_futex_wait(ref self.seq as *int, seq0)
             }
+        }
+    }
+
+    /// 关闭通道：唤醒所有等待接收者；关闭后 send 不再接受新消费者（文档约定）
+    #[io]
+    #[state]
+    pub fn close(ref self) -> void {
+        ArchX86_64::atomic_store(ref self.closed, 1);
+        ArchX86_64::atomic_fetch_add(ref self.seq, 1);
+        unsafe {
+            __ayanami_futex_wake(ref self.seq as *int, 2147483647)
         }
     }
 }

@@ -22,6 +22,22 @@ fn test_mutex_explicit_lock_unlock() {
 }
 
 #[test]
+fn test_mutex_try_lock() {
+    m = Mutex::new[int](10);
+    v = m.try_with_lock((ref mut int x) -> int {
+        *x = *x + 1;
+        return *x
+    });
+    #assert_eq(v.unwrap(), 11);
+    m.lock();
+    r = m.try_with_lock((ref mut int x) -> int { *x });
+    #assert(r.is_none());
+    m.unlock();
+    r2 = m.try_with_lock((ref mut int x) -> int { *x });
+    #assert_eq(r2.unwrap(), 11)
+}
+
+#[test]
 fn test_mutex_string_payload() {
     // 拥有型载荷：替换后旧值 drop（泄漏由 mem 门禁间接覆盖）
     m = Mutex::new[String]("hello");

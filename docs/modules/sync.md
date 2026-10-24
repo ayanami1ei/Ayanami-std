@@ -15,6 +15,8 @@ import "sync";
 | `a.swap(int v) -> int` | 原子交换，返回旧值 |
 | `a.fetch_add(int v) -> int` | 原子加，返回旧值 |
 | `a.fetch_sub(int v) -> int` | 原子减，返回旧值 |
+| `a.fetch_and/or/xor(int v) -> int` | 原子位运算（CAS 循环），返回旧值 |
+| `a.compare_exchange(int expected, int new) -> int` | 原子比较交换，返回旧值（`old == expected` 成功） |
 | `fence()` | 全内存栅栏（`mfence`） |
 | `cpu_relax()` | 自旋提示（`pause`） |
 
@@ -41,6 +43,7 @@ lock.store(0);
 |---|---|
 | `Mutex::new[T](T v)` | 新建 |
 | `m.with_lock((ref mut T v) -> U { ... }) -> U` | 加锁 → 回调 → 解锁；返回回调结果（void 可作语句） |
+| `m.try_with_lock(...) -> Option[U]` | 尝试加锁（不阻塞）；已被占用 → `None` |
 | `m.lock()` / `m.unlock()` | 显式加锁/解锁（必须配对） |
 | `m.data() -> ref mut T` | 载荷（仅持锁期间使用） |
 
@@ -59,6 +62,8 @@ v = m.with_lock((ref mut int v) -> int { *v });
 | `RwLock::new[T](T v)` | 新建 |
 | `l.with_read((ref T v) -> U { ... }) -> U` | 读锁（多读者并发） |
 | `l.with_write((ref mut T v) -> U { ... }) -> U` | 写锁（独占） |
+| `l.try_with_read/try_with_write(...) -> Option[U]` | 尝试加锁（不阻塞） |
+| `l.lock_read()/unlock_read()`、`l.lock_write()/unlock_write()` | 显式加解锁（必须配对） |
 
 状态字：`0` 空闲 / `n>0` 读者数 / `-1` 写者持有。读者释放最后一个时唤醒一个写者；
 写者释放时唤醒全部。**写者饥饿未处理**（S3 已知限制）。

@@ -168,7 +168,7 @@ int64_t __ayanami_thread_yield(void);                     // sched_yield
 | **S1** | `AtomicInt` + `fence`/`cpu_relax`（纯内联汇编） | 单线程语义测试（load/store/swap/fetch_*/自旋锁）；零运行时依赖 | ✅ 本批 |
 | **S2** | 线程：`spawn`/`join`/`current_id`/`yield_now`（pthread；asm 后端 raw syscall + pthread） | 多线程计数器（原子累加）、闭包捕获析构、join 语义、`thread_test` | ✅ 本批 |
 | **S3** | `Mutex[T]` / `RwLock[T]`（futex）＋ `futex_wait/wake` 两后端 | 单线程语义、显式 lock/unlock、8 线程争用、4 读者/写者并发 | ✅ 完成（写者饥饿策略待定） |
-| **S4** | `Channel[T]`（mpsc；双栈队列 + seq futex 唤醒） | FIFO、阻塞接收、`try_recv`、4 生产者并发 | ✅ 本批（close 待做） |
+| **S4** | `Channel[T]`（mpsc；双栈队列 + seq futex 唤醒） | FIFO、阻塞接收、`try_recv`、`close`/`recv_opt`、4 生产者并发 | ✅ 完成 |
 | **S5** | 最简 `block_on` + 多线程执行器（衔接 `038.4`） | 跨线程轮询、`Waker` = 原子 + futex wake | 待做（依赖编译器 async） |
 
 约定：每阶段含 `tests/unit/*_test.aya` + `docs/modules/*.md`；汇编后端与 C 后端行为一致

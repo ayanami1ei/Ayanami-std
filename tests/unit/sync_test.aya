@@ -29,6 +29,21 @@ fn test_atomic_fetch_add_sub() {
 }
 
 #[test]
+fn test_atomic_bitwise_cas() {
+    a = AtomicInt::new(10);
+    #assert_eq(a.fetch_or(5), 10);
+    #assert_eq(a.load(), 15);
+    #assert_eq(a.fetch_and(12), 15);
+    #assert_eq(a.load(), 12);
+    #assert_eq(a.fetch_xor(15), 12);
+    #assert_eq(a.load(), 3);
+    #assert_eq(a.compare_exchange(3, 7), 3);
+    #assert_eq(a.load(), 7);
+    #assert_eq(a.compare_exchange(99, 8), 7);
+    #assert_eq(a.load(), 7)
+}
+
+#[test]
 fn test_atomic_field_of_struct() {
     b = Holder { count = AtomicInt::new(7) };
     #assert_eq(b.count.fetch_add(1), 7);

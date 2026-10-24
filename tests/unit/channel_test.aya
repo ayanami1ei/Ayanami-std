@@ -94,3 +94,38 @@ fn test_channel_mpsc() {
     }
     #assert_eq(sum, n * per)
 }
+
+#[test]
+fn test_channel_close() {
+    c = Channel::new[int]();
+    c.send(1);
+    c.send(2);
+    c.close();
+    #assert_eq(c.recv_opt().unwrap(), 1);
+    #assert_eq(c.recv_opt().unwrap(), 2);
+    #assert(c.recv_opt().is_none())
+}
+
+#[test]
+fn test_channel_close_wakes_recv() {
+    c = Channel::new[int]();
+    got = AtomicInt::new(0);
+    unsafe {
+        pc = ref c as *Channel[int]
+        pg = ref got as *AtomicInt
+        Thread::spawn(() -> void {
+            unsafe {
+                o = (*pc).recv_opt();
+                match o {
+                    Option::Some(x) => { }
+                    Option::None() => { (*pg).store(1) }
+                }
+            }
+        });
+        (*pc).close();
+        while got.load() == 0 {
+            cpu_relax()
+        }
+    }
+    #assert_eq(got.load(), 1)
+}

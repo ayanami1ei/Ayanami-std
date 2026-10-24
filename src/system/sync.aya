@@ -50,6 +50,45 @@ impl AtomicInt {
     pub fn fetch_sub(ref self, int v) -> int {
         return ArchX86_64::atomic_fetch_sub(ref self.value, v);
     }
+
+    /// 原子比较交换（返回旧值；`old == expected` 表示成功）
+    #[state]
+    pub fn compare_exchange(ref self, int expected, int new) -> int {
+        return ArchX86_64::atomic_compare_exchange(ref self.value, expected, new);
+    }
+
+    /// 原子按位与（返回旧值；CAS 循环）
+    #[state]
+    pub fn fetch_and(ref self, int v) -> int {
+        while true {
+            old = ArchX86_64::atomic_load(ref self.value);
+            if ArchX86_64::atomic_compare_exchange(ref self.value, old, old & v) == old {
+                return old
+            }
+        }
+    }
+
+    /// 原子按位或（返回旧值；CAS 循环）
+    #[state]
+    pub fn fetch_or(ref self, int v) -> int {
+        while true {
+            old = ArchX86_64::atomic_load(ref self.value);
+            if ArchX86_64::atomic_compare_exchange(ref self.value, old, old | v) == old {
+                return old
+            }
+        }
+    }
+
+    /// 原子按位异或（返回旧值；CAS 循环）
+    #[state]
+    pub fn fetch_xor(ref self, int v) -> int {
+        while true {
+            old = ArchX86_64::atomic_load(ref self.value);
+            if ArchX86_64::atomic_compare_exchange(ref self.value, old, old ^ v) == old {
+                return old
+            }
+        }
+    }
 }
 
 /// 全内存栅栏（mfence）
@@ -93,6 +132,18 @@ impl[T] Mutex[T] {
         r = f(ref mut self.payload);
         self.unlock();
         return r;
+    }
+
+    /// 尝试加锁并执行回调；已被占用 → None（不阻塞）
+    #[io]
+    #[state]
+    pub fn try_with_lock[U](ref mut self, Fn(ref mut T) -> U f) -> Option[U] {
+        if ArchX86_64::atomic_compare_exchange(ref self.state, 0, 1) != 0 {
+            return Option::None()
+        }
+        r = f(ref mut self.payload);
+        self.unlock();
+        return Option::Some(r)
     }
 
     /// 显式加锁（必须配对 unlock）
@@ -165,6 +216,62 @@ impl[T] RwLock[T] {
         r = f(ref mut self.payload);
         self.release_write();
         return r
+    }
+
+    /// 显式读锁（必须配对 unlock_read）
+    #[io]
+    #[state]
+    pub fn lock_read(ref self) -> void {
+        self.acquire_read();
+    }
+
+    /// 显式读锁解锁
+    #[io]
+    #[state]
+    pub fn unlock_read(ref self) -> void {
+        self.release_read();
+    }
+
+    /// 显式写锁（必须配对 unlock_write）
+    #[io]
+    #[state]
+    pub fn lock_write(ref self) -> void {
+        self.acquire_write();
+    }
+
+    /// 显式写锁解锁
+    #[io]
+    #[state]
+    pub fn unlock_write(ref self) -> void {
+        self.release_write();
+    }
+
+    /// 尝试读锁并执行回调；有写者 → None（不阻塞）
+    #[io]
+    #[state]
+    pub fn try_with_read[U](ref self, Fn(ref T) -> U f) -> Option[U] {
+        s = ArchX86_64::atomic_load(ref self.state);
+        if s < 0 {
+            return Option::None()
+        }
+        if ArchX86_64::atomic_compare_exchange(ref self.state, s, s + 1) != s {
+            return Option::None()
+        }
+        r = f(ref self.payload);
+        self.release_read();
+        return Option::Some(r)
+    }
+
+    /// 尝试写锁并执行回调；非空闲 → None（不阻塞）
+    #[io]
+    #[state]
+    pub fn try_with_write[U](ref mut self, Fn(ref mut T) -> U f) -> Option[U] {
+        if ArchX86_64::atomic_compare_exchange(ref self.state, 0, -1) != 0 {
+            return Option::None()
+        }
+        r = f(ref mut self.payload);
+        self.release_write();
+        return Option::Some(r)
     }
 
     #[io]

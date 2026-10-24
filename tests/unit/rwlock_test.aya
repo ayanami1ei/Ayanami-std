@@ -14,6 +14,25 @@ fn test_rwlock_single_thread() {
     #assert_eq(v2, 6)
 }
 
+#[test]
+fn test_rwlock_try() {
+    l = RwLock::new[int](3);
+    r = l.try_with_read((ref int x) -> int { *x });
+    #assert_eq(r.unwrap(), 3);
+    w = l.try_with_write((ref mut int x) -> int {
+        *x = 4;
+        return *x
+    });
+    #assert_eq(w.unwrap(), 4);
+    // 读锁持有时写锁失败（单线程下通过显式加锁模拟）
+    l.lock_read();
+    failed = l.try_with_write((ref mut int x) -> int { *x });
+    #assert(failed.is_none());
+    l.unlock_read();
+    ok = l.try_with_write((ref mut int x) -> int { *x });
+    #assert_eq(ok.unwrap(), 4)
+}
+
 // 并发体放在普通函数（多线程 + 自旋等待）
 fn rw_write_run() -> int {
     l = RwLock::new[int](0);

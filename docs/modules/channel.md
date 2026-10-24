@@ -10,7 +10,9 @@ import "channel";
 |---|---|
 | `Channel::new[T]()` | 新建 |
 | `c.send(T v)` | 发送（多生产者安全；唤醒一个等待接收者） |
-| `c.recv() -> T` | 阻塞接收（无数据时 futex 等待） |
+| `c.recv() -> T` | 阻塞接收（无数据时 futex 等待；关闭且空 → panic） |
+| `c.recv_opt() -> Option[T]` | 阻塞接收；关闭且已取空 → `None` |
+| `c.close()` | 关闭通道，唤醒所有等待接收者 |
 | `c.try_recv() -> Option[T]` | 非阻塞接收（无数据 → `None`） |
 
 ## 语义
@@ -19,7 +21,7 @@ import "channel";
 - **多生产者**：`send` 经 `Mutex` 保护，任意线程可并发发送；接收端单消费者。
 - **唤醒**：`Channel` 内 `seq` 原子字，send 后递增并 `futex_wake`；recv 采样的顺序为
   「先取队列 → 再采样 seq → 等待」，避免丢失唤醒。
-- **关闭**：暂不提供 `close`（recv 阻塞至有数据）；`try_recv` 区分“空”。
+- **关闭**：`close()` 后已缓冲数据仍可取出，取空后 `recv_opt` 返回 `None`（`recv` 会 panic）；`send` 在关闭后不再有消费者（文档约定）。
 
 ## 示例
 
