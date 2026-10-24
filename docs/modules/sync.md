@@ -63,7 +63,7 @@ v = m.with_lock((ref mut int v) -> int { *v });
 | `l.with_read((ref T v) -> U { ... }) -> U` | 读锁（多读者并发） |
 | `l.with_write((ref mut T v) -> U { ... }) -> U` | 写锁（独占） |
 | `l.try_with_read/try_with_write(...) -> Option[U]` | 尝试加锁（不阻塞） |
-| `l.lock_read()/unlock_read()`、`l.lock_write()/unlock_write()` | 显式加解锁（必须配对） |
+| `l.read_lock()/read_unlock()`、`l.write_lock()/write_unlock()` | 显式加解锁（必须配对） |
 
 状态字：`0` 空闲 / `n>0` 读者数 / `-1` 写者持有；另有 `writers` 原子计数登记等待写者。
 **写者优先**：存在等待写者时新读者等待（`try_with_read` 同样返回 `None`），

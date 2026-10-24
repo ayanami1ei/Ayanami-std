@@ -219,31 +219,31 @@ impl[T] RwLock[T] {
         return r
     }
 
-    /// 显式读锁（必须配对 unlock_read）
+    /// 显式读锁（必须配对 read_unlock）
     #[io]
     #[state]
-    pub fn lock_read(ref self) -> void {
+    pub fn read_lock(ref self) -> void {
         self.acquire_read();
     }
 
     /// 显式读锁解锁
     #[io]
     #[state]
-    pub fn unlock_read(ref self) -> void {
+    pub fn read_unlock(ref self) -> void {
         self.release_read();
     }
 
-    /// 显式写锁（必须配对 unlock_write）
+    /// 显式写锁（必须配对 write_unlock）
     #[io]
     #[state]
-    pub fn lock_write(ref self) -> void {
+    pub fn write_lock(ref self) -> void {
         self.acquire_write();
     }
 
     /// 显式写锁解锁
     #[io]
     #[state]
-    pub fn unlock_write(ref self) -> void {
+    pub fn write_unlock(ref self) -> void {
         self.release_write();
     }
 

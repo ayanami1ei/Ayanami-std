@@ -1,0 +1,38 @@
+import "sync";
+
+import "test";
+
+// 编译器 #[sync(obj)] 块：进入 lock、出口/return 自动 unlock（协议：lock/unlock/data）
+#[test]
+fn test_sync_block_mutex() {
+    m = Mutex::new[int](5);
+    hit = 0;
+    #[sync(m)]
+    {
+        d = m.data();
+        *d = *d + 1;
+        hit = 1
+    }
+    #assert_eq(hit, 1);
+    v = 0;
+    #[sync(m, guard = g)]
+    {
+        v = *g
+    }
+    #assert_eq(v, 6)
+}
+
+fn early_value() -> int {
+    m = Mutex::new[int](7);
+    #[sync(m, guard = g)]
+    {
+        *g = *g + 1;
+        return *g
+    }
+    return 0
+}
+
+#[test]
+fn test_sync_block_return_value() {
+    #assert_eq(early_value(), 8)
+}

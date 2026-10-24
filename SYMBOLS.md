@@ -762,10 +762,10 @@ src/system/sync.aya:196: pub fn new[T](T v) -> RwLock[T]
 src/system/sync.aya:201: impl[T] RwLock[T]
 src/system/sync.aya:205: pub fn with_read[U](ref self, Fn(ref T) -> U f) -> U
 src/system/sync.aya:215: pub fn with_write[U](ref mut self, Fn(ref mut T) -> U f) -> U
-src/system/sync.aya:225: pub fn lock_read(ref self) -> void
-src/system/sync.aya:232: pub fn unlock_read(ref self) -> void
-src/system/sync.aya:239: pub fn lock_write(ref self) -> void
-src/system/sync.aya:246: pub fn unlock_write(ref self) -> void
+src/system/sync.aya:225: pub fn read_lock(ref self) -> void
+src/system/sync.aya:232: pub fn read_unlock(ref self) -> void
+src/system/sync.aya:239: pub fn write_lock(ref self) -> void
+src/system/sync.aya:246: pub fn write_unlock(ref self) -> void
 src/system/sync.aya:253: pub fn try_with_read[U](ref self, Fn(ref T) -> U f) -> Option[U]
 src/system/sync.aya:269: pub fn try_with_write[U](ref mut self, Fn(ref mut T) -> U f) -> Option[U]
 src/system/sync.aya:280: fn acquire_read(ref self) -> void
@@ -1124,6 +1124,9 @@ tests/unit/string_test.aya:97: fn test_self_append()
 tests/unit/string_test.aya:111: fn test_is_whitespace()
 tests/unit/string_test.aya:119: fn test_count_char()
 tests/unit/string_test.aya:126: fn test_int_format_edges()
+tests/unit/sync_block_test.aya:7: fn test_sync_block_mutex()
+tests/unit/sync_block_test.aya:25: fn early_value() -> int
+tests/unit/sync_block_test.aya:36: fn test_sync_block_return_value()
 tests/unit/sync_test.aya:6: fn test_atomic_load_store()
 tests/unit/sync_test.aya:14: fn test_atomic_swap()
 tests/unit/sync_test.aya:21: fn test_atomic_fetch_add_sub()

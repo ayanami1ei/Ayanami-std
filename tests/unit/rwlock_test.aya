@@ -25,10 +25,10 @@ fn test_rwlock_try() {
     });
     #assert_eq(w.unwrap(), 4);
     // 读锁持有时写锁失败（单线程下通过显式加锁模拟）
-    l.lock_read();
+    l.read_lock();
     failed = l.try_with_write((ref mut int x) -> int { *x });
     #assert(failed.is_none());
-    l.unlock_read();
+    l.read_unlock();
     ok = l.try_with_write((ref mut int x) -> int { *x });
     #assert_eq(ok.unwrap(), 4)
 }
