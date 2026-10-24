@@ -778,6 +778,11 @@ src/system/sync.aya:353: pub namespace Barrier
 src/system/sync.aya:355: pub fn new(int participants) -> Barrier
 src/system/sync.aya:367: impl Barrier
 src/system/sync.aya:371: pub fn wait(ref self) -> void
+src/system/sync.aya:406: pub struct Once
+src/system/sync.aya:410: pub namespace Once
+src/system/sync.aya:411: pub fn new() -> Once
+src/system/sync.aya:416: impl Once
+src/system/sync.aya:419: pub fn call_once(ref self, Fn() -> void f) -> void
 src/system/thread.aya:10: fn __ayanami_thread_spawn(Job job) -> usize;
 src/system/thread.aya:13: fn __ayanami_thread_join(usize handle) -> int;
 src/system/thread.aya:16: fn __ayanami_thread_id() -> int;
@@ -1032,6 +1037,9 @@ tests/unit/num_test.aya:17: fn test_overflow_flags()
 tests/unit/num_test.aya:29: fn test_saturating()
 tests/unit/num_test.aya:42: fn test_checked_overflowing()
 tests/unit/num_test.aya:58: fn test_neg_family()
+tests/unit/once_test.aya:7: fn once_run() -> int
+tests/unit/once_test.aya:33: fn test_once_runs_single_time()
+tests/unit/once_test.aya:38: fn test_once_waits_for_completion()
 tests/unit/option_test.aya:5: fn some_int(int v) -> Option[int]
 tests/unit/option_test.aya:9: fn none_int() -> Option[int]
 tests/unit/option_test.aya:13: fn seven() -> int

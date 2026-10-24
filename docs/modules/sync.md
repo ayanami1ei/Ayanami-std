@@ -85,6 +85,15 @@ l.with_write((ref mut int x) -> void { *x = *x + 1 });
 实现：`Mutex` 保护到达计数与代数 + `seq` futex 字；最后到达者推进代数并唤醒全部。
 闭包按值捕获，结果经返回值（票据）带出。
 
+## 一次性执行（S3 补充）
+
+| API | 说明 |
+|---|---|
+| `Once::new()` | 新建 |
+| `o.call_once(Fn() -> void f)` | 至多执行一次；并发调用者等待完成（futex） |
+
+state：`0` 未开始 / `1` 执行中 / `2` 完成。适合配合 `static mut` 做一次性初始化。
+
 ## 待落地（见设计文档 §6）
 
 - **S4 通道**：`Channel[T]`（mpsc）；

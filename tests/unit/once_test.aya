@@ -1,0 +1,49 @@
+import "sync";
+
+import "thread";
+
+import "test";
+
+fn once_run() -> int {
+    o = Once::new();
+    count = AtomicInt::new(0);
+    done = AtomicInt::new(0);
+    unsafe {
+        po = ref o as *Once
+        pc = ref count as *AtomicInt
+        pd = ref done as *AtomicInt
+        i = 0;
+        while i < 8 {
+            Thread::spawn(() -> void {
+                unsafe {
+                    (*po).call_once(() -> void { (*pc).fetch_add(1) });
+                    (*pd).fetch_add(1)
+                }
+            })
+            i = i + 1
+        }
+        while done.load() < 8 {
+            cpu_relax()
+        }
+    }
+    return count.load()
+}
+
+#[test]
+fn test_once_runs_single_time() {
+    #assert_eq(once_run(), 1)
+}
+
+#[test]
+fn test_once_waits_for_completion() {
+    // 先执行一次，后续调用直接返回（不再执行）
+    o = Once::new();
+    n = AtomicInt::new(0);
+    unsafe {
+        pn = ref n as *AtomicInt
+        o.call_once(() -> void { unsafe { (*pn).fetch_add(1) } });
+        o.call_once(() -> void { unsafe { (*pn).fetch_add(1) } });
+        o.call_once(() -> void { unsafe { (*pn).fetch_add(1) } });
+    }
+    #assert_eq(n.load(), 1)
+}

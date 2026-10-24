@@ -399,3 +399,36 @@ impl Barrier {
         }
     }
 }
+
+/// 一次性执行：`call_once` 至多执行一次；并发调用者等待完成
+///
+/// state：0 未开始 / 1 执行中 / 2 完成（futex 等待字）。
+pub struct Once {
+    int state
+}
+
+pub namespace Once {
+    pub fn new() -> Once {
+        return Once { state = 0 }
+    }
+}
+
+impl Once {
+    #[io]
+    #[state]
+    pub fn call_once(ref self, Fn() -> void f) -> void {
+        if ArchX86_64::atomic_compare_exchange(ref self.state, 0, 1) == 0 {
+            f();
+            ArchX86_64::atomic_store(ref self.state, 2);
+            unsafe {
+                __ayanami_futex_wake(ref self.state as *int, 2147483647)
+            }
+            return
+        }
+        while ArchX86_64::atomic_load(ref self.state) != 2 {
+            unsafe {
+                __ayanami_futex_wait(ref self.state as *int, 1)
+            }
+        }
+    }
+}
