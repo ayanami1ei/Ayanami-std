@@ -80,7 +80,7 @@ impl[T] Mutex[T] {
 }
 
 // RwLock[T]（S3 已落地）：with_read / with_write 回调式
-// state：0 空闲 / n>0 读者数 / -1 写者持有
+// state：0 空闲 / n>0 读者数 / -1 写者持有；writers：等待写者数（写者优先）
 ```
 
 > 回调直接收到 `ref mut T`（编译器 #205 修复后可安全解引用/整体写）；闭包按值捕获
@@ -167,7 +167,7 @@ int64_t __ayanami_thread_yield(void);                     // sched_yield
 |---|---|---|---|
 | **S1** | `AtomicInt` + `fence`/`cpu_relax`（纯内联汇编） | 单线程语义测试（load/store/swap/fetch_*/自旋锁）；零运行时依赖 | ✅ 本批 |
 | **S2** | 线程：`spawn`/`join`/`current_id`/`yield_now`（pthread；asm 后端 raw syscall + pthread） | 多线程计数器（原子累加）、闭包捕获析构、join 语义、`thread_test` | ✅ 本批 |
-| **S3** | `Mutex[T]` / `RwLock[T]`（futex）＋ `futex_wait/wake` 两后端 | 单线程语义、显式 lock/unlock、8 线程争用、4 读者/写者并发 | ✅ 完成（写者饥饿策略待定） |
+| **S3** | `Mutex[T]` / `RwLock[T]`（futex，写者优先）＋ `futex_wait/wake` 两后端 | 单线程语义、显式 lock/unlock、8 线程争用、4 读者/写者并发、混合读写 | ✅ 完成 |
 | **S4** | `Channel[T]`（mpsc；双栈队列 + seq futex 唤醒） | FIFO、阻塞接收、`try_recv`、`close`/`recv_opt`、4 生产者并发 | ✅ 完成 |
 | **S5** | 最简 `block_on` + 多线程执行器（衔接 `038.4`） | 跨线程轮询、`Waker` = 原子 + futex wake | 待做（依赖编译器 async） |
 

@@ -91,3 +91,45 @@ fn rw_read_run() -> int {
 fn test_rwlock_concurrent_readers() {
     #assert_eq(rw_read_run(), 4)
 }
+
+fn rw_mixed_run() -> int {
+    l = RwLock::new[int](0);
+    done = AtomicInt::new(0);
+    unsafe {
+        pl = ref l as *RwLock[int]
+        pd = ref done as *AtomicInt
+        i = 0;
+        while i < 2 {
+            Thread::spawn(() -> void {
+                j = 0;
+                while j < 10 {
+                    unsafe { (*pl).with_write((ref mut int v) -> void { *v = *v + 2 }) }
+                    j = j + 1
+                }
+                unsafe { (*pd).fetch_add(1) }
+            })
+            i = i + 1
+        }
+        i = 0;
+        while i < 4 {
+            Thread::spawn(() -> void {
+                j = 0;
+                while j < 10 {
+                    unsafe { (*pl).with_read((ref int v) -> void { }) }
+                    j = j + 1
+                }
+                unsafe { (*pd).fetch_add(1) }
+            })
+            i = i + 1
+        }
+        while done.load() < 6 {
+            cpu_relax()
+        }
+    }
+    return l.with_read((ref int v) -> int { *v })
+}
+
+#[test]
+fn test_rwlock_mixed_read_write() {
+    #assert_eq(rw_mixed_run(), 40)
+}

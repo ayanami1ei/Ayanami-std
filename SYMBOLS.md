@@ -756,21 +756,21 @@ src/system/sync.aya:152: pub fn lock(ref self) -> void
 src/system/sync.aya:172: pub fn unlock(ref self) -> void
 src/system/sync.aya:181: pub fn data(ref mut self) -> ref mut T
 src/system/sync.aya:189: pub struct RwLock[T]
-src/system/sync.aya:194: pub namespace RwLock
-src/system/sync.aya:195: pub fn new[T](T v) -> RwLock[T]
-src/system/sync.aya:200: impl[T] RwLock[T]
-src/system/sync.aya:204: pub fn with_read[U](ref self, Fn(ref T) -> U f) -> U
-src/system/sync.aya:214: pub fn with_write[U](ref mut self, Fn(ref mut T) -> U f) -> U
-src/system/sync.aya:224: pub fn lock_read(ref self) -> void
-src/system/sync.aya:231: pub fn unlock_read(ref self) -> void
-src/system/sync.aya:238: pub fn lock_write(ref self) -> void
-src/system/sync.aya:245: pub fn unlock_write(ref self) -> void
-src/system/sync.aya:252: pub fn try_with_read[U](ref self, Fn(ref T) -> U f) -> Option[U]
-src/system/sync.aya:268: pub fn try_with_write[U](ref mut self, Fn(ref mut T) -> U f) -> Option[U]
-src/system/sync.aya:279: fn acquire_read(ref self) -> void
-src/system/sync.aya:295: fn release_read(ref self) -> void
-src/system/sync.aya:305: fn acquire_write(ref self) -> void
-src/system/sync.aya:319: fn release_write(ref self) -> void
+src/system/sync.aya:195: pub namespace RwLock
+src/system/sync.aya:196: pub fn new[T](T v) -> RwLock[T]
+src/system/sync.aya:201: impl[T] RwLock[T]
+src/system/sync.aya:205: pub fn with_read[U](ref self, Fn(ref T) -> U f) -> U
+src/system/sync.aya:215: pub fn with_write[U](ref mut self, Fn(ref mut T) -> U f) -> U
+src/system/sync.aya:225: pub fn lock_read(ref self) -> void
+src/system/sync.aya:232: pub fn unlock_read(ref self) -> void
+src/system/sync.aya:239: pub fn lock_write(ref self) -> void
+src/system/sync.aya:246: pub fn unlock_write(ref self) -> void
+src/system/sync.aya:253: pub fn try_with_read[U](ref self, Fn(ref T) -> U f) -> Option[U]
+src/system/sync.aya:269: pub fn try_with_write[U](ref mut self, Fn(ref mut T) -> U f) -> Option[U]
+src/system/sync.aya:280: fn acquire_read(ref self) -> void
+src/system/sync.aya:296: fn release_read(ref self) -> void
+src/system/sync.aya:310: fn acquire_write(ref self) -> void
+src/system/sync.aya:326: fn release_write(ref self) -> void
 src/system/thread.aya:10: fn __ayanami_thread_spawn(Job job) -> usize;
 src/system/thread.aya:13: fn __ayanami_thread_join(usize handle) -> int;
 src/system/thread.aya:16: fn __ayanami_thread_id() -> int;
@@ -1054,6 +1054,8 @@ tests/unit/rwlock_test.aya:37: fn rw_write_run() -> int
 tests/unit/rwlock_test.aya:61: fn test_rwlock_concurrent_writers()
 tests/unit/rwlock_test.aya:65: fn rw_read_run() -> int
 tests/unit/rwlock_test.aya:91: fn test_rwlock_concurrent_readers()
+tests/unit/rwlock_test.aya:95: fn rw_mixed_run() -> int
+tests/unit/rwlock_test.aya:133: fn test_rwlock_mixed_read_write()
 tests/unit/sort_test.aya:6: fn test_sort_int()
 tests/unit/sort_test.aya:18: fn test_sort_string()
 tests/unit/sort_test.aya:30: fn test_sort_edge()

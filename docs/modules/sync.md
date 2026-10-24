@@ -65,8 +65,9 @@ v = m.with_lock((ref mut int v) -> int { *v });
 | `l.try_with_read/try_with_write(...) -> Option[U]` | 尝试加锁（不阻塞） |
 | `l.lock_read()/unlock_read()`、`l.lock_write()/unlock_write()` | 显式加解锁（必须配对） |
 
-状态字：`0` 空闲 / `n>0` 读者数 / `-1` 写者持有。读者释放最后一个时唤醒一个写者；
-写者释放时唤醒全部。**写者饥饿未处理**（S3 已知限制）。
+状态字：`0` 空闲 / `n>0` 读者数 / `-1` 写者持有；另有 `writers` 原子计数登记等待写者。
+**写者优先**：存在等待写者时新读者等待（`try_with_read` 同样返回 `None`），
+读者释放最后一个时唤醒全部（写者可竞争获取），写者释放时唤醒全部。
 
 ```ayanami
 l = RwLock::new[int](5);

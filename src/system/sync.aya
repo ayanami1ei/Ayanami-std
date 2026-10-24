@@ -188,12 +188,13 @@ impl[T] Mutex[T] {
 /// 语义：多读者并发；写者独占。写者饥饿未处理（S3 已知限制）。
 pub struct RwLock[T] {
     int state
+    int writers
     T payload
 }
 
 pub namespace RwLock {
     pub fn new[T](T v) -> RwLock[T] {
-        return RwLock[T] { state = 0, payload = v };
+        return RwLock[T] { state = 0, writers = 0, payload = v };
     }
 }
 
@@ -251,7 +252,7 @@ impl[T] RwLock[T] {
     #[state]
     pub fn try_with_read[U](ref self, Fn(ref T) -> U f) -> Option[U] {
         s = ArchX86_64::atomic_load(ref self.state);
-        if s < 0 {
+        if s < 0 || ArchX86_64::atomic_load(ref self.writers) > 0 {
             return Option::None()
         }
         if ArchX86_64::atomic_compare_exchange(ref self.state, s, s + 1) != s {
@@ -279,7 +280,7 @@ impl[T] RwLock[T] {
     fn acquire_read(ref self) -> void {
         while true {
             s = ArchX86_64::atomic_load(ref self.state);
-            if s >= 0 {
+            if s >= 0 && ArchX86_64::atomic_load(ref self.writers) == 0 {
                 if ArchX86_64::atomic_compare_exchange(ref self.state, s, s + 1) == s {
                     return
                 }
@@ -294,8 +295,12 @@ impl[T] RwLock[T] {
     #[state]
     fn release_read(ref self) -> void {
         if ArchX86_64::atomic_fetch_sub(ref self.state, 1) == 1 {
+            n = 1
+            if ArchX86_64::atomic_load(ref self.writers) > 0 {
+                n = 2147483647
+            }
             unsafe {
-                __ayanami_futex_wake(ref self.state as *int, 1)
+                __ayanami_futex_wake(ref self.state as *int, n)
             }
         }
     }
@@ -303,8 +308,10 @@ impl[T] RwLock[T] {
     #[io]
     #[state]
     fn acquire_write(ref self) -> void {
+        ArchX86_64::atomic_fetch_add(ref self.writers, 1);
         while true {
             if ArchX86_64::atomic_compare_exchange(ref self.state, 0, -1) == 0 {
+                ArchX86_64::atomic_fetch_sub(ref self.writers, 1);
                 return
             }
             s = ArchX86_64::atomic_load(ref self.state);
