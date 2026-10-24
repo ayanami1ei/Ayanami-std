@@ -92,7 +92,7 @@ impl[T] Mutex[T] {
 ### 3.4 通道 — `system/channel.aya`（后续）
 
 ```ayanami
-pub struct Channel[T] { ... }       // mpsc：多生产者单消费者
+pub struct Channel[T] { ... }       // mpsc：new() 无界 / new_bounded(cap) 背压
 pub fn send(ref self, T v)          // 阻塞（缓冲满时）
 pub fn recv(ref self) -> T          // 阻塞（空时）
 pub fn try_recv(ref self) -> Option[T]

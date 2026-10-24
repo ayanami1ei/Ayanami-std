@@ -128,3 +128,45 @@ fn test_channel_close_wakes_recv() {
     }
     #assert_eq(got.load(), 1)
 }
+
+#[test]
+fn test_channel_bounded() {
+    c = Channel::new_bounded[int](2);
+    c.send(1);
+    c.send(2);
+    #assert_eq(c.try_recv().unwrap(), 1);
+    c.send(3);
+    #assert_eq(c.try_recv().unwrap(), 2);
+    #assert_eq(c.try_recv().unwrap(), 3)
+}
+
+fn bounded_backpressure_run() -> int {
+    // cap=1：生产 3 条，消费 3 条；生产者应被背压阻塞但仍能全部送达
+    c = Channel::new_bounded[int](1);
+    done = AtomicInt::new(0);
+    unsafe {
+        pc = ref c as *Channel[int]
+        pd = ref done as *AtomicInt
+        Thread::spawn(() -> void {
+            k = 0;
+            while k < 3 {
+                unsafe { (*pc).send(k) }
+                k = k + 1
+            }
+            unsafe { (*pd).store(1) }
+        })
+    }
+    sum = 0;
+    j = 0;
+    while j < 3 {
+        sum = sum + c.recv()
+        j = j + 1
+    }
+    #assert_eq(sum, 3);
+    #assert_eq(done.load(), 1)
+}
+
+#[test]
+fn test_channel_bounded_backpressure() {
+    bounded_backpressure_run()
+}

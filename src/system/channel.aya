@@ -20,8 +20,11 @@ pub struct ChanState[T] {
 
 pub struct Channel[T] {
     Mutex[ChanState[T]] state
-    int seq
+    int seq          // 数据可用（recv 等待）
+    int space_seq    // 空间释放（有界 send 等待）
     int closed
+    int cap          // 0 = 无界
+    int slots        // 空闲槽位（仅 cap > 0 时使用）
 }
 
 pub namespace Channel {
@@ -32,7 +35,29 @@ pub namespace Channel {
                 out_stack = ArrayList::new[T]()
             }),
             seq = 0,
-            closed = 0
+            space_seq = 0,
+            closed = 0,
+            cap = 0,
+            slots = 0
+        };
+    }
+
+    /// 有界通道（cap 个槽位；满时 send 阻塞 —— 背压）
+    pub fn new_bounded[T](int cap) -> Channel[T] {
+        c = cap
+        if c <= 0 {
+            c = 1
+        }
+        return Channel[T] {
+            state = Mutex::new[ChanState[T]](ChanState[T] {
+                in_stack = ArrayList::new[T](),
+                out_stack = ArrayList::new[T]()
+            }),
+            seq = 0,
+            space_seq = 0,
+            closed = 0,
+            cap = c,
+            slots = c
         };
     }
 }
@@ -42,6 +67,24 @@ impl[T] Channel[T] {
     #[io]
     #[state]
     pub fn send(ref self, T v) -> void {
+        if self.cap > 0 {
+            while true {
+                if ArchX86_64::atomic_load(ref self.closed) != 0 {
+                    return
+                }
+                n = ArchX86_64::atomic_fetch_sub(ref self.slots, 1);
+                if n > 0 {
+                    break
+                }
+                ArchX86_64::atomic_fetch_add(ref self.slots, 1);
+                s0 = ArchX86_64::atomic_load(ref self.space_seq);
+                if ArchX86_64::atomic_load(ref self.space_seq) == s0 {
+                    unsafe {
+                        __ayanami_futex_wait(ref self.space_seq as *int, s0)
+                    }
+                }
+            }
+        }
         self.state.with_lock((ref mut ChanState[T] s) -> void { s.in_stack.push(v) });
         ArchX86_64::atomic_fetch_add(ref self.seq, 1);
         unsafe {
@@ -53,9 +96,17 @@ impl[T] Channel[T] {
     #[io]
     #[state]
     pub fn try_recv(ref mut self) -> Option[T] {
-        return self.state.with_lock((ref mut ChanState[T] s) -> Option[T] {
+        got = self.state.with_lock((ref mut ChanState[T] s) -> Option[T] {
             return pop_front(s)
         });
+        if got.is_some() && self.cap > 0 {
+            ArchX86_64::atomic_fetch_add(ref self.slots, 1);
+            ArchX86_64::atomic_fetch_add(ref self.space_seq, 1);
+            unsafe {
+                __ayanami_futex_wake(ref self.space_seq as *int, 1)
+            }
+        }
+        return got;
     }
 
     /// 阻塞接收（关闭且无数据 → panic；需要 Option 用 recv_opt）
@@ -77,6 +128,13 @@ impl[T] Channel[T] {
                 return pop_front(s)
             });
             if got.is_some() {
+                if self.cap > 0 {
+                    ArchX86_64::atomic_fetch_add(ref self.slots, 1);
+                    ArchX86_64::atomic_fetch_add(ref self.space_seq, 1);
+                    unsafe {
+                        __ayanami_futex_wake(ref self.space_seq as *int, 1)
+                    }
+                }
                 return got
             }
             if ArchX86_64::atomic_load(ref self.closed) != 0 {
@@ -97,8 +155,10 @@ impl[T] Channel[T] {
     pub fn close(ref self) -> void {
         ArchX86_64::atomic_store(ref self.closed, 1);
         ArchX86_64::atomic_fetch_add(ref self.seq, 1);
+        ArchX86_64::atomic_fetch_add(ref self.space_seq, 1);
         unsafe {
-            __ayanami_futex_wake(ref self.seq as *int, 2147483647)
+            __ayanami_futex_wake(ref self.seq as *int, 2147483647);
+            __ayanami_futex_wake(ref self.space_seq as *int, 2147483647)
         }
     }
 }

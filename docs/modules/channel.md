@@ -8,7 +8,8 @@ import "channel";
 
 | API | 说明 |
 |---|---|
-| `Channel::new[T]()` | 新建 |
+| `Channel::new[T]()` | 新建（无界） |
+| `Channel::new_bounded[T](int cap)` | 有界（cap 个槽位；满时 `send` 阻塞 —— 背压） |
 | `c.send(T v)` | 发送（多生产者安全；唤醒一个等待接收者） |
 | `c.recv() -> T` | 阻塞接收（无数据时 futex 等待；关闭且空 → panic） |
 | `c.recv_opt() -> Option[T]` | 阻塞接收；关闭且已取空 → `None` |
@@ -21,7 +22,8 @@ import "channel";
 - **多生产者**：`send` 经 `Mutex` 保护，任意线程可并发发送；接收端单消费者。
 - **唤醒**：`Channel` 内 `seq` 原子字，send 后递增并 `futex_wake`；recv 采样的顺序为
   「先取队列 → 再采样 seq → 等待」，避免丢失唤醒。
-- **关闭**：`close()` 后已缓冲数据仍可取出，取空后 `recv_opt` 返回 `None`（`recv` 会 panic）；`send` 在关闭后不再有消费者（文档约定）。
+- **关闭**：`close()` 后已缓冲数据仍可取出，取空后 `recv_opt` 返回 `None`（`recv` 会 panic）；关闭后阻塞中的 `send` 直接返回（丢弃该条）。
+- **有界（背压）**：`new_bounded(cap)` 用「空闲槽位原子计数 + space_seq futex」限流；`recv` 释放槽位并唤醒等待的生产者。
 
 ## 示例
 

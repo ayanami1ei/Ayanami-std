@@ -625,17 +625,18 @@ src/system/alloc.aya:56: pub fn default_alloc(usize size) -> usize
 src/system/alloc.aya:61: pub fn default_free(usize addr)
 src/system/channel.aya:16: pub struct ChanState[T]
 src/system/channel.aya:21: pub struct Channel[T]
-src/system/channel.aya:27: pub namespace Channel
-src/system/channel.aya:28: pub fn new[T]() -> Channel[T]
-src/system/channel.aya:40: impl[T] Channel[T]
-src/system/channel.aya:44: pub fn send(ref self, T v) -> void
-src/system/channel.aya:55: pub fn try_recv(ref mut self) -> Option[T]
-src/system/channel.aya:65: pub fn recv(ref mut self) -> T
-src/system/channel.aya:73: pub fn recv_opt(ref mut self) -> Option[T]
-src/system/channel.aya:97: pub fn close(ref self) -> void
-src/system/channel.aya:108: fn pop_front[T](ref mut ChanState[T] s) -> Option[T]
-src/system/channel.aya:121: fn __ayanami_futex_wait(*int addr, int expected) -> int;
-src/system/channel.aya:124: fn __ayanami_futex_wake(*int addr, int n) -> int;
+src/system/channel.aya:30: pub namespace Channel
+src/system/channel.aya:31: pub fn new[T]() -> Channel[T]
+src/system/channel.aya:46: pub fn new_bounded[T](int cap) -> Channel[T]
+src/system/channel.aya:65: impl[T] Channel[T]
+src/system/channel.aya:69: pub fn send(ref self, T v) -> void
+src/system/channel.aya:98: pub fn try_recv(ref mut self) -> Option[T]
+src/system/channel.aya:116: pub fn recv(ref mut self) -> T
+src/system/channel.aya:124: pub fn recv_opt(ref mut self) -> Option[T]
+src/system/channel.aya:155: pub fn close(ref self) -> void
+src/system/channel.aya:168: fn pop_front[T](ref mut ChanState[T] s) -> Option[T]
+src/system/channel.aya:181: fn __ayanami_futex_wait(*int addr, int expected) -> int;
+src/system/channel.aya:184: fn __ayanami_futex_wake(*int addr, int n) -> int;
 src/system/env.aya:9: fn __ayanami_arg_count() -> int;
 src/system/env.aya:12: fn __ayanami_arg_len(int i) -> int;
 src/system/env.aya:15: fn __ayanami_arg_data(int i) -> [char];
@@ -902,6 +903,9 @@ tests/unit/channel_test.aya:49: fn test_channel_recv_blocks_until_send()
 tests/unit/channel_test.aya:70: fn test_channel_mpsc()
 tests/unit/channel_test.aya:99: fn test_channel_close()
 tests/unit/channel_test.aya:110: fn test_channel_close_wakes_recv()
+tests/unit/channel_test.aya:133: fn test_channel_bounded()
+tests/unit/channel_test.aya:143: fn bounded_backpressure_run() -> int
+tests/unit/channel_test.aya:170: fn test_channel_bounded_backpressure()
 tests/unit/char_test.aya:4: fn test_classify()
 tests/unit/char_test.aya:17: fn test_convert()
 tests/unit/convert_test.aya:7: fn as_float[U: Into[float]](U x) -> float
