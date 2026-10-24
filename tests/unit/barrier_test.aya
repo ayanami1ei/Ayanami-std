@@ -1,0 +1,74 @@
+import "sync";
+
+import "thread";
+
+import "test";
+
+// N 线程各自自增后到屏障等待，全部到达后才检查总数
+fn barrier_run() -> int {
+    b = Barrier::new(4);
+    count = AtomicInt::new(0);
+    ok = AtomicInt::new(0);
+    unsafe {
+        pb = ref b as *Barrier
+        pc = ref count as *AtomicInt
+        po = ref ok as *AtomicInt
+        i = 0;
+        while i < 4 {
+            Thread::spawn(() -> void {
+                unsafe {
+                    (*pc).fetch_add(1);
+                    (*pb).wait();
+                    if (*pc).load() == 4 {
+                        (*po).fetch_add(1)
+                    }
+                }
+            })
+            i = i + 1
+        }
+        while ok.load() < 4 {
+            cpu_relax()
+        }
+    }
+    return ok.load()
+}
+
+#[test]
+fn test_barrier_rendezvous() {
+    #assert_eq(barrier_run(), 4)
+}
+
+// 可重复使用：两轮
+fn barrier_two_rounds_run() -> int {
+    b = Barrier::new(3);
+    phase = AtomicInt::new(0);
+    ok = AtomicInt::new(0);
+    unsafe {
+        pb = ref b as *Barrier
+        pp = ref phase as *AtomicInt
+        po = ref ok as *AtomicInt
+        i = 0;
+        while i < 3 {
+            Thread::spawn(() -> void {
+                unsafe {
+                    (*pb).wait();
+                    (*pp).fetch_add(1);
+                    (*pb).wait();
+                    if (*pp).load() == 3 {
+                        (*po).fetch_add(1)
+                    }
+                }
+            })
+            i = i + 1
+        }
+        while ok.load() < 3 {
+            cpu_relax()
+        }
+    }
+    return ok.load()
+}
+
+#[test]
+fn test_barrier_reusable() {
+    #assert_eq(barrier_two_rounds_run(), 3)
+}

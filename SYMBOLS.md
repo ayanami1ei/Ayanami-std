@@ -771,6 +771,13 @@ src/system/sync.aya:280: fn acquire_read(ref self) -> void
 src/system/sync.aya:296: fn release_read(ref self) -> void
 src/system/sync.aya:310: fn acquire_write(ref self) -> void
 src/system/sync.aya:326: fn release_write(ref self) -> void
+src/system/sync.aya:334: struct BarrierTicket
+src/system/sync.aya:342: struct BarrierState
+src/system/sync.aya:348: pub struct Barrier
+src/system/sync.aya:353: pub namespace Barrier
+src/system/sync.aya:355: pub fn new(int participants) -> Barrier
+src/system/sync.aya:367: impl Barrier
+src/system/sync.aya:371: pub fn wait(ref self) -> void
 src/system/thread.aya:10: fn __ayanami_thread_spawn(Job job) -> usize;
 src/system/thread.aya:13: fn __ayanami_thread_join(usize handle) -> int;
 src/system/thread.aya:16: fn __ayanami_thread_id() -> int;
@@ -876,6 +883,10 @@ tests/unit/assert_test.aya:5: fn some3() -> Option[int]
 tests/unit/assert_test.aya:9: fn none_opt() -> Option[int]
 tests/unit/assert_test.aya:14: fn test_compare_asserts()
 tests/unit/assert_test.aya:22: fn test_other_asserts()
+tests/unit/barrier_test.aya:8: fn barrier_run() -> int
+tests/unit/barrier_test.aya:37: fn test_barrier_rendezvous()
+tests/unit/barrier_test.aya:42: fn barrier_two_rounds_run() -> int
+tests/unit/barrier_test.aya:72: fn test_barrier_reusable()
 tests/unit/bitops_test.aya:6: fn test_popcount()
 tests/unit/bitops_test.aya:14: fn test_zeros()
 tests/unit/bitops_test.aya:24: fn test_power_of_two()

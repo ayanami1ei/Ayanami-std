@@ -75,6 +75,16 @@ v = l.with_read((ref int x) -> int { *x });
 l.with_write((ref mut int x) -> void { *x = *x + 1 });
 ```
 
+## 屏障（S3 补充）
+
+| API | 说明 |
+|---|---|
+| `Barrier::new(int n)` | n 个参与者 |
+| `b.wait()` | 等待本轮所有参与者到达后一起继续；**可重复使用** |
+
+实现：`Mutex` 保护到达计数与代数 + `seq` futex 字；最后到达者推进代数并唤醒全部。
+闭包按值捕获，结果经返回值（票据）带出。
+
 ## 待落地（见设计文档 §6）
 
 - **S4 通道**：`Channel[T]`（mpsc）；

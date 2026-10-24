@@ -330,3 +330,72 @@ impl[T] RwLock[T] {
         }
     }
 }
+
+struct BarrierTicket {
+    int generation
+    int last
+}
+
+/// 屏障：N 个线程相互等待，全部到达后一起继续（可重复使用）
+///
+/// seq：futex 字（每轮 +1）；state 保护到达计数与代数（代数防止丢失唤醒/跨轮误入）。
+struct BarrierState {
+    int total
+    int arrived
+    int generation
+}
+
+pub struct Barrier {
+    int seq
+    Mutex[BarrierState] state
+}
+
+pub namespace Barrier {
+    /// 新建（participants 个线程会合）
+    pub fn new(int participants) -> Barrier {
+        return Barrier {
+            seq = 0,
+            state = Mutex::new[BarrierState](BarrierState {
+                total = participants,
+                arrived = 0,
+                generation = 0
+            })
+        };
+    }
+}
+
+impl Barrier {
+    /// 等待所有参与者到达（阻塞至本轮完成）
+    #[io]
+    #[state]
+    pub fn wait(ref self) -> void {
+        // 闭包按值捕获，结果经返回值带出（票据：本轮代数 + 是否最后到达）
+        t = self.state.with_lock((ref mut BarrierState s) -> BarrierTicket {
+            g = s.generation;
+            done = 0;
+            s.arrived = s.arrived + 1;
+            if s.arrived == s.total {
+                s.arrived = 0;
+                s.generation = s.generation + 1;
+                done = 1;
+            }
+            return BarrierTicket { generation = g, last = done }
+        });
+        if t.last == 1 {
+            ArchX86_64::atomic_fetch_add(ref self.seq, 1);
+            unsafe {
+                __ayanami_futex_wake(ref self.seq as *int, 2147483647)
+            }
+            return
+        }
+        while true {
+            cur = ArchX86_64::atomic_load(ref self.seq);
+            if cur > t.generation {
+                return
+            }
+            unsafe {
+                __ayanami_futex_wait(ref self.seq as *int, cur)
+            }
+        }
+    }
+}
