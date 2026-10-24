@@ -22,6 +22,7 @@
 | [alloc.md](modules/alloc.md) | 全局分配器：可替换后端接口与自定义分配器（覆盖弱符号） |
 | [macros.md](modules/macros.md) | 宏 TokenStream API（ABI v6 编解码、诊断、hygiene） |
 | [fs.md](modules/fs.md) | 文件读写：`exists` / `read_file` / `write_file` |
+| [path.md](modules/path.md) | 路径字符串工具：`normalize` / `join` / `basename` / `dirname` / `extension` |
 | [env.md](modules/env.md) | 命令行参数与环境变量 |
 | [iter.md](modules/iter.md) | 迭代器：`for-in` 协议、`into_iter`、自定义迭代器 |
 | [collections.md](modules/collections.md) | 集合与排序：`List` 接口、`ArrayList`、`LinkedList`、`HashSet`/`HashMap`、`Ord` 排序 |

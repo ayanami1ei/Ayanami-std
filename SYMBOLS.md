@@ -403,8 +403,8 @@ src/core/option.aya:74: fn map[U](self, Fn(T)->U f) -> Option[U]
 src/core/option.aya:81: fn and_then[U](self, Fn(T)->Option[U] f) -> Option[U]
 src/core/option.aya:88: fn filter(self, Fn(T)->bool f) -> Option[T]
 src/core/option.aya:100: impl[T, E] Result[T, E]
-src/core/option.aya:101: fn is_ok(self) -> bool
-src/core/option.aya:104: fn is_err(self) -> bool
+src/core/option.aya:101: fn is_ok(ref self) -> bool
+src/core/option.aya:104: fn is_err(ref self) -> bool
 src/core/option.aya:108: fn unwrap_or(self, T default) -> T
 src/core/option.aya:115: fn ok(self) -> Option[T]
 src/core/option.aya:122: fn unwrap_or_else(self, Fn(E)->T f) -> T
@@ -719,6 +719,11 @@ src/system/io.aya:176: pub fn try_read_float() -> Option[float]
 src/system/io.aya:184: pub fn read_bool() -> bool
 src/system/io.aya:192: pub fn try_read_bool() -> Option[bool]
 src/system/io.aya:200: pub fn try_read_uint() -> Option[usize]
+src/system/path.aya:15: pub fn normalize(String path) -> String
+src/system/path.aya:40: pub fn join(String base, String name) -> String
+src/system/path.aya:57: pub fn basename(String path) -> String
+src/system/path.aya:78: pub fn dirname(String path) -> String
+src/system/path.aya:102: pub fn extension(String path) -> String
 src/system/rand.aya:9: fn __ayanami_random_u64() -> int;
 src/system/rand.aya:11: pub struct Rng
 src/system/rand.aya:15: pub namespace Rng
@@ -1075,6 +1080,10 @@ tests/unit/option_test.aya:160: fn test_result_expect_err_panics()
 tests/unit/panic_test.aya:6: fn test_index_oob()
 tests/unit/panic_test.aya:13: fn test_pop_empty()
 tests/unit/panic_test.aya:19: fn test_panic_macro()
+tests/unit/path_test.aya:6: fn test_path_normalize()
+tests/unit/path_test.aya:15: fn test_path_join()
+tests/unit/path_test.aya:26: fn test_path_basename_dirname()
+tests/unit/path_test.aya:37: fn test_path_extension()
 tests/unit/rand_test.aya:10: fn test_range()
 tests/unit/rand_test.aya:23: fn test_deterministic()
 tests/unit/rand_test.aya:32: fn test_seed_variation()

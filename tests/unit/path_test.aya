@@ -1,0 +1,42 @@
+import "path";
+
+import "test";
+
+#[test]
+fn test_path_normalize() {
+    #assert_eq(normalize(""), "");
+    #assert_eq(normalize("/"), "/");
+    #assert_eq(normalize("a//b///c"), "a/b/c");
+    #assert_eq(normalize("/a/b/"), "/a/b");
+    #assert_eq(normalize("a/b/"), "a/b")
+}
+
+#[test]
+fn test_path_join() {
+    #assert_eq(join("a", "b"), "a/b");
+    #assert_eq(join("a/", "b"), "a/b");
+    #assert_eq(join("a", "/b"), "/b");
+    #assert_eq(join("", "b"), "b");
+    #assert_eq(join("a", ""), "a");
+    #assert_eq(join("/", "b"), "/b");
+    #assert_eq(join("a", "../b"), "a/../b")
+}
+
+#[test]
+fn test_path_basename_dirname() {
+    #assert_eq(basename("/a/b/c.txt"), "c.txt");
+    #assert_eq(basename("c.txt"), "c.txt");
+    #assert_eq(basename("/"), "/");
+    #assert_eq(dirname("/a/b/c.txt"), "/a/b");
+    #assert_eq(dirname("c.txt"), ".");
+    #assert_eq(dirname("/c.txt"), "/");
+    #assert_eq(dirname("/"), "/")
+}
+
+#[test]
+fn test_path_extension() {
+    #assert_eq(extension("a/b/c.txt"), "txt");
+    #assert_eq(extension("a/b/c"), "");
+    #assert_eq(extension("archive.tar.gz"), "gz");
+    #assert_eq(extension("/"), "")
+}

@@ -98,10 +98,10 @@ impl[T] Option[T] {
 }
 
 impl[T, E] Result[T, E] {
-    fn is_ok(self) -> bool {
+    fn is_ok(ref self) -> bool {
         return self._tag == 0;
     }
-    fn is_err(self) -> bool {
+    fn is_err(ref self) -> bool {
         return self._tag != 0;
     }
     /// Ok 取值，Err 用默认值
