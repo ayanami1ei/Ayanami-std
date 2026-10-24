@@ -63,7 +63,9 @@ def prepare_driver(binary, stem, fn_names):
     main 从 argv[1] 解析十进制序号，分派到对应用例；每个用例仍以独立进程运行。
     返回驱动二进制路径；编译失败返回 (None, 输出)。
     """
-    driver = os.path.join(UNIT, ".driver.aya")
+    drv_dir = os.path.join(ROOT, "build", "drivers")
+    os.makedirs(drv_dir, exist_ok=True)
+    driver = os.path.join(drv_dir, f"{stem}.aya")
     src_path = os.path.join(UNIT, f"{stem}.aya")
     with open(src_path, encoding="utf-8") as f:
         src = f.read()
@@ -71,10 +73,7 @@ def prepare_driver(binary, stem, fn_names):
     for i, fn in enumerate(fn_names):
         arms.append(f"    if idx == {i} {{ {fn}(); return 0 }}")
     body = "\n".join(arms)
-    with open(driver, "w", encoding="utf-8") as f:
-        f.write('import "env";\n')
-        f.write(src)
-        f.write(f"""
+    content = 'import "env";\n' + src + f"""
 
 fn main() -> int {{
     idx = 0;
@@ -90,14 +89,22 @@ fn main() -> int {{
 {body}
     return 3
 }}
-""")
+"""
+    # 内容不变则不重写（保留 mtime，命中编译器增量缓存）
+    old_content = None
+    if os.path.exists(driver):
+        with open(driver, encoding="utf-8") as f:
+            old_content = f.read()
+    if old_content != content:
+        with open(driver, "w", encoding="utf-8") as f:
+            f.write(content)
     # 以越界序号运行：只编译/链接、不执行任何用例；驱动返回 3 表示构建成功
     env = dict(os.environ, AYA_TEST_IDX="9999")
     p = subprocess.run(
         [binary, "run", os.path.relpath(driver, ROOT)],
         cwd=ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=600,
     )
-    exe = os.path.join(ROOT, "build", ".driver")
+    exe = os.path.join(ROOT, "build", stem)
     if p.returncode != 3 or not os.path.exists(exe):
         return None, (p.stdout + p.stderr).decode("utf-8", "replace").strip(), driver
     return exe, "", driver
@@ -135,42 +142,30 @@ def run_unit(binary, flt, failures):
     by_stem = {}
     for stem, fn_name, expect_panic in tests:
         by_stem.setdefault(stem, []).append((fn_name, expect_panic))
-    try:
-        for stem, cases in by_stem.items():
-            exe, build_out, driver = prepare_driver(binary, stem, [c[0] for c in cases])
-            if exe is None:
-                # 编译失败：该文件全部用例标记失败
-                for fn_name, _ in cases:
-                    label = f"{stem}::{fn_name}"
-                    print(f"  {RED}FAIL{RESET} {label}  (build failed)")
-                    for ln in build_out.splitlines()[-6:]:
-                        print(f"       {DIM}{ln}{RESET}")
-                    failures.append(label)
-                continue
-            for idx, (fn_name, expect_panic) in enumerate(cases):
-                code, out = run_case(exe, idx, stem)
-                ok = (code == 101) if expect_panic else (code == 0)
+    for stem, cases in by_stem.items():
+        exe, build_out, driver = prepare_driver(binary, stem, [c[0] for c in cases])
+        if exe is None:
+            for fn_name, _ in cases:
                 label = f"{stem}::{fn_name}"
-                if ok:
-                    passed += 1
-                    print(f"  {GREEN}ok{RESET}   {label}")
-                else:
-                    want = 101 if expect_panic else 0
-                    print(f"  {RED}FAIL{RESET} {label}  (exit {code}, want {want})")
-                    line = first_line(out)
-                    if line:
-                        print(f"       {DIM}{line}{RESET}")
-                    failures.append(label)
-    finally:
-        try:
-            os.remove(os.path.join(UNIT, ".driver.aya"))
-        except OSError:
-            pass
-        for suffix in ("", ".lcl", ".ll", ".o"):
-            try:
-                os.remove(os.path.join(ROOT, "build", ".driver" + suffix))
-            except OSError:
-                pass
+                print(f"  {RED}FAIL{RESET} {label}  (build failed)")
+                for ln in build_out.splitlines()[-6:]:
+                    print(f"       {DIM}{ln}{RESET}")
+                failures.append(label)
+            continue
+        for idx, (fn_name, expect_panic) in enumerate(cases):
+            code, out = run_case(exe, idx, stem)
+            ok = (code == 101) if expect_panic else (code == 0)
+            label = f"{stem}::{fn_name}"
+            if ok:
+                passed += 1
+                print(f"  {GREEN}ok{RESET}   {label}")
+            else:
+                want = 101 if expect_panic else 0
+                print(f"  {RED}FAIL{RESET} {label}  (exit {code}, want {want})")
+                line = first_line(out)
+                if line:
+                    print(f"       {DIM}{line}{RESET}")
+                failures.append(label)
     return passed, len(tests)
 
 
