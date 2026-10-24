@@ -116,9 +116,8 @@ fn test_channel_close_wakes_recv() {
         Thread::spawn(() -> void {
             unsafe {
                 o = (*pc).recv_opt();
-                match o {
-                    Option::Some(x) => { }
-                    Option::None() => { (*pg).store(1) }
+                if o.is_none() {
+                    (*pg).store(1)
                 }
             }
         });
