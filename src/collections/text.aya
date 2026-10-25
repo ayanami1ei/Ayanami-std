@@ -148,7 +148,7 @@ impl String {
 pub fn split(ref String s, ref String sep) -> ArrayList[String] {
     res = ArrayList::new[String]();
     for part in s.copy().split_iter(sep.copy()) {
-        res.push(part.copy())
+        res.push(part)
     }
     return res;
 }
@@ -248,7 +248,7 @@ pub fn pad_right(ref String s, usize width, char fill) -> String {
 pub fn lines(ref String s) -> ArrayList[String] {
     res = ArrayList::new[String]();
     for ln in s.copy().lines_iter() {
-        res.push(ln.copy())
+        res.push(ln)
     }
     return res;
 }
@@ -275,7 +275,7 @@ pub fn split_once(ref String s, ref String sep) -> Split {
 pub fn split_whitespace(ref String s) -> ArrayList[String] {
     res = ArrayList::new[String]();
     for w in s.copy().split_whitespace_iter() {
-        res.push(w.copy())
+        res.push(w)
     }
     return res;
 }

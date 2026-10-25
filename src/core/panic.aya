@@ -4,11 +4,11 @@ import "string";
 #[pure]
 #[noreturn]
 #[extern]
-fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
+fn __ayanami_panic_at(int line, int col, String file, String msg) -> !;
 
 #[pure]
 #[noreturn]
-pub fn panic_at(int line, int col, String file, String msg) -> void {
+pub fn panic_at(int line, int col, String file, String msg) -> ! {
     __ayanami_panic_at(line, col, file, msg);
 }
 

@@ -421,8 +421,8 @@ src/core/ord.aya:11: impl int
 src/core/ord.aya:14: fn cmp(ref self, ref int other) -> int
 src/core/ord.aya:25: impl String
 src/core/ord.aya:28: fn cmp(ref self, ref String other) -> int
-src/core/panic.aya:7: fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
-src/core/panic.aya:11: pub fn panic_at(int line, int col, String file, String msg) -> void
+src/core/panic.aya:7: fn __ayanami_panic_at(int line, int col, String file, String msg) -> !;
+src/core/panic.aya:11: pub fn panic_at(int line, int col, String file, String msg) -> !
 src/core/panic.aya:20: pub fn panic(String input, String msg, int __line, int __col, String __file) -> String
 src/core/panic.aya:36: pub fn panic_bounds(String input, String index, String len, int __line, int __col, String __file) -> String
 src/core/string.aya:5: fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
