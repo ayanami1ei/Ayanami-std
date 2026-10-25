@@ -145,3 +145,21 @@ fn test_error_model() {
     #assert(rmdir("/tmp/ayanami_fs_err_dir"));
     #assert(remove_file("/tmp/ayanami_fs_err_test.txt"))
 }
+
+#[test]
+fn test_fs_walk() {
+    root = "/tmp/ayanami_walk_test";
+    sub = join(root.copy(), "sub");
+    mkdir(root.copy());
+    mkdir(sub.copy());
+    write_file(join(root.copy(), "a.txt"), "a");
+    write_file(join(sub.copy(), "b.txt"), "b");
+    files = walk(root.copy());
+    #assert(files.len() >= 2);
+    #assert(files.contains(join(root.copy(), "a.txt")));
+    #assert(files.contains(join(sub.copy(), "b.txt")));
+    remove_file(join(root.copy(), "a.txt"));
+    remove_file(join(sub.copy(), "b.txt"));
+    rmdir(sub.copy());
+    rmdir(root)
+}

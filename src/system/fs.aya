@@ -1,6 +1,8 @@
 // fs — 文件读写（运行时提供）
 import "string";
 
+import "path";
+
 import "option";
 
 import "arraylist";
@@ -301,4 +303,34 @@ pub fn read_file_result(String path) -> Result[String, IoError] {
         return Result::Err(last_error(path));
     }
     return Result::Ok(String::new(data, n as usize));
+}
+
+/// 递归列出目录下所有**文件**路径（深度优先；不含目录本身）
+///
+/// 顺序取决于 `list_dir`；目录不可读时跳过该分支。
+#[alloc]
+#[state]
+pub fn walk(String root) -> ArrayList[String] {
+    res = ArrayList::new[String]();
+    walk_into(root, ref mut res);
+    return res;
+}
+
+#[alloc]
+#[state]
+fn walk_into(String dir, ref mut ArrayList[String] dst) {
+    entries = list_dir(dir.copy());
+    match entries {
+        Option::Some(names) => {
+            for name in names.into_iter() {
+                full = join(dir.copy(), name);
+                if is_dir(full.copy()) {
+                    walk_into(full, dst)
+                } else {
+                    dst.push(full)
+                }
+            }
+        }
+        Option::None() => { }
+    }
 }
