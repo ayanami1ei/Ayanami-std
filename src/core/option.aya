@@ -20,7 +20,7 @@ pub enum Option[T] {
 
 impl[T] Option[T] {
     fn unwrap_or(self, T default) -> T {
-        match self {
+        return match self {
             Option::Some(v) => v,
             Option::None() => default,
         }
@@ -41,25 +41,17 @@ impl[T] Option[T] {
     /// Some 取值；None 触发 panic（退出码 101）
     #[alloc]
     fn unwrap(self, int __line, int __col, String __file) -> T {
-        match self {
-            Option::Some(v) => {
-                return v
-            }
-            Option::None() => {
-                panic_at(__line, __col, __file, "called `Option::unwrap` on a None value")
-            }
+        return match self {
+            Option::Some(v) => v,
+            Option::None() => panic_at(__line, __col, __file, "called `Option::unwrap` on a None value"),
         }
     }
     /// Some 取值；None 触发带自定义消息的 panic
     #[alloc]
     fn expect(self, String msg, int __line, int __col, String __file) -> T {
-        match self {
-            Option::Some(v) => {
-                return v
-            }
-            Option::None() => {
-                panic_at(__line, __col, __file, msg)
-            }
+        return match self {
+            Option::Some(v) => v,
+            Option::None() => panic_at(__line, __col, __file, msg),
         }
     }
     /// 有值取值，否则用 `f()` 生成
@@ -112,14 +104,14 @@ impl[T, E] Result[T, E] {
     }
     /// Ok 取值，Err 用默认值
     fn unwrap_or(self, T default) -> T {
-        match self {
+        return match self {
             Result::Ok(v) => v,
             Result::Err(_) => default,
         }
     }
     /// Ok → Some(v)，Err → None
     fn ok(self) -> Option[T] {
-        match self {
+        return match self {
             Result::Ok(v) => Option::Some(v),
             Result::Err(_) => Option::None(),
         }
@@ -155,25 +147,17 @@ impl[T, E] Result[T, E] {
     /// Ok 取值；Err 触发 panic（退出码 101）
     #[alloc]
     fn unwrap(self, int __line, int __col, String __file) -> T {
-        match self {
-            Result::Ok(v) => {
-                return v
-            }
-            Result::Err(_) => {
-                panic_at(__line, __col, __file, "called `Result::unwrap` on an Err value")
-            }
+        return match self {
+            Result::Ok(v) => v,
+            Result::Err(_) => panic_at(__line, __col, __file, "called `Result::unwrap` on an Err value"),
         }
     }
     /// Ok 取值；Err 触发带自定义消息的 panic
     #[alloc]
     fn expect(self, String msg, int __line, int __col, String __file) -> T {
-        match self {
-            Result::Ok(v) => {
-                return v
-            }
-            Result::Err(_) => {
-                panic_at(__line, __col, __file, msg)
-            }
+        return match self {
+            Result::Ok(v) => v,
+            Result::Err(_) => panic_at(__line, __col, __file, msg),
         }
     }
 }
