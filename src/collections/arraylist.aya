@@ -54,6 +54,13 @@ impl[T] ArrayList[T] {
         self.data[self.len] = val;
         self.len = self.len + 1;
     }
+    /// 元素引用（非 Copy 元素取值请用本方法或 clone）
+    fn index_ref(ref self, usize index, int __line, int __col, String __file) -> ref T {
+        if index >= self.len {
+            panic_bounds_at(__line, __col, __file, index as int, self.len as int)
+        }
+        return ref self.data[index];
+    }
     fn index(ref self, usize index, int __line, int __col, String __file) -> T {
         if index >= self.len {
             panic_bounds_at(__line, __col, __file, index, self.len)

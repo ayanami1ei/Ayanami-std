@@ -20,10 +20,10 @@ pub enum Option[T] {
 
 impl[T] Option[T] {
     fn unwrap_or(self, T default) -> T {
-        if self._tag == 0 {
-            return self._data_Some._0;
+        match self {
+            Option::Some(v) => v,
+            Option::None() => default,
         }
-        return default;
     }
     fn is_some(ref self) -> bool {
         return self._tag == 0;
@@ -41,20 +41,26 @@ impl[T] Option[T] {
     /// Some 取值；None 触发 panic（退出码 101）
     #[alloc]
     fn unwrap(self, int __line, int __col, String __file) -> T {
-        if self._tag == 0 {
-            return self._data_Some._0;
+        match self {
+            Option::Some(v) => {
+                return v
+            }
+            Option::None() => {
+                panic_at(__line, __col, __file, "called `Option::unwrap` on a None value")
+            }
         }
-        panic_at(__line, __col, __file, "called `Option::unwrap` on a None value");
-        return self._data_Some._0;
     }
     /// Some 取值；None 触发带自定义消息的 panic
     #[alloc]
     fn expect(self, String msg, int __line, int __col, String __file) -> T {
-        if self._tag == 0 {
-            return self._data_Some._0;
+        match self {
+            Option::Some(v) => {
+                return v
+            }
+            Option::None() => {
+                panic_at(__line, __col, __file, msg)
+            }
         }
-        panic_at(__line, __col, __file, msg);
-        return self._data_Some._0;
     }
     /// 有值取值，否则用 `f()` 生成
     fn unwrap_or_else(self, Fn()->T f) -> T {
@@ -106,17 +112,17 @@ impl[T, E] Result[T, E] {
     }
     /// Ok 取值，Err 用默认值
     fn unwrap_or(self, T default) -> T {
-        if self._tag == 0 {
-            return self._data_Ok._0;
+        match self {
+            Result::Ok(v) => v,
+            Result::Err(_) => default,
         }
-        return default;
     }
     /// Ok → Some(v)，Err → None
     fn ok(self) -> Option[T] {
-        if self._tag == 0 {
-            return Option::Some(self._data_Ok._0);
+        match self {
+            Result::Ok(v) => Option::Some(v),
+            Result::Err(_) => Option::None(),
         }
-        return Option::None();
     }
     /// Ok 取值，Err 用 `f(e)` 生成
     fn unwrap_or_else(self, Fn(E)->T f) -> T {
@@ -149,19 +155,25 @@ impl[T, E] Result[T, E] {
     /// Ok 取值；Err 触发 panic（退出码 101）
     #[alloc]
     fn unwrap(self, int __line, int __col, String __file) -> T {
-        if self._tag == 0 {
-            return self._data_Ok._0;
+        match self {
+            Result::Ok(v) => {
+                return v
+            }
+            Result::Err(_) => {
+                panic_at(__line, __col, __file, "called `Result::unwrap` on an Err value")
+            }
         }
-        panic_at(__line, __col, __file, "called `Result::unwrap` on an Err value");
-        return self._data_Ok._0;
     }
     /// Ok 取值；Err 触发带自定义消息的 panic
     #[alloc]
     fn expect(self, String msg, int __line, int __col, String __file) -> T {
-        if self._tag == 0 {
-            return self._data_Ok._0;
+        match self {
+            Result::Ok(v) => {
+                return v
+            }
+            Result::Err(_) => {
+                panic_at(__line, __col, __file, msg)
+            }
         }
-        panic_at(__line, __col, __file, msg);
-        return self._data_Ok._0;
     }
 }
