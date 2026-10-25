@@ -563,6 +563,10 @@ src/dev/test.aya:354: pub fn assert_some(String input, String opt, int __line, i
 src/dev/test.aya:386: pub fn assert_none(String input, String opt, int __line, int __col, String __file) -> String
 src/dev/test.aya:415: pub fn assert_close(String input, String a, String b, String eps, int __line, int __col, String __file) -> String
 src/dev/test.aya:451: pub fn fail(String input, String msg, int __line, int __col, String __file) -> String
+src/meta/fmt.aya:24: fn push_char(String s, char c) -> String
+src/meta/fmt.aya:30: fn trim_ws(String s) -> String
+src/meta/fmt.aya:54: fn split_top(String s) -> ArrayList[String]
+src/meta/fmt.aya:110: pub fn format(String input, int __line, int __col, String __file) -> String
 src/meta/macros.aya:25: pub struct Span
 src/meta/macros.aya:32: pub struct Token
 src/meta/macros.aya:39: pub struct TokenStream
@@ -953,6 +957,9 @@ tests/unit/env_test.aya:6: fn test_args()
 tests/unit/env_test.aya:13: fn test_env()
 tests/unit/env_test.aya:20: fn test_env_or_args()
 tests/unit/env_test.aya:29: fn test_has_env()
+tests/unit/fmt_test.aya:6: fn test_format_basic()
+tests/unit/fmt_test.aya:15: fn test_format_expressions_and_widths()
+tests/unit/fmt_test.aya:23: fn test_format_braces()
 tests/unit/fs_test.aya:10: fn test_roundtrip()
 tests/unit/fs_test.aya:18: fn test_missing()
 tests/unit/fs_test.aya:24: fn test_read_lines()

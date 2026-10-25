@@ -1,0 +1,27 @@
+import "fmt";
+
+import "test";
+
+#[test]
+fn test_format_basic() {
+    #assert_eq(#format("x={} y={}", 1, 2), "x=1 y=2");
+    #assert_eq(#format("{}", "hi"), "hi");
+    #assert_eq(#format("{}{}", 1, 2), "12");
+    #assert_eq(#format("a {{b}} c"), "a {b} c");
+    #assert_eq(#format("{}", 3.5), "3.5")
+}
+
+#[test]
+fn test_format_expressions_and_widths() {
+    #assert_eq(#format("sum={}", 1 + 2), "sum=3");
+    #assert_eq(#format("len={}", "hello".len()), "len=5");
+    #assert_eq(#format("n={}", 42u8), "n=42");
+    #assert_eq(#format("{} {}", true, false), "true false")
+}
+
+#[test]
+fn test_format_braces() {
+    #assert_eq(#format("{{}}"), "{}");
+    #assert_eq(#format("a{{b}}c"), "a{b}c");
+    #assert_eq(#format("{{{}}}", 7), "{7}")
+}
