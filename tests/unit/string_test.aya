@@ -143,3 +143,15 @@ fn test_to_string_does_not_consume() {
     #assert_eq(s.len(), 5);
     #assert_eq(s, "hello")
 }
+
+#[test]
+fn test_integer_width_to_string() {
+    #assert_eq(5usize.to_string(), "5");
+    #assert_eq(42u8.to_string(), "42");
+    #assert_eq(65535u16.to_string(), "65535");
+    #assert_eq(7u32.to_string(), "7");
+    #assert_eq(9u64.to_string(), "9");
+    #assert_eq((0 - 5i8).to_string(), "-5");
+    #assert_eq(100i16.to_string(), "100");
+    #assert_eq((0 - 7i32).to_string(), "-7")
+}

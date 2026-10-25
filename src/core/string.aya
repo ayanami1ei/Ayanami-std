@@ -28,6 +28,62 @@ interface ToString {
     fn to_string(ref self) -> String;
 }
 
+impl u8 {
+    #[alloc]
+    #[state]
+    fn to_string(ref self) -> String {
+        return (*self as int).to_string();
+    }
+}
+
+impl u16 {
+    #[alloc]
+    #[state]
+    fn to_string(ref self) -> String {
+        return (*self as int).to_string();
+    }
+}
+
+impl u32 {
+    #[alloc]
+    #[state]
+    fn to_string(ref self) -> String {
+        return (*self as int).to_string();
+    }
+}
+
+impl u64 {
+    #[alloc]
+    #[state]
+    fn to_string(ref self) -> String {
+        return (*self as int).to_string();
+    }
+}
+
+impl i8 {
+    #[alloc]
+    #[state]
+    fn to_string(ref self) -> String {
+        return (*self as int).to_string();
+    }
+}
+
+impl i16 {
+    #[alloc]
+    #[state]
+    fn to_string(ref self) -> String {
+        return (*self as int).to_string();
+    }
+}
+
+impl i32 {
+    #[alloc]
+    #[state]
+    fn to_string(ref self) -> String {
+        return (*self as int).to_string();
+    }
+}
+
 impl int {
     #[alloc]
     #[state]
