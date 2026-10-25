@@ -133,3 +133,13 @@ fn test_int_format_edges() {
     #assert_eq(max.to_string(), "9223372036854775807");
     #assert_eq(max.to_hex(), "7fffffffffffffff")
 }
+
+#[test]
+fn test_to_string_does_not_consume() {
+    s = "hello";
+    t = s.to_string();
+    #assert_eq(t.len(), 5);
+    // s 仍可用（String::to_string 为 ref self，复制而非移动）
+    #assert_eq(s.len(), 5);
+    #assert_eq(s, "hello")
+}

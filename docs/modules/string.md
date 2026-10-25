@@ -23,7 +23,7 @@ import "string";
 | `s.eq / s.ne(ref String) -> bool` | 比较；`==` / `!=` 等价 |
 | `s.lt / s.gt / s.le / s.ge(ref String) -> bool` | 字典序比较；`<` `>` `<=` `>=` 等价 |
 | `s.copy() -> String` | 深拷贝 |
-| `s.to_string() -> String` | 返回自身（实现 `ToString`） |
+| `s.to_string() -> String` | 返回**副本**（`ref self`，不消费原值；实现 `ToString`） |
 | `s.is_empty() -> bool` | 是否空串 |
 | `s.index_of(ref String) -> int` | 子串位置；未找到 `-1` |
 | `s.contains / starts_with / ends_with(ref String) -> bool` | 子串 / 前缀 / 后缀 |

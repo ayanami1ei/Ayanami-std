@@ -25,17 +25,17 @@ pub struct String {
 }
 
 interface ToString {
-    fn to_string(self) -> String;
+    fn to_string(ref self) -> String;
 }
 
 impl int {
     #[alloc]
     #[state]
-    fn to_string(self) -> String {
-        if self == 0 {
+    fn to_string(ref self) -> String {
+        n = *self;
+        if n == 0 {
             return String { data = ['0'], len = 1 };
         }
-        n = self;
         digit_count = 0usize;
         if n < 0 {
             digit_count = 1usize;
@@ -261,8 +261,8 @@ impl float {
     /// 最短可读形式（%g-6 风格；整值不带 `.0`）
     #[alloc]
     #[state]
-    fn to_string(self) -> String {
-        return fmt_g(self);
+    fn to_string(ref self) -> String {
+        return fmt_g(*self);
     }
     /// 定点格式化（digits 位小数，夹取 [0, 17]）
     #[alloc]
@@ -352,16 +352,16 @@ impl float {
 impl char {
     #[alloc]
     #[state]
-    fn to_string(self) -> String {
-        return String { data = [self], len = 1 };
+    fn to_string(ref self) -> String {
+        return String { data = [*self], len = 1 };
     }
 }
 
 impl bool {
     #[alloc]
     #[state]
-    fn to_string(self) -> String {
-        if self {
+    fn to_string(ref self) -> String {
+        if *self {
             return String { data = ['t', 'r', 'u', 'e'], len = 4 };
         } else {
             return String { data = ['f', 'a', 'l', 's', 'e'], len = 5 };
@@ -555,8 +555,10 @@ pub namespace String {
 }
 
 impl String {
-    fn to_string(self) -> String {
-        return self;
+    #[alloc]
+    #[state]
+    fn to_string(ref self) -> String {
+        return self.copy();
     }
     fn index(ref self, usize i, int __line, int __col, String __file) -> char {
         if i >= self.len {
