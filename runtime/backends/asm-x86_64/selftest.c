@@ -72,6 +72,17 @@ static void ovf_case_mul_u128(void) {
     (void)__ayanami_ovf_mul_u128(a, a, 0, 0, f);
 }
 
+static int exit_child_code(void) {
+    pid_t pid = fork();
+    if (pid == 0) {
+        __ayanami_exit(7);
+        _exit(0);
+    }
+    int st = 0;
+    if (waitpid(pid, &st, 0) < 0) return -1;
+    return WIFEXITED(st) ? WEXITSTATUS(st) : -1;
+}
+
 int main(void) {
     assert(__ayanami_runtime_abi() == AYANAMI_RUNTIME_ABI);
 
@@ -281,6 +292,9 @@ int main(void) {
         assert(ovf_child_exits_101(ovf_case_sub_u128));
         assert(ovf_child_exits_101(ovf_case_mul_u128));
     }
+
+    // process：exit(code) 退出码正确（子进程）
+    assert(exit_child_code() == 7);
 
     printf("asm-x86_64 runtime self-test ok (ABI %lld)\n",
            (long long)__ayanami_runtime_abi());

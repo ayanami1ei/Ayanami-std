@@ -25,6 +25,7 @@
 | [fs.md](modules/fs.md) | 文件读写：`exists` / `read_file` / `write_file` |
 | [path.md](modules/path.md) | 路径字符串工具：`normalize` / `join` / `basename` / `dirname` / `extension` |
 | [env.md](modules/env.md) | 命令行参数与环境变量 |
+| [process.md](modules/process.md) | 进程控制：`exit(code)` / `exit_ok()` |
 | [iter.md](modules/iter.md) | 迭代器：`for-in` 协议、`into_iter`、自定义迭代器 |
 | [collections.md](modules/collections.md) | 集合与排序：`List` 接口、`ArrayList`、`LinkedList`、`HashSet`/`HashMap`、`Ord` 排序 |
 | [text.md](modules/text.md) | 文本处理：`split` / `join` / `replace` / `pad_*` / `lines` / `split_once` |

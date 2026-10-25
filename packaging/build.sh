@@ -25,7 +25,7 @@ MODULES=(
     core/string core/panic core/ord core/eq core/option core/math core/bitops core/arch_x86_64 core/num
     collections/list collections/arraylist collections/linkedlist collections/iter collections/text collections/sort collections/hash collections/hashmap collections/hashset
     core/convert dev/test
-    system/alloc system/io system/path system/fs system/env system/time system/rand system/sync system/thread system/channel
+    system/alloc system/io system/path system/fs system/env system/process system/time system/rand system/sync system/thread system/channel
     meta/macros meta/fmt meta/mir
     std
 )

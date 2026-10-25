@@ -746,6 +746,9 @@ src/system/path.aya:40: pub fn join(String base, String name) -> String
 src/system/path.aya:57: pub fn basename(String path) -> String
 src/system/path.aya:78: pub fn dirname(String path) -> String
 src/system/path.aya:102: pub fn extension(String path) -> String
+src/system/process.aya:4: fn __ayanami_exit(int code) -> void;
+src/system/process.aya:9: pub fn exit(int code) -> !
+src/system/process.aya:17: pub fn exit_ok() -> !
 src/system/rand.aya:9: fn __ayanami_random_u64() -> int;
 src/system/rand.aya:11: pub struct Rng
 src/system/rand.aya:15: pub namespace Rng

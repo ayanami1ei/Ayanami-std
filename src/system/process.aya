@@ -1,0 +1,20 @@
+// process — 进程控制（当前：退出；参数见 system/env）
+
+#[extern]
+fn __ayanami_exit(int code) -> void;
+
+/// 立即退出进程（code 作为退出码；不返回）
+#[io]
+#[state]
+pub fn exit(int code) -> ! {
+    __ayanami_exit(code);
+    while true { }
+}
+
+/// 正常退出（退出码 0）
+#[io]
+#[state]
+pub fn exit_ok() -> ! {
+    __ayanami_exit(0);
+    while true { }
+}

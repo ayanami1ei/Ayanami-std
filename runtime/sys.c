@@ -161,6 +161,13 @@ int64_t __ayanami_thread_yield(void) {
 
 #endif // AYANAMI_ASM_PORT（线程由汇编后端提供）
 
+// ── 进程（C 后端：exit） ──
+#ifndef AYANAMI_ASM_PORT
+void __ayanami_exit(int64_t code) {
+    exit((int)code);
+}
+#endif // AYANAMI_ASM_PORT（进程退出由汇编后端提供）
+
 // ── futex（C 后端：syscall(2)；EINTR 视为 0，由调用方重查状态） ──
 #ifndef AYANAMI_ASM_PORT
 #include <linux/futex.h>

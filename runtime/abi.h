@@ -106,6 +106,9 @@ int64_t __ayanami_thread_join(int64_t handle); // 0 成功 / -1
 int64_t __ayanami_thread_id(void);             // 内核 tid
 int64_t __ayanami_thread_yield(void);          // sched_yield
 
+// ── 进程 ──
+void __ayanami_exit(int64_t code);   // 立即退出进程（不返回）
+
 // ── futex（锁/通道等待原语；*addr 指向 int 字） ──
 int64_t __ayanami_futex_wait(int32_t *addr, int32_t expected); // 0（含 EINTR）/ -1
 int64_t __ayanami_futex_wake(int32_t *addr, int32_t n);        // 唤醒数 / -1
