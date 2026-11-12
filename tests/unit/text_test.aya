@@ -159,3 +159,13 @@ fn test_truncate() {
     #assert_eq(truncate("hello world", 8usize), "hello...");
     #assert_eq(truncate("hello", 3usize), "hel")
 }
+
+#[test]
+fn test_trim() {
+    #assert_eq("  hi \t\n".trim(), "hi");
+    #assert_eq("  hi  ".trim_start(), "hi  ");
+    #assert_eq("  hi  ".trim_end(), "  hi");
+    #assert_eq("".trim(), "");
+    #assert_eq("   ".trim(), "");
+    #assert_eq("\t a b \r\n".trim(), "a b")
+}
