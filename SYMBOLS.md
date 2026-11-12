@@ -713,6 +713,8 @@ src/system/fs.aya:289: pub fn last_error(String path) -> IoError
 src/system/fs.aya:296: pub fn read_file_result(String path) -> Result[String, IoError]
 src/system/fs.aya:313: pub fn walk(String root) -> ArrayList[String]
 src/system/fs.aya:321: fn walk_into(String dir, ref mut ArrayList[String] dst)
+src/system/fs.aya:343: pub fn walk_filtered(String root, Fn(ref String) -> bool keep) -> ArrayList[String]
+src/system/fs.aya:372: pub fn walk_ext(String root, String ext) -> ArrayList[String]
 src/system/io.aya:9: fn __ayanami_getchar() -> int;
 src/system/io.aya:13: fn __ayanami_putchar(int c);
 src/system/io.aya:17: fn __ayanami_print_str([char] s, int len);
@@ -966,6 +968,7 @@ tests/unit/fmt_test.aya:6: fn test_format_basic()
 tests/unit/fmt_test.aya:15: fn test_format_expressions_and_widths()
 tests/unit/fmt_test.aya:23: fn test_format_braces()
 tests/unit/fmt_test.aya:30: fn test_format_width_align()
+tests/unit/fmt_test.aya:39: fn test_format_radix()
 tests/unit/fs_test.aya:10: fn test_roundtrip()
 tests/unit/fs_test.aya:18: fn test_missing()
 tests/unit/fs_test.aya:24: fn test_read_lines()
@@ -977,6 +980,7 @@ tests/unit/fs_test.aya:84: fn test_copy_rename()
 tests/unit/fs_test.aya:99: fn test_size_copy_tree()
 tests/unit/fs_test.aya:126: fn test_error_model()
 tests/unit/fs_test.aya:150: fn test_fs_walk()
+tests/unit/fs_test.aya:168: fn test_fs_walk_filtered_and_ext()
 tests/unit/hash_test.aya:6: fn test_hash()
 tests/unit/hashmap_test.aya:6: fn test_map_basic()
 tests/unit/hashmap_test.aya:20: fn test_map_grow()
