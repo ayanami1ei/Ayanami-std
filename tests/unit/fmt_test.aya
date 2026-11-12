@@ -25,3 +25,12 @@ fn test_format_braces() {
     #assert_eq(#format("a{{b}}c"), "a{b}c");
     #assert_eq(#format("{{{}}}", 7), "{7}")
 }
+
+#[test]
+fn test_format_width_align() {
+    #assert_eq(#format("[{:5}]", 7), "[7    ]");
+    #assert_eq(#format("[{:>5}]", 7), "[    7]");
+    #assert_eq(#format("[{:<5}]", 7), "[7    ]");
+    #assert_eq(#format("[{:3}]", "abcdef"), "[abcdef]");
+    #assert_eq(#format("{:2}-{:>4}", "a", "b"), "a -   b")
+}
