@@ -334,3 +334,48 @@ fn walk_into(String dir, ref mut ArrayList[String] dst) {
         Option::None() => { }
     }
 }
+
+/// 递归遍历并按谓词过滤文件路径（谓词收到 `ref` 路径，不转移所有权）
+///
+/// 用显式目录栈代替递归，闭包只需一份所有权，可安全重复调用。
+#[alloc]
+#[state]
+pub fn walk_filtered(String root, Fn(ref String) -> bool keep) -> ArrayList[String] {
+    res = ArrayList::new[String]();
+    dirs = ArrayList::new[String]();
+    dirs.push(root);
+    while !dirs.is_empty() {
+        dir = dirs.pop();
+        entries = list_dir(dir.copy());
+        match entries {
+            Option::Some(names) => {
+                for name in names.into_iter() {
+                    full = join(dir.copy(), name);
+                    if is_dir(full.copy()) {
+                        dirs.push(full)
+                    } else {
+                        if keep(ref full) {
+                            res.push(full)
+                        }
+                    }
+                }
+            }
+            Option::None() => { }
+        }
+    }
+    return res;
+}
+
+/// 递归列出指定后缀的文件（`ext` 含点，如 `".txt"`）
+#[alloc]
+#[state]
+pub fn walk_ext(String root, String ext) -> ArrayList[String] {
+    all = walk(root);
+    res = ArrayList::new[String]();
+    for p in all.into_iter() {
+        if p.ends_with(ref ext) {
+            res.push(p)
+        }
+    }
+    return res;
+}

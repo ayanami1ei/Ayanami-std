@@ -163,3 +163,28 @@ fn test_fs_walk() {
     rmdir(sub.copy());
     rmdir(root)
 }
+
+#[test]
+fn test_fs_walk_filtered_and_ext() {
+    root = "/tmp/ayanami_walk_filter_test";
+    sub = join(root.copy(), "sub");
+    mkdir(root.copy());
+    mkdir(sub.copy());
+    write_file(join(root.copy(), "a.txt"), "a");
+    write_file(join(root.copy(), "b.log"), "b");
+    write_file(join(sub.copy(), "c.txt"), "c");
+    txt = walk_filtered(root.copy(), (ref String p) -> bool {
+        return p.ends_with(".txt")
+    });
+    #assert_eq(txt.len(), 2);
+    #assert(txt.contains(join(root.copy(), "a.txt")));
+    #assert(txt.contains(join(sub.copy(), "c.txt")));
+    logs = walk_ext(root.copy(), ".log");
+    #assert_eq(logs.len(), 1);
+    #assert(logs.contains(join(root.copy(), "b.log")));
+    remove_file(join(root.copy(), "a.txt"));
+    remove_file(join(root.copy(), "b.log"));
+    remove_file(join(sub.copy(), "c.txt"));
+    rmdir(sub.copy());
+    rmdir(root)
+}
