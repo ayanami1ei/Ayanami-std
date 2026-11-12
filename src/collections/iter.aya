@@ -195,6 +195,55 @@ impl[T, U, IA: Iterator[T], IB: Iterator[U]] ZipIter[T, U, IA, IB] {
     }
 }
 
+/// 跳过前 n 个元素
+pub struct SkipIter[T, I: Iterator[T]] {
+    I inner
+    usize n
+}
+
+pub namespace SkipIter {
+    pub fn new[T, I: Iterator[T]](I inner, usize n) -> SkipIter[T, I] {
+        return SkipIter[T, I] { inner = inner, n = n };
+    }
+}
+
+impl[T, I: Iterator[T]] SkipIter[T, I] {
+    fn next(ref mut self) -> Option[T] {
+        while self.n > 0 {
+            match self.inner.next() {
+                Option::Some(_) => { self.n = self.n - 1 }
+                Option::None() => { return Option::None() }
+            }
+        }
+        return self.inner.next()
+    }
+}
+
+/// 首尾相接
+pub struct ChainIter[T, IA: Iterator[T], IB: Iterator[T]] {
+    IA a
+    IB b
+    bool first_done
+}
+
+pub namespace ChainIter {
+    pub fn new[T, IA: Iterator[T], IB: Iterator[T]](IA a, IB b) -> ChainIter[T, IA, IB] {
+        return ChainIter[T, IA, IB] { a = a, b = b, first_done = false };
+    }
+}
+
+impl[T, IA: Iterator[T], IB: Iterator[T]] ChainIter[T, IA, IB] {
+    fn next(ref mut self) -> Option[T] {
+        if !self.first_done {
+            match self.a.next() {
+                Option::Some(v) => { return Option::Some(v) }
+                Option::None() => { self.first_done = true }
+            }
+        }
+        return self.b.next()
+    }
+}
+
 // ── 组合接口：自由函数 + 方法语法（UFCS），支持自然链式 ──
 //
 // 例：`a.into_iter().map(f).filter(p).take(5usize)`、`s.lines().enumerate()`。
@@ -222,4 +271,29 @@ pub fn enumerate[T, I: Iterator[T]](I it) -> EnumerateIter[T, I] {
 /// 拉链：`it.zip(other)`
 pub fn zip[T, U, IA: Iterator[T], IB: Iterator[U]](IA a, IB b) -> ZipIter[T, U, IA, IB] {
     return ZipIter::new(a, b);
+}
+
+/// 跳过前 n 个：`it.skip(n)`
+pub fn skip[T, I: Iterator[T]](I it, usize n) -> SkipIter[T, I] {
+    return SkipIter::new(it, n);
+}
+
+/// 首尾相接：`a.chain(b)`
+pub fn chain[T, IA: Iterator[T], IB: Iterator[T]](IA a, IB b) -> ChainIter[T, IA, IB] {
+    return ChainIter::new(a, b);
+}
+
+/// 收集为 `ArrayList`：`it.collect()`
+#[alloc]
+#[state]
+pub fn collect[T, I: Iterator[T]](I it) -> ArrayList[T] {
+    res = ArrayList::new[T]();
+    done = false;
+    while !done {
+        match it.next() {
+            Option::Some(v) => { res.push(v) }
+            Option::None() => { done = true }
+        }
+    }
+    return res
 }

@@ -99,6 +99,7 @@ for x in t { s = s + x }        // 30 + 40 = 70
 ```ayanami
 for p in a.into_iter().enumerate() { ... }              // 带下标
 for p in a.into_iter().take(2usize).zip(b.into_iter()) { ... }
+c = a.into_iter().skip(1usize).chain(b.into_iter()).collect()
 ```
 
 | 自由函数 | 等价构造 |
@@ -108,6 +109,9 @@ for p in a.into_iter().take(2usize).zip(b.into_iter()) { ... }
 | `it.take(n)` | `TakeIter::new(it, n)` |
 | `it.enumerate()` | `EnumerateIter::new(it)` |
 | `it.zip(other)` | `ZipIter::new(it, other)` |
+| `it.skip(n)` | `SkipIter::new(it, n)` |
+| `a.chain(b)` | `ChainIter::new(a, b)` |
+| `it.collect()` | `collect(it)` → `ArrayList[T]` |
 
 > 同名方法解析冲突（编译器 #189）已修复：`map` / `filter` / `take` 等均可直接方法语法链式。
 

@@ -170,11 +170,24 @@ src/collections/iter.aya:177: pub namespace ZipIter
 src/collections/iter.aya:178: pub fn new[T, U, IA: Iterator[T], IB: Iterator[U]](IA a, IB b) -> ZipIter[T, U, IA, IB]
 src/collections/iter.aya:183: impl[T, U, IA: Iterator[T], IB: Iterator[U]] ZipIter[T, U, IA, IB]
 src/collections/iter.aya:185: fn next(ref mut self) -> Option[Pair[T, U]]
-src/collections/iter.aya:203: pub fn map[T, U, I: Iterator[T]](I it, Fn(T)->U f) -> MapIter[T, U, I]
-src/collections/iter.aya:208: pub fn filter[T, I: Iterator[T]](I it, Fn(T)->bool pred) -> FilterIter[T, I]
-src/collections/iter.aya:213: pub fn take[T, I: Iterator[T]](I it, usize n) -> TakeIter[T, I]
-src/collections/iter.aya:218: pub fn enumerate[T, I: Iterator[T]](I it) -> EnumerateIter[T, I]
-src/collections/iter.aya:223: pub fn zip[T, U, IA: Iterator[T], IB: Iterator[U]](IA a, IB b) -> ZipIter[T, U, IA, IB]
+src/collections/iter.aya:199: pub struct SkipIter[T, I: Iterator[T]]
+src/collections/iter.aya:204: pub namespace SkipIter
+src/collections/iter.aya:205: pub fn new[T, I: Iterator[T]](I inner, usize n) -> SkipIter[T, I]
+src/collections/iter.aya:210: impl[T, I: Iterator[T]] SkipIter[T, I]
+src/collections/iter.aya:211: fn next(ref mut self) -> Option[T]
+src/collections/iter.aya:223: pub struct ChainIter[T, IA: Iterator[T], IB: Iterator[T]]
+src/collections/iter.aya:229: pub namespace ChainIter
+src/collections/iter.aya:230: pub fn new[T, IA: Iterator[T], IB: Iterator[T]](IA a, IB b) -> ChainIter[T, IA, IB]
+src/collections/iter.aya:235: impl[T, IA: Iterator[T], IB: Iterator[T]] ChainIter[T, IA, IB]
+src/collections/iter.aya:236: fn next(ref mut self) -> Option[T]
+src/collections/iter.aya:252: pub fn map[T, U, I: Iterator[T]](I it, Fn(T)->U f) -> MapIter[T, U, I]
+src/collections/iter.aya:257: pub fn filter[T, I: Iterator[T]](I it, Fn(T)->bool pred) -> FilterIter[T, I]
+src/collections/iter.aya:262: pub fn take[T, I: Iterator[T]](I it, usize n) -> TakeIter[T, I]
+src/collections/iter.aya:267: pub fn enumerate[T, I: Iterator[T]](I it) -> EnumerateIter[T, I]
+src/collections/iter.aya:272: pub fn zip[T, U, IA: Iterator[T], IB: Iterator[U]](IA a, IB b) -> ZipIter[T, U, IA, IB]
+src/collections/iter.aya:277: pub fn skip[T, I: Iterator[T]](I it, usize n) -> SkipIter[T, I]
+src/collections/iter.aya:282: pub fn chain[T, IA: Iterator[T], IB: Iterator[T]](IA a, IB b) -> ChainIter[T, IA, IB]
+src/collections/iter.aya:289: pub fn collect[T, I: Iterator[T]](I it) -> ArrayList[T]
 src/collections/linkedlist.aya:13: pub struct LinkedList[T]
 src/collections/linkedlist.aya:19: pub namespace LinkedList
 src/collections/linkedlist.aya:20: pub fn new[T]() -> LinkedList[T]
@@ -1049,6 +1062,7 @@ tests/unit/iter_test.aya:178: fn test_string_adapters()
 tests/unit/iter_test.aya:195: fn test_method_chain_enumerate()
 tests/unit/iter_test.aya:207: fn test_method_chain_map_filter()
 tests/unit/iter_test.aya:224: fn test_method_chain_take_zip()
+tests/unit/iter_test.aya:240: fn test_skip_chain_collect()
 tests/unit/linkedlist_test.aya:6: fn test_basic()
 tests/unit/linkedlist_test.aya:18: fn test_ll_eq_ops()
 tests/unit/linkedlist_test.aya:31: fn test_ll_mut_ops()
