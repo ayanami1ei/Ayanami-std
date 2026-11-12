@@ -316,6 +316,16 @@ src/core/convert.aya:370: impl char
 src/core/convert.aya:372: fn into(self) -> int
 src/core/convert.aya:377: impl bool
 src/core/convert.aya:379: fn into(self) -> int
+src/core/encoding.aya:12: fn hex_val(int c) -> int
+src/core/encoding.aya:25: fn hex_char_lower(int v) -> char
+src/core/encoding.aya:32: fn hex_char_upper(int v) -> char
+src/core/encoding.aya:42: pub fn hex_encode(ref String s) -> String
+src/core/encoding.aya:59: pub fn hex_encode_upper(ref String s) -> String
+src/core/encoding.aya:76: pub fn hex_decode(ref String s) -> Option[String]
+src/core/encoding.aya:97: fn b64_val(int c) -> int
+src/core/encoding.aya:116: fn b64_char(int v) -> char
+src/core/encoding.aya:135: pub fn base64_encode(ref String s) -> String
+src/core/encoding.aya:175: pub fn base64_decode(ref String s) -> Option[String]
 src/core/eq.aya:7: interface Eq
 src/core/eq.aya:8: fn same(ref self, ref Self other) -> bool;
 src/core/eq.aya:11: impl int
@@ -960,6 +970,11 @@ tests/unit/convert_test.aya:72: fn test_result_parse()
 tests/unit/convert_test.aya:84: fn test_radix_parse()
 tests/unit/convert_test.aya:104: fn test_is_float()
 tests/unit/convert_test.aya:112: fn test_parse_uint()
+tests/unit/encoding_test.aya:6: fn test_hex_roundtrip()
+tests/unit/encoding_test.aya:18: fn test_hex_invalid()
+tests/unit/encoding_test.aya:26: fn test_base64_known_vectors()
+tests/unit/encoding_test.aya:36: fn test_base64_roundtrip()
+tests/unit/encoding_test.aya:47: fn test_base64_invalid()
 tests/unit/env_test.aya:6: fn test_args()
 tests/unit/env_test.aya:13: fn test_env()
 tests/unit/env_test.aya:20: fn test_env_or_args()

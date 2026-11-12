@@ -1,0 +1,53 @@
+import "encoding";
+
+import "test";
+
+#[test]
+fn test_hex_roundtrip() {
+    #assert_eq(hex_encode("Hi"), "4869");
+    #assert_eq(hex_encode_upper("Hi"), "4869");
+    ff = hex_decode("ff").unwrap();
+    #assert_eq(hex_encode(ff.copy()), "ff");
+    #assert_eq(hex_encode_upper(ff.copy()), "FF");
+    h = hex_decode("deadBEEF").unwrap();
+    #assert_eq(hex_encode(h.copy()), "deadbeef");
+    #assert_eq(hex_decode("00ff10").unwrap().len(), 3)
+}
+
+#[test]
+fn test_hex_invalid() {
+    #assert(hex_decode("abc").is_none());
+    #assert(hex_decode("zz").is_none());
+    #assert(hex_decode("0g").is_none());
+    #assert(hex_decode("").unwrap().len() == 0)
+}
+
+#[test]
+fn test_base64_known_vectors() {
+    #assert_eq(base64_encode(""), "");
+    #assert_eq(base64_encode("a"), "YQ==");
+    #assert_eq(base64_encode("ab"), "YWI=");
+    #assert_eq(base64_encode("abc"), "YWJj");
+    #assert_eq(base64_encode("hello"), "aGVsbG8=");
+    #assert_eq(base64_encode("foobar"), "Zm9vYmFy")
+}
+
+#[test]
+fn test_base64_roundtrip() {
+    #assert_eq(base64_decode(base64_encode("")).unwrap(), "");
+    #assert_eq(base64_decode(base64_encode("a")).unwrap(), "a");
+    #assert_eq(base64_decode(base64_encode("ab")).unwrap(), "ab");
+    #assert_eq(base64_decode(base64_encode("abc")).unwrap(), "abc");
+    #assert_eq(base64_decode(base64_encode("hello world")).unwrap(), "hello world");
+    bin = hex_decode("00ff10").unwrap();
+    #assert_eq(base64_decode(base64_encode(bin.copy())).unwrap(), bin)
+}
+
+#[test]
+fn test_base64_invalid() {
+    #assert(base64_decode("YQ=").is_none());
+    #assert(base64_decode("Y===").is_none());
+    #assert(base64_decode("!!!!").is_none());
+    #assert(base64_decode("YQ==extra").is_none());
+    #assert(base64_decode("YWJjZA==").unwrap().len() == 4)
+}
