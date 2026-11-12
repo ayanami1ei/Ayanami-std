@@ -135,9 +135,10 @@ pub fn format(String input, int __line, int __col, String __file) -> String {
                 i = i + 2
             } else {
                 if c == '{' && i + 1 < nn && (inner[i + 1] == '}' || inner[i + 1] == ':') {
-                    // 规格：{:N} 左对齐 / {:<N} 左对齐 / {:>N} 右对齐
+                    // 规格：{: [<|>]? [0-9]* [xXbo]? }
                     right = 0;
                     width = 0;
+                    radix = ' ';
                     next_i = i + 2;
                     if inner[i + 1] == ':' {
                         j = i + 2;
@@ -153,8 +154,12 @@ pub fn format(String input, int __line, int __col, String __file) -> String {
                             width = width * 10 + (inner[j] as int - 48);
                             j = j + 1
                         }
-                        if j >= nn || inner[j] != '}' || width <= 0 {
-                            diag_error("format: 非法格式说明（支持 {:N} / {:<N} / {:>N}）");
+                        if j < nn && (inner[j] == 'x' || inner[j] == 'X' || inner[j] == 'b' || inner[j] == 'o') {
+                            radix = inner[j];
+                            j = j + 1
+                        }
+                        if j >= nn || inner[j] != '}' || (width <= 0 && radix == ' ') {
+                            diag_error("format: 非法格式说明（支持 {:N} / {:<N} / {:>N} / {:x|X|b|o}）");
                             return "\"\""
                         }
                         next_i = j + 1
@@ -174,7 +179,24 @@ pub fn format(String input, int __line, int __col, String __file) -> String {
                     if !first {
                         res = res + " + "
                     }
-                    res = res + "(" + trim_ws(parts[used + 1]) + ").to_string()";
+                    res = res + "(" + trim_ws(parts[used + 1]) + ")";
+                    if radix == 'x' {
+                        res = res + ".to_hex()"
+                    } else {
+                        if radix == 'X' {
+                            res = res + ".to_hex_upper()"
+                        } else {
+                            if radix == 'b' {
+                                res = res + ".to_bin()"
+                            } else {
+                                if radix == 'o' {
+                                    res = res + ".to_oct()"
+                                } else {
+                                    res = res + ".to_string()"
+                                }
+                            }
+                        }
+                    }
                     if width > 0 {
                         if right == 1 {
                             res = res + ".pad_left(" + width.to_string() + "usize, ' ')"
