@@ -1,0 +1,44 @@
+import "csv";
+
+import "test";
+
+#[test]
+fn test_csv_parse_basic() {
+    rows = parse("a,b\nc,d");
+    #assert_eq(rows.len(), 2);
+    #assert_eq(rows.index(0).index(0), "a");
+    #assert_eq(rows.index(0).index(1), "b");
+    #assert_eq(rows.index(1).index(0), "c");
+    #assert_eq(rows.index(1).index(1), "d")
+}
+
+#[test]
+fn test_csv_parse_quoted() {
+    rows = parse("a,\"b,c\",d\n\"say \"\"hi\"\"\",x");
+    #assert_eq(rows.index(0).index(1), "b,c");
+    #assert_eq(rows.index(1).index(0), "say \"hi\"");
+    #assert_eq(rows.index(1).index(1), "x")
+}
+
+#[test]
+fn test_csv_parse_crlf_and_empty() {
+    rows = parse("a,b\r\nc,d\r\n");
+    #assert_eq(rows.len(), 2);
+    #assert_eq(rows.index(1).index(1), "d");
+    #assert_eq(parse("").len(), 0);
+    e = parse("a,,c");
+    #assert_eq(e.index(0).len(), 3);
+    #assert_eq(e.index(0).index(1), "")
+}
+
+#[test]
+fn test_csv_encode_and_roundtrip() {
+    rows = parse("a,\"b,c\",d\n\"say \"\"hi\"\"\",x");
+    text = encode(rows);
+    again = parse(text);
+    #assert_eq(again.len(), 2);
+    #assert_eq(again.index(0).index(1), "b,c");
+    #assert_eq(again.index(1).index(0), "say \"hi\"");
+    one = parse("plain,text");
+    #assert_eq(encode(one), "plain,text\n")
+}

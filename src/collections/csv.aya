@@ -1,0 +1,124 @@
+// csv — CSV 解析与生成（RFC 4180 风格）
+//
+// - 解析：逗号分隔、双引号包裹、`""` 转义、CRLF/LF 行尾、引号内换行；
+// - 生成：字段含 `,` / `"` / 换行时自动加引号并转义；每行以 `\n` 结尾。
+import "string";
+
+import "arraylist";
+
+/// 解析 CSV 文本为行 × 字段
+#[alloc]
+#[state]
+pub fn parse(ref String s) -> ArrayList[ArrayList[String]] {
+    rows = ArrayList::new[ArrayList[String]]();
+    n = s.len as int;
+    if n == 0 {
+        return rows
+    }
+    row = ArrayList::new[String]();
+    field = "";
+    in_quotes = false;
+    just_newline = false;
+    i = 0;
+    while i < n {
+        c = s.data[i as usize];
+        if in_quotes {
+            if c == '"' {
+                if i + 1 < n && s.data[(i + 1) as usize] == '"' {
+                    field = field + "\"";
+                    i = i + 2
+                } else {
+                    in_quotes = false;
+                    i = i + 1
+                }
+            } else {
+                field = field + c.to_string();
+                i = i + 1
+            }
+        } else {
+            if c == '"' && field.is_empty() {
+                in_quotes = true;
+                just_newline = false;
+                i = i + 1
+            } else {
+                if c == ',' {
+                    row.push(field);
+                    field = "";
+                    just_newline = false;
+                    i = i + 1
+                } else {
+                    if c == '\n' {
+                        row.push(field);
+                        rows.push(row);
+                        row = ArrayList::new[String]();
+                        field = "";
+                        just_newline = true;
+                        i = i + 1
+                    } else {
+                        if c == '\r' && i + 1 < n && s.data[(i + 1) as usize] == '\n' {
+                            i = i + 1
+                        } else {
+                            field = field + c.to_string();
+                            just_newline = false;
+                            i = i + 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if !just_newline {
+        row.push(field);
+        rows.push(row)
+    }
+    return rows
+}
+
+fn field_needs_quote(ref String f) -> bool {
+    return f.count_char(',') > 0
+        || f.count_char('"') > 0
+        || f.count_char('\n') > 0
+        || f.count_char('\r') > 0
+}
+
+fn quote_field(ref String f) -> String {
+    res = "\"";
+    i = 0usize;
+    while i < f.len {
+        c = f.data[i];
+        if c == '"' {
+            res = res + "\"\""
+        } else {
+            res = res + c.to_string()
+        }
+        i = i + 1
+    }
+    return res + "\""
+}
+
+/// 行 × 字段 → CSV 文本（每行 `\n` 结尾）
+#[alloc]
+#[state]
+pub fn encode(ref ArrayList[ArrayList[String]] rows) -> String {
+    res = "";
+    r = 0usize;
+    while r < rows.len() {
+        row = rows.index_ref(r);
+        i = 0usize;
+        while i < row.len() {
+            if i > 0 {
+                res = res + ","
+            }
+            f = row.index_ref(i);
+            if field_needs_quote(f) {
+                res = res + quote_field(f)
+            } else {
+                res = res + f.copy()
+            }
+            i = i + 1
+        }
+        res = res + "\n";
+        r = r + 1
+    }
+    return res
+}
