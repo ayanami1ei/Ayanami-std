@@ -26,6 +26,7 @@ import "string";
 | `s.to_string() -> String` | 返回**副本**（`ref self`，不消费原值；实现 `ToString`） |
 | `s.is_empty() -> bool` | 是否空串 |
 | `s.index_of(ref String) -> int` | 子串位置；未找到 `-1` |
+| `s.last_index_of(ref String) -> int` | 最后一次出现位置；未找到 `-1`（空 needle → `len`） |
 | `s.contains / starts_with / ends_with(ref String) -> bool` | 子串 / 前缀 / 后缀 |
 | `s.substring(usize start, usize end) -> String` | 区间 `[start, end)`，越界自动夹取 |
 | `s.trim() -> String` | 去掉首尾空白 |

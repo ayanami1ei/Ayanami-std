@@ -155,3 +155,12 @@ fn test_integer_width_to_string() {
     #assert_eq(100i16.to_string(), "100");
     #assert_eq((0 - 7i32).to_string(), "-7")
 }
+
+#[test]
+fn test_last_index_of() {
+    #assert_eq("a.b.c".last_index_of("."), 3);
+    #assert_eq("abc".last_index_of("x"), -1);
+    #assert_eq("abc".last_index_of(""), 3);
+    #assert_eq("hello hello".last_index_of("hello"), 6);
+    #assert_eq("abc".last_index_of("abcd"), -1)
+}

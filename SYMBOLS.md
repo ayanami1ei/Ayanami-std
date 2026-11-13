@@ -558,118 +558,119 @@ src/core/string.aya:22: pub struct String
 src/core/string.aya:27: interface ToString
 src/core/string.aya:28: fn to_string(ref self) -> String;
 src/core/string.aya:31: impl u8
-src/core/string.aya:34: fn to_string(ref self) -> String
+src/core/string.aya:34: pub fn to_string(ref self) -> String
 src/core/string.aya:39: impl u16
-src/core/string.aya:42: fn to_string(ref self) -> String
+src/core/string.aya:42: pub fn to_string(ref self) -> String
 src/core/string.aya:47: impl u32
-src/core/string.aya:50: fn to_string(ref self) -> String
+src/core/string.aya:50: pub fn to_string(ref self) -> String
 src/core/string.aya:55: impl u64
-src/core/string.aya:58: fn to_string(ref self) -> String
+src/core/string.aya:58: pub fn to_string(ref self) -> String
 src/core/string.aya:63: impl i8
-src/core/string.aya:66: fn to_string(ref self) -> String
+src/core/string.aya:66: pub fn to_string(ref self) -> String
 src/core/string.aya:71: impl i16
-src/core/string.aya:74: fn to_string(ref self) -> String
+src/core/string.aya:74: pub fn to_string(ref self) -> String
 src/core/string.aya:79: impl i32
-src/core/string.aya:82: fn to_string(ref self) -> String
+src/core/string.aya:82: pub fn to_string(ref self) -> String
 src/core/string.aya:87: impl int
-src/core/string.aya:90: fn to_string(ref self) -> String
-src/core/string.aya:128: fn to_base(self, int base, ref String digits) -> String
-src/core/string.aya:163: fn to_hex(self) -> String
-src/core/string.aya:169: fn to_hex_upper(self) -> String
-src/core/string.aya:175: fn to_bin(self) -> String
-src/core/string.aya:181: fn to_oct(self) -> String
+src/core/string.aya:90: pub fn to_string(ref self) -> String
+src/core/string.aya:128: pub fn to_base(self, int base, ref String digits) -> String
+src/core/string.aya:163: pub fn to_hex(self) -> String
+src/core/string.aya:169: pub fn to_hex_upper(self) -> String
+src/core/string.aya:175: pub fn to_bin(self) -> String
+src/core/string.aya:181: pub fn to_oct(self) -> String
 src/core/string.aya:189: fn pow10(int n) -> int
 src/core/string.aya:202: fn pad_int(int v, int width) -> String
 src/core/string.aya:215: fn zeros(int n) -> String
 src/core/string.aya:228: fn trim_zeros(ref String s) -> String
 src/core/string.aya:242: fn fmt_g(float x) -> String
 src/core/string.aya:316: impl float
-src/core/string.aya:320: fn to_string(ref self) -> String
-src/core/string.aya:326: fn to_fixed(self, int digits) -> String
-src/core/string.aya:355: fn to_sci(self, int digits) -> String
+src/core/string.aya:320: pub fn to_string(ref self) -> String
+src/core/string.aya:326: pub fn to_fixed(self, int digits) -> String
+src/core/string.aya:355: pub fn to_sci(self, int digits) -> String
 src/core/string.aya:408: impl char
-src/core/string.aya:411: fn to_string(ref self) -> String
+src/core/string.aya:411: pub fn to_string(ref self) -> String
 src/core/string.aya:416: impl bool
-src/core/string.aya:419: fn to_string(ref self) -> String
+src/core/string.aya:419: pub fn to_string(ref self) -> String
 src/core/string.aya:428: impl int
-src/core/string.aya:429: fn add(self, int other) -> int
-src/core/string.aya:432: fn sub(self, int other) -> int
-src/core/string.aya:435: fn mul(self, int other) -> int
-src/core/string.aya:438: fn div(self, int other) -> int
-src/core/string.aya:441: fn rem(self, int other) -> int
-src/core/string.aya:444: fn eq(self, int other) -> bool
-src/core/string.aya:447: fn ne(self, int other) -> bool
-src/core/string.aya:450: fn lt(self, int other) -> bool
-src/core/string.aya:453: fn gt(self, int other) -> bool
-src/core/string.aya:456: fn le(self, int other) -> bool
-src/core/string.aya:459: fn ge(self, int other) -> bool
-src/core/string.aya:462: fn neg(self) -> int
+src/core/string.aya:429: pub fn add(self, int other) -> int
+src/core/string.aya:432: pub fn sub(self, int other) -> int
+src/core/string.aya:435: pub fn mul(self, int other) -> int
+src/core/string.aya:438: pub fn div(self, int other) -> int
+src/core/string.aya:441: pub fn rem(self, int other) -> int
+src/core/string.aya:444: pub fn eq(self, int other) -> bool
+src/core/string.aya:447: pub fn ne(self, int other) -> bool
+src/core/string.aya:450: pub fn lt(self, int other) -> bool
+src/core/string.aya:453: pub fn gt(self, int other) -> bool
+src/core/string.aya:456: pub fn le(self, int other) -> bool
+src/core/string.aya:459: pub fn ge(self, int other) -> bool
+src/core/string.aya:462: pub fn neg(self) -> int
 src/core/string.aya:467: impl float
-src/core/string.aya:468: fn add(self, float other) -> float
-src/core/string.aya:471: fn sub(self, float other) -> float
-src/core/string.aya:474: fn mul(self, float other) -> float
-src/core/string.aya:477: fn div(self, float other) -> float
-src/core/string.aya:480: fn eq(self, float other) -> bool
-src/core/string.aya:483: fn ne(self, float other) -> bool
-src/core/string.aya:486: fn lt(self, float other) -> bool
-src/core/string.aya:489: fn gt(self, float other) -> bool
-src/core/string.aya:492: fn le(self, float other) -> bool
-src/core/string.aya:495: fn ge(self, float other) -> bool
-src/core/string.aya:498: fn neg(self) -> float
+src/core/string.aya:468: pub fn add(self, float other) -> float
+src/core/string.aya:471: pub fn sub(self, float other) -> float
+src/core/string.aya:474: pub fn mul(self, float other) -> float
+src/core/string.aya:477: pub fn div(self, float other) -> float
+src/core/string.aya:480: pub fn eq(self, float other) -> bool
+src/core/string.aya:483: pub fn ne(self, float other) -> bool
+src/core/string.aya:486: pub fn lt(self, float other) -> bool
+src/core/string.aya:489: pub fn gt(self, float other) -> bool
+src/core/string.aya:492: pub fn le(self, float other) -> bool
+src/core/string.aya:495: pub fn ge(self, float other) -> bool
+src/core/string.aya:498: pub fn neg(self) -> float
 src/core/string.aya:503: impl char
-src/core/string.aya:504: fn eq(self, char other) -> bool
-src/core/string.aya:507: fn ne(self, char other) -> bool
-src/core/string.aya:510: fn lt(self, char other) -> bool
-src/core/string.aya:513: fn gt(self, char other) -> bool
-src/core/string.aya:516: fn le(self, char other) -> bool
-src/core/string.aya:519: fn ge(self, char other) -> bool
-src/core/string.aya:523: fn is_digit(self) -> bool
-src/core/string.aya:528: fn is_alpha(self) -> bool
-src/core/string.aya:539: fn is_alnum(self) -> bool
-src/core/string.aya:546: fn is_space(self) -> bool
-src/core/string.aya:557: fn is_upper(self) -> bool
-src/core/string.aya:562: fn is_lower(self) -> bool
-src/core/string.aya:567: fn to_digit(self) -> int
-src/core/string.aya:572: fn to_upper(self) -> char
-src/core/string.aya:580: fn to_lower(self) -> char
+src/core/string.aya:504: pub fn eq(self, char other) -> bool
+src/core/string.aya:507: pub fn ne(self, char other) -> bool
+src/core/string.aya:510: pub fn lt(self, char other) -> bool
+src/core/string.aya:513: pub fn gt(self, char other) -> bool
+src/core/string.aya:516: pub fn le(self, char other) -> bool
+src/core/string.aya:519: pub fn ge(self, char other) -> bool
+src/core/string.aya:523: pub fn is_digit(self) -> bool
+src/core/string.aya:528: pub fn is_alpha(self) -> bool
+src/core/string.aya:539: pub fn is_alnum(self) -> bool
+src/core/string.aya:546: pub fn is_space(self) -> bool
+src/core/string.aya:557: pub fn is_upper(self) -> bool
+src/core/string.aya:562: pub fn is_lower(self) -> bool
+src/core/string.aya:567: pub fn to_digit(self) -> int
+src/core/string.aya:572: pub fn to_upper(self) -> char
+src/core/string.aya:580: pub fn to_lower(self) -> char
 src/core/string.aya:589: impl bool
-src/core/string.aya:590: fn eq(self, bool other) -> bool
-src/core/string.aya:593: fn ne(self, bool other) -> bool
+src/core/string.aya:590: pub fn eq(self, bool other) -> bool
+src/core/string.aya:593: pub fn ne(self, bool other) -> bool
 src/core/string.aya:598: pub namespace String
 src/core/string.aya:600: pub fn empty() -> String
 src/core/string.aya:604: pub fn new() -> String
 src/core/string.aya:608: pub fn new([char] data, usize len) -> String
 src/core/string.aya:613: impl String
-src/core/string.aya:616: fn to_string(ref self) -> String
-src/core/string.aya:619: fn index(ref self, usize i, int __line, int __col, String __file) -> char
-src/core/string.aya:625: fn len(ref self) -> usize
-src/core/string.aya:630: fn add(ref self, ref String other) -> String
-src/core/string.aya:643: fn add[T: ToString](ref self, T a) -> String
-src/core/string.aya:647: fn eq(ref self, ref String other) -> bool
-src/core/string.aya:658: fn ne(ref self, ref String other) -> bool
-src/core/string.aya:663: fn lt(ref self, ref String other) -> bool
-src/core/string.aya:680: fn gt(ref self, ref String other) -> bool
-src/core/string.aya:684: fn le(ref self, ref String other) -> bool
-src/core/string.aya:688: fn ge(ref self, ref String other) -> bool
-src/core/string.aya:693: fn copy(ref self) -> String
-src/core/string.aya:701: fn is_empty(ref self) -> bool
-src/core/string.aya:705: fn index_of(ref self, ref String needle) -> int
-src/core/string.aya:728: fn contains(ref self, ref String needle) -> bool
-src/core/string.aya:735: fn starts_with(ref self, ref String prefix) -> bool
-src/core/string.aya:747: fn ends_with(ref self, ref String suffix) -> bool
-src/core/string.aya:761: fn substring(ref self, usize start, usize end) -> String
-src/core/string.aya:779: fn trim(ref self) -> String
-src/core/string.aya:800: fn count_char(ref self, char c) -> int
-src/core/string.aya:813: fn is_whitespace(ref self) -> bool
-src/core/string.aya:829: fn remove_prefix(ref self, ref String prefix) -> String
-src/core/string.aya:838: fn remove_suffix(ref self, ref String suffix) -> String
-src/core/string.aya:847: fn trim_start(ref self) -> String
-src/core/string.aya:861: fn trim_end(ref self) -> String
-src/core/string.aya:874: fn to_upper(ref self) -> String
-src/core/string.aya:883: fn to_lower(ref self) -> String
-src/core/string.aya:892: fn repeat(ref self, usize times) -> String
-src/core/string.aya:903: fn parse_int(ref self) -> int
-src/core/string.aya:941: fn is_int(ref self) -> bool
+src/core/string.aya:616: pub fn to_string(ref self) -> String
+src/core/string.aya:619: pub fn index(ref self, usize i, int __line, int __col, String __file) -> char
+src/core/string.aya:625: pub fn len(ref self) -> usize
+src/core/string.aya:630: pub fn add(ref self, ref String other) -> String
+src/core/string.aya:643: pub fn add[T: ToString](ref self, T a) -> String
+src/core/string.aya:647: pub fn eq(ref self, ref String other) -> bool
+src/core/string.aya:658: pub fn ne(ref self, ref String other) -> bool
+src/core/string.aya:663: pub fn lt(ref self, ref String other) -> bool
+src/core/string.aya:680: pub fn gt(ref self, ref String other) -> bool
+src/core/string.aya:684: pub fn le(ref self, ref String other) -> bool
+src/core/string.aya:688: pub fn ge(ref self, ref String other) -> bool
+src/core/string.aya:693: pub fn copy(ref self) -> String
+src/core/string.aya:701: pub fn is_empty(ref self) -> bool
+src/core/string.aya:705: pub fn index_of(ref self, ref String needle) -> int
+src/core/string.aya:729: pub fn last_index_of(ref self, ref String needle) -> int
+src/core/string.aya:754: pub fn contains(ref self, ref String needle) -> bool
+src/core/string.aya:761: pub fn starts_with(ref self, ref String prefix) -> bool
+src/core/string.aya:773: pub fn ends_with(ref self, ref String suffix) -> bool
+src/core/string.aya:787: pub fn substring(ref self, usize start, usize end) -> String
+src/core/string.aya:805: pub fn trim(ref self) -> String
+src/core/string.aya:826: pub fn count_char(ref self, char c) -> int
+src/core/string.aya:839: pub fn is_whitespace(ref self) -> bool
+src/core/string.aya:855: pub fn remove_prefix(ref self, ref String prefix) -> String
+src/core/string.aya:864: pub fn remove_suffix(ref self, ref String suffix) -> String
+src/core/string.aya:873: pub fn trim_start(ref self) -> String
+src/core/string.aya:887: pub fn trim_end(ref self) -> String
+src/core/string.aya:900: pub fn to_upper(ref self) -> String
+src/core/string.aya:909: pub fn to_lower(ref self) -> String
+src/core/string.aya:918: pub fn repeat(ref self, usize times) -> String
+src/core/string.aya:929: pub fn parse_int(ref self) -> int
+src/core/string.aya:967: pub fn is_int(ref self) -> bool
 src/dev/test.aya:26: pub fn test(String input) -> String
 src/dev/test.aya:32: pub fn should_panic(String input) -> String
 src/dev/test.aya:38: pub fn check(bool failed, int line, int col, String file, String msg) -> int
@@ -1342,6 +1343,7 @@ tests/unit/string_test.aya:119: fn test_count_char()
 tests/unit/string_test.aya:126: fn test_int_format_edges()
 tests/unit/string_test.aya:138: fn test_to_string_does_not_consume()
 tests/unit/string_test.aya:148: fn test_integer_width_to_string()
+tests/unit/string_test.aya:160: fn test_last_index_of()
 tests/unit/sync_block_test.aya:7: fn test_sync_block_mutex()
 tests/unit/sync_block_test.aya:25: fn early_value() -> int
 tests/unit/sync_block_test.aya:36: fn test_sync_block_return_value()
