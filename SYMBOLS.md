@@ -192,23 +192,35 @@ src/collections/iter.aya:272: pub fn zip[T, U, IA: Iterator[T], IB: Iterator[U]]
 src/collections/iter.aya:277: pub fn skip[T, I: Iterator[T]](I it, usize n) -> SkipIter[T, I]
 src/collections/iter.aya:282: pub fn chain[T, IA: Iterator[T], IB: Iterator[T]](IA a, IB b) -> ChainIter[T, IA, IB]
 src/collections/iter.aya:289: pub fn collect[T, I: Iterator[T]](I it) -> ArrayList[T]
-src/collections/json.aya:12: fn hex_val(int c) -> int
-src/collections/json.aya:25: fn hex_digit(int v) -> char
-src/collections/json.aya:35: pub fn escape(ref String s) -> String
-src/collections/json.aya:84: pub fn quote(ref String s) -> String
-src/collections/json.aya:88: fn push_utf8(String res, int cp) -> String
-src/collections/json.aya:107: fn parse_u4(ref String s, usize at) -> int
-src/collections/json.aya:127: pub fn unescape(ref String s) -> Option[String]
-src/collections/json.aya:206: pub enum Json
-src/collections/json.aya:217: pub struct JsonField
-src/collections/json.aya:222: pub namespace JsonField
-src/collections/json.aya:223: pub fn new(String key, Json value) -> JsonField
-src/collections/json.aya:228: impl Json
-src/collections/json.aya:232: fn render(ref self) -> String
-src/collections/json.aya:237: fn render_float(float f) -> String
-src/collections/json.aya:251: fn render_ref(ref Json v) -> String
-src/collections/json.aya:276: fn render_array(ref ArrayList[Json] items) -> String
-src/collections/json.aya:291: fn render_object(ref ArrayList[JsonField] fields) -> String
+src/collections/json.aya:14: fn hex_val(int c) -> int
+src/collections/json.aya:27: fn hex_digit(int v) -> char
+src/collections/json.aya:37: pub fn escape(ref String s) -> String
+src/collections/json.aya:86: pub fn quote(ref String s) -> String
+src/collections/json.aya:90: fn push_utf8(String res, int cp) -> String
+src/collections/json.aya:109: fn parse_u4(ref String s, usize at) -> int
+src/collections/json.aya:129: pub fn unescape(ref String s) -> Option[String]
+src/collections/json.aya:208: pub enum Json
+src/collections/json.aya:219: pub struct JsonField
+src/collections/json.aya:224: pub namespace JsonField
+src/collections/json.aya:225: pub fn new(String key, Json value) -> JsonField
+src/collections/json.aya:230: impl Json
+src/collections/json.aya:234: fn render(ref self) -> String
+src/collections/json.aya:239: fn render_float(float f) -> String
+src/collections/json.aya:253: fn render_ref(ref Json v) -> String
+src/collections/json.aya:278: fn render_array(ref ArrayList[Json] items) -> String
+src/collections/json.aya:293: fn render_object(ref ArrayList[JsonField] fields) -> String
+src/collections/json.aya:310: struct Parsed
+src/collections/json.aya:316: struct StrParsed
+src/collections/json.aya:322: fn parse_fail(usize at) -> Parsed
+src/collections/json.aya:326: fn skip_ws(ref String s, usize i) -> usize
+src/collections/json.aya:352: fn parse_string_at(ref String s, usize i) -> StrParsed
+src/collections/json.aya:378: fn is_digit(char c) -> bool
+src/collections/json.aya:382: fn parse_number(ref String s, usize i) -> Parsed
+src/collections/json.aya:439: fn parse_literal(ref String s, usize i, ref String lit, Json v) -> Parsed
+src/collections/json.aya:453: fn parse_value(ref String s, usize i) -> Parsed
+src/collections/json.aya:487: fn parse_array(ref String s, usize i) -> Parsed
+src/collections/json.aya:517: fn parse_object(ref String s, usize i) -> Parsed
+src/collections/json.aya:561: pub fn parse(ref String s) -> Option[Json]
 src/collections/linkedlist.aya:13: pub struct LinkedList[T]
 src/collections/linkedlist.aya:19: pub namespace LinkedList
 src/collections/linkedlist.aya:20: pub fn new[T]() -> LinkedList[T]
@@ -1123,6 +1135,9 @@ tests/unit/json_test.aya:20: fn test_json_unescape()
 tests/unit/json_test.aya:31: fn test_json_escape_roundtrip()
 tests/unit/json_test.aya:46: fn test_json_render_scalars()
 tests/unit/json_test.aya:55: fn test_json_render_nested()
+tests/unit/json_test.aya:72: fn test_json_parse_scalars()
+tests/unit/json_test.aya:82: fn test_json_parse_containers()
+tests/unit/json_test.aya:93: fn test_json_parse_invalid()
 tests/unit/linkedlist_test.aya:6: fn test_basic()
 tests/unit/linkedlist_test.aya:18: fn test_ll_eq_ops()
 tests/unit/linkedlist_test.aya:31: fn test_ll_mut_ops()

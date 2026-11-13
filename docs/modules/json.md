@@ -65,3 +65,24 @@ fn main() -> int {
 
 - `Float` 的 NaN / Inf 输出 `null`（避免非法 JSON）；
 - `render` 不消费值，可重复调用。
+
+## 解析
+
+| 函数 | 说明 |
+|---|---|
+| `parse(ref String s) -> Option[Json]` | 解析 JSON 文本（严格） |
+
+```ayanami
+import "json";
+
+fn main() -> int {
+    v = parse("{\"a\":[1,2,3]}").unwrap();
+    println(v.render());   // {"a":[1,2,3]}
+    return 0
+}
+```
+
+- 严格校验：非法字面量、尾逗号、缺值、前导零、多余尾随内容 → `Option::None()`；
+- 字符串支持 `\uXXXX` 与代理对，非法转义/控制字符 → `None()`；
+- 数字按是否含 `.` / 指数区分 `Json::Int` 与 `Json::Float`；
+- 对象保持输入顺序；空数组/空对象正常解析。

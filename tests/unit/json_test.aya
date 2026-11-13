@@ -67,3 +67,36 @@ fn test_json_render_nested() {
     #assert_eq(Json::Array(arr).render(), "[1,\"a\",false]");
     #assert_eq(obj.render(), "{\"a\":1,\"b\":[2,3]}")
 }
+
+#[test]
+fn test_json_parse_scalars() {
+    #assert_eq(parse(ref "null").unwrap().render(), "null");
+    #assert_eq(parse(ref " true ").unwrap().render(), "true");
+    #assert_eq(parse(ref "123").unwrap().render(), "123");
+    #assert_eq(parse(ref "1.5").unwrap().render(), "1.5");
+    #assert_eq(parse(ref "\"hi\"").unwrap().render(), "\"hi\"");
+    #assert_eq(parse(ref "\"\\u4f60\\u597d\"").unwrap().render(), "\"你好\"")
+}
+
+#[test]
+fn test_json_parse_containers() {
+    text = "{\"a\":[1,2,3],\"b\":{\"c\":true},\"s\":\"x\"}";
+    p = parse(ref text).unwrap();
+    #assert_eq(p.render(), text);
+    spaced = "{ \"a\" : [ 1 , 2 ] }";
+    #assert_eq(parse(ref spaced).unwrap().render(), "{\"a\":[1,2]}");
+    #assert_eq(parse(ref "[]").unwrap().render(), "[]");
+    #assert_eq(parse(ref "{}").unwrap().render(), "{}")
+}
+
+#[test]
+fn test_json_parse_invalid() {
+    #assert(parse(ref "").is_none());
+    #assert(parse(ref "tru").is_none());
+    #assert(parse(ref "[1,]").is_none());
+    #assert(parse(ref "{\"a\":}").is_none());
+    #assert(parse(ref "01").is_none());
+    #assert(parse(ref "1 2").is_none());
+    #assert(parse(ref "\"\\u12\"").is_none());
+    #assert(parse(ref "{a:1}").is_none())
+}
