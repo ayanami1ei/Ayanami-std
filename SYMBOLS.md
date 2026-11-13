@@ -870,11 +870,14 @@ src/system/io.aya:176: pub fn try_read_float() -> Option[float]
 src/system/io.aya:184: pub fn read_bool() -> bool
 src/system/io.aya:192: pub fn try_read_bool() -> Option[bool]
 src/system/io.aya:200: pub fn try_read_uint() -> Option[usize]
-src/system/path.aya:15: pub fn normalize(String path) -> String
-src/system/path.aya:40: pub fn join(String base, String name) -> String
-src/system/path.aya:57: pub fn basename(String path) -> String
-src/system/path.aya:78: pub fn dirname(String path) -> String
-src/system/path.aya:102: pub fn extension(String path) -> String
+src/system/path.aya:14: pub fn normalize(String path) -> String
+src/system/path.aya:39: pub fn join(String base, String name) -> String
+src/system/path.aya:56: pub fn basename(String path) -> String
+src/system/path.aya:77: pub fn dirname(String path) -> String
+src/system/path.aya:101: pub fn extension(String path) -> String
+src/system/path.aya:116: pub fn is_absolute(String path) -> bool
+src/system/path.aya:123: pub fn file_stem(String path) -> String
+src/system/path.aya:135: pub fn with_extension(String path, String ext) -> String
 src/system/process.aya:4: fn __ayanami_exit(int code) -> void;
 src/system/process.aya:9: pub fn exit(int code) -> !
 src/system/process.aya:17: pub fn exit_ok() -> !
@@ -1283,6 +1286,7 @@ tests/unit/path_test.aya:6: fn test_path_normalize()
 tests/unit/path_test.aya:15: fn test_path_join()
 tests/unit/path_test.aya:26: fn test_path_basename_dirname()
 tests/unit/path_test.aya:37: fn test_path_extension()
+tests/unit/path_test.aya:45: fn test_path_absolute_stem_extension()
 tests/unit/rand_test.aya:10: fn test_range()
 tests/unit/rand_test.aya:23: fn test_deterministic()
 tests/unit/rand_test.aya:32: fn test_seed_variation()

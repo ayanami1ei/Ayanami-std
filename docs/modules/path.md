@@ -13,6 +13,9 @@ import "path";
 | `basename(String) -> String` | 最后一段（根 → `/`，空 → `""`） |
 | `dirname(String) -> String` | 目录部分（无目录 → `.`，根 → `/`） |
 | `extension(String) -> String` | 扩展名（无 → `""`，不含点） |
+| `is_absolute(String) -> bool` | 是否以 `/` 开头 |
+| `file_stem(String) -> String` | 文件名去扩展名（点文件 `.bashrc` 视为无扩展名） |
+| `with_extension(String, String) -> String` | 替换/添加扩展名（空扩展名表示去掉） |
 
 示例：
 
@@ -23,4 +26,7 @@ join("/data", "/abs/y")       // "/abs/y"
 basename("/a/b/c.txt")        // "c.txt"
 dirname("/a/b/c.txt")         // "/a/b"
 extension("archive.tar.gz")   // "gz"
+file_stem("/a/b/c.txt")       // "c"
+with_extension("/a/b/c.txt", "md")  // "/a/b/c.md"
+is_absolute("/a/b")           // true
 ```

@@ -8,13 +8,12 @@ import "iter";
 //
 // 约定：Unix 风格 '/'；空字符串视为空路径；根为 "/"。
 // 不解析 ".." / "."（保持字面，交给文件系统）。
-
 /// 规范化：折叠重复 '/'，去掉末尾 '/'（根 "/" 保留）
 #[alloc]
 #[state]
 pub fn normalize(String path) -> String {
     if path.len() == 0 {
-        return ""
+        return "";
     }
     sep = "/";
     parts = split(ref path, ref sep);
@@ -22,16 +21,16 @@ pub fn normalize(String path) -> String {
     for seg in parts.into_iter() {
         if seg.len() > 0 {
             if res.len() > 0 {
-                res = res + "/"
+                res = res + "/";
             }
-            res = res + seg
+            res = res + seg;
         }
     }
     slash = "/";
     if path.starts_with(ref slash) {
-        res = "/" + res
+        res = "/" + res;
     }
-    return res
+    return res;
 }
 
 /// 连接路径：name 为绝对路径时覆盖 base；否则拼接后规范化
@@ -40,15 +39,15 @@ pub fn normalize(String path) -> String {
 pub fn join(String base, String name) -> String {
     slash = "/";
     if name.len() > 0 && name.starts_with(ref slash) {
-        return normalize(name)
+        return normalize(name);
     }
     if base.len() == 0 {
-        return normalize(name)
+        return normalize(name);
     }
     if name.len() == 0 {
-        return normalize(base)
+        return normalize(base);
     }
-    return normalize(base + "/" + name)
+    return normalize(base + "/" + name);
 }
 
 /// 最后一段（空路径 → ""；根 → "/"）
@@ -57,19 +56,19 @@ pub fn join(String base, String name) -> String {
 pub fn basename(String path) -> String {
     p = normalize(path);
     if p.len() == 0 {
-        return ""
+        return "";
     }
     if p == "/" {
-        return "/"
+        return "/";
     }
     i = p.len() as int - 1;
     while i >= 0 {
         if p[i] == '/' {
-            return p.substring((i + 1) as usize, p.len())
+            return p.substring((i + 1) as usize, p.len());
         }
-        i = i - 1
+        i = i - 1;
     }
-    return p
+    return p;
 }
 
 /// 目录部分（无目录段 → "."；根 → "/"）
@@ -78,22 +77,22 @@ pub fn basename(String path) -> String {
 pub fn dirname(String path) -> String {
     p = normalize(path);
     if p.len() == 0 {
-        return ""
+        return "";
     }
     if p == "/" {
-        return "/"
+        return "/";
     }
     i = p.len() as int - 1;
     while i >= 0 {
         if p[i] == '/' {
             if i == 0 {
-                return "/"
+                return "/";
             }
-            return p.substring(0usize, i as usize)
+            return p.substring(0usize, i as usize);
         }
-        i = i - 1
+        i = i - 1;
     }
-    return "."
+    return ".";
 }
 
 /// 扩展名（无 '.' → ""；不含点本身）
@@ -103,10 +102,56 @@ pub fn extension(String path) -> String {
     b = basename(path);
     i = b.len() as int - 1;
     while i >= 0 {
-        if b[i] == '.' {
-            return b.substring((i + 1) as usize, b.len())
+        if b[i] == '.' && i > 0 {
+            return b.substring((i + 1) as usize, b.len());
         }
-        i = i - 1
+        i = i - 1;
     }
-    return ""
+    return "";
+}
+
+/// 是否绝对路径（POSIX：以 `/` 开头）
+#[alloc]
+#[state]
+pub fn is_absolute(String path) -> bool {
+    return path.starts_with("/");
+}
+
+/// 文件名去掉最后一级扩展名（点文件如 `.bashrc` 视为无扩展名）
+#[alloc]
+#[state]
+pub fn file_stem(String path) -> String {
+    b = basename(path);
+    e = extension(b.copy());
+    if e.is_empty() {
+        return b;
+    }
+    return b.substring(0usize, b.len - e.len - 1usize);
+}
+
+/// 替换/添加扩展名（`ext` 不含点；空 `ext` 表示去掉扩展名）
+#[alloc]
+#[state]
+pub fn with_extension(String path, String ext) -> String {
+    p = normalize(path);
+    b = basename(p.copy());
+    d = dirname(p.copy());
+    e = extension(b.copy());
+    stem = b.copy();
+    if !e.is_empty() {
+        stem = b.substring(0usize, b.len - e.len - 1usize);
+    }
+    name = "";
+    if ext.is_empty() {
+        name = stem;
+    } else {
+        name = stem + "." + ext;
+    }
+    if d == "." {
+        return name;
+    }
+    if d == "/" {
+        return "/" + name;
+    }
+    return d + "/" + name;
 }

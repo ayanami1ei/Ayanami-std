@@ -40,3 +40,19 @@ fn test_path_extension() {
     #assert_eq(extension("archive.tar.gz"), "gz");
     #assert_eq(extension("/"), "")
 }
+
+#[test]
+fn test_path_absolute_stem_extension() {
+    #assert(is_absolute("/a/b"));
+    #assert(!is_absolute("a/b"));
+    #assert_eq(file_stem("a/b/c.txt"), "c");
+    #assert_eq(file_stem("archive.tar.gz"), "archive.tar");
+    #assert_eq(file_stem(".bashrc"), ".bashrc");
+    #assert_eq(file_stem("noext"), "noext");
+    #assert_eq(extension(".bashrc"), "");
+    #assert_eq(with_extension("/a/b/c.txt", "md"), "/a/b/c.md");
+    #assert_eq(with_extension("c.txt", ""), "c");
+    #assert_eq(with_extension("c", "md"), "c.md");
+    #assert_eq(with_extension("/c", "md"), "/c.md");
+    #assert_eq(with_extension(".bashrc", "md"), ".bashrc.md")
+}
