@@ -5,6 +5,7 @@
 #   void    __ayanami_putchar(int c)              写 1 字节到 stdout
 #   void    __ayanami_print_int(int64_t n)        十进制（无换行）
 #   void    __ayanami_print_str(const char*, int64_t len)
+#   void    __ayanami_eprint_str(const char*, int64_t len)
 #   void    __ayanami_print_ln(void)              换行
 #
 # 系统调用号：read=0 write=1
@@ -57,6 +58,33 @@ __ayanami_print_str:
     syscall
     ret
     .size __ayanami_print_str, .-__ayanami_print_str
+
+# void __ayanami_eprint_str(const char *s, int64_t len)
+    .globl __ayanami_eprint_str
+    .type  __ayanami_eprint_str, @function
+__ayanami_eprint_str:
+    movq %rsi, %rdx               # len
+    movq %rdi, %rsi               # buf
+    movq $2, %rdi                 # fd 2 (stderr)
+    movq $1, %rax                 # write
+    syscall
+    ret
+    .size __ayanami_eprint_str, .-__ayanami_eprint_str
+
+# void __ayanami_eprint_ln(void)
+    .globl __ayanami_eprint_ln
+    .type  __ayanami_eprint_ln, @function
+__ayanami_eprint_ln:
+    subq $24, %rsp
+    movb $10, (%rsp)
+    movq $1, %rax
+    movq $2, %rdi
+    movq %rsp, %rsi
+    movq $1, %rdx
+    syscall
+    addq $24, %rsp
+    ret
+    .size __ayanami_eprint_ln, .-__ayanami_eprint_ln
 
 # void __ayanami_print_ln(void)
     .globl __ayanami_print_ln

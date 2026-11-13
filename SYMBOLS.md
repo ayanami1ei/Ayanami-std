@@ -853,31 +853,36 @@ src/system/fs.aya:490: pub fn walk_ext(String root, String ext) -> ArrayList[Str
 src/system/io.aya:9: fn __ayanami_getchar() -> int;
 src/system/io.aya:13: fn __ayanami_putchar(int c);
 src/system/io.aya:17: fn __ayanami_print_str([char] s, int len);
-src/system/io.aya:21: fn __ayanami_print_ln();
-src/system/io.aya:24: pub fn getchar() -> int
-src/system/io.aya:29: pub fn putchar(int c)
-src/system/io.aya:35: pub fn print(ref String n)
-src/system/io.aya:41: pub fn println()
-src/system/io.aya:47: pub fn println(ref String s)
-src/system/io.aya:55: fn __ayanami_print_int(int n);
-src/system/io.aya:59: pub fn print(int n)
-src/system/io.aya:65: pub fn print(usize n)
-src/system/io.aya:72: pub fn print(float f)
-src/system/io.aya:78: pub fn print(bool b)
-src/system/io.aya:88: pub fn print(char c)
-src/system/io.aya:95: pub fn println(int n)
-src/system/io.aya:102: pub fn println(usize n)
-src/system/io.aya:110: pub fn println(float f)
-src/system/io.aya:117: pub fn println(bool b)
-src/system/io.aya:124: pub fn println(char c)
-src/system/io.aya:134: pub fn read_line() -> String
-src/system/io.aya:152: pub fn read_int() -> int
-src/system/io.aya:160: pub fn try_read_int() -> Option[int]
-src/system/io.aya:168: pub fn read_float() -> float
-src/system/io.aya:176: pub fn try_read_float() -> Option[float]
-src/system/io.aya:184: pub fn read_bool() -> bool
-src/system/io.aya:192: pub fn try_read_bool() -> Option[bool]
-src/system/io.aya:200: pub fn try_read_uint() -> Option[usize]
+src/system/io.aya:20: fn __ayanami_eprint_str([char] s, int len);
+src/system/io.aya:23: fn __ayanami_eprint_ln() -> void;
+src/system/io.aya:27: fn __ayanami_print_ln();
+src/system/io.aya:30: pub fn getchar() -> int
+src/system/io.aya:35: pub fn putchar(int c)
+src/system/io.aya:41: pub fn print(ref String n)
+src/system/io.aya:49: pub fn eprint(ref String s)
+src/system/io.aya:55: pub fn eprintln(ref String s)
+src/system/io.aya:62: pub fn eprintln()
+src/system/io.aya:66: pub fn println()
+src/system/io.aya:72: pub fn println(ref String s)
+src/system/io.aya:80: fn __ayanami_print_int(int n);
+src/system/io.aya:84: pub fn print(int n)
+src/system/io.aya:90: pub fn print(usize n)
+src/system/io.aya:97: pub fn print(float f)
+src/system/io.aya:103: pub fn print(bool b)
+src/system/io.aya:113: pub fn print(char c)
+src/system/io.aya:120: pub fn println(int n)
+src/system/io.aya:127: pub fn println(usize n)
+src/system/io.aya:135: pub fn println(float f)
+src/system/io.aya:142: pub fn println(bool b)
+src/system/io.aya:149: pub fn println(char c)
+src/system/io.aya:159: pub fn read_line() -> String
+src/system/io.aya:177: pub fn read_int() -> int
+src/system/io.aya:185: pub fn try_read_int() -> Option[int]
+src/system/io.aya:193: pub fn read_float() -> float
+src/system/io.aya:201: pub fn try_read_float() -> Option[float]
+src/system/io.aya:209: pub fn read_bool() -> bool
+src/system/io.aya:217: pub fn try_read_bool() -> Option[bool]
+src/system/io.aya:225: pub fn try_read_uint() -> Option[usize]
 src/system/path.aya:14: pub fn normalize(String path) -> String
 src/system/path.aya:39: pub fn join(String base, String name) -> String
 src/system/path.aya:56: pub fn basename(String path) -> String
@@ -1189,6 +1194,7 @@ tests/unit/ini_test.aya:6: fn test_ini_parse_basic()
 tests/unit/ini_test.aya:18: fn test_ini_values_and_duplicates()
 tests/unit/ini_test.aya:27: fn test_ini_sections_keys()
 tests/unit/io_test.aya:6: fn test_input()
+tests/unit/io_test.aya:23: fn test_eprint()
 tests/unit/iter_test.aya:11: struct Countdown
 tests/unit/iter_test.aya:15: impl Countdown
 tests/unit/iter_test.aya:17: pub fn next(ref mut self) -> Option[int]

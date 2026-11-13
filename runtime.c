@@ -311,6 +311,14 @@ void __ayanami_print_str(const char *s, int64_t len) {
 void __ayanami_print_ln(void) {
     printf("\n");
 }
+
+void __ayanami_eprint_str(const char *s, int64_t len) {
+    fwrite(s, 1, len, stderr);
+}
+
+void __ayanami_eprint_ln(void) {
+    fputc('\n', stderr);
+}
 #endif // AYANAMI_ASM_PORT（I/O 由汇编后端提供）
 
 // 浮点格式化已迁移为纯 Ayanami 实现（std/src/core/string.aya：fmt_g/to_fixed/to_sci）。

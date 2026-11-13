@@ -16,6 +16,12 @@ fn __ayanami_putchar(int c);
 #[extern]
 fn __ayanami_print_str([char] s, int len);
 
+#[extern]
+fn __ayanami_eprint_str([char] s, int len);
+
+#[extern]
+fn __ayanami_eprint_ln() -> void;
+
 #[io]
 #[extern]
 fn __ayanami_print_ln();
@@ -36,8 +42,27 @@ pub fn print(ref String n) {
     __ayanami_print_str(n.data, n.len as int);
 }
 
+/// 向 stderr 写字符串（不换行）
 #[alloc]
 #[io]
+#[io]
+pub fn eprint(ref String s) {
+    __ayanami_eprint_str(s.data, s.len as int)
+}
+
+/// 向 stderr 写字符串并换行
+#[io]
+pub fn eprintln(ref String s) {
+    __ayanami_eprint_str(s.data, s.len as int);
+    __ayanami_eprint_ln()
+}
+
+/// 向 stderr 写一个换行
+#[io]
+pub fn eprintln() {
+    __ayanami_eprint_ln()
+}
+
 pub fn println() {
     __ayanami_print_ln();
 }

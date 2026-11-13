@@ -18,3 +18,10 @@ fn test_input() {
     #assert(try_read_uint().is_none());
     #assert(read_line().is_empty())
 }
+
+#[test]
+fn test_eprint() {
+    eprint("stderr-selftest");
+    eprintln();
+    eprintln("stderr line")
+}
