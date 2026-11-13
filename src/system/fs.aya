@@ -243,6 +243,55 @@ pub fn rmdir(String path) -> bool {
     return __ayanami_fs_rmdir(path) == 0;
 }
 
+/// 递归创建目录（已存在视为成功）
+#[io]
+pub fn create_dir_all(String path) -> bool {
+    p = normalize(path);
+    if p.is_empty() {
+        return false;
+    }
+    if is_dir(p.copy()) {
+        return true;
+    }
+    parent = dirname(p.copy());
+    if parent != "." && parent != "/" && parent != p {
+        if !create_dir_all(parent) {
+            return false;
+        }
+    }
+    return mkdir(p);
+}
+
+/// 递归删除目录及其内容（符号链接只删除链接本身，不跟随）
+#[io]
+pub fn remove_dir_all(String path) -> bool {
+    if !exists(path.copy()) {
+        return false;
+    }
+    entries = list_dir(path.copy());
+    match entries {
+        Option.Some(names) => {
+            for name in names.into_iter() {
+                full = join(path.copy(), name);
+                link = read_link(full.copy());
+                if link.is_some() {
+                    remove_file(full);
+                } else {
+                    if is_dir(full.copy()) {
+                        if !remove_dir_all(full) {
+                            return false;
+                        }
+                    } else {
+                        remove_file(full);
+                    }
+                }
+            }
+        },
+        Option.None => {},
+    }
+    return rmdir(path);
+}
+
 /// 修改时间（Unix 秒；失败 None）
 #[io]
 pub fn mtime(String path) -> Option[int] {

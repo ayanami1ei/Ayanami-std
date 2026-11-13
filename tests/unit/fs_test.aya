@@ -254,3 +254,24 @@ fn test_fs_set_current_dir() {
     remove_file(join(root.copy(), "x.txt"));
     rmdir(root)
 }
+
+#[test]
+fn test_fs_create_and_remove_dir_all() {
+    root = "/tmp/ayanami_mkdir_all";
+    remove_dir_all(root.copy());
+    #assert(create_dir_all(join(root.copy(), "a/b/c")));
+    #assert(create_dir_all(join(root.copy(), "a/b/c")));
+    #assert(is_dir(join(root.copy(), "a/b/c")));
+    write_file(join(root.copy(), "a/b/c/x.txt"), "x");
+    outside = "/tmp/ayanami_mkdir_outside";
+    remove_dir_all(outside.copy());
+    #assert(create_dir_all(outside.copy()));
+    write_file(join(outside.copy(), "keep.txt"), "k");
+    #assert(symlink(outside.copy(), join(root.copy(), "a/link")));
+    #assert(remove_dir_all(root.copy()));
+    #assert(!exists(root.copy()));
+    #assert(exists(join(outside.copy(), "keep.txt")));
+    remove_file(join(outside.copy(), "keep.txt"));
+    rmdir(outside.copy());
+    #assert(!remove_dir_all("/tmp/ayanami_not_exist_xyz"))
+}
