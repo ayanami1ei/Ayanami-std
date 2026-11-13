@@ -192,13 +192,23 @@ src/collections/iter.aya:272: pub fn zip[T, U, IA: Iterator[T], IB: Iterator[U]]
 src/collections/iter.aya:277: pub fn skip[T, I: Iterator[T]](I it, usize n) -> SkipIter[T, I]
 src/collections/iter.aya:282: pub fn chain[T, IA: Iterator[T], IB: Iterator[T]](IA a, IB b) -> ChainIter[T, IA, IB]
 src/collections/iter.aya:289: pub fn collect[T, I: Iterator[T]](I it) -> ArrayList[T]
-src/collections/json.aya:8: fn hex_val(int c) -> int
-src/collections/json.aya:21: fn hex_digit(int v) -> char
-src/collections/json.aya:31: pub fn escape(ref String s) -> String
-src/collections/json.aya:80: pub fn quote(ref String s) -> String
-src/collections/json.aya:84: fn push_utf8(String res, int cp) -> String
-src/collections/json.aya:103: fn parse_u4(ref String s, usize at) -> int
-src/collections/json.aya:123: pub fn unescape(ref String s) -> Option[String]
+src/collections/json.aya:12: fn hex_val(int c) -> int
+src/collections/json.aya:25: fn hex_digit(int v) -> char
+src/collections/json.aya:35: pub fn escape(ref String s) -> String
+src/collections/json.aya:84: pub fn quote(ref String s) -> String
+src/collections/json.aya:88: fn push_utf8(String res, int cp) -> String
+src/collections/json.aya:107: fn parse_u4(ref String s, usize at) -> int
+src/collections/json.aya:127: pub fn unescape(ref String s) -> Option[String]
+src/collections/json.aya:206: pub enum Json
+src/collections/json.aya:217: pub struct JsonField
+src/collections/json.aya:222: pub namespace JsonField
+src/collections/json.aya:223: pub fn new(String key, Json value) -> JsonField
+src/collections/json.aya:228: impl Json
+src/collections/json.aya:232: fn render(ref self) -> String
+src/collections/json.aya:237: fn render_float(float f) -> String
+src/collections/json.aya:251: fn render_ref(ref Json v) -> String
+src/collections/json.aya:276: fn render_array(ref ArrayList[Json] items) -> String
+src/collections/json.aya:291: fn render_object(ref ArrayList[JsonField] fields) -> String
 src/collections/linkedlist.aya:13: pub struct LinkedList[T]
 src/collections/linkedlist.aya:19: pub namespace LinkedList
 src/collections/linkedlist.aya:20: pub fn new[T]() -> LinkedList[T]
@@ -1111,6 +1121,8 @@ tests/unit/iter_test.aya:240: fn test_skip_chain_collect()
 tests/unit/json_test.aya:10: fn test_json_escape()
 tests/unit/json_test.aya:20: fn test_json_unescape()
 tests/unit/json_test.aya:31: fn test_json_escape_roundtrip()
+tests/unit/json_test.aya:46: fn test_json_render_scalars()
+tests/unit/json_test.aya:55: fn test_json_render_nested()
 tests/unit/linkedlist_test.aya:6: fn test_basic()
 tests/unit/linkedlist_test.aya:18: fn test_ll_eq_ops()
 tests/unit/linkedlist_test.aya:31: fn test_ll_mut_ops()

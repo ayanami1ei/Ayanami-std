@@ -5,6 +5,10 @@ import "string";
 
 import "option";
 
+import "arraylist";
+
+import "iter";
+
 fn hex_val(int c) -> int {
     if c >= 48 && c <= 57 {
         return c - 48
@@ -196,4 +200,105 @@ pub fn unescape(ref String s) -> Option[String] {
         }
     }
     return Option::Some(res)
+}
+
+/// JSON 值（数字区分 `int` / `float`）
+pub enum Json {
+    Null,
+    Bool(bool),
+    Int(int),
+    Float(float),
+    Str(String),
+    Array(ArrayList[Json]),
+    Object(ArrayList[JsonField]),
+}
+
+/// 对象成员（保持插入顺序）
+pub struct JsonField {
+    String key
+    Json value
+}
+
+pub namespace JsonField {
+    pub fn new(String key, Json value) -> JsonField {
+        return JsonField { key = key, value = value }
+    }
+}
+
+impl Json {
+    /// 序列化为 JSON 文本（按引用遍历，不消费自身）
+    #[alloc]
+    #[state]
+    fn render(ref self) -> String {
+        return render_ref(ref self)
+    }
+}
+
+fn render_float(float f) -> String {
+    // NaN / Inf 不是合法 JSON，输出 null
+    if f != f {
+        return "null"
+    }
+    if f - f != 0.0 {
+        return "null"
+    }
+    return f.to_string()
+}
+
+// 按 tag 分发（避免 `match self` 移出载荷后重复析构）。
+#[alloc]
+#[state]
+fn render_ref(ref Json v) -> String {
+    tag = v._tag;
+    if tag == 0 {
+        return "null"
+    }
+    if tag == 1 {
+        return v._data_Bool._0.to_string()
+    }
+    if tag == 2 {
+        return v._data_Int._0.to_string()
+    }
+    if tag == 3 {
+        return render_float(v._data_Float._0)
+    }
+    if tag == 4 {
+        return quote(ref v._data_Str._0)
+    }
+    if tag == 5 {
+        return render_array(ref v._data_Array._0)
+    }
+    return render_object(ref v._data_Object._0)
+}
+
+#[alloc]
+#[state]
+fn render_array(ref ArrayList[Json] items) -> String {
+    res = "[";
+    i = 0usize;
+    while i < items.len() {
+        if i > 0 {
+            res = res + ","
+        }
+        res = res + render_ref(items.index_ref(i));
+        i = i + 1
+    }
+    return res + "]"
+}
+
+#[alloc]
+#[state]
+fn render_object(ref ArrayList[JsonField] fields) -> String {
+    res = "{";
+    i = 0usize;
+    while i < fields.len() {
+        if i > 0 {
+            res = res + ","
+        }
+        f = fields.index_ref(i);
+        res = res + quote(ref f.key) + ":";
+        res = res + render_ref(ref f.value);
+        i = i + 1
+    }
+    return res + "}"
 }

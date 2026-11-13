@@ -41,3 +41,29 @@ fn test_json_escape_roundtrip() {
         #assert_eq(d, s)
     }
 }
+
+#[test]
+fn test_json_render_scalars() {
+    #assert_eq(Json::Null.render(), "null");
+    #assert_eq(Json::Bool(true).render(), "true");
+    #assert_eq(Json::Int(-42).render(), "-42");
+    #assert_eq(Json::Float(3.5).render(), "3.5");
+    #assert_eq(Json::Str("say \"hi\"").render(), "\"say \\\"hi\\\"\"")
+}
+
+#[test]
+fn test_json_render_nested() {
+    arr = ArrayList::new[Json]();
+    arr.push(Json::Int(1));
+    arr.push(Json::Str("a"));
+    arr.push(Json::Bool(false));
+    fields = ArrayList::new[JsonField]();
+    fields.push(JsonField::new("a", Json::Int(1)));
+    inner = ArrayList::new[Json]();
+    inner.push(Json::Int(2));
+    inner.push(Json::Int(3));
+    fields.push(JsonField::new("b", Json::Array(inner)));
+    obj = Json::Object(fields);
+    #assert_eq(Json::Array(arr).render(), "[1,\"a\",false]");
+    #assert_eq(obj.render(), "{\"a\":1,\"b\":[2,3]}")
+}
