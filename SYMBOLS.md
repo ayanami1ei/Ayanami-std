@@ -647,47 +647,48 @@ src/system/env.aya:74: pub fn get_env_or(String name, String fallback) -> String
 src/system/env.aya:84: pub fn has_env(String name) -> bool
 src/system/fs.aya:11: fn __ayanami_fs_size(String path) -> int;
 src/system/fs.aya:14: fn __ayanami_fs_read(String path) -> [char];
-src/system/fs.aya:17: fn __ayanami_fs_write(String path, String data) -> int;
-src/system/fs.aya:20: fn __ayanami_fs_append(String path, String data) -> int;
-src/system/fs.aya:23: fn __ayanami_fs_remove(String path) -> int;
-src/system/fs.aya:26: fn __ayanami_fs_copy(String src, String dst) -> int;
-src/system/fs.aya:29: fn __ayanami_fs_rename(String from, String to) -> int;
-src/system/fs.aya:32: fn __ayanami_fs_is_dir(String path) -> int;
-src/system/fs.aya:35: fn __ayanami_fs_mkdir(String path) -> int;
-src/system/fs.aya:38: fn __ayanami_fs_rmdir(String path) -> int;
-src/system/fs.aya:41: fn __ayanami_fs_mtime(String path) -> int;
-src/system/fs.aya:44: fn __ayanami_fs_is_file(String path) -> int;
-src/system/fs.aya:47: fn __ayanami_fs_list_data(String path) -> [char];
-src/system/fs.aya:50: fn __ayanami_fs_list_len() -> int;
-src/system/fs.aya:54: pub fn exists(String path) -> bool
-src/system/fs.aya:60: pub fn read_file(String path) -> Option[String]
-src/system/fs.aya:74: pub fn write_file(String path, String data) -> bool
-src/system/fs.aya:84: pub fn read_lines(String path) -> Option[ArrayList[String]]
-src/system/fs.aya:95: pub fn append_file(String path, String data) -> bool
-src/system/fs.aya:101: pub fn remove_file(String path) -> bool
-src/system/fs.aya:107: pub fn is_dir(String path) -> bool
-src/system/fs.aya:115: pub fn list_dir(String path) -> Option[ArrayList[String]]
-src/system/fs.aya:128: pub fn mkdir(String path) -> bool
-src/system/fs.aya:134: pub fn rmdir(String path) -> bool
-src/system/fs.aya:140: pub fn mtime(String path) -> Option[int]
-src/system/fs.aya:150: pub fn is_file(String path) -> bool
-src/system/fs.aya:156: pub fn copy_file(String src, String dst) -> bool
-src/system/fs.aya:162: pub fn rename_file(String from, String to) -> bool
-src/system/fs.aya:168: pub fn size(String path) -> Option[int]
-src/system/fs.aya:180: pub fn copy_tree(String src, String dst) -> int
-src/system/fs.aya:184: fn copy_tree_impl(String src, String dst, int depth) -> int
-src/system/fs.aya:224: fn __ayanami_fs_errno() -> int;
-src/system/fs.aya:227: fn __ayanami_fs_errno_kind(int e) -> int;
-src/system/fs.aya:230: fn __ayanami_fs_strerror(int e) -> [char];
-src/system/fs.aya:233: fn __ayanami_cstr_len([char] s) -> int;
-src/system/fs.aya:236: pub enum IoErrorKind
-src/system/fs.aya:248: pub struct IoError
-src/system/fs.aya:254: fn classify_kind(int code) -> IoErrorKind
-src/system/fs.aya:267: impl IoError
-src/system/fs.aya:271: fn message(ref self) -> String
-src/system/fs.aya:280: fn what(ref self) -> String
-src/system/fs.aya:287: pub fn last_error(String path) -> IoError
-src/system/fs.aya:294: pub fn read_file_result(String path) -> Result[String, IoError]
+src/system/fs.aya:17: fn __ayanami_release_chars([char] data);
+src/system/fs.aya:20: fn __ayanami_fs_write(String path, String data) -> int;
+src/system/fs.aya:23: fn __ayanami_fs_append(String path, String data) -> int;
+src/system/fs.aya:26: fn __ayanami_fs_remove(String path) -> int;
+src/system/fs.aya:29: fn __ayanami_fs_copy(String src, String dst) -> int;
+src/system/fs.aya:32: fn __ayanami_fs_rename(String from, String to) -> int;
+src/system/fs.aya:35: fn __ayanami_fs_is_dir(String path) -> int;
+src/system/fs.aya:38: fn __ayanami_fs_mkdir(String path) -> int;
+src/system/fs.aya:41: fn __ayanami_fs_rmdir(String path) -> int;
+src/system/fs.aya:44: fn __ayanami_fs_mtime(String path) -> int;
+src/system/fs.aya:47: fn __ayanami_fs_is_file(String path) -> int;
+src/system/fs.aya:50: fn __ayanami_fs_list_data(String path) -> [char];
+src/system/fs.aya:53: fn __ayanami_fs_list_len() -> int;
+src/system/fs.aya:57: pub fn exists(String path) -> bool
+src/system/fs.aya:63: pub fn read_file(String path) -> Option[String]
+src/system/fs.aya:77: pub fn write_file(String path, String data) -> bool
+src/system/fs.aya:87: pub fn read_lines(String path) -> Option[ArrayList[String]]
+src/system/fs.aya:102: pub fn append_file(String path, String data) -> bool
+src/system/fs.aya:108: pub fn remove_file(String path) -> bool
+src/system/fs.aya:114: pub fn is_dir(String path) -> bool
+src/system/fs.aya:122: pub fn list_dir(String path) -> Option[ArrayList[String]]
+src/system/fs.aya:135: pub fn mkdir(String path) -> bool
+src/system/fs.aya:141: pub fn rmdir(String path) -> bool
+src/system/fs.aya:147: pub fn mtime(String path) -> Option[int]
+src/system/fs.aya:157: pub fn is_file(String path) -> bool
+src/system/fs.aya:163: pub fn copy_file(String src, String dst) -> bool
+src/system/fs.aya:169: pub fn rename_file(String from, String to) -> bool
+src/system/fs.aya:175: pub fn size(String path) -> Option[int]
+src/system/fs.aya:187: pub fn copy_tree(String src, String dst) -> int
+src/system/fs.aya:191: fn copy_tree_impl(String src, String dst, int depth) -> int
+src/system/fs.aya:231: fn __ayanami_fs_errno() -> int;
+src/system/fs.aya:234: fn __ayanami_fs_errno_kind(int e) -> int;
+src/system/fs.aya:237: fn __ayanami_fs_strerror(int e) -> [char];
+src/system/fs.aya:240: fn __ayanami_cstr_len([char] s) -> int;
+src/system/fs.aya:243: pub enum IoErrorKind
+src/system/fs.aya:255: pub struct IoError
+src/system/fs.aya:261: fn classify_kind(int code) -> IoErrorKind
+src/system/fs.aya:274: impl IoError
+src/system/fs.aya:278: fn message(ref self) -> String
+src/system/fs.aya:287: fn what(ref self) -> String
+src/system/fs.aya:294: pub fn last_error(String path) -> IoError
+src/system/fs.aya:301: pub fn read_file_result(String path) -> Result[String, IoError]
 src/system/io.aya:9: fn __ayanami_getchar() -> int;
 src/system/io.aya:13: fn __ayanami_putchar(int c);
 src/system/io.aya:17: fn __ayanami_print_str([char] s, int len);
@@ -828,6 +829,17 @@ tests/golden/text_pipeline.aya:10: fn main() -> int
 tests/golden/text_stats.aya:8: fn main() -> int
 tests/golden/usize_print.aya:5: fn main() -> int
 tests/golden/word_count.aya:7: fn main() -> int
+tests/unit/.driver_readlines.aya:10: fn test_roundtrip()
+tests/unit/.driver_readlines.aya:18: fn test_missing()
+tests/unit/.driver_readlines.aya:24: fn test_read_lines()
+tests/unit/.driver_readlines.aya:36: fn test_append()
+tests/unit/.driver_readlines.aya:44: fn test_remove()
+tests/unit/.driver_readlines.aya:53: fn test_dir_ops()
+tests/unit/.driver_readlines.aya:68: fn test_fs_more()
+tests/unit/.driver_readlines.aya:84: fn test_copy_rename()
+tests/unit/.driver_readlines.aya:99: fn test_size_copy_tree()
+tests/unit/.driver_readlines.aya:126: fn test_error_model()
+tests/unit/.driver_readlines.aya:150: fn main() -> int
 tests/unit/alloc_test.aya:6: fn use_allocator[A: Allocator](ref A a, usize size) -> usize
 tests/unit/alloc_test.aya:11: struct WrapperAlloc
 tests/unit/alloc_test.aya:15: impl WrapperAlloc

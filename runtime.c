@@ -78,22 +78,79 @@ __attribute__((weak)) void __ayanami_diag_emit(long long level, __ayanami_diag_b
 void *__ayanami_default_alloc(size_t size) { return malloc(size); }
 void __ayanami_default_free(void *ptr) { free(ptr); }
 
+// 计数分配登记：unique_free 对"已释放/非计数"指针幂等，避免手动释放与自动 drop 双重释放
+#define AYANAMI_COUNTED_CAP (1u << 16)
+static void *counted_slots[AYANAMI_COUNTED_CAP];
+static void *const counted_tomb = (void *)(uintptr_t)-1;
+
+static size_t counted_hash(void *p) {
+    uintptr_t x = (uintptr_t)p >> 4;
+    x ^= x >> 17;
+    x *= (uintptr_t)0xed5ad4bbU;
+    x ^= x >> 11;
+    return (size_t)(x & (AYANAMI_COUNTED_CAP - 1));
+}
+
+static void counted_add(void *p) {
+    if (!p) return;
+    size_t i = counted_hash(p);
+    size_t tomb = (size_t)-1;
+    size_t n = 0;
+    while (n < AYANAMI_COUNTED_CAP) {
+        void *slot = counted_slots[i];
+        if (slot == p) return;
+        if (slot == NULL) {
+            if (tomb != (size_t)-1) i = tomb;
+            counted_slots[i] = p;
+            return;
+        }
+        if (slot == counted_tomb && tomb == (size_t)-1) tomb = i;
+        i = (i + 1) & (AYANAMI_COUNTED_CAP - 1);
+        n++;
+    }
+}
+
+static int counted_take(void *p) {
+    if (!p) return 0;
+    size_t i = counted_hash(p);
+    size_t n = 0;
+    while (n < AYANAMI_COUNTED_CAP) {
+        void *slot = counted_slots[i];
+        if (slot == NULL) return 0;
+        if (slot == p) {
+            counted_slots[i] = counted_tomb;
+            return 1;
+        }
+        i = (i + 1) & (AYANAMI_COUNTED_CAP - 1);
+        n++;
+    }
+    return 0;
+}
+
 // 计数分配（弱符号：用户程序可导出同名强定义覆盖，见 std/src/system/alloc.aya）
 __attribute__((weak)) void *__ayanami_unique_alloc(size_t size) {
     void *p = __ayanami_default_alloc(size);
-    if (p) live_allocs++;
+    if (p) {
+        counted_add(p);
+        live_allocs++;
+    }
     return p;
 }
 
 __attribute__((weak)) void __ayanami_unique_free(void *ptr) {
     if (!ptr) return;
-    live_allocs--;
-    __ayanami_default_free(ptr);
+    if (counted_take(ptr)) {
+        live_allocs--;
+        __ayanami_default_free(ptr);
+    }
 }
 
 // 计数分配的标准库入口（编译器内建声明只覆盖 unique_*，std 经此调用避免重复声明）
 void *__ayanami_counted_alloc(size_t size) { return __ayanami_unique_alloc(size); }
 void __ayanami_counted_free(void *ptr) { __ayanami_unique_free(ptr); }
+
+// 显式释放拥有型 [char] 缓冲（fs.read_lines 在 lines() 复制完成后调用）
+void __ayanami_release_chars(void *ptr) { __ayanami_unique_free(ptr); }
 
 int64_t __ayanami_live_allocs(void) {
     return live_allocs;
