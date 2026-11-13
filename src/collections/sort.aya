@@ -12,7 +12,7 @@ import "arraylist";
 
 impl[T: Ord] ArrayList[T] {
     /// 最小元素（空表 None）
-    fn min(ref self) -> Option[T] {
+    pub fn min(ref self) -> Option[T] {
         if self.len == 0 {
             return Option::None();
         }
@@ -27,7 +27,7 @@ impl[T: Ord] ArrayList[T] {
         return Option::Some(best);
     }
     /// 最大元素（空表 None）
-    fn max(ref self) -> Option[T] {
+    pub fn max(ref self) -> Option[T] {
         if self.len == 0 {
             return Option::None();
         }
@@ -42,7 +42,7 @@ impl[T: Ord] ArrayList[T] {
         return Option::Some(best);
     }
     /// 是否按 `cmp` 升序（非严格：允许相等）
-    fn is_sorted(ref self) -> bool {
+    pub fn is_sorted(ref self) -> bool {
         i = 1usize;
         while i < self.len {
             prev = self.data[i - 1];
@@ -55,7 +55,7 @@ impl[T: Ord] ArrayList[T] {
         return true;
     }
     /// 二分查找（要求已升序）；返回下标，未找到 -1
-    fn binary_search(ref self, ref T v) -> int {
+    pub fn binary_search(ref self, ref T v) -> int {
         lo = 0usize;
         hi = self.len;
         while lo < hi {
@@ -72,9 +72,32 @@ impl[T: Ord] ArrayList[T] {
         }
         return 0 - 1;
     }
+    /// 按自定义比较器升序排序（插入排序，稳定）
+    ///
+    /// `cmp(a, b) < 0` 表示 a 应排在 b 前。
+    #[state]
+    pub fn sort_by(ref mut self, Fn(ref T,ref T)->int cmp) {
+        i = 1usize;
+        while i < self.len {
+            v = self.data[i];
+            j = i;
+            while j > 0 {
+                prev = self.data[j - 1];
+                if cmp(ref prev, ref v) > 0 {
+                    self.data[j] = prev;
+                    j = j - 1;
+                } else {
+                    self.data[j - 1] = prev;
+                    break;
+                }
+            }
+            self.data[j] = v;
+            i = i + 1;
+        }
+    }
     /// 升序排序（插入排序，稳定）
     #[state]
-    fn sort(ref mut self) {
+    pub fn sort(ref mut self) {
         i = 1usize;
         while i < self.len {
             v = self.data[i];
