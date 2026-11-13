@@ -43,6 +43,10 @@ src/collections/arraylist.aya:337: fn insert_at(ref mut self, usize idx, T v, in
 src/collections/arraylist.aya:354: fn remove_at(ref mut self, usize idx, int __line, int __col, String __file)
 src/collections/arraylist.aya:367: fn first(ref self, int __line, int __col, String __file) -> T
 src/collections/arraylist.aya:375: fn last(ref self, int __line, int __col, String __file) -> T
+src/collections/csv.aya:12: pub fn parse(ref String s) -> ArrayList[ArrayList[String]]
+src/collections/csv.aya:77: fn field_needs_quote(ref String f) -> bool
+src/collections/csv.aya:84: fn quote_field(ref String f) -> String
+src/collections/csv.aya:102: pub fn encode(ref ArrayList[ArrayList[String]] rows) -> String
 src/collections/hash.aya:7: interface Hash
 src/collections/hash.aya:8: fn hash(ref self) -> int;
 src/collections/hash.aya:9: fn hash_eq(ref self, ref Self other) -> bool;
@@ -1005,6 +1009,10 @@ tests/unit/convert_test.aya:72: fn test_result_parse()
 tests/unit/convert_test.aya:84: fn test_radix_parse()
 tests/unit/convert_test.aya:104: fn test_is_float()
 tests/unit/convert_test.aya:112: fn test_parse_uint()
+tests/unit/csv_test.aya:6: fn test_csv_parse_basic()
+tests/unit/csv_test.aya:16: fn test_csv_parse_quoted()
+tests/unit/csv_test.aya:24: fn test_csv_parse_crlf_and_empty()
+tests/unit/csv_test.aya:35: fn test_csv_encode_and_roundtrip()
 tests/unit/encoding_test.aya:6: fn test_hex_roundtrip()
 tests/unit/encoding_test.aya:18: fn test_hex_invalid()
 tests/unit/encoding_test.aya:26: fn test_base64_known_vectors()
