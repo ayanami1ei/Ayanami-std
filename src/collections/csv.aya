@@ -13,7 +13,7 @@ pub fn parse(ref String s) -> ArrayList[ArrayList[String]] {
     rows = ArrayList::new[ArrayList[String]]();
     n = s.len as int;
     if n == 0 {
-        return rows
+        return rows;
     }
     row = ArrayList::new[String]();
     field = "";
@@ -26,26 +26,26 @@ pub fn parse(ref String s) -> ArrayList[ArrayList[String]] {
             if c == '"' {
                 if i + 1 < n && s.data[(i + 1) as usize] == '"' {
                     field = field + "\"";
-                    i = i + 2
+                    i = i + 2;
                 } else {
                     in_quotes = false;
-                    i = i + 1
+                    i = i + 1;
                 }
             } else {
                 field = field + c.to_string();
-                i = i + 1
+                i = i + 1;
             }
         } else {
             if c == '"' && field.is_empty() {
                 in_quotes = true;
                 just_newline = false;
-                i = i + 1
+                i = i + 1;
             } else {
                 if c == ',' {
                     row.push(field);
                     field = "";
                     just_newline = false;
-                    i = i + 1
+                    i = i + 1;
                 } else {
                     if c == '\n' {
                         row.push(field);
@@ -53,14 +53,14 @@ pub fn parse(ref String s) -> ArrayList[ArrayList[String]] {
                         row = ArrayList::new[String]();
                         field = "";
                         just_newline = true;
-                        i = i + 1
+                        i = i + 1;
                     } else {
-                        if c == '\r' && i + 1 < n && s.data[(i + 1) as usize] == '\n' {
-                            i = i + 1
+                        if c == '\x0d' && i + 1 < n && s.data[(i + 1) as usize] == '\n' {
+                            i = i + 1;
                         } else {
                             field = field + c.to_string();
                             just_newline = false;
-                            i = i + 1
+                            i = i + 1;
                         }
                     }
                 }
@@ -71,14 +71,11 @@ pub fn parse(ref String s) -> ArrayList[ArrayList[String]] {
         row.push(field);
         rows.push(row)
     }
-    return rows
+    return rows;
 }
 
 fn field_needs_quote(ref String f) -> bool {
-    return f.count_char(',') > 0
-        || f.count_char('"') > 0
-        || f.count_char('\n') > 0
-        || f.count_char('\r') > 0
+    return f.count_char(',') > 0 || f.count_char('"') > 0 || f.count_char('\n') > 0 || f.count_char('\x0d') > 0;
 }
 
 fn quote_field(ref String f) -> String {
@@ -87,13 +84,13 @@ fn quote_field(ref String f) -> String {
     while i < f.len {
         c = f.data[i];
         if c == '"' {
-            res = res + "\"\""
+            res = res + "\"\"";
         } else {
-            res = res + c.to_string()
+            res = res + c.to_string();
         }
-        i = i + 1
+        i = i + 1;
     }
-    return res + "\""
+    return res + "\"";
 }
 
 /// 行 × 字段 → CSV 文本（每行 `\n` 结尾）
@@ -107,18 +104,18 @@ pub fn encode(ref ArrayList[ArrayList[String]] rows) -> String {
         i = 0usize;
         while i < row.len() {
             if i > 0 {
-                res = res + ","
+                res = res + ",";
             }
             f = row.index_ref(i);
             if field_needs_quote(f) {
-                res = res + quote_field(f)
+                res = res + quote_field(f);
             } else {
-                res = res + f.copy()
+                res = res + f.copy();
             }
-            i = i + 1
+            i = i + 1;
         }
         res = res + "\n";
-        r = r + 1
+        r = r + 1;
     }
-    return res
+    return res;
 }

@@ -13,22 +13,22 @@ import "convert";
 
 fn hex_val(int c) -> int {
     if c >= 48 && c <= 57 {
-        return c - 48
+        return c - 48;
     }
     if c >= 97 && c <= 102 {
-        return c - 87
+        return c - 87;
     }
     if c >= 65 && c <= 70 {
-        return c - 55
+        return c - 55;
     }
-    return -1
+    return -1;
 }
 
 fn hex_digit(int v) -> char {
     if v < 10 {
-        return (48 + v) as char
+        return (48 + v) as char;
     }
-    return (87 + v) as char
+    return (87 + v) as char;
 }
 
 /// 转义 JSON 字符串内容（不含外层引号）
@@ -41,32 +41,32 @@ pub fn escape(ref String s) -> String {
         c = s.data[i];
         b = c as int;
         if c == '"' {
-            res = res + "\\\""
+            res = res + "\\\"";
         } else {
             if c == '\\' {
-                res = res + "\\\\"
+                res = res + "\\\\";
             } else {
                 if b == 8 {
-                    res = res + "\\b"
+                    res = res + "\\b";
                 } else {
                     if b == 12 {
-                        res = res + "\\f"
+                        res = res + "\\f";
                     } else {
                         if b == 10 {
-                            res = res + "\\n"
+                            res = res + "\\n";
                         } else {
                             if b == 13 {
-                                res = res + "\\r"
+                                res = res + "\\r";
                             } else {
                                 if b == 9 {
-                                    res = res + "\\t"
+                                    res = res + "\\t";
                                 } else {
                                     if b < 32 {
                                         res = res + "\\u00";
                                         res = res + hex_digit(b >> 4).to_string();
-                                        res = res + hex_digit(b & 0xf).to_string()
+                                        res = res + hex_digit(b & 15).to_string();
                                     } else {
-                                        res = res + c.to_string()
+                                        res = res + c.to_string();
                                     }
                                 }
                             }
@@ -75,52 +75,52 @@ pub fn escape(ref String s) -> String {
                 }
             }
         }
-        i = i + 1
+        i = i + 1;
     }
-    return res
+    return res;
 }
 
 /// 加外层引号的 JSON 字符串
 #[alloc]
 #[state]
 pub fn quote(ref String s) -> String {
-    return "\"" + escape(ref s) + "\""
+    return "\"" + escape(ref s) + "\"";
 }
 
 fn push_utf8(String res, int cp) -> String {
-    if cp < 0x80 {
-        return res + (cp as char).to_string()
+    if cp < 128 {
+        return res + (cp as char).to_string();
     }
-    if cp < 0x800 {
-        r = res + ((0xc0 | (cp >> 6)) as char).to_string();
-        return r + ((0x80 | (cp & 0x3f)) as char).to_string()
+    if cp < 2048 {
+        r = res + ((192 | cp >> 6) as char).to_string();
+        return r + ((128 | cp & 63) as char).to_string();
     }
-    if cp < 0x10000 {
-        r = res + ((0xe0 | (cp >> 12)) as char).to_string();
-        r = r + ((0x80 | ((cp >> 6) & 0x3f)) as char).to_string();
-        return r + ((0x80 | (cp & 0x3f)) as char).to_string()
+    if cp < 65536 {
+        r = res + ((224 | cp >> 12) as char).to_string();
+        r = r + ((128 | cp >> 6 & 63) as char).to_string();
+        return r + ((128 | cp & 63) as char).to_string();
     }
-    r = res + ((0xf0 | (cp >> 18)) as char).to_string();
-    r = r + ((0x80 | ((cp >> 12) & 0x3f)) as char).to_string();
-    r = r + ((0x80 | ((cp >> 6) & 0x3f)) as char).to_string();
-    return r + ((0x80 | (cp & 0x3f)) as char).to_string()
+    r = res + ((240 | cp >> 18) as char).to_string();
+    r = r + ((128 | cp >> 12 & 63) as char).to_string();
+    r = r + ((128 | cp >> 6 & 63) as char).to_string();
+    return r + ((128 | cp & 63) as char).to_string();
 }
 
 fn parse_u4(ref String s, usize at) -> int {
     if at + 4 > s.len {
-        return -1
+        return -1;
     }
     v = 0;
     j = 0usize;
     while j < 4 {
         d = hex_val(s.data[at + j] as int);
         if d < 0 {
-            return -1
+            return -1;
         }
-        v = (v << 4) | d;
-        j = j + 1
+        v = v << 4 | d;
+        j = j + 1;
     }
-    return v
+    return v;
 }
 
 /// 反转义 JSON 字符串内容（不含外层引号；非法序列 → None）
@@ -133,60 +133,60 @@ pub fn unescape(ref String s) -> Option[String] {
         c = s.data[i];
         if c != '\\' {
             res = res + c.to_string();
-            i = i + 1
+            i = i + 1;
         } else {
             if i + 1 >= s.len {
-                return Option::None()
+                return Option::None();
             }
             e = s.data[i + 1];
             if e == '"' {
-                res = res + "\""
+                res = res + "\"";
             } else {
                 if e == '\\' {
-                    res = res + "\\"
+                    res = res + "\\";
                 } else {
                     if e == '/' {
-                        res = res + "/"
+                        res = res + "/";
                     } else {
                         if e == 'b' {
-                            res = res + (8 as char).to_string()
+                            res = res + (8 as char).to_string();
                         } else {
                             if e == 'f' {
-                                res = res + (12 as char).to_string()
+                                res = res + (12 as char).to_string();
                             } else {
                                 if e == 'n' {
-                                    res = res + "\n"
+                                    res = res + "\n";
                                 } else {
                                     if e == 'r' {
-                                        res = res + "\r"
+                                        res = res + "\r";
                                     } else {
                                         if e == 't' {
-                                            res = res + "\t"
+                                            res = res + "\t";
                                         } else {
                                             if e == 'u' {
                                                 cp = parse_u4(ref s, i + 2);
                                                 if cp < 0 {
-                                                    return Option::None()
+                                                    return Option::None();
                                                 }
-                                                if cp >= 0xd800 && cp <= 0xdbff {
+                                                if cp >= 55296 && cp <= 56319 {
                                                     if i + 11 >= s.len || s.data[i + 6] != '\\' || s.data[i + 7] != 'u' {
-                                                        return Option::None()
+                                                        return Option::None();
                                                     }
                                                     lo = parse_u4(ref s, i + 8);
-                                                    if lo < 0xdc00 || lo > 0xdfff {
-                                                        return Option::None()
+                                                    if lo < 56320 || lo > 57343 {
+                                                        return Option::None();
                                                     }
-                                                    cp = 0x10000 + ((cp - 0xd800) << 10) + (lo - 0xdc00);
-                                                    i = i + 12
+                                                    cp = 65536 + (cp - 55296 << 10) + (lo - 56320);
+                                                    i = i + 12;
                                                 } else {
-                                                    if cp >= 0xdc00 && cp <= 0xdfff {
-                                                        return Option::None()
+                                                    if cp >= 56320 && cp <= 57343 {
+                                                        return Option::None();
                                                     }
-                                                    i = i + 6
+                                                    i = i + 6;
                                                 }
-                                                res = push_utf8(res, cp)
+                                                res = push_utf8(res, cp);
                                             } else {
-                                                return Option::None()
+                                                return Option::None();
                                             }
                                         }
                                     }
@@ -197,11 +197,11 @@ pub fn unescape(ref String s) -> Option[String] {
                 }
             }
             if e != 'u' {
-                i = i + 2
+                i = i + 2;
             }
         }
     }
-    return Option::Some(res)
+    return Option::Some(res);
 }
 
 /// JSON 值（数字区分 `int` / `float`）
@@ -223,7 +223,7 @@ pub struct JsonField {
 
 pub namespace JsonField {
     pub fn new(String key, Json value) -> JsonField {
-        return JsonField { key = key, value = value }
+        return JsonField { key = key, value = value };
     }
 }
 
@@ -231,20 +231,20 @@ impl Json {
     /// 序列化为 JSON 文本（按引用遍历，不消费自身）
     #[alloc]
     #[state]
-    fn render(ref self) -> String {
-        return render_ref(ref self)
+    pub fn render(ref self) -> String {
+        return render_ref(ref self);
     }
 }
 
 fn render_float(float f) -> String {
     // NaN / Inf 不是合法 JSON，输出 null
     if f != f {
-        return "null"
+        return "null";
     }
     if f - f != 0.0 {
-        return "null"
+        return "null";
     }
-    return f.to_string()
+    return f.to_string();
 }
 
 // 按 tag 分发（避免 `match self` 移出载荷后重复析构）。
@@ -253,24 +253,24 @@ fn render_float(float f) -> String {
 fn render_ref(ref Json v) -> String {
     tag = v._tag;
     if tag == 0 {
-        return "null"
+        return "null";
     }
     if tag == 1 {
-        return v._data_Bool._0.to_string()
+        return v._data_Bool._0.to_string();
     }
     if tag == 2 {
-        return v._data_Int._0.to_string()
+        return v._data_Int._0.to_string();
     }
     if tag == 3 {
-        return render_float(v._data_Float._0)
+        return render_float(v._data_Float._0);
     }
     if tag == 4 {
-        return quote(ref v._data_Str._0)
+        return quote(ref v._data_Str._0);
     }
     if tag == 5 {
-        return render_array(ref v._data_Array._0)
+        return render_array(ref v._data_Array._0);
     }
-    return render_object(ref v._data_Object._0)
+    return render_object(ref v._data_Object._0);
 }
 
 #[alloc]
@@ -280,12 +280,12 @@ fn render_array(ref ArrayList[Json] items) -> String {
     i = 0usize;
     while i < items.len() {
         if i > 0 {
-            res = res + ","
+            res = res + ",";
         }
         res = res + render_ref(items.index_ref(i));
-        i = i + 1
+        i = i + 1;
     }
-    return res + "]"
+    return res + "]";
 }
 
 #[alloc]
@@ -295,18 +295,17 @@ fn render_object(ref ArrayList[JsonField] fields) -> String {
     i = 0usize;
     while i < fields.len() {
         if i > 0 {
-            res = res + ","
+            res = res + ",";
         }
         f = fields.index_ref(i);
         res = res + quote(ref f.key) + ":";
         res = res + render_ref(ref f.value);
-        i = i + 1
+        i = i + 1;
     }
-    return res + "}"
+    return res + "}";
 }
 
 // ── 解析 ──
-
 struct Parsed {
     bool ok
     Json value
@@ -320,7 +319,7 @@ struct StrParsed {
 }
 
 fn parse_fail(usize at) -> Parsed {
-    return Parsed { ok = false, value = Json::Null, next = at }
+    return Parsed { ok = false, value = Json::Null, next = at };
 }
 
 fn skip_ws(ref String s, usize i) -> usize {
@@ -328,24 +327,24 @@ fn skip_ws(ref String s, usize i) -> usize {
     while j < s.len {
         c = s.data[j];
         if c == ' ' {
-            j = j + 1
+            j = j + 1;
         } else {
             if c == '\t' {
-                j = j + 1
+                j = j + 1;
             } else {
                 if c == '\n' {
-                    j = j + 1
+                    j = j + 1;
                 } else {
-                    if c == '\r' {
-                        j = j + 1
+                    if c == '\x0d' {
+                        j = j + 1;
                     } else {
-                        return j
+                        return j;
                     }
                 }
             }
         }
     }
-    return j
+    return j;
 }
 
 // i 指向开引号之后
@@ -355,46 +354,46 @@ fn parse_string_at(ref String s, usize i) -> StrParsed {
     while j < s.len {
         c = s.data[j];
         if c == '\\' {
-            j = j + 2
+            j = j + 2;
         } else {
             if c == '"' {
                 raw = s.substring(start, j);
                 u = unescape(ref raw);
                 if u.is_none() {
-                    return StrParsed { ok = false, value = "", next = j }
+                    return StrParsed { ok = false, value = "", next = j };
                 }
-                return StrParsed { ok = true, value = u.unwrap(), next = j + 1 }
+                return StrParsed { ok = true, value = u.unwrap(), next = j + 1 };
             } else {
-                if (c as int) < 32 {
-                    return StrParsed { ok = false, value = "", next = j }
+                if c as int < 32 {
+                    return StrParsed { ok = false, value = "", next = j };
                 }
-                j = j + 1
+                j = j + 1;
             }
         }
     }
-    return StrParsed { ok = false, value = "", next = j }
+    return StrParsed { ok = false, value = "", next = j };
 }
 
 fn is_digit(char c) -> bool {
-    return c >= '0' && c <= '9'
+    return c >= '0' && c <= '9';
 }
 
 fn parse_number(ref String s, usize i) -> Parsed {
     j = i;
     if j < s.len && s.data[j] == '-' {
-        j = j + 1
+        j = j + 1;
     }
     if j >= s.len || !is_digit(s.data[j]) {
-        return parse_fail(j)
+        return parse_fail(j);
     }
     if s.data[j] == '0' {
         j = j + 1;
         if j < s.len && is_digit(s.data[j]) {
-            return parse_fail(j)
+            return parse_fail(j);
         }
     } else {
         while j < s.len && is_digit(s.data[j]) {
-            j = j + 1
+            j = j + 1;
         }
     }
     is_float = false;
@@ -402,157 +401,165 @@ fn parse_number(ref String s, usize i) -> Parsed {
         is_float = true;
         j = j + 1;
         if j >= s.len || !is_digit(s.data[j]) {
-            return parse_fail(j)
+            return parse_fail(j);
         }
         while j < s.len && is_digit(s.data[j]) {
-            j = j + 1
+            j = j + 1;
         }
     }
     if j < s.len && (s.data[j] == 'e' || s.data[j] == 'E') {
         is_float = true;
         j = j + 1;
         if j < s.len && (s.data[j] == '+' || s.data[j] == '-') {
-            j = j + 1
+            j = j + 1;
         }
         if j >= s.len || !is_digit(s.data[j]) {
-            return parse_fail(j)
+            return parse_fail(j);
         }
         while j < s.len && is_digit(s.data[j]) {
-            j = j + 1
+            j = j + 1;
         }
     }
     raw = s.substring(i, j);
     if is_float {
         f = parse_float_result(ref raw);
         match f {
-            Result::Ok(v) => { return Parsed { ok = true, value = Json::Float(v), next = j } }
-            Result::Err(e) => { return parse_fail(j) }
+            Result.Ok(v) => {
+                return Parsed { ok = true, value = Json::Float(v), next = j };
+            },
+            Result.Err(e) => {
+                return parse_fail(j);
+            },
         }
     }
     n = parse_int_result(ref raw);
     match n {
-        Result::Ok(v) => { return Parsed { ok = true, value = Json::Int(v), next = j } }
-        Result::Err(e) => { return parse_fail(j) }
+        Result.Ok(v) => {
+            return Parsed { ok = true, value = Json::Int(v), next = j };
+        },
+        Result.Err(e) => {
+            return parse_fail(j);
+        },
     }
 }
 
 fn parse_literal(ref String s, usize i, ref String lit, Json v) -> Parsed {
     if i + lit.len > s.len {
-        return parse_fail(i)
+        return parse_fail(i);
     }
     k = 0usize;
     while k < lit.len {
         if s.data[i + k] != lit.data[k] {
-            return parse_fail(i)
+            return parse_fail(i);
         }
-        k = k + 1
+        k = k + 1;
     }
-    return Parsed { ok = true, value = v, next = i + lit.len }
+    return Parsed { ok = true, value = v, next = i + lit.len };
 }
 
 fn parse_value(ref String s, usize i) -> Parsed {
     j = skip_ws(ref s, i);
     if j >= s.len {
-        return parse_fail(j)
+        return parse_fail(j);
     }
     c = s.data[j];
     if c == '{' {
-        return parse_object(ref s, j + 1)
+        return parse_object(ref s, j + 1);
     }
     if c == '[' {
-        return parse_array(ref s, j + 1)
+        return parse_array(ref s, j + 1);
     }
     if c == '"' {
         sp = parse_string_at(ref s, j + 1);
         if !sp.ok {
-            return parse_fail(sp.next)
+            return parse_fail(sp.next);
         }
-        return Parsed { ok = true, value = Json::Str(sp.value), next = sp.next }
+        return Parsed { ok = true, value = Json::Str(sp.value), next = sp.next };
     }
     if c == 't' {
-        return parse_literal(ref s, j, ref "true", Json::Bool(true))
+        return parse_literal(ref s, j, ref "true", Json::Bool(true));
     }
     if c == 'f' {
-        return parse_literal(ref s, j, ref "false", Json::Bool(false))
+        return parse_literal(ref s, j, ref "false", Json::Bool(false));
     }
     if c == 'n' {
-        return parse_literal(ref s, j, ref "null", Json::Null)
+        return parse_literal(ref s, j, ref "null", Json::Null);
     }
     if c == '-' || is_digit(c) {
-        return parse_number(ref s, j)
+        return parse_number(ref s, j);
     }
-    return parse_fail(j)
+    return parse_fail(j);
 }
 
 fn parse_array(ref String s, usize i) -> Parsed {
     items = ArrayList::new[Json]();
     j = skip_ws(ref s, i);
     if j < s.len && s.data[j] == ']' {
-        return Parsed { ok = true, value = Json::Array(items), next = j + 1 }
+        return Parsed { ok = true, value = Json::Array(items), next = j + 1 };
     }
     done = false;
     while !done {
         p = parse_value(ref s, j);
         if !p.ok {
-            return parse_fail(j)
+            return parse_fail(j);
         }
         items.push(p.value);
         j = skip_ws(ref s, p.next);
         if j >= s.len {
-            return parse_fail(j)
+            return parse_fail(j);
         }
         c = s.data[j];
         if c == ',' {
-            j = skip_ws(ref s, j + 1)
+            j = skip_ws(ref s, j + 1);
         } else {
             if c == ']' {
-                return Parsed { ok = true, value = Json::Array(items), next = j + 1 }
+                return Parsed { ok = true, value = Json::Array(items), next = j + 1 };
             }
-            return parse_fail(j)
+            return parse_fail(j);
         }
     }
-    return parse_fail(j)
+    return parse_fail(j);
 }
 
 fn parse_object(ref String s, usize i) -> Parsed {
     fields = ArrayList::new[JsonField]();
     j = skip_ws(ref s, i);
     if j < s.len && s.data[j] == '}' {
-        return Parsed { ok = true, value = Json::Object(fields), next = j + 1 }
+        return Parsed { ok = true, value = Json::Object(fields), next = j + 1 };
     }
     done = false;
     while !done {
         if j >= s.len || s.data[j] != '"' {
-            return parse_fail(j)
+            return parse_fail(j);
         }
         kp = parse_string_at(ref s, j + 1);
         if !kp.ok {
-            return parse_fail(kp.next)
+            return parse_fail(kp.next);
         }
         j = skip_ws(ref s, kp.next);
         if j >= s.len || s.data[j] != ':' {
-            return parse_fail(j)
+            return parse_fail(j);
         }
         vp = parse_value(ref s, j + 1);
         if !vp.ok {
-            return parse_fail(vp.next)
+            return parse_fail(vp.next);
         }
         fields.push(JsonField::new(kp.value, vp.value));
         j = skip_ws(ref s, vp.next);
         if j >= s.len {
-            return parse_fail(j)
+            return parse_fail(j);
         }
         c = s.data[j];
         if c == ',' {
-            j = skip_ws(ref s, j + 1)
+            j = skip_ws(ref s, j + 1);
         } else {
             if c == '}' {
-                return Parsed { ok = true, value = Json::Object(fields), next = j + 1 }
+                return Parsed { ok = true, value = Json::Object(fields), next = j + 1 };
             }
-            return parse_fail(j)
+            return parse_fail(j);
         }
     }
-    return parse_fail(j)
+    return parse_fail(j);
 }
 
 /// 解析 JSON 文本（严格：首尾空白外必须完全消费）；失败 → None
@@ -561,204 +568,203 @@ fn parse_object(ref String s, usize i) -> Parsed {
 pub fn parse(ref String s) -> Option[Json] {
     p = parse_value(ref s, 0);
     if !p.ok {
-        return Option::None()
+        return Option::None();
     }
     j = skip_ws(ref s, p.next);
     if j != s.len {
-        return Option::None()
+        return Option::None();
     }
-    return Option::Some(p.value)
+    return Option::Some(p.value);
 }
 
 // ── 访问器（复制式：字符串返回副本，不暴露引用） ──
-
 impl Json {
     /// 是否为 null
-    fn is_null(ref self) -> bool {
-        return self._tag == 0
+    pub fn is_null(ref self) -> bool {
+        return self._tag == 0;
     }
     /// 整数（非 Int → None）
-    fn as_int(ref self) -> Option[int] {
+    pub fn as_int(ref self) -> Option[int] {
         if self._tag == 2 {
-            return Option::Some(self._data_Int._0)
+            return Option::Some(self._data_Int._0);
         }
-        return Option::None()
+        return Option::None();
     }
     /// 浮点（Float；Int 也会转换）
-    fn as_float(ref self) -> Option[float] {
+    pub fn as_float(ref self) -> Option[float] {
         if self._tag == 3 {
-            return Option::Some(self._data_Float._0)
+            return Option::Some(self._data_Float._0);
         }
         if self._tag == 2 {
-            return Option::Some(self._data_Int._0 as float)
+            return Option::Some(self._data_Int._0 as float);
         }
-        return Option::None()
+        return Option::None();
     }
     /// 布尔
-    fn as_bool(ref self) -> Option[bool] {
+    pub fn as_bool(ref self) -> Option[bool] {
         if self._tag == 1 {
-            return Option::Some(self._data_Bool._0)
+            return Option::Some(self._data_Bool._0);
         }
-        return Option::None()
+        return Option::None();
     }
     /// 字符串（返回副本）
     #[alloc]
     #[state]
-    fn as_str(ref self) -> Option[String] {
+    pub fn as_str(ref self) -> Option[String] {
         if self._tag == 4 {
-            return Option::Some(self._data_Str._0.copy())
+            return Option::Some(self._data_Str._0.copy());
         }
-        return Option::None()
+        return Option::None();
     }
     /// 数组/对象长度（其他类型为 0）
-    fn len(ref self) -> usize {
+    pub fn len(ref self) -> usize {
         if self._tag == 5 {
-            return self._data_Array._0.len()
+            return self._data_Array._0.len();
         }
         if self._tag == 6 {
-            return self._data_Object._0.len()
+            return self._data_Object._0.len();
         }
-        return 0usize
+        return 0usize;
     }
     /// 对象第 i 个键（返回副本）
     #[alloc]
     #[state]
-    fn key_at(ref self, usize i) -> Option[String] {
+    pub fn key_at(ref self, usize i) -> Option[String] {
         if self._tag != 6 {
-            return Option::None()
+            return Option::None();
         }
         if i >= self._data_Object._0.len() {
-            return Option::None()
+            return Option::None();
         }
-        return Option::Some(self._data_Object._0.index_ref(i).key.copy())
+        return Option::Some(self._data_Object._0.index_ref(i).key.copy());
     }
     /// 对象取值：整数
-    fn get_int(ref self, ref String key) -> Option[int] {
+    pub fn get_int(ref self, ref String key) -> Option[int] {
         if self._tag != 6 {
-            return Option::None()
+            return Option::None();
         }
         i = 0usize;
         while i < self._data_Object._0.len() {
             f = self._data_Object._0.index_ref(i);
             if f.key == key {
-                return f.value.as_int()
+                return f.value.as_int();
             }
-            i = i + 1
+            i = i + 1;
         }
-        return Option::None()
+        return Option::None();
     }
     /// 对象取值：浮点（Int 也转换）
-    fn get_float(ref self, ref String key) -> Option[float] {
+    pub fn get_float(ref self, ref String key) -> Option[float] {
         if self._tag != 6 {
-            return Option::None()
+            return Option::None();
         }
         i = 0usize;
         while i < self._data_Object._0.len() {
             f = self._data_Object._0.index_ref(i);
             if f.key == key {
-                return f.value.as_float()
+                return f.value.as_float();
             }
-            i = i + 1
+            i = i + 1;
         }
-        return Option::None()
+        return Option::None();
     }
     /// 对象取值：布尔
-    fn get_bool(ref self, ref String key) -> Option[bool] {
+    pub fn get_bool(ref self, ref String key) -> Option[bool] {
         if self._tag != 6 {
-            return Option::None()
+            return Option::None();
         }
         i = 0usize;
         while i < self._data_Object._0.len() {
             f = self._data_Object._0.index_ref(i);
             if f.key == key {
-                return f.value.as_bool()
+                return f.value.as_bool();
             }
-            i = i + 1
+            i = i + 1;
         }
-        return Option::None()
+        return Option::None();
     }
     /// 对象取值：字符串（副本）
     #[alloc]
     #[state]
-    fn get_str(ref self, ref String key) -> Option[String] {
+    pub fn get_str(ref self, ref String key) -> Option[String] {
         if self._tag != 6 {
-            return Option::None()
+            return Option::None();
         }
         i = 0usize;
         while i < self._data_Object._0.len() {
             f = self._data_Object._0.index_ref(i);
             if f.key == key {
-                return f.value.as_str()
+                return f.value.as_str();
             }
-            i = i + 1
+            i = i + 1;
         }
-        return Option::None()
+        return Option::None();
     }
     /// 对象取值：目标变体的 tag（不存在 → -1；0=Null 1=Bool 2=Int 3=Float 4=Str 5=Array 6=Object）
-    fn get_tag(ref self, ref String key) -> int {
+    pub fn get_tag(ref self, ref String key) -> int {
         if self._tag != 6 {
-            return 0 - 1
+            return 0 - 1;
         }
         i = 0usize;
         while i < self._data_Object._0.len() {
             f = self._data_Object._0.index_ref(i);
             if f.key == key {
-                return f.value._tag
+                return f.value._tag;
             }
-            i = i + 1
+            i = i + 1;
         }
-        return 0 - 1
+        return 0 - 1;
     }
     /// 数组第 i 个元素的整数
-    fn at_int(ref self, usize i) -> Option[int] {
+    pub fn at_int(ref self, usize i) -> Option[int] {
         if self._tag != 5 {
-            return Option::None()
+            return Option::None();
         }
         if i >= self._data_Array._0.len() {
-            return Option::None()
+            return Option::None();
         }
-        return self._data_Array._0.index_ref(i).as_int()
+        return self._data_Array._0.index_ref(i).as_int();
     }
     /// 数组第 i 个元素的浮点（Int 也转换）
-    fn at_float(ref self, usize i) -> Option[float] {
+    pub fn at_float(ref self, usize i) -> Option[float] {
         if self._tag != 5 {
-            return Option::None()
+            return Option::None();
         }
         if i >= self._data_Array._0.len() {
-            return Option::None()
+            return Option::None();
         }
-        return self._data_Array._0.index_ref(i).as_float()
+        return self._data_Array._0.index_ref(i).as_float();
     }
     /// 数组第 i 个元素的布尔
-    fn at_bool(ref self, usize i) -> Option[bool] {
+    pub fn at_bool(ref self, usize i) -> Option[bool] {
         if self._tag != 5 {
-            return Option::None()
+            return Option::None();
         }
         if i >= self._data_Array._0.len() {
-            return Option::None()
+            return Option::None();
         }
-        return self._data_Array._0.index_ref(i).as_bool()
+        return self._data_Array._0.index_ref(i).as_bool();
     }
     /// 数组第 i 个元素的字符串（副本）
     #[alloc]
     #[state]
-    fn at_str(ref self, usize i) -> Option[String] {
+    pub fn at_str(ref self, usize i) -> Option[String] {
         if self._tag != 5 {
-            return Option::None()
+            return Option::None();
         }
         if i >= self._data_Array._0.len() {
-            return Option::None()
+            return Option::None();
         }
-        return self._data_Array._0.index_ref(i).as_str()
+        return self._data_Array._0.index_ref(i).as_str();
     }
     /// 数组第 i 个元素的目标 tag（越界或非数组 → -1）
-    fn at_tag(ref self, usize i) -> int {
+    pub fn at_tag(ref self, usize i) -> int {
         if self._tag != 5 {
-            return 0 - 1
+            return 0 - 1;
         }
         if i >= self._data_Array._0.len() {
-            return 0 - 1
+            return 0 - 1;
         }
-        return self._data_Array._0.index_ref(i)._tag
+        return self._data_Array._0.index_ref(i)._tag;
     }
 }

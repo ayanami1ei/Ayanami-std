@@ -14,7 +14,7 @@ struct Countdown {
 
 impl Countdown {
     #[state]
-    fn next(ref mut self) -> Option[int] {
+    pub fn next(ref mut self) -> Option[int] {
         if self.cur <= 0 {
             return Option::None();
         }

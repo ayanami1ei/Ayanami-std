@@ -174,7 +174,7 @@ fn test_fs_walk_filtered_and_ext() {
     write_file(join(root.copy(), "b.log"), "b");
     write_file(join(sub.copy(), "c.txt"), "c");
     txt = walk_filtered(root.copy(), (ref String p) -> bool {
-        return p.ends_with(".txt")
+        return p.ends_with(".txt");
     });
     #assert_eq(txt.len(), 2);
     #assert(txt.contains(join(root.copy(), "a.txt")));

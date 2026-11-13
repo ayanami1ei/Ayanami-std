@@ -11,29 +11,29 @@ import "option";
 /// 十六进制字符 → 半字节值（非法返回 -1）
 fn hex_val(int c) -> int {
     if c >= 48 && c <= 57 {
-        return c - 48
+        return c - 48;
     }
     if c >= 97 && c <= 102 {
-        return c - 87
+        return c - 87;
     }
     if c >= 65 && c <= 70 {
-        return c - 55
+        return c - 55;
     }
-    return -1
+    return -1;
 }
 
 fn hex_char_lower(int v) -> char {
     if v < 10 {
-        return (48 + v) as char
+        return (48 + v) as char;
     }
-    return (87 + v) as char
+    return (87 + v) as char;
 }
 
 fn hex_char_upper(int v) -> char {
     if v < 10 {
-        return (48 + v) as char
+        return (48 + v) as char;
     }
-    return (55 + v) as char
+    return (55 + v) as char;
 }
 
 /// 字节串 → 小写十六进制
@@ -47,10 +47,10 @@ pub fn hex_encode(ref String s) -> String {
     while i < n {
         b = s.data[i] as int;
         buf[i * 2] = hex_char_lower(b >> 4);
-        buf[i * 2 + 1] = hex_char_lower(b & 0xf);
-        i = i + 1
+        buf[i * 2 + 1] = hex_char_lower(b & 15);
+        i = i + 1;
     }
-    return String::new(buf, m)
+    return String::new(buf, m);
 }
 
 /// 字节串 → 大写十六进制
@@ -64,10 +64,10 @@ pub fn hex_encode_upper(ref String s) -> String {
     while i < n {
         b = s.data[i] as int;
         buf[i * 2] = hex_char_upper(b >> 4);
-        buf[i * 2 + 1] = hex_char_upper(b & 0xf);
-        i = i + 1
+        buf[i * 2 + 1] = hex_char_upper(b & 15);
+        i = i + 1;
     }
-    return String::new(buf, m)
+    return String::new(buf, m);
 }
 
 /// 十六进制 → 字节串（大小写均可；奇数长度或非法字符 → None）
@@ -76,7 +76,7 @@ pub fn hex_encode_upper(ref String s) -> String {
 pub fn hex_decode(ref String s) -> Option[String] {
     n = s.len;
     if n % 2 != 0 {
-        return Option::None()
+        return Option::None();
     }
     m = (n / 2) as usize;
     buf = [char; m];
@@ -85,48 +85,48 @@ pub fn hex_decode(ref String s) -> Option[String] {
         hi = hex_val(s.data[i * 2] as int);
         lo = hex_val(s.data[i * 2 + 1] as int);
         if hi < 0 || lo < 0 {
-            return Option::None()
+            return Option::None();
         }
-        buf[i] = ((hi << 4) | lo) as char;
-        i = i + 1
+        buf[i] = (hi << 4 | lo) as char;
+        i = i + 1;
     }
-    return Option::Some(String::new(buf, m))
+    return Option::Some(String::new(buf, m));
 }
 
 /// Base64 字母表值（非法返回 -1）
 fn b64_val(int c) -> int {
     if c >= 65 && c <= 90 {
-        return c - 65
+        return c - 65;
     }
     if c >= 97 && c <= 122 {
-        return c - 71
+        return c - 71;
     }
     if c >= 48 && c <= 57 {
-        return c + 4
+        return c + 4;
     }
     if c == 43 {
-        return 62
+        return 62;
     }
     if c == 47 {
-        return 63
+        return 63;
     }
-    return -1
+    return -1;
 }
 
 fn b64_char(int v) -> char {
     if v < 26 {
-        return (65 + v) as char
+        return (65 + v) as char;
     }
     if v < 52 {
-        return (71 + v) as char
+        return (71 + v) as char;
     }
     if v < 62 {
-        return (v - 4) as char
+        return (v - 4) as char;
     }
     if v == 62 {
-        return '+'
+        return '+';
     }
-    return '/'
+    return '/';
 }
 
 /// 字节串 → Base64（含 `=` 填充）
@@ -134,7 +134,7 @@ fn b64_char(int v) -> char {
 #[state]
 pub fn base64_encode(ref String s) -> String {
     n = s.len as int;
-    m = (((n + 2) / 3) * 4) as usize;
+    m = ((n + 2) / 3 * 4) as usize;
     buf = [char; m];
     i = 0;
     o = 0usize;
@@ -143,11 +143,11 @@ pub fn base64_encode(ref String s) -> String {
         b1 = s.data[(i + 1) as usize] as int;
         b2 = s.data[(i + 2) as usize] as int;
         buf[o] = b64_char(b0 >> 2);
-        buf[o + 1] = b64_char(((b0 & 3) << 4) | (b1 >> 4));
-        buf[o + 2] = b64_char(((b1 & 0xf) << 2) | (b2 >> 6));
-        buf[o + 3] = b64_char(b2 & 0x3f);
+        buf[o + 1] = b64_char((b0 & 3) << 4 | b1 >> 4);
+        buf[o + 2] = b64_char((b1 & 15) << 2 | b2 >> 6);
+        buf[o + 3] = b64_char(b2 & 63);
         i = i + 3;
-        o = o + 4
+        o = o + 4;
     }
     rem = n - i;
     if rem == 1 {
@@ -155,18 +155,18 @@ pub fn base64_encode(ref String s) -> String {
         buf[o] = b64_char(b0 >> 2);
         buf[o + 1] = b64_char((b0 & 3) << 4);
         buf[o + 2] = '=';
-        buf[o + 3] = '='
+        buf[o + 3] = '=';
     } else {
         if rem == 2 {
             b0 = s.data[i as usize] as int;
             b1 = s.data[(i + 1) as usize] as int;
             buf[o] = b64_char(b0 >> 2);
-            buf[o + 1] = b64_char(((b0 & 3) << 4) | (b1 >> 4));
-            buf[o + 2] = b64_char((b1 & 0xf) << 2);
-            buf[o + 3] = '='
+            buf[o + 1] = b64_char((b0 & 3) << 4 | b1 >> 4);
+            buf[o + 2] = b64_char((b1 & 15) << 2);
+            buf[o + 3] = '=';
         }
     }
-    return String::new(buf, m)
+    return String::new(buf, m);
 }
 
 /// Base64 → 字节串（严格校验长度/字符/填充；失败 → None）
@@ -175,17 +175,17 @@ pub fn base64_encode(ref String s) -> String {
 pub fn base64_decode(ref String s) -> Option[String] {
     n = s.len;
     if n % 4 != 0 {
-        return Option::None()
+        return Option::None();
     }
     pad = 0;
     if n > 0 && s.data[n - 1] == '=' {
-        pad = pad + 1
+        pad = pad + 1;
     }
     if n > 1 && s.data[n - 2] == '=' {
-        pad = pad + 1
+        pad = pad + 1;
     }
     if n == 0 {
-        return Option::Some(String::new())
+        return Option::Some(String::new());
     }
     m = (n / 4 * 3 - pad as usize) as usize;
     buf = [char; m];
@@ -197,36 +197,36 @@ pub fn base64_decode(ref String s) -> Option[String] {
         d2 = 0;
         d3 = 0;
         if s.data[i + 2] == '=' {
-            d2 = -2
+            d2 = -2;
         } else {
-            d2 = b64_val(s.data[i + 2] as int)
+            d2 = b64_val(s.data[i + 2] as int);
         }
         if s.data[i + 3] == '=' {
-            d3 = -2
+            d3 = -2;
         } else {
-            d3 = b64_val(s.data[i + 3] as int)
+            d3 = b64_val(s.data[i + 3] as int);
         }
         if d0 < 0 || d1 < 0 || d2 == -1 || d3 == -1 {
-            return Option::None()
+            return Option::None();
         }
         last = i + 4 == n;
         if !last && (d2 == -2 || d3 == -2) {
-            return Option::None()
+            return Option::None();
         }
         if d2 == -2 && d3 != -2 {
-            return Option::None()
+            return Option::None();
         }
-        buf[o] = (((d0 << 2) | (d1 >> 4)) & 0xff) as char;
+        buf[o] = ((d0 << 2 | d1 >> 4) & 255) as char;
         o = o + 1;
         if d2 != -2 {
-            buf[o] = ((((d1 & 0xf) << 4) | (d2 >> 2)) & 0xff) as char;
-            o = o + 1
+            buf[o] = (((d1 & 15) << 4 | d2 >> 2) & 255) as char;
+            o = o + 1;
         }
         if d3 != -2 {
-            buf[o] = ((((d2 & 3) << 6) | d3) & 0xff) as char;
-            o = o + 1
+            buf[o] = (((d2 & 3) << 6 | d3) & 255) as char;
+            o = o + 1;
         }
-        i = i + 4
+        i = i + 4;
     }
-    return Option::Some(String::new(buf, m))
+    return Option::Some(String::new(buf, m));
 }

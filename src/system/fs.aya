@@ -286,7 +286,7 @@ impl IoError {
     /// 系统错误消息（strerror + errno 编号）
     #[alloc]
     #[state]
-    fn message(ref self) -> String {
+    pub fn message(ref self) -> String {
         p = __ayanami_fs_strerror(self.errno);
         n = __ayanami_cstr_len(p);
         m = String::new(p, n as usize);
@@ -295,7 +295,7 @@ impl IoError {
     /// 完整消息：`<path>: <message>`（`Error` 接口）
     #[alloc]
     #[state]
-    fn what(ref self) -> String {
+    pub fn what(ref self) -> String {
         return self.path + ": " + self.message();
     }
 }
@@ -337,7 +337,7 @@ pub fn walk(String root) -> ArrayList[String] {
 fn walk_into(String dir, ref mut ArrayList[String] dst) {
     entries = list_dir(dir.copy());
     match entries {
-        Option::Some(names) => {
+        Option.Some(names) => {
             for name in names.into_iter() {
                 full = join(dir.copy(), name);
                 if is_dir(full.copy()) {
@@ -346,8 +346,8 @@ fn walk_into(String dir, ref mut ArrayList[String] dst) {
                     dst.push(full)
                 }
             }
-        }
-        Option::None() => { }
+        },
+        Option.None => {},
     }
 }
 
@@ -356,7 +356,7 @@ fn walk_into(String dir, ref mut ArrayList[String] dst) {
 /// 用显式目录栈代替递归，闭包只需一份所有权，可安全重复调用。
 #[alloc]
 #[state]
-pub fn walk_filtered(String root, Fn(ref String) -> bool keep) -> ArrayList[String] {
+pub fn walk_filtered(String root, Fn(ref String)->bool keep) -> ArrayList[String] {
     res = ArrayList::new[String]();
     dirs = ArrayList::new[String]();
     dirs.push(root);
@@ -364,7 +364,7 @@ pub fn walk_filtered(String root, Fn(ref String) -> bool keep) -> ArrayList[Stri
         dir = dirs.pop();
         entries = list_dir(dir.copy());
         match entries {
-            Option::Some(names) => {
+            Option.Some(names) => {
                 for name in names.into_iter() {
                     full = join(dir.copy(), name);
                     if is_dir(full.copy()) {
@@ -375,8 +375,8 @@ pub fn walk_filtered(String root, Fn(ref String) -> bool keep) -> ArrayList[Stri
                         }
                     }
                 }
-            }
-            Option::None() => { }
+            },
+            Option.None => {},
         }
     }
     return res;

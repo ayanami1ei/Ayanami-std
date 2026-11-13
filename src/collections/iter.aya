@@ -27,7 +27,7 @@ pub struct ArrayListIter[T] {
 
 impl[T] ArrayListIter[T] {
     #[state]
-    fn next(ref mut self) -> Option[T] {
+    pub fn next(ref mut self) -> Option[T] {
         if self.index >= self.data.len {
             return Option::None();
         }
@@ -39,7 +39,7 @@ impl[T] ArrayListIter[T] {
 
 impl[T] ArrayList[T] {
     /// 转为拥有所有权的迭代器（`for x in a.into_iter()`）
-    fn into_iter(self) -> ArrayListIter[T] {
+    pub fn into_iter(self) -> ArrayListIter[T] {
         return ArrayListIter[T] { data = self, index = 0 };
     }
 }
@@ -52,7 +52,7 @@ pub struct LinkedListIter[T] {
 
 impl[T] LinkedListIter[T] {
     #[state]
-    fn next(ref mut self) -> Option[T] {
+    pub fn next(ref mut self) -> Option[T] {
         if self.index >= self.data.len {
             return Option::None();
         }
@@ -64,7 +64,7 @@ impl[T] LinkedListIter[T] {
 
 impl[T] LinkedList[T] {
     /// 转为拥有所有权的迭代器
-    fn into_iter(self) -> LinkedListIter[T] {
+    pub fn into_iter(self) -> LinkedListIter[T] {
         return LinkedListIter[T] { data = self, index = 0 };
     }
 }
@@ -83,7 +83,7 @@ pub namespace MapIter {
 
 impl[T, U, I: Iterator[T]] MapIter[T, U, I] {
     #[state]
-    fn next(ref mut self) -> Option[U] {
+    pub fn next(ref mut self) -> Option[U] {
         o = self.inner.next();
         if o._tag != 0 {
             return Option::None();
@@ -106,7 +106,7 @@ pub namespace FilterIter {
 
 impl[T, I: Iterator[T]] FilterIter[T, I] {
     #[state]
-    fn next(ref mut self) -> Option[T] {
+    pub fn next(ref mut self) -> Option[T] {
         while true {
             o = self.inner.next();
             if o._tag != 0 {
@@ -134,7 +134,7 @@ pub namespace TakeIter {
 
 impl[T, I: Iterator[T]] TakeIter[T, I] {
     #[state]
-    fn next(ref mut self) -> Option[T] {
+    pub fn next(ref mut self) -> Option[T] {
         if self.left == 0 {
             return Option::None();
         }
@@ -157,7 +157,7 @@ pub namespace EnumerateIter {
 
 impl[T, I: Iterator[T]] EnumerateIter[T, I] {
     #[state]
-    fn next(ref mut self) -> Option[Pair[usize, T]] {
+    pub fn next(ref mut self) -> Option[Pair[usize, T]] {
         o = self.inner.next();
         if o._tag != 0 {
             return Option::None();
@@ -182,7 +182,7 @@ pub namespace ZipIter {
 
 impl[T, U, IA: Iterator[T], IB: Iterator[U]] ZipIter[T, U, IA, IB] {
     #[state]
-    fn next(ref mut self) -> Option[Pair[T, U]] {
+    pub fn next(ref mut self) -> Option[Pair[T, U]] {
         oa = self.a.next();
         if oa._tag != 0 {
             return Option::None();
@@ -208,14 +208,18 @@ pub namespace SkipIter {
 }
 
 impl[T, I: Iterator[T]] SkipIter[T, I] {
-    fn next(ref mut self) -> Option[T] {
+    pub fn next(ref mut self) -> Option[T] {
         while self.n > 0 {
             match self.inner.next() {
-                Option::Some(_) => { self.n = self.n - 1 }
-                Option::None() => { return Option::None() }
+                Option.Some(_) => {
+                    self.n = self.n - 1;
+                },
+                Option.None => {
+                    return Option::None();
+                },
             }
         }
-        return self.inner.next()
+        return self.inner.next();
     }
 }
 
@@ -233,14 +237,18 @@ pub namespace ChainIter {
 }
 
 impl[T, IA: Iterator[T], IB: Iterator[T]] ChainIter[T, IA, IB] {
-    fn next(ref mut self) -> Option[T] {
+    pub fn next(ref mut self) -> Option[T] {
         if !self.first_done {
             match self.a.next() {
-                Option::Some(v) => { return Option::Some(v) }
-                Option::None() => { self.first_done = true }
+                Option.Some(v) => {
+                    return Option::Some(v);
+                },
+                Option.None => {
+                    self.first_done = true;
+                },
             }
         }
-        return self.b.next()
+        return self.b.next();
     }
 }
 
@@ -291,9 +299,13 @@ pub fn collect[T, I: Iterator[T]](I it) -> ArrayList[T] {
     done = false;
     while !done {
         match it.next() {
-            Option::Some(v) => { res.push(v) }
-            Option::None() => { done = true }
+            Option.Some(v) => {
+                res.push(v)
+            },
+            Option.None => {
+                done = true;
+            },
         }
     }
-    return res
+    return res;
 }
