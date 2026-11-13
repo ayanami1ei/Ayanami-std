@@ -135,6 +135,7 @@ int64_t __ayanami_fs_errno_kind(int64_t e);  // errno → 稳定类别码（0..7
 char *__ayanami_fs_strerror(int64_t e);      // strerror 拷贝（unique_alloc，调用方拥有）
 int64_t __ayanami_cstr_len(const char *s);   // C 串长度（NULL → 0）
 char *__ayanami_fs_getcwd(void);             // 当前工作目录（unique_alloc，NUL 结尾）；NULL 失败
+int64_t __ayanami_fs_chdir(__ayanami_str_view path); // 切换工作目录；0 成功 / -1
 char *__ayanami_fs_read_link(__ayanami_str_view path); // 符号链接目标（unique_alloc，NUL 结尾）；NULL 失败
 int64_t __ayanami_fs_symlink(__ayanami_str_view target, __ayanami_str_view link); // 创建符号链接；0 成功 / -1
 

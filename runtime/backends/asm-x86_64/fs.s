@@ -146,6 +146,32 @@ __ayanami_fs_read_link:
     ret
     .size __ayanami_fs_read_link, .-__ayanami_fs_read_link
 
+# int64_t __ayanami_fs_chdir(str_view path)   chdir；0 成功 / -1
+# 系统调用号：chdir=80
+    .globl __ayanami_fs_chdir
+    .type  __ayanami_fs_chdir, @function
+__ayanami_fs_chdir:
+    subq $4264, %rsp
+    leaq 144(%rsp), %rdx
+    movq $4096, %rcx
+    call __ayanami_fs_path_cstr
+    testl %eax, %eax
+    je 2f
+    movq $80, %rax
+    leaq 144(%rsp), %rdi
+    syscall
+    testq %rax, %rax
+    js 3f
+    xorl %eax, %eax
+    addq $4264, %rsp
+    ret
+3:  negq %rax
+    movq %rax, g_fs_errno(%rip)
+2:  movq $-1, %rax
+    addq $4264, %rsp
+    ret
+    .size __ayanami_fs_chdir, .-__ayanami_fs_chdir
+
 # char *__ayanami_fs_getcwd(void)   unique_alloc 拷贝（NUL 结尾）；失败 NULL
 # 系统调用号：getcwd=79
     .globl __ayanami_fs_getcwd

@@ -110,6 +110,12 @@ pub fn is_dir(String path) -> bool {
     return __ayanami_fs_is_dir(path) == 1;
 }
 
+/// 切换工作目录（成功 true）
+#[io]
+pub fn set_current_dir(String path) -> bool {
+    return __ayanami_fs_chdir(path) == 0;
+}
+
 /// 当前工作目录（失败 None）
 #[io]
 #[alloc]
@@ -336,6 +342,9 @@ fn __ayanami_cstr_len([char] s) -> int;
 
 #[extern]
 fn __ayanami_fs_getcwd() -> [char];
+
+#[extern]
+fn __ayanami_fs_chdir(String path) -> int;
 
 #[extern]
 fn __ayanami_fs_read_link(String path) -> [char];

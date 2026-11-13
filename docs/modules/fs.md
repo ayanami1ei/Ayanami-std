@@ -7,6 +7,7 @@ import "fs";
 | 函数 | 说明 |
 |---|---|
 | `exists(String path) -> bool` | 文件是否存在 |
+| `set_current_dir(String path) -> bool` | 切换工作目录（成功 true） |
 | `current_dir() -> Option[String]` | 当前工作目录（失败 None） |
 | `symlink(String target, String link) -> bool` | 创建符号链接（target 原样写入） |
 | `read_link(String path) -> Option[String]` | 读取符号链接目标（非链接/失败 → None） |

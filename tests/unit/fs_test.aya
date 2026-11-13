@@ -236,3 +236,21 @@ fn test_fs_read_link_and_canonicalize() {
     rmdir(sub.copy());
     rmdir(root)
 }
+
+#[test]
+fn test_fs_set_current_dir() {
+    root = "/tmp/ayanami_chdir_test";
+    remove_file(join(root.copy(), "x.txt"));
+    rmdir(root.copy());
+    mkdir(root.copy());
+    write_file(join(root.copy(), "x.txt"), "x");
+    before = current_dir().unwrap();
+    #assert(set_current_dir(root.copy()));
+    here = current_dir().unwrap();
+    #assert_eq(here, canonicalize(root.copy()).unwrap());
+    #assert(exists("x.txt"));
+    #assert(set_current_dir(before.copy()));
+    #assert(!set_current_dir("/definitely/not/here"));
+    remove_file(join(root.copy(), "x.txt"));
+    rmdir(root)
+}

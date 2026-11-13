@@ -93,6 +93,14 @@ int64_t __ayanami_fs_symlink(__ayanami_str_view target, __ayanami_str_view link)
     return 0;
 }
 
+// 切换工作目录
+int64_t __ayanami_fs_chdir(__ayanami_str_view path) {
+    char p[4096];
+    if (!path_cstr(path, p, sizeof p)) return fs_fail();
+    if (chdir(p) != 0) return fs_fail();
+    return 0;
+}
+
 // 当前工作目录（unique_alloc 拷贝，NUL 结尾；调用方拥有）
 char *__ayanami_fs_getcwd(void) {
     char buf[4096];
