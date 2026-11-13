@@ -203,6 +203,14 @@ int64_t __ayanami_thread_yield(void) {
 void __ayanami_exit(int64_t code) {
     exit((int)code);
 }
+
+int64_t __ayanami_process_id(void) {
+    return (int64_t)getpid();
+}
+
+int64_t __ayanami_parent_process_id(void) {
+    return (int64_t)getppid();
+}
 #endif // AYANAMI_ASM_PORT（进程退出由汇编后端提供）
 
 // ── futex（C 后端：syscall(2)；EINTR 视为 0，由调用方重查状态） ──

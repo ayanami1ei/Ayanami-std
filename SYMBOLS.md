@@ -884,9 +884,13 @@ src/system/path.aya:101: pub fn extension(String path) -> String
 src/system/path.aya:116: pub fn is_absolute(String path) -> bool
 src/system/path.aya:123: pub fn file_stem(String path) -> String
 src/system/path.aya:135: pub fn with_extension(String path, String ext) -> String
-src/system/process.aya:4: fn __ayanami_exit(int code) -> void;
-src/system/process.aya:9: pub fn exit(int code) -> !
-src/system/process.aya:17: pub fn exit_ok() -> !
+src/system/process.aya:3: fn __ayanami_exit(int code) -> void;
+src/system/process.aya:6: fn __ayanami_process_id() -> int;
+src/system/process.aya:9: fn __ayanami_parent_process_id() -> int;
+src/system/process.aya:14: pub fn exit(int code) -> !
+src/system/process.aya:22: pub fn exit_ok() -> !
+src/system/process.aya:29: pub fn id() -> int
+src/system/process.aya:35: pub fn parent_id() -> int
 src/system/rand.aya:9: fn __ayanami_random_u64() -> int;
 src/system/rand.aya:11: pub struct Rng
 src/system/rand.aya:15: pub namespace Rng
@@ -1294,6 +1298,7 @@ tests/unit/path_test.aya:15: fn test_path_join()
 tests/unit/path_test.aya:26: fn test_path_basename_dirname()
 tests/unit/path_test.aya:37: fn test_path_extension()
 tests/unit/path_test.aya:45: fn test_path_absolute_stem_extension()
+tests/unit/process_test.aya:6: fn test_process_id()
 tests/unit/rand_test.aya:10: fn test_range()
 tests/unit/rand_test.aya:23: fn test_deterministic()
 tests/unit/rand_test.aya:32: fn test_seed_variation()

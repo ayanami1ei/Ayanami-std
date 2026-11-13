@@ -1,0 +1,11 @@
+import "process";
+
+import "test";
+
+#[test]
+fn test_process_id() {
+    p = id();
+    #assert(p > 0);
+    #assert(parent_id() > 0);
+    #assert(parent_id() != p)
+}
