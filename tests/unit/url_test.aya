@@ -1,0 +1,34 @@
+import "url";
+
+import "test";
+
+#[test]
+fn test_percent_encode() {
+    #assert_eq(percent_encode(ref "hello"), "hello");
+    #assert_eq(percent_encode(ref "a b"), "a%20b");
+    #assert_eq(percent_encode(ref "a+b&c=d"), "a%2Bb%26c%3Dd");
+    #assert_eq(percent_encode(ref "路径"), "%E8%B7%AF%E5%BE%84")
+}
+
+#[test]
+fn test_percent_decode() {
+    #assert_eq(percent_decode(ref "a%20b").unwrap(), "a b");
+    #assert_eq(percent_decode(ref "%E8%B7%AF").unwrap(), "路");
+    #assert(percent_decode(ref "%2").is_none());
+    #assert(percent_decode(ref "%zz").is_none());
+    #assert_eq(percent_decode(ref "a+b").unwrap(), "a+b")
+}
+
+#[test]
+fn test_form_decode() {
+    #assert_eq(form_decode(ref "a+b%20c").unwrap(), "a b c");
+    #assert(form_decode(ref "%G0").is_none())
+}
+
+#[test]
+fn test_query_get() {
+    #assert_eq(query_get(ref "a=1&b=hello%20world", ref "b").unwrap(), "hello world");
+    #assert_eq(query_get(ref "?x=a+b", ref "x").unwrap(), "a b");
+    #assert_eq(query_get(ref "flag&k=v", ref "flag").unwrap(), "");
+    #assert(query_get(ref "a=1", ref "missing").is_none())
+}

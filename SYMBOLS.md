@@ -274,6 +274,13 @@ src/collections/text.aya:275: pub fn split_whitespace(ref String s) -> ArrayList
 src/collections/text.aya:285: pub fn count(ref String s, ref String needle) -> int
 src/collections/text.aya:313: pub fn count_lines(ref String s) -> int
 src/collections/text.aya:334: pub fn truncate(ref String s, usize n) -> String
+src/collections/url.aya:14: fn is_unreserved(char c) -> bool
+src/collections/url.aya:18: fn hex_digit(int v) -> char
+src/collections/url.aya:25: fn hex_val(int c) -> int
+src/collections/url.aya:41: pub fn percent_encode(ref String s) -> String
+src/collections/url.aya:62: pub fn percent_decode(ref String s) -> Option[String]
+src/collections/url.aya:89: pub fn form_decode(ref String s) -> Option[String]
+src/collections/url.aya:121: pub fn query_get(ref String query, ref String key) -> Option[String]
 src/core/arch_x86_64.aya:13: pub namespace ArchX86_64
 src/core/arch_x86_64.aya:16: pub fn wrapping_add(int a, int b) -> int
 src/core/arch_x86_64.aya:25: pub fn wrapping_sub(int a, int b) -> int
@@ -1266,3 +1273,7 @@ tests/unit/time_test.aya:30: fn test_micros_format()
 tests/unit/time_test.aya:42: fn test_datetime_epoch()
 tests/unit/time_test.aya:54: fn test_datetime_leap()
 tests/unit/time_test.aya:66: fn test_format_unix_date()
+tests/unit/url_test.aya:6: fn test_percent_encode()
+tests/unit/url_test.aya:14: fn test_percent_decode()
+tests/unit/url_test.aya:23: fn test_form_decode()
+tests/unit/url_test.aya:29: fn test_query_get()

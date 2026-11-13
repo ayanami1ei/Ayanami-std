@@ -32,6 +32,7 @@
 | [collections.md](modules/collections.md) | 集合与排序：`List` 接口、`ArrayList`、`LinkedList`、`HashSet`/`HashMap`、`Ord` 排序 |
 | [text.md](modules/text.md) | 文本处理：`split` / `join` / `replace` / `pad_*` / `lines` / `split_once` |
 | [csv.md](modules/csv.md) | CSV：`parse` / `encode`（引号、转义、CRLF） |
+| [url.md](modules/url.md) | URL：`percent_encode` / `percent_decode` / `form_decode` / `query_get` |
 | [option-result.md](modules/option-result.md) | `std` 聚合：`Option`、`Result`、`Error` 接口 |
 | [panic.md](modules/panic.md) | 运行时 panic：`#panic`、越界与空表行为 |
 | [runtime.md](dev/runtime.md) | C 运行时：ABI、约定与扩展步骤 |

@@ -1,0 +1,143 @@
+// url — URL 百分号编码与查询串解析（纯 Ayanami）
+//
+// - percent_encode：仅保留 RFC 3986 unreserved（A-Z a-z 0-9 - . _ ~）；
+// - percent_decode：严格解析 `%HH`（不把 `+` 当空格）；
+// - query_get：按 `&` / `=` 拆查询串，键值按表单规则解码（`+` → 空格）。
+import "string";
+
+import "text";
+
+import "iter";
+
+import "arraylist";
+
+fn is_unreserved(char c) -> bool {
+    return c.is_alnum() || c == '-' || c == '.' || c == '_' || c == '~'
+}
+
+fn hex_digit(int v) -> char {
+    if v < 10 {
+        return (48 + v) as char
+    }
+    return (55 + v) as char
+}
+
+fn hex_val(int c) -> int {
+    if c >= 48 && c <= 57 {
+        return c - 48
+    }
+    if c >= 97 && c <= 102 {
+        return c - 87
+    }
+    if c >= 65 && c <= 70 {
+        return c - 55
+    }
+    return -1
+}
+
+/// 百分号编码（空格 → `%20`）
+#[alloc]
+#[state]
+pub fn percent_encode(ref String s) -> String {
+    res = "";
+    i = 0usize;
+    while i < s.len {
+        c = s.data[i];
+        if is_unreserved(c) {
+            res = res + c.to_string()
+        } else {
+            b = c as int;
+            res = res + "%";
+            res = res + hex_digit(b >> 4).to_string();
+            res = res + hex_digit(b & 0xf).to_string()
+        }
+        i = i + 1
+    }
+    return res
+}
+
+/// 百分号解码（严格：非法 `%` 序列 → None）
+#[alloc]
+#[state]
+pub fn percent_decode(ref String s) -> Option[String] {
+    res = "";
+    i = 0usize;
+    while i < s.len {
+        c = s.data[i];
+        if c == '%' {
+            if i + 2 >= s.len {
+                return Option::None()
+            }
+            hi = hex_val(s.data[i + 1] as int);
+            lo = hex_val(s.data[i + 2] as int);
+            if hi < 0 || lo < 0 {
+                return Option::None()
+            }
+            res = res + (((hi << 4) | lo) as char).to_string();
+            i = i + 3
+        } else {
+            res = res + c.to_string();
+            i = i + 1
+        }
+    }
+    return Option::Some(res)
+}
+
+/// 表单解码：`+` → 空格，再做百分号解码
+#[alloc]
+#[state]
+pub fn form_decode(ref String s) -> Option[String] {
+    res = "";
+    i = 0usize;
+    while i < s.len {
+        c = s.data[i];
+        if c == '+' {
+            res = res + " ";
+            i = i + 1
+        } else {
+            if c == '%' {
+                if i + 2 >= s.len {
+                    return Option::None()
+                }
+                hi = hex_val(s.data[i + 1] as int);
+                lo = hex_val(s.data[i + 2] as int);
+                if hi < 0 || lo < 0 {
+                    return Option::None()
+                }
+                res = res + (((hi << 4) | lo) as char).to_string();
+                i = i + 3
+            } else {
+                res = res + c.to_string();
+                i = i + 1
+            }
+        }
+    }
+    return Option::Some(res)
+}
+
+/// 从查询串取参数（`query` 可带或不带前导 `?`；返回表单解码后的值）
+#[alloc]
+#[state]
+pub fn query_get(ref String query, ref String key) -> Option[String] {
+    q = query.copy();
+    if q.starts_with("?") {
+        q = q.substring(1usize, q.len)
+    }
+    pairs = split(ref q, "&");
+    for p in pairs.into_iter() {
+        eq = p.index_of("=");
+        raw_k = "";
+        raw_v = "";
+        if eq >= 0 {
+            raw_k = p.substring(0usize, eq as usize);
+            raw_v = p.substring((eq + 1) as usize, p.len)
+        } else {
+            raw_k = p
+        }
+        k = form_decode(ref raw_k).unwrap_or("");
+        if k == key {
+            return Option::Some(form_decode(ref raw_v).unwrap_or(""))
+        }
+    }
+    return Option::None()
+}
