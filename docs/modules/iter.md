@@ -112,6 +112,9 @@ c = a.into_iter().skip(1usize).chain(b.into_iter()).collect()
 | `it.skip(n)` | `SkipIter::new(it, n)` |
 | `a.chain(b)` | `ChainIter::new(a, b)` |
 | `it.collect()` | `collect(it)` → `ArrayList[T]` |
+| `it.count()` | 元素个数（`usize`） |
+| `it.last()` | 最后一项（空 → None） |
+| `it.fold(init, f)` | 折叠（`f(acc, x)`） |
 
 > 同名方法解析冲突（编译器 #189）已修复：`map` / `filter` / `take` 等均可直接方法语法链式。
 

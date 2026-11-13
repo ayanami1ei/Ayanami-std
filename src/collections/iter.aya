@@ -309,3 +309,50 @@ pub fn collect[T, I: Iterator[T]](I it) -> ArrayList[T] {
     }
     return res;
 }
+
+/// 计数：`it.count()`
+#[state]
+pub fn count[T, I: Iterator[T]](I it) -> usize {
+    n = 0usize;
+    done = false;
+    while !done {
+        match it.next() {
+            Option.Some(_) => {
+                n = n + 1;
+            },
+            Option.None => {
+                done = true;
+            },
+        }
+    }
+    return n;
+}
+
+/// 最后一项：`it.last()`
+#[alloc]
+#[state]
+pub fn last[T, I: Iterator[T]](I it) -> Option[T] {
+    xs = collect(it);
+    if xs.is_empty() {
+        return Option::None();
+    }
+    return Option::Some(xs.pop());
+}
+
+/// 折叠：`it.fold(init, f)`
+#[state]
+pub fn fold[T, U, I: Iterator[T]](I it, U init, Fn(U,T)->U f) -> U {
+    acc = init;
+    done = false;
+    while !done {
+        match it.next() {
+            Option.Some(v) => {
+                acc = f(acc, v);
+            },
+            Option.None => {
+                done = true;
+            },
+        }
+    }
+    return acc;
+}

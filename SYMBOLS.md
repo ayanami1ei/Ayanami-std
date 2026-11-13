@@ -203,6 +203,9 @@ src/collections/iter.aya:280: pub fn zip[T, U, IA: Iterator[T], IB: Iterator[U]]
 src/collections/iter.aya:285: pub fn skip[T, I: Iterator[T]](I it, usize n) -> SkipIter[T, I]
 src/collections/iter.aya:290: pub fn chain[T, IA: Iterator[T], IB: Iterator[T]](IA a, IB b) -> ChainIter[T, IA, IB]
 src/collections/iter.aya:297: pub fn collect[T, I: Iterator[T]](I it) -> ArrayList[T]
+src/collections/iter.aya:315: pub fn count[T, I: Iterator[T]](I it) -> usize
+src/collections/iter.aya:334: pub fn last[T, I: Iterator[T]](I it) -> Option[T]
+src/collections/iter.aya:344: pub fn fold[T, U, I: Iterator[T]](I it, U init, Fn(U,T)->U f) -> U
 src/collections/json.aya:14: fn hex_val(int c) -> int
 src/collections/json.aya:27: fn hex_digit(int v) -> char
 src/collections/json.aya:37: pub fn escape(ref String s) -> String
@@ -1218,6 +1221,7 @@ tests/unit/iter_test.aya:195: fn test_method_chain_enumerate()
 tests/unit/iter_test.aya:207: fn test_method_chain_map_filter()
 tests/unit/iter_test.aya:224: fn test_method_chain_take_zip()
 tests/unit/iter_test.aya:240: fn test_skip_chain_collect()
+tests/unit/iter_test.aya:259: fn test_iter_count_last_fold()
 tests/unit/json_test.aya:10: fn test_json_escape()
 tests/unit/json_test.aya:20: fn test_json_unescape()
 tests/unit/json_test.aya:31: fn test_json_escape_roundtrip()

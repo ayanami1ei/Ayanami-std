@@ -254,3 +254,28 @@ fn test_skip_chain_collect() {
     d = e.into_iter().skip(9usize).collect();
     #assert_eq(d.len(), 0)
 }
+
+#[test]
+fn test_iter_count_last_fold() {
+    a = ArrayList::new[int]();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    #assert_eq(a.into_iter().count(), 3usize);
+    e = ArrayList::new[int]();
+    #assert_eq(e.into_iter().count(), 0usize);
+    b = ArrayList::new[int]();
+    b.push(4);
+    b.push(5);
+    #assert_eq(b.into_iter().last().unwrap(), 5);
+    c = ArrayList::new[int]();
+    #assert(c.into_iter().last().is_none());
+    d = ArrayList::new[int]();
+    d.push(1);
+    d.push(2);
+    d.push(3);
+    s = d.into_iter().fold(0, (int acc, int v) -> int {
+        return acc + v * 10;
+    });
+    #assert_eq(s, 60)
+}
