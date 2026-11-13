@@ -37,3 +37,34 @@ fn test_micros_format() {
     #assert_eq(format_ms(0 - 1001), "00:00:01.001");
     #assert_eq(format_ms(0 - 9223372036854775807 - 1), "2562047788015:12:55.807")
 }
+
+#[test]
+fn test_datetime_epoch() {
+    d = DateTime::from_unix(0);
+    #assert_eq(d.year, 1970);
+    #assert_eq(d.month, 1);
+    #assert_eq(d.day, 1);
+    #assert_eq(d.hour, 0);
+    #assert_eq(d.minute, 0);
+    #assert_eq(d.second, 0);
+    #assert_eq(d.weekday, 4)
+}
+
+#[test]
+fn test_datetime_leap() {
+    d = DateTime::from_unix(1709210096);
+    #assert_eq(d.year, 2024);
+    #assert_eq(d.month, 2);
+    #assert_eq(d.day, 29);
+    #assert_eq(d.hour, 12);
+    #assert_eq(d.minute, 34);
+    #assert_eq(d.second, 56);
+    #assert_eq(d.weekday, 4)
+}
+
+#[test]
+fn test_format_unix_date() {
+    #assert_eq(format_unix(0), "1970-01-01 00:00:00");
+    #assert_eq(format_date(1709210096), "2024-02-29");
+    #assert_eq(format_unix(946684800), "2000-01-01 00:00:00")
+}
