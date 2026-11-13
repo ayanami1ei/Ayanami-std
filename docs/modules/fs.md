@@ -7,6 +7,7 @@ import "fs";
 | 函数 | 说明 |
 |---|---|
 | `exists(String path) -> bool` | 文件是否存在 |
+| `current_dir() -> Option[String]` | 当前工作目录（失败 None） |
 | `walk(String root) -> ArrayList[String]` | 递归列出目录下所有文件路径（深度优先；目录不可读时跳过） |
 | `walk_filtered(String root, Fn(ref String) -> bool keep) -> ArrayList[String]` | 递归遍历并只保留谓词为真的文件路径 |
 | `walk_ext(String root, String ext) -> ArrayList[String]` | 递归列出指定后缀的文件（`ext` 含点，如 `".txt"`） |

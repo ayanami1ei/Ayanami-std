@@ -110,6 +110,19 @@ pub fn is_dir(String path) -> bool {
     return __ayanami_fs_is_dir(path) == 1;
 }
 
+/// 当前工作目录（失败 None）
+#[io]
+#[alloc]
+#[state]
+pub fn current_dir() -> Option[String] {
+    data = __ayanami_fs_getcwd();
+    if data == null {
+        return Option::None();
+    }
+    n = __ayanami_cstr_len(data);
+    return Option::Some(String::new(data, n as usize));
+}
+
 /// 目录项（不含 `.` / `..`；失败 None）
 #[alloc]
 #[state]
@@ -233,6 +246,9 @@ fn __ayanami_fs_strerror(int e) -> [char];
 
 #[extern]
 fn __ayanami_cstr_len([char] s) -> int;
+
+#[extern]
+fn __ayanami_fs_getcwd() -> [char];
 
 /// IO 错误类别（由 errno 归类）
 pub enum IoErrorKind {

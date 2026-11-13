@@ -67,6 +67,17 @@ int64_t __ayanami_cstr_len(const char *s) {
     return s ? (int64_t)strlen(s) : 0;
 }
 
+// 当前工作目录（unique_alloc 拷贝，NUL 结尾；调用方拥有）
+char *__ayanami_fs_getcwd(void) {
+    char buf[4096];
+    if (!getcwd(buf, sizeof buf)) return NULL;
+    size_t n = strlen(buf);
+    char *r = (char *)__ayanami_unique_alloc(n + 1);
+    if (!r) return NULL;
+    memcpy(r, buf, n + 1);
+    return r;
+}
+
 
 // 系统熵源：优先 getrandom，退回 /dev/urandom，最后退回 time()
 int64_t __ayanami_random_u64(void) {

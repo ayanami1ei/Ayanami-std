@@ -188,3 +188,11 @@ fn test_fs_walk_filtered_and_ext() {
     rmdir(sub.copy());
     rmdir(root)
 }
+
+#[test]
+fn test_fs_current_dir() {
+    d = current_dir().unwrap();
+    #assert(d.len() > 0);
+    #assert(d.starts_with("/"));
+    #assert(exists(d.copy()))
+}

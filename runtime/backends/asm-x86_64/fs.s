@@ -49,6 +49,45 @@ __ayanami_cstr_len:
 2:  ret
     .size __ayanami_cstr_len, .-__ayanami_cstr_len
 
+# char *__ayanami_fs_getcwd(void)   unique_alloc 拷贝（NUL 结尾）；失败 NULL
+# 系统调用号：getcwd=79
+    .globl __ayanami_fs_getcwd
+    .type  __ayanami_fs_getcwd, @function
+__ayanami_fs_getcwd:
+    pushq %rbx
+    pushq %r12
+    subq $4104, %rsp              # 4096 字节路径缓冲 + 8 字节对齐
+    movq $79, %rax                # SYS_getcwd
+    movq %rsp, %rdi
+    movq $4096, %rsi
+    syscall
+    cmpq $0, %rax
+    jl 2f
+    xorl %r12d, %r12d             # strlen
+1:  cmpb $0, (%rsp,%r12)
+    je 3f
+    incq %r12
+    jmp 1b
+3:  leaq 1(%r12), %rdi            # len + 1（含 NUL）
+    call __ayanami_unique_alloc
+    testq %rax, %rax
+    jz 2f
+    movq %rax, %rdi
+    movq %rsp, %rsi
+    movq %r12, %rcx
+    rep movsb
+    movb $0, (%rdi)
+    addq $4104, %rsp
+    popq %r12
+    popq %rbx
+    ret
+2:  xorl %eax, %eax
+    addq $4104, %rsp
+    popq %r12
+    popq %rbx
+    ret
+    .size __ayanami_fs_getcwd, .-__ayanami_fs_getcwd
+
 # char *__ayanami_fs_strerror(int64_t e)   unique_alloc 拷贝消息（NUL 结尾）
     .globl __ayanami_fs_strerror
     .type  __ayanami_fs_strerror, @function

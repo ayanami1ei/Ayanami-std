@@ -134,6 +134,7 @@ int64_t __ayanami_fs_errno(void);            // 最近一次 fs 失败 errno
 int64_t __ayanami_fs_errno_kind(int64_t e);  // errno → 稳定类别码（0..7，见 sys.c）
 char *__ayanami_fs_strerror(int64_t e);      // strerror 拷贝（unique_alloc，调用方拥有）
 int64_t __ayanami_cstr_len(const char *s);   // C 串长度（NULL → 0）
+char *__ayanami_fs_getcwd(void);             // 当前工作目录（unique_alloc，NUL 结尾）；NULL 失败
 
 // ── 命令行参数 / 环境变量（返回值为 unique_alloc 拷贝） ──
 int64_t __ayanami_arg_count(void);                    // argc（含程序名）
