@@ -245,6 +245,8 @@ pub fn rmdir(String path) -> bool {
 
 /// 递归创建目录（已存在视为成功）
 #[io]
+#[alloc]
+#[state]
 pub fn create_dir_all(String path) -> bool {
     p = normalize(path);
     if p.is_empty() {
@@ -264,6 +266,8 @@ pub fn create_dir_all(String path) -> bool {
 
 /// 递归删除目录及其内容（符号链接只删除链接本身，不跟随）
 #[io]
+#[alloc]
+#[state]
 pub fn remove_dir_all(String path) -> bool {
     if !exists(path.copy()) {
         return false;

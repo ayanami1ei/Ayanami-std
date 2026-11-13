@@ -25,6 +25,8 @@ import "fs";
 | `is_dir(String path) -> bool` | 是否目录 |
 | `is_file(String path) -> bool` | 是否普通文件 |
 | `mkdir(String path) -> bool` / `rmdir(String path) -> bool` | 创建 / 删除（空）目录 |
+| `create_dir_all(String path) -> bool` | 递归创建目录（已存在视为成功） |
+| `remove_dir_all(String path) -> bool` | 递归删除目录内容（符号链接只删除链接本身） |
 | `mtime(String path) -> Option[int]` | 修改时间（Unix 秒；失败 `None`） |
 | `size(String path) -> Option[int]` | 文件字节数（失败 `None`） |
 | `copy_tree(String src, String dst) -> int` | 递归复制目录树（返回文件数；失败 `-1`） |
