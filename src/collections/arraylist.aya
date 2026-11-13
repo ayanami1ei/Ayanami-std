@@ -57,7 +57,7 @@ impl[T] ArrayList[T] {
     /// 元素引用（非 Copy 元素取值请用本方法或 clone）
     fn index_ref(ref self, usize index, int __line, int __col, String __file) -> ref T {
         if index >= self.len {
-            panic_bounds_at(__line, __col, __file, index as int, self.len as int)
+            panic_bounds_at(__line, __col, __file, index, self.len)
         }
         return ref self.data[index];
     }
