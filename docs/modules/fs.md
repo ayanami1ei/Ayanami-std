@@ -8,6 +8,9 @@ import "fs";
 |---|---|
 | `exists(String path) -> bool` | 文件是否存在 |
 | `current_dir() -> Option[String]` | 当前工作目录（失败 None） |
+| `symlink(String target, String link) -> bool` | 创建符号链接（target 原样写入） |
+| `read_link(String path) -> Option[String]` | 读取符号链接目标（非链接/失败 → None） |
+| `canonicalize(String path) -> Option[String]` | 规范绝对路径（逐段解析符号链接、`.`/`..` 折叠；允许末尾不存在） |
 | `walk(String root) -> ArrayList[String]` | 递归列出目录下所有文件路径（深度优先；目录不可读时跳过） |
 | `walk_filtered(String root, Fn(ref String) -> bool keep) -> ArrayList[String]` | 递归遍历并只保留谓词为真的文件路径 |
 | `walk_ext(String root, String ext) -> ArrayList[String]` | 递归列出指定后缀的文件（`ext` 含点，如 `".txt"`） |

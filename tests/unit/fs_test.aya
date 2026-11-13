@@ -196,3 +196,35 @@ fn test_fs_current_dir() {
     #assert(d.starts_with("/"));
     #assert(exists(d.copy()))
 }
+
+#[test]
+fn test_fs_read_link_and_canonicalize() {
+    root = "/tmp/ayanami_link_test";
+    sub = join(root.copy(), "sub");
+    mkdir(root.copy());
+    mkdir(sub.copy());
+    target = join(sub.copy(), "target.txt");
+    write_file(target.copy(), "x");
+    rel_link = join(root.copy(), "rel.txt");
+    abs_link = join(root.copy(), "abs.txt");
+    #assert(symlink("sub/target.txt", rel_link.copy()));
+    #assert(symlink(target.copy(), abs_link.copy()));
+    #assert_eq(read_link(rel_link.copy()).unwrap(), "sub/target.txt");
+    #assert_eq(read_link(abs_link.copy()).unwrap(), target);
+    #assert_eq(canonicalize(rel_link.copy()).unwrap(), target);
+    #assert_eq(canonicalize(abs_link.copy()).unwrap(), target);
+    loop_a = join(root.copy(), "a");
+    loop_b = join(root.copy(), "b");
+    #assert(symlink("b", loop_a.copy()));
+    #assert(symlink("a", loop_b.copy()));
+    #assert(canonicalize(loop_a.copy()).is_none());
+    #assert_eq(canonicalize(join(root.copy(), "sub/../sub/./target.txt")).unwrap(), target);
+    #assert(read_link(target.copy()).is_none());
+    remove_file(rel_link.copy());
+    remove_file(abs_link.copy());
+    remove_file(loop_a.copy());
+    remove_file(loop_b.copy());
+    remove_file(target.copy());
+    rmdir(sub.copy());
+    rmdir(root)
+}

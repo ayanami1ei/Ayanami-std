@@ -49,6 +49,103 @@ __ayanami_cstr_len:
 2:  ret
     .size __ayanami_cstr_len, .-__ayanami_cstr_len
 
+# int64_t __ayanami_fs_symlink(str_view target, str_view link)   symlinkat；0 成功 / -1
+# 系统调用号：symlinkat=266
+    .globl __ayanami_fs_symlink
+    .type  __ayanami_fs_symlink, @function
+__ayanami_fs_symlink:
+    pushq %rbx
+    pushq %r12
+    pushq %r13
+    pushq %r14
+    subq $8200, %rsp
+    movq %rdi, %rbx               # target data
+    movq %rsi, %r12               # target len
+    movq %rdx, %r13               # link data
+    movq %rcx, %r14               # link len
+    leaq 4104(%rsp), %rdx         # target cstr
+    movq $4096, %rcx
+    movq %rbx, %rdi
+    movq %r12, %rsi
+    call __ayanami_fs_path_cstr
+    testl %eax, %eax
+    je 2f
+    movq %rsp, %rdx               # link cstr
+    movq $4096, %rcx
+    movq %r13, %rdi
+    movq %r14, %rsi
+    call __ayanami_fs_path_cstr
+    testl %eax, %eax
+    je 2f
+    movq $266, %rax               # SYS_symlinkat
+    leaq 4104(%rsp), %rdi         # target
+    movq $-100, %rsi              # AT_FDCWD
+    movq %rsp, %rdx               # link
+    syscall
+    testq %rax, %rax
+    js 3f
+    xorl %eax, %eax
+    addq $8200, %rsp
+    popq %r14
+    popq %r13
+    popq %r12
+    popq %rbx
+    ret
+3:  negq %rax
+    movq %rax, g_fs_errno(%rip)
+2:  movq $-1, %rax
+    addq $8200, %rsp
+    popq %r14
+    popq %r13
+    popq %r12
+    popq %rbx
+    ret
+    .size __ayanami_fs_symlink, .-__ayanami_fs_symlink
+
+# char *__ayanami_fs_read_link(str_view path)   unique_alloc 拷贝（NUL 结尾）；失败 NULL
+# 系统调用号：readlink=89
+    .globl __ayanami_fs_read_link
+    .type  __ayanami_fs_read_link, @function
+__ayanami_fs_read_link:
+    pushq %rbx
+    pushq %r12
+    subq $8200, %rsp              # [0,4096) 目标缓冲 + [4104,8200) 路径缓冲
+    leaq 4104(%rsp), %rdx
+    movq $4096, %rcx
+    call __ayanami_fs_path_cstr
+    testl %eax, %eax
+    je 2f
+    movq $89, %rax                # SYS_readlink
+    leaq 4104(%rsp), %rdi
+    movq %rsp, %rsi
+    movq $4095, %rdx
+    syscall
+    testq %rax, %rax
+    js 3f
+    movq %rax, %r12
+    movb $0, (%rsp,%r12)
+    leaq 1(%r12), %rdi
+    call __ayanami_unique_alloc
+    testq %rax, %rax
+    jz 2f
+    movq %rax, %rdi
+    movq %rsp, %rsi
+    movq %r12, %rcx
+    rep movsb
+    movb $0, (%rdi)
+    addq $8200, %rsp
+    popq %r12
+    popq %rbx
+    ret
+3:  negq %rax
+    movq %rax, g_fs_errno(%rip)
+2:  xorl %eax, %eax
+    addq $8200, %rsp
+    popq %r12
+    popq %rbx
+    ret
+    .size __ayanami_fs_read_link, .-__ayanami_fs_read_link
+
 # char *__ayanami_fs_getcwd(void)   unique_alloc 拷贝（NUL 结尾）；失败 NULL
 # 系统调用号：getcwd=79
     .globl __ayanami_fs_getcwd

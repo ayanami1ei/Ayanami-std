@@ -67,6 +67,32 @@ int64_t __ayanami_cstr_len(const char *s) {
     return s ? (int64_t)strlen(s) : 0;
 }
 
+static int path_cstr(__ayanami_str_view path, char *out, size_t cap);
+
+// 符号链接目标（unique_alloc 拷贝，NUL 结尾；调用方拥有）
+char *__ayanami_fs_read_link(__ayanami_str_view path) {
+    char p[4096];
+    if (!path_cstr(path, p, sizeof p)) return NULL;
+    char buf[4096];
+    ssize_t n = readlink(p, buf, sizeof buf - 1);
+    if (n < 0) return fs_fail_null();
+    buf[n] = 0;
+    char *r = (char *)__ayanami_unique_alloc((size_t)n + 1);
+    if (!r) return NULL;
+    memcpy(r, buf, (size_t)n + 1);
+    return r;
+}
+
+// 创建符号链接（target 原样写入）
+int64_t __ayanami_fs_symlink(__ayanami_str_view target, __ayanami_str_view link) {
+    char t[4096];
+    char l[4096];
+    if (!path_cstr(target, t, sizeof t)) return fs_fail();
+    if (!path_cstr(link, l, sizeof l)) return fs_fail();
+    if (symlink(t, l) != 0) return fs_fail();
+    return 0;
+}
+
 // 当前工作目录（unique_alloc 拷贝，NUL 结尾；调用方拥有）
 char *__ayanami_fs_getcwd(void) {
     char buf[4096];

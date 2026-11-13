@@ -123,6 +123,93 @@ pub fn current_dir() -> Option[String] {
     return Option::Some(String::new(data, n as usize));
 }
 
+/// 创建符号链接（`target` 原样写入；成功 true）
+#[io]
+pub fn symlink(String target, String link) -> bool {
+    return __ayanami_fs_symlink(target, link) == 0;
+}
+
+/// 读取符号链接目标（非符号链接或失败 → None）
+#[io]
+#[alloc]
+#[state]
+pub fn read_link(String path) -> Option[String] {
+    data = __ayanami_fs_read_link(path);
+    if data == null {
+        return Option::None();
+    }
+    n = __ayanami_cstr_len(data);
+    return Option::Some(String::new(data, n as usize));
+}
+
+/// 解析为规范绝对路径（逐段解析符号链接，`.` / `..` 折叠；循环/过深 → None）
+///
+/// 说明：与 `realpath` 不同，允许末尾不存在的路径段（按字面保留）。
+#[io]
+#[alloc]
+#[state]
+pub fn canonicalize(String path) -> Option[String] {
+    cur = "";
+    if is_absolute(path.copy()) {
+        cur = "/";
+    } else {
+        c = current_dir();
+        if c.is_none() {
+            return Option::None();
+        }
+        cur = c.unwrap();
+    }
+    st = ArrayList::new[String]();
+    parts = split(ref path, "/");
+    i = parts.len();
+    while i > 0 {
+        i = i - 1;
+        seg = parts.index_ref(i).copy();
+        if !seg.is_empty() {
+            st.push(seg)
+        }
+    }
+    depth = 0;
+    while !st.is_empty() {
+        seg = st.pop();
+        if seg == "." {} else {
+            if seg == ".." {
+                cur = dirname(cur.copy());
+            } else {
+                cand = "";
+                if cur == "/" {
+                    cand = "/" + seg;
+                } else {
+                    cand = cur + "/" + seg;
+                }
+                link = read_link(cand.copy());
+                if link.is_some() {
+                    depth = depth + 1;
+                    if depth > 64 {
+                        return Option::None();
+                    }
+                    target = link.unwrap();
+                    if is_absolute(target.copy()) {
+                        cur = "/";
+                    }
+                    tparts = split(ref target, "/");
+                    j = tparts.len();
+                    while j > 0 {
+                        j = j - 1;
+                        ts = tparts.index_ref(j).copy();
+                        if !ts.is_empty() {
+                            st.push(ts)
+                        }
+                    }
+                } else {
+                    cur = cand;
+                }
+            }
+        }
+    }
+    return Option::Some(normalize(cur));
+}
+
 /// 目录项（不含 `.` / `..`；失败 None）
 #[alloc]
 #[state]
@@ -249,6 +336,12 @@ fn __ayanami_cstr_len([char] s) -> int;
 
 #[extern]
 fn __ayanami_fs_getcwd() -> [char];
+
+#[extern]
+fn __ayanami_fs_read_link(String path) -> [char];
+
+#[extern]
+fn __ayanami_fs_symlink(String target, String link) -> int;
 
 /// IO 错误类别（由 errno 归类）
 pub enum IoErrorKind {

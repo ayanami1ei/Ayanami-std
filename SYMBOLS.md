@@ -816,33 +816,38 @@ src/system/fs.aya:97: pub fn append_file(String path, String data) -> bool
 src/system/fs.aya:103: pub fn remove_file(String path) -> bool
 src/system/fs.aya:109: pub fn is_dir(String path) -> bool
 src/system/fs.aya:117: pub fn current_dir() -> Option[String]
-src/system/fs.aya:130: pub fn list_dir(String path) -> Option[ArrayList[String]]
-src/system/fs.aya:143: pub fn mkdir(String path) -> bool
-src/system/fs.aya:149: pub fn rmdir(String path) -> bool
-src/system/fs.aya:155: pub fn mtime(String path) -> Option[int]
-src/system/fs.aya:165: pub fn is_file(String path) -> bool
-src/system/fs.aya:171: pub fn copy_file(String src, String dst) -> bool
-src/system/fs.aya:177: pub fn rename_file(String from, String to) -> bool
-src/system/fs.aya:183: pub fn size(String path) -> Option[int]
-src/system/fs.aya:195: pub fn copy_tree(String src, String dst) -> int
-src/system/fs.aya:199: fn copy_tree_impl(String src, String dst, int depth) -> int
-src/system/fs.aya:239: fn __ayanami_fs_errno() -> int;
-src/system/fs.aya:242: fn __ayanami_fs_errno_kind(int e) -> int;
-src/system/fs.aya:245: fn __ayanami_fs_strerror(int e) -> [char];
-src/system/fs.aya:248: fn __ayanami_cstr_len([char] s) -> int;
-src/system/fs.aya:251: fn __ayanami_fs_getcwd() -> [char];
-src/system/fs.aya:254: pub enum IoErrorKind
-src/system/fs.aya:266: pub struct IoError
-src/system/fs.aya:272: fn classify_kind(int code) -> IoErrorKind
-src/system/fs.aya:285: impl IoError
-src/system/fs.aya:289: pub fn message(ref self) -> String
-src/system/fs.aya:298: pub fn what(ref self) -> String
-src/system/fs.aya:305: pub fn last_error(String path) -> IoError
-src/system/fs.aya:312: pub fn read_file_result(String path) -> Result[String, IoError]
-src/system/fs.aya:329: pub fn walk(String root) -> ArrayList[String]
-src/system/fs.aya:337: fn walk_into(String dir, ref mut ArrayList[String] dst)
-src/system/fs.aya:359: pub fn walk_filtered(String root, Fn(ref String)->bool keep) -> ArrayList[String]
-src/system/fs.aya:388: pub fn walk_ext(String root, String ext) -> ArrayList[String]
+src/system/fs.aya:128: pub fn symlink(String target, String link) -> bool
+src/system/fs.aya:136: pub fn read_link(String path) -> Option[String]
+src/system/fs.aya:151: pub fn canonicalize(String path) -> Option[String]
+src/system/fs.aya:217: pub fn list_dir(String path) -> Option[ArrayList[String]]
+src/system/fs.aya:230: pub fn mkdir(String path) -> bool
+src/system/fs.aya:236: pub fn rmdir(String path) -> bool
+src/system/fs.aya:242: pub fn mtime(String path) -> Option[int]
+src/system/fs.aya:252: pub fn is_file(String path) -> bool
+src/system/fs.aya:258: pub fn copy_file(String src, String dst) -> bool
+src/system/fs.aya:264: pub fn rename_file(String from, String to) -> bool
+src/system/fs.aya:270: pub fn size(String path) -> Option[int]
+src/system/fs.aya:282: pub fn copy_tree(String src, String dst) -> int
+src/system/fs.aya:286: fn copy_tree_impl(String src, String dst, int depth) -> int
+src/system/fs.aya:326: fn __ayanami_fs_errno() -> int;
+src/system/fs.aya:329: fn __ayanami_fs_errno_kind(int e) -> int;
+src/system/fs.aya:332: fn __ayanami_fs_strerror(int e) -> [char];
+src/system/fs.aya:335: fn __ayanami_cstr_len([char] s) -> int;
+src/system/fs.aya:338: fn __ayanami_fs_getcwd() -> [char];
+src/system/fs.aya:341: fn __ayanami_fs_read_link(String path) -> [char];
+src/system/fs.aya:344: fn __ayanami_fs_symlink(String target, String link) -> int;
+src/system/fs.aya:347: pub enum IoErrorKind
+src/system/fs.aya:359: pub struct IoError
+src/system/fs.aya:365: fn classify_kind(int code) -> IoErrorKind
+src/system/fs.aya:378: impl IoError
+src/system/fs.aya:382: pub fn message(ref self) -> String
+src/system/fs.aya:391: pub fn what(ref self) -> String
+src/system/fs.aya:398: pub fn last_error(String path) -> IoError
+src/system/fs.aya:405: pub fn read_file_result(String path) -> Result[String, IoError]
+src/system/fs.aya:422: pub fn walk(String root) -> ArrayList[String]
+src/system/fs.aya:430: fn walk_into(String dir, ref mut ArrayList[String] dst)
+src/system/fs.aya:452: pub fn walk_filtered(String root, Fn(ref String)->bool keep) -> ArrayList[String]
+src/system/fs.aya:481: pub fn walk_ext(String root, String ext) -> ArrayList[String]
 src/system/io.aya:9: fn __ayanami_getchar() -> int;
 src/system/io.aya:13: fn __ayanami_putchar(int c);
 src/system/io.aya:17: fn __ayanami_print_str([char] s, int len);
@@ -1133,6 +1138,7 @@ tests/unit/fs_test.aya:126: fn test_error_model()
 tests/unit/fs_test.aya:150: fn test_fs_walk()
 tests/unit/fs_test.aya:168: fn test_fs_walk_filtered_and_ext()
 tests/unit/fs_test.aya:193: fn test_fs_current_dir()
+tests/unit/fs_test.aya:201: fn test_fs_read_link_and_canonicalize()
 tests/unit/hash_test.aya:6: fn test_hash()
 tests/unit/hashmap_test.aya:6: fn test_map_basic()
 tests/unit/hashmap_test.aya:20: fn test_map_grow()
