@@ -136,6 +136,17 @@ src/collections/hashset.aya:412: fn count(ref self, Fn(K)->bool f) -> usize
 src/collections/hashset.aya:426: fn find(ref self, Fn(K)->bool f) -> Option[K]
 src/collections/hashset.aya:441: impl[K: Hash + Ord] HashSet[K]
 src/collections/hashset.aya:445: fn sorted_list(ref self) -> ArrayList[K]
+src/collections/ini.aya:16: pub struct IniEntry
+src/collections/ini.aya:23: pub struct Ini
+src/collections/ini.aya:27: fn trim_brackets(ref String s) -> String
+src/collections/ini.aya:37: pub fn parse(ref String text) -> Ini
+src/collections/ini.aya:63: impl Ini
+src/collections/ini.aya:65: pub fn len(ref self) -> usize
+src/collections/ini.aya:71: pub fn get(ref self, ref String section, ref String key) -> Option[String]
+src/collections/ini.aya:85: pub fn get_or(ref self, ref String section, ref String key, String fallback) -> String
+src/collections/ini.aya:95: pub fn has(ref self, ref String section, ref String key) -> bool
+src/collections/ini.aya:101: pub fn sections(ref self) -> ArrayList[String]
+src/collections/ini.aya:116: pub fn keys(ref self, ref String section) -> ArrayList[String]
 src/collections/iter.aya:12: interface Iterator[T]
 src/collections/iter.aya:13: fn next(ref mut self) -> Option[T];
 src/collections/iter.aya:17: pub struct Pair[A, B]
@@ -1134,6 +1145,9 @@ tests/unit/hashset_test.aya:194: fn test_take_superset()
 tests/unit/hashset_test.aya:213: fn test_set_predicates()
 tests/unit/hashset_test.aya:245: fn test_inplace_set_ops()
 tests/unit/hashset_test.aya:268: fn test_sorted_list()
+tests/unit/ini_test.aya:6: fn test_ini_parse_basic()
+tests/unit/ini_test.aya:18: fn test_ini_values_and_duplicates()
+tests/unit/ini_test.aya:27: fn test_ini_sections_keys()
 tests/unit/io_test.aya:6: fn test_input()
 tests/unit/iter_test.aya:11: struct Countdown
 tests/unit/iter_test.aya:15: impl Countdown

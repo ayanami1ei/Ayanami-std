@@ -1,0 +1,131 @@
+// ini — INI 配置解析（纯 Ayanami）
+//
+// 语法：
+//   - `[section]` 分段；顶层键的 section 为 "";
+//   - `key = value`（首个 `=` 分隔，两侧去空白；值可含 `=`）；
+//   - `;` / `#` 开头为注释；空行忽略；重复键以最后一次为准。
+import "string";
+
+import "text";
+
+import "iter";
+
+import "arraylist";
+
+/// 一条配置项
+pub struct IniEntry {
+    String section
+    String key
+    String value
+}
+
+/// 解析结果（保持文件中的出现顺序）
+pub struct Ini {
+    ArrayList[IniEntry] entries
+}
+
+fn trim_brackets(ref String s) -> String {
+    if s.starts_with("[") && s.ends_with("]") && s.len >= 2 {
+        return s.substring(1usize, s.len - 1usize).trim();
+    }
+    return s.trim();
+}
+
+/// 解析 INI 文本
+#[alloc]
+#[state]
+pub fn parse(ref String text) -> Ini {
+    entries = ArrayList::new[IniEntry]();
+    ls = lines(ref text);
+    section = "";
+    for raw in ls.into_iter() {
+        line = raw.trim();
+        if line.is_empty() {} else {
+            if line.starts_with(";") || line.starts_with("#") {} else {
+                if line.starts_with("[") {
+                    section = trim_brackets(ref line);
+                } else {
+                    eq = line.index_of("=");
+                    if eq >= 0 {
+                        k = line.substring(0usize, eq as usize).trim();
+                        v = line.substring((eq + 1) as usize, line.len).trim();
+                        if !k.is_empty() {
+                            entries.push(IniEntry { section = section.copy(), key = k, value = v })
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return Ini { entries = entries };
+}
+
+impl Ini {
+    /// 配置项数量
+    pub fn len(ref self) -> usize {
+        return self.entries.len();
+    }
+    /// 取值（重复键以最后一次为准；不存在 → None）
+    #[alloc]
+    #[state]
+    pub fn get(ref self, ref String section, ref String key) -> Option[String] {
+        i = self.entries.len();
+        while i > 0 {
+            i = i - 1;
+            e = self.entries.index_ref(i);
+            if e.section == section && e.key == key {
+                return Option::Some(e.value.copy());
+            }
+        }
+        return Option::None();
+    }
+    /// 取值或默认值
+    #[alloc]
+    #[state]
+    pub fn get_or(ref self, ref String section, ref String key, String fallback) -> String {
+        v = self.get(section, key);
+        if v.is_some() {
+            return v.unwrap();
+        }
+        return fallback;
+    }
+    /// 是否存在
+    #[alloc]
+    #[state]
+    pub fn has(ref self, ref String section, ref String key) -> bool {
+        return self.get(section, key).is_some();
+    }
+    /// 段名列表（去重、按首次出现顺序；包含顶层 ""）
+    #[alloc]
+    #[state]
+    pub fn sections(ref self) -> ArrayList[String] {
+        res = ArrayList::new[String]();
+        i = 0usize;
+        while i < self.entries.len() {
+            s = self.entries.index_ref(i).section.copy();
+            if !res.contains(s) {
+                res.push(s)
+            }
+            i = i + 1;
+        }
+        return res;
+    }
+    /// 指定段的键列表（去重、按首次出现顺序）
+    #[alloc]
+    #[state]
+    pub fn keys(ref self, ref String section) -> ArrayList[String] {
+        res = ArrayList::new[String]();
+        i = 0usize;
+        while i < self.entries.len() {
+            e = self.entries.index_ref(i);
+            if e.section == section {
+                k = e.key.copy();
+                if !res.contains(k) {
+                    res.push(k)
+                }
+            }
+            i = i + 1;
+        }
+        return res;
+    }
+}

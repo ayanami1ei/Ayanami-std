@@ -23,7 +23,7 @@ fi
 # 依赖顺序：被依赖者在前；每模块构建后立即安装，支持冷构建
 MODULES=(
     core/string core/panic core/ord core/eq core/option core/math core/bitops core/arch_x86_64 core/num
-    collections/list collections/arraylist collections/linkedlist collections/iter collections/text collections/sort collections/csv collections/url collections/json collections/hash collections/hashmap collections/hashset
+    collections/list collections/arraylist collections/linkedlist collections/iter collections/text collections/sort collections/csv collections/url collections/json collections/ini collections/hash collections/hashmap collections/hashset
     core/convert core/encoding core/sha256 dev/test
     system/alloc system/io system/path system/fs system/env system/process system/time system/rand system/sync system/thread system/channel
     meta/macros meta/fmt meta/mir

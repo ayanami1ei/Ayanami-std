@@ -34,6 +34,7 @@
 | [csv.md](modules/csv.md) | CSV：`parse` / `encode`（引号、转义、CRLF） |
 | [url.md](modules/url.md) | URL：`percent_encode` / `percent_decode` / `form_decode` / `query_get` |
 | [json.md](modules/json.md) | JSON：字符串转义 `escape` / `quote` / `unescape` |
+| [ini.md](modules/ini.md) | INI：`parse` / `get` / `get_or` / `sections` / `keys` |
 | [option-result.md](modules/option-result.md) | `std` 聚合：`Option`、`Result`、`Error` 接口 |
 | [panic.md](modules/panic.md) | 运行时 panic：`#panic`、越界与空表行为 |
 | [runtime.md](dev/runtime.md) | C 运行时：ABI、约定与扩展步骤 |

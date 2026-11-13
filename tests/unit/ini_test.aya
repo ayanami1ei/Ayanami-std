@@ -1,0 +1,40 @@
+import "ini";
+
+import "test";
+
+#[test]
+fn test_ini_parse_basic() {
+    text = "; comment\nname = ayanami\n[server]\nhost=127.0.0.1\nport = 8080\n# note\n[log]\nlevel=info\n";
+    c = parse(ref text);
+    #assert_eq(c.len(), 4);
+    #assert_eq(c.get(ref "", ref "name").unwrap(), "ayanami");
+    #assert_eq(c.get(ref "server", ref "host").unwrap(), "127.0.0.1");
+    #assert_eq(c.get(ref "server", ref "port").unwrap(), "8080");
+    #assert_eq(c.get(ref "log", ref "level").unwrap(), "info");
+    #assert(c.get(ref "server", ref "missing").is_none())
+}
+
+#[test]
+fn test_ini_values_and_duplicates() {
+    text = "[a]\nk = v=1\nk = last\nempty =\n";
+    c = parse(ref text);
+    #assert_eq(c.get(ref "a", ref "k").unwrap(), "last");
+    #assert_eq(c.get(ref "a", ref "empty").unwrap(), "");
+    #assert_eq(c.get_or(ref "a", ref "missing", "def"), "def")
+}
+
+#[test]
+fn test_ini_sections_keys() {
+    text = "top=1\n[s1]\na=1\nb=2\n[s2]\nc=3\n[s1]\na=9\n";
+    c = parse(ref text);
+    secs = c.sections();
+    #assert_eq(secs.len(), 3);
+    #assert_eq(secs.index(0), "");
+    #assert_eq(secs.index(1), "s1");
+    #assert_eq(secs.index(2), "s2");
+    ks = c.keys(ref "s1");
+    #assert_eq(ks.len(), 2);
+    #assert_eq(ks.index(0), "a");
+    #assert_eq(ks.index(1), "b");
+    #assert(c.has(ref "s2", ref "c"))
+}
