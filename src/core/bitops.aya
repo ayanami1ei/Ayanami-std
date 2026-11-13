@@ -53,3 +53,75 @@ pub fn is_power_of_two(int x) -> bool {
     }
     return popcount(x) == 1;
 }
+
+/// 循环左移（64 位；n 自动对 64 取模，负数按同余处理）
+pub fn rotl(int x, int n) -> int {
+    m = n % 64;
+    if m < 0 {
+        m = m + 64;
+    }
+    if m == 0 {
+        return x;
+    }
+    u = x as usize;
+    return (u << m as usize | u >> (64 - m) as usize) as int;
+}
+
+/// 循环右移（64 位）
+pub fn rotr(int x, int n) -> int {
+    m = n % 64;
+    if m < 0 {
+        m = m + 64;
+    }
+    if m == 0 {
+        return x;
+    }
+    u = x as usize;
+    return (u >> m as usize | u << (64 - m) as usize) as int;
+}
+
+/// 有效位数（0 → 0）
+pub fn bit_length(int x) -> int {
+    if x == 0 {
+        return 0;
+    }
+    return 64 - leading_zeros(x);
+}
+
+/// 按位反转（64 位）
+pub fn reverse_bits(int x) -> int {
+    u = x as usize;
+    r = 0usize;
+    i = 0;
+    while i < 64 {
+        r = r << 1usize | u & 1usize;
+        u = u >> 1usize;
+        i = i + 1;
+    }
+    return r as int;
+}
+
+/// 字节序翻转（bswap64）
+pub fn swap_bytes(int x) -> int {
+    u = x as usize;
+    r = 0usize;
+    i = 0;
+    while i < 8 {
+        r = r << 8usize | u & 255usize;
+        u = u >> 8usize;
+        i = i + 1;
+    }
+    return r as int;
+}
+
+/// 大于等于 n 的最小 2 的幂（n <= 1 → 1）
+pub fn next_power_of_two(int n) -> int {
+    if n <= 1 {
+        return 1;
+    }
+    p = 1;
+    while p < n {
+        p = p << 1;
+    }
+    return p;
+}

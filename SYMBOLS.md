@@ -367,6 +367,12 @@ src/core/bitops.aya:4: pub fn popcount(int x) -> int
 src/core/bitops.aya:18: pub fn leading_zeros(int x) -> int
 src/core/bitops.aya:34: pub fn trailing_zeros(int x) -> int
 src/core/bitops.aya:50: pub fn is_power_of_two(int x) -> bool
+src/core/bitops.aya:58: pub fn rotl(int x, int n) -> int
+src/core/bitops.aya:71: pub fn rotr(int x, int n) -> int
+src/core/bitops.aya:84: pub fn bit_length(int x) -> int
+src/core/bitops.aya:92: pub fn reverse_bits(int x) -> int
+src/core/bitops.aya:105: pub fn swap_bytes(int x) -> int
+src/core/bitops.aya:118: pub fn next_power_of_two(int n) -> int
 src/core/convert.aya:13: pub enum ParseError
 src/core/convert.aya:19: impl ParseError
 src/core/convert.aya:24: fn what(ref self) -> String
@@ -1054,6 +1060,9 @@ tests/unit/barrier_test.aya:72: fn test_barrier_reusable()
 tests/unit/bitops_test.aya:6: fn test_popcount()
 tests/unit/bitops_test.aya:14: fn test_zeros()
 tests/unit/bitops_test.aya:24: fn test_power_of_two()
+tests/unit/bitops_test.aya:34: fn test_bitops_rotate()
+tests/unit/bitops_test.aya:44: fn test_bitops_length_reverse_swap()
+tests/unit/bitops_test.aya:56: fn test_bitops_next_power()
 tests/unit/channel_test.aya:10: fn test_channel_fifo()
 tests/unit/channel_test.aya:23: fn test_channel_many_items()
 tests/unit/channel_test.aya:40: fn test_channel_string_payload()
