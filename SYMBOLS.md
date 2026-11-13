@@ -859,9 +859,9 @@ src/system/io.aya:27: fn __ayanami_print_ln();
 src/system/io.aya:30: pub fn getchar() -> int
 src/system/io.aya:35: pub fn putchar(int c)
 src/system/io.aya:41: pub fn print(ref String n)
-src/system/io.aya:49: pub fn eprint(ref String s)
-src/system/io.aya:55: pub fn eprintln(ref String s)
-src/system/io.aya:62: pub fn eprintln()
+src/system/io.aya:47: pub fn eprint(ref String s)
+src/system/io.aya:53: pub fn eprintln(ref String s)
+src/system/io.aya:60: pub fn eprintln()
 src/system/io.aya:66: pub fn println()
 src/system/io.aya:72: pub fn println(ref String s)
 src/system/io.aya:80: fn __ayanami_print_int(int n);

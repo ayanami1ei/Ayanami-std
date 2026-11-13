@@ -43,8 +43,6 @@ pub fn print(ref String n) {
 }
 
 /// 向 stderr 写字符串（不换行）
-#[alloc]
-#[io]
 #[io]
 pub fn eprint(ref String s) {
     __ayanami_eprint_str(s.data, s.len as int)
@@ -63,6 +61,8 @@ pub fn eprintln() {
     __ayanami_eprint_ln()
 }
 
+#[alloc]
+#[io]
 pub fn println() {
     __ayanami_print_ln();
 }
