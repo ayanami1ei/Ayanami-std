@@ -448,6 +448,18 @@ src/core/panic.aya:7: fn __ayanami_panic_at(int line, int col, String file, Stri
 src/core/panic.aya:11: pub fn panic_at(int line, int col, String file, String msg) -> !
 src/core/panic.aya:20: pub fn panic(String input, String msg, int __line, int __col, String __file) -> String
 src/core/panic.aya:36: pub fn panic_bounds(String input, String index, String len, int __line, int __col, String __file) -> String
+src/core/sha256.aya:10: fn rotr(int x, int n) -> int
+src/core/sha256.aya:14: fn ch(int x, int y, int z) -> int
+src/core/sha256.aya:18: fn maj(int x, int y, int z) -> int
+src/core/sha256.aya:22: fn big_sigma0(int x) -> int
+src/core/sha256.aya:26: fn big_sigma1(int x) -> int
+src/core/sha256.aya:30: fn small_sigma0(int x) -> int
+src/core/sha256.aya:34: fn small_sigma1(int x) -> int
+src/core/sha256.aya:38: fn add32(int a, int b) -> int
+src/core/sha256.aya:42: fn load_k() -> [int; 64]
+src/core/sha256.aya:111: fn load_h() -> [int; 8]
+src/core/sha256.aya:127: pub fn sha256_bytes(ref String s) -> String
+src/core/sha256.aya:213: pub fn sha256_hex(ref String s) -> String
 src/core/string.aya:5: fn __ayanami_panic_at(int line, int col, String file, String msg) -> void;
 src/core/string.aya:10: fn __ayanami_panic_bounds_at(int line, int col, String file, int index, int len) -> void;
 src/core/string.aya:14: pub fn panic_bounds_at(int line, int col, String file, usize index, usize len) -> void
@@ -1162,6 +1174,8 @@ tests/unit/rwlock_test.aya:65: fn rw_read_run() -> int
 tests/unit/rwlock_test.aya:91: fn test_rwlock_concurrent_readers()
 tests/unit/rwlock_test.aya:95: fn rw_mixed_run() -> int
 tests/unit/rwlock_test.aya:133: fn test_rwlock_mixed_read_write()
+tests/unit/sha256_test.aya:6: fn test_sha256_known_vectors()
+tests/unit/sha256_test.aya:14: fn test_sha256_two_block_message()
 tests/unit/sort_test.aya:6: fn test_sort_int()
 tests/unit/sort_test.aya:18: fn test_sort_string()
 tests/unit/sort_test.aya:30: fn test_sort_edge()

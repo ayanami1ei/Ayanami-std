@@ -1,0 +1,216 @@
+// sha256 — SHA-256 摘要（纯 Ayanami，无机器相关依赖）
+//
+// 32 位运算用 int（64 位）承载并在每步后掩码到 0xffffffff，避免依赖机器层。
+import "string";
+
+import "encoding";
+
+const MASK32 = 0xffffffff;
+
+fn rotr(int x, int n) -> int {
+    return ((x >> n) | (x << (32 - n))) & MASK32
+}
+
+fn ch(int x, int y, int z) -> int {
+    return ((x & y) ^ ((x ^ MASK32) & z)) & MASK32
+}
+
+fn maj(int x, int y, int z) -> int {
+    return ((x & y) ^ (x & z) ^ (y & z)) & MASK32
+}
+
+fn big_sigma0(int x) -> int {
+    return rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22)
+}
+
+fn big_sigma1(int x) -> int {
+    return rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25)
+}
+
+fn small_sigma0(int x) -> int {
+    return (rotr(x, 7) ^ rotr(x, 18) ^ (x >> 3)) & MASK32
+}
+
+fn small_sigma1(int x) -> int {
+    return (rotr(x, 17) ^ rotr(x, 19) ^ (x >> 10)) & MASK32
+}
+
+fn add32(int a, int b) -> int {
+    return (a + b) & MASK32
+}
+
+fn load_k() -> [int; 64] {
+    k = [int; 64];
+    k[0] = 0x428a2f98;
+    k[1] = 0x71374491;
+    k[2] = 0xb5c0fbcf;
+    k[3] = 0xe9b5dba5;
+    k[4] = 0x3956c25b;
+    k[5] = 0x59f111f1;
+    k[6] = 0x923f82a4;
+    k[7] = 0xab1c5ed5;
+    k[8] = 0xd807aa98;
+    k[9] = 0x12835b01;
+    k[10] = 0x243185be;
+    k[11] = 0x550c7dc3;
+    k[12] = 0x72be5d74;
+    k[13] = 0x80deb1fe;
+    k[14] = 0x9bdc06a7;
+    k[15] = 0xc19bf174;
+    k[16] = 0xe49b69c1;
+    k[17] = 0xefbe4786;
+    k[18] = 0x0fc19dc6;
+    k[19] = 0x240ca1cc;
+    k[20] = 0x2de92c6f;
+    k[21] = 0x4a7484aa;
+    k[22] = 0x5cb0a9dc;
+    k[23] = 0x76f988da;
+    k[24] = 0x983e5152;
+    k[25] = 0xa831c66d;
+    k[26] = 0xb00327c8;
+    k[27] = 0xbf597fc7;
+    k[28] = 0xc6e00bf3;
+    k[29] = 0xd5a79147;
+    k[30] = 0x06ca6351;
+    k[31] = 0x14292967;
+    k[32] = 0x27b70a85;
+    k[33] = 0x2e1b2138;
+    k[34] = 0x4d2c6dfc;
+    k[35] = 0x53380d13;
+    k[36] = 0x650a7354;
+    k[37] = 0x766a0abb;
+    k[38] = 0x81c2c92e;
+    k[39] = 0x92722c85;
+    k[40] = 0xa2bfe8a1;
+    k[41] = 0xa81a664b;
+    k[42] = 0xc24b8b70;
+    k[43] = 0xc76c51a3;
+    k[44] = 0xd192e819;
+    k[45] = 0xd6990624;
+    k[46] = 0xf40e3585;
+    k[47] = 0x106aa070;
+    k[48] = 0x19a4c116;
+    k[49] = 0x1e376c08;
+    k[50] = 0x2748774c;
+    k[51] = 0x34b0bcb5;
+    k[52] = 0x391c0cb3;
+    k[53] = 0x4ed8aa4a;
+    k[54] = 0x5b9cca4f;
+    k[55] = 0x682e6ff3;
+    k[56] = 0x748f82ee;
+    k[57] = 0x78a5636f;
+    k[58] = 0x84c87814;
+    k[59] = 0x8cc70208;
+    k[60] = 0x90befffa;
+    k[61] = 0xa4506ceb;
+    k[62] = 0xbef9a3f7;
+    k[63] = 0xc67178f2;
+    return k
+}
+
+fn load_h() -> [int; 8] {
+    h = [int; 8];
+    h[0] = 0x6a09e667;
+    h[1] = 0xbb67ae85;
+    h[2] = 0x3c6ef372;
+    h[3] = 0xa54ff53a;
+    h[4] = 0x510e527f;
+    h[5] = 0x9b05688c;
+    h[6] = 0x1f83d9ab;
+    h[7] = 0x5be0cd19;
+    return h
+}
+
+/// SHA-256 原始摘要（32 字节）
+#[alloc]
+#[state]
+pub fn sha256_bytes(ref String s) -> String {
+    n = s.len as int;
+    total = ((n + 9 + 63) / 64) * 64;
+    total_u = total as usize;
+    buf = [char; total_u];
+    i = 0;
+    while i < n {
+        buf[i as usize] = s.data[i as usize];
+        i = i + 1
+    }
+    buf[n as usize] = 0x80 as char;
+    bit_len = n * 8;
+    j = 0;
+    while j < 8 {
+        shift = (7 - j) * 8;
+        buf[(total - 8 + j) as usize] = ((bit_len >> shift) & 0xff) as char;
+        j = j + 1
+    }
+    k = load_k();
+    h = load_h();
+    blocks = total / 64;
+    w = [int; 64];
+    b = 0;
+    while b < blocks {
+        base = b * 64;
+        t = 0;
+        while t < 16 {
+            p = base + t * 4;
+            w[t] = ((buf[p as usize] as int) << 24)
+                | ((buf[(p + 1) as usize] as int) << 16)
+                | ((buf[(p + 2) as usize] as int) << 8)
+                | (buf[(p + 3) as usize] as int);
+            t = t + 1
+        }
+        while t < 64 {
+            w[t] = (small_sigma1(w[t - 2]) + w[t - 7] + small_sigma0(w[t - 15]) + w[t - 16]) & MASK32;
+            t = t + 1
+        }
+        a = h[0];
+        bb = h[1];
+        c = h[2];
+        d = h[3];
+        e = h[4];
+        f = h[5];
+        g = h[6];
+        hh = h[7];
+        t = 0;
+        while t < 64 {
+            t1 = (hh + big_sigma1(e) + ch(e, f, g) + k[t] + w[t]) & MASK32;
+            t2 = (big_sigma0(a) + maj(a, bb, c)) & MASK32;
+            hh = g;
+            g = f;
+            f = e;
+            e = (d + t1) & MASK32;
+            d = c;
+            c = bb;
+            bb = a;
+            a = (t1 + t2) & MASK32;
+            t = t + 1
+        }
+        h[0] = (h[0] + a) & MASK32;
+        h[1] = (h[1] + bb) & MASK32;
+        h[2] = (h[2] + c) & MASK32;
+        h[3] = (h[3] + d) & MASK32;
+        h[4] = (h[4] + e) & MASK32;
+        h[5] = (h[5] + f) & MASK32;
+        h[6] = (h[6] + g) & MASK32;
+        h[7] = (h[7] + hh) & MASK32;
+        b = b + 1
+    }
+    res = [char; 32];
+    x = 0;
+    while x < 8 {
+        v = h[x];
+        res[x * 4] = ((v >> 24) & 0xff) as char;
+        res[x * 4 + 1] = ((v >> 16) & 0xff) as char;
+        res[x * 4 + 2] = ((v >> 8) & 0xff) as char;
+        res[x * 4 + 3] = (v & 0xff) as char;
+        x = x + 1
+    }
+    return String::new(res, 32usize)
+}
+
+/// SHA-256 十六进制摘要（64 字符小写）
+#[alloc]
+#[state]
+pub fn sha256_hex(ref String s) -> String {
+    raw = sha256_bytes(s);
+    return hex_encode(ref raw)
+}

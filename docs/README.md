@@ -15,6 +15,7 @@
 | [string.md](modules/string.md) | 字符串与字符：`String` 方法、`char` 工具、`ToString` |
 | [convert.md](modules/convert.md) | 解析与转换：`try_parse_*`、`parse_*_or`、`to_*`、`Into[T]` |
 | [encoding.md](modules/encoding.md) | 编码：`hex_encode` / `hex_decode`、`base64_encode` / `base64_decode` |
+| [sha256.md](modules/sha256.md) | SHA-256 摘要：`sha256_bytes` / `sha256_hex`（纯 Ayanami） |
 | [rand.md](modules/rand.md) | 伪随机数：`Rng`（LCG，确定性） |
 | [time.md](modules/time.md) | 时间：`now_millis`（单调）/ `now_unix` |
 | [sync.md](modules/sync.md) | 并发原语：`AtomicInt`（顺序一致）、`fence` / `cpu_relax`（S1） |
