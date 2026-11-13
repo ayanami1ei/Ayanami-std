@@ -48,6 +48,7 @@ pub struct JsonField { String key; Json value }
 | 方法 | 说明 |
 |---|---|
 | `v.render() -> String` | 序列化为 JSON 文本（按引用遍历，不消费 `v`） |
+| `v.render_pretty() -> String` | 缩进（2 空格）序列化（不消费 `v`） |
 
 ```ayanami
 import "json";

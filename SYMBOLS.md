@@ -239,6 +239,10 @@ src/collections/json.aya:729: pub fn at_float(ref self, usize i) -> Option[float
 src/collections/json.aya:739: pub fn at_bool(ref self, usize i) -> Option[bool]
 src/collections/json.aya:751: pub fn at_str(ref self, usize i) -> Option[String]
 src/collections/json.aya:761: pub fn at_tag(ref self, usize i) -> int
+src/collections/json.aya:773: fn indent_of(int depth) -> String
+src/collections/json.aya:785: fn render_pretty_at(ref Json v, int depth) -> String
+src/collections/json.aya:828: impl Json
+src/collections/json.aya:832: pub fn render_pretty(ref self) -> String
 src/collections/linkedlist.aya:13: pub struct LinkedList[T]
 src/collections/linkedlist.aya:19: pub namespace LinkedList
 src/collections/linkedlist.aya:20: pub fn new[T]() -> LinkedList[T]
@@ -1158,6 +1162,7 @@ tests/unit/json_test.aya:72: fn test_json_parse_scalars()
 tests/unit/json_test.aya:82: fn test_json_parse_containers()
 tests/unit/json_test.aya:93: fn test_json_parse_invalid()
 tests/unit/json_test.aya:105: fn test_json_accessors()
+tests/unit/json_test.aya:129: fn test_json_render_pretty()
 tests/unit/linkedlist_test.aya:6: fn test_basic()
 tests/unit/linkedlist_test.aya:18: fn test_ll_eq_ops()
 tests/unit/linkedlist_test.aya:31: fn test_ll_mut_ops()

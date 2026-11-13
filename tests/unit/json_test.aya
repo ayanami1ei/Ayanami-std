@@ -124,3 +124,13 @@ fn test_json_accessors() {
     #assert(n.is_null());
     #assert(!n.as_int().is_some())
 }
+
+#[test]
+fn test_json_render_pretty() {
+    v = parse(ref "{\"a\":[1,2],\"b\":{\"c\":true}}").unwrap();
+    expected = "{\n  \"a\": [\n    1,\n    2\n  ],\n  \"b\": {\n    \"c\": true\n  }\n}";
+    #assert_eq(v.render_pretty(), expected);
+    #assert_eq(parse(ref "[]").unwrap().render_pretty(), "[]");
+    #assert_eq(parse(ref "{}").unwrap().render_pretty(), "{}");
+    #assert_eq(parse(ref "42").unwrap().render_pretty(), "42")
+}

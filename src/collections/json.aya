@@ -768,3 +768,68 @@ impl Json {
         return self._data_Array._0.index_ref(i)._tag;
     }
 }
+
+/// 缩进（2 空格 × depth）
+fn indent_of(int depth) -> String {
+    res = "";
+    i = 0;
+    while i < depth {
+        res = res + "  ";
+        i = i + 1;
+    }
+    return res;
+}
+
+#[alloc]
+#[state]
+fn render_pretty_at(ref Json v, int depth) -> String {
+    tag = v._tag;
+    if tag == 5 {
+        n = v._data_Array._0.len() as int;
+        if n == 0 {
+            return "[]";
+        }
+        res = "[\n";
+        i = 0;
+        while i < n {
+            res = res + indent_of(depth + 1);
+            res = res + render_pretty_at(v._data_Array._0.index_ref(i as usize), depth + 1);
+            if i + 1 < n {
+                res = res + ",";
+            }
+            res = res + "\n";
+            i = i + 1;
+        }
+        return res + indent_of(depth) + "]";
+    }
+    if tag == 6 {
+        n = v._data_Object._0.len() as int;
+        if n == 0 {
+            return "{}";
+        }
+        res = "{\n";
+        i = 0;
+        while i < n {
+            f = v._data_Object._0.index_ref(i as usize);
+            res = res + indent_of(depth + 1);
+            res = res + quote(ref f.key) + ": ";
+            res = res + render_pretty_at(ref f.value, depth + 1);
+            if i + 1 < n {
+                res = res + ",";
+            }
+            res = res + "\n";
+            i = i + 1;
+        }
+        return res + indent_of(depth) + "}";
+    }
+    return render_ref(ref v);
+}
+
+impl Json {
+    /// 缩进（2 空格）序列化
+    #[alloc]
+    #[state]
+    pub fn render_pretty(ref self) -> String {
+        return render_pretty_at(ref self, 0);
+    }
+}
