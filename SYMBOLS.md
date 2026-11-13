@@ -980,21 +980,25 @@ src/system/thread.aya:54: pub fn yield_now() -> int
 src/system/time.aya:12: fn __ayanami_time_millis() -> int;
 src/system/time.aya:15: fn __ayanami_time_micros() -> int;
 src/system/time.aya:18: fn __ayanami_time_unix() -> int;
-src/system/time.aya:21: fn __ayanami_time_sleep_ms(int ms);
-src/system/time.aya:26: pub fn now_millis() -> int
-src/system/time.aya:33: pub fn now_micros() -> int
-src/system/time.aya:40: pub fn now_unix() -> int
-src/system/time.aya:47: pub fn format_ms(int ms) -> String
-src/system/time.aya:68: pub fn elapsed_ms(int start) -> int
-src/system/time.aya:75: pub fn sleep_ms(int ms)
-src/system/time.aya:84: pub struct DateTime
-src/system/time.aya:94: fn div_floor(int a, int b) -> int
-src/system/time.aya:112: pub namespace DateTime
-src/system/time.aya:114: pub fn from_unix(int unix) -> DateTime
-src/system/time.aya:140: impl DateTime
-src/system/time.aya:144: pub fn format(ref self) -> String
-src/system/time.aya:158: pub fn format_unix(int unix) -> String
-src/system/time.aya:165: pub fn format_date(int unix) -> String
+src/system/time.aya:21: fn __ayanami_time_unix_ms() -> int;
+src/system/time.aya:24: fn __ayanami_time_sleep_ms(int ms);
+src/system/time.aya:27: fn __ayanami_time_sleep_us(int us);
+src/system/time.aya:32: pub fn now_millis() -> int
+src/system/time.aya:39: pub fn now_micros() -> int
+src/system/time.aya:46: pub fn now_unix() -> int
+src/system/time.aya:53: pub fn now_unix_ms() -> int
+src/system/time.aya:59: pub fn sleep_us(int us)
+src/system/time.aya:69: pub fn format_ms(int ms) -> String
+src/system/time.aya:90: pub fn elapsed_ms(int start) -> int
+src/system/time.aya:97: pub fn sleep_ms(int ms)
+src/system/time.aya:106: pub struct DateTime
+src/system/time.aya:116: fn div_floor(int a, int b) -> int
+src/system/time.aya:134: pub namespace DateTime
+src/system/time.aya:136: pub fn from_unix(int unix) -> DateTime
+src/system/time.aya:162: impl DateTime
+src/system/time.aya:166: pub fn format(ref self) -> String
+src/system/time.aya:180: pub fn format_unix(int unix) -> String
+src/system/time.aya:187: pub fn format_date(int unix) -> String
 tests/bench/iter_chain.aya:26: fn build(int n, int seed) -> ArrayList[int]
 tests/bench/iter_chain.aya:37: fn sum_index(ref ArrayList[int] a) -> int
 tests/bench/iter_chain.aya:51: fn sum_iter(ArrayList[int] a) -> int
@@ -1393,6 +1397,7 @@ tests/unit/time_test.aya:30: fn test_micros_format()
 tests/unit/time_test.aya:42: fn test_datetime_epoch()
 tests/unit/time_test.aya:54: fn test_datetime_leap()
 tests/unit/time_test.aya:66: fn test_format_unix_date()
+tests/unit/time_test.aya:73: fn test_time_unix_ms_and_sleep_us()
 tests/unit/url_test.aya:6: fn test_percent_encode()
 tests/unit/url_test.aya:14: fn test_percent_decode()
 tests/unit/url_test.aya:23: fn test_form_decode()

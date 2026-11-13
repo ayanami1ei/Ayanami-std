@@ -68,3 +68,15 @@ fn test_format_unix_date() {
     #assert_eq(format_date(1709210096), "2024-02-29");
     #assert_eq(format_unix(946684800), "2000-01-01 00:00:00")
 }
+
+#[test]
+fn test_time_unix_ms_and_sleep_us() {
+    a = now_unix_ms();
+    #assert(a > 0);
+    b = now_unix_ms();
+    #assert(b >= a);
+    t1 = now_micros();
+    sleep_us(2000);
+    t2 = now_micros();
+    #assert(t2 - t1 >= 1000)
+}

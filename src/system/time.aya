@@ -18,7 +18,13 @@ fn __ayanami_time_micros() -> int;
 fn __ayanami_time_unix() -> int;
 
 #[extern]
+fn __ayanami_time_unix_ms() -> int;
+
+#[extern]
 fn __ayanami_time_sleep_ms(int ms);
+
+#[extern]
+fn __ayanami_time_sleep_us(int us);
 
 /// 单调毫秒（计时用）
 #[io]
@@ -39,6 +45,22 @@ pub fn now_micros() -> int {
 #[state]
 pub fn now_unix() -> int {
     return __ayanami_time_unix();
+}
+
+/// Unix 毫秒（墙上时钟，含毫秒精度）
+#[io]
+#[state]
+pub fn now_unix_ms() -> int {
+    return __ayanami_time_unix_ms();
+}
+
+/// 睡眠 `us` 微秒（`<= 0` 直接返回）
+#[io]
+pub fn sleep_us(int us) {
+    if us <= 0 {
+        return;
+    }
+    __ayanami_time_sleep_us(us)
 }
 
 /// 毫秒数格式化：`HH:MM:SS.mmm`（负数取绝对值）

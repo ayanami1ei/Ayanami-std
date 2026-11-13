@@ -152,12 +152,30 @@ int64_t __ayanami_time_unix(void) {
     return (int64_t)time(NULL);
 }
 
+// Unix 毫秒
+int64_t __ayanami_time_unix_ms(void) {
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return (int64_t)ts.tv_sec * 1000 + (int64_t)(ts.tv_nsec / 1000000);
+}
+
 // 睡眠毫秒（nanosleep；被信号打断时按剩余时间继续）
 int64_t __ayanami_time_sleep_ms(int64_t ms) {
     if (ms <= 0) return 0;
     struct timespec ts;
     ts.tv_sec = ms / 1000;
     ts.tv_nsec = (ms % 1000) * 1000000;
+    while (nanosleep(&ts, &ts) != 0 && errno == EINTR) {
+    }
+    return 0;
+}
+
+// 睡眠微秒
+int64_t __ayanami_time_sleep_us(int64_t us) {
+    if (us <= 0) return 0;
+    struct timespec ts;
+    ts.tv_sec = us / 1000000;
+    ts.tv_nsec = (us % 1000000) * 1000;
     while (nanosleep(&ts, &ts) != 0 && errno == EINTR) {
     }
     return 0;

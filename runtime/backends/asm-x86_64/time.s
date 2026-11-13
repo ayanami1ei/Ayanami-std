@@ -4,7 +4,9 @@
 #   int64_t __ayanami_time_millis(void)      CLOCK_MONOTONIC 毫秒
 #   int64_t __ayanami_time_micros(void)      CLOCK_MONOTONIC 微秒
 #   int64_t __ayanami_time_unix(void)        Unix 秒（CLOCK_REALTIME）
+#   int64_t __ayanami_time_unix_ms(void)     Unix 毫秒（CLOCK_REALTIME）
 #   int64_t __ayanami_time_sleep_ms(int64_t) 睡眠毫秒（EINTR 续睡）
+#   int64_t __ayanami_time_sleep_us(int64_t) 睡眠微秒（EINTR 续睡）
 #
 # 系统调用号：nanosleep=35 clock_gettime=228
 # CLOCK_REALTIME=0 CLOCK_MONOTONIC=1
@@ -65,6 +67,26 @@ __ayanami_time_unix:
     ret
     .size __ayanami_time_unix, .-__ayanami_time_unix
 
+# int64_t __ayanami_time_unix_ms(void)
+    .globl __ayanami_time_unix_ms
+    .type  __ayanami_time_unix_ms, @function
+__ayanami_time_unix_ms:
+    subq $24, %rsp
+    movq $228, %rax               # clock_gettime
+    xorl %edi, %edi               # CLOCK_REALTIME
+    movq %rsp, %rsi
+    syscall
+    movq (%rsp), %r9
+    movq 8(%rsp), %rax
+    xorl %edx, %edx
+    movq $1000000, %rcx
+    divq %rcx                     # nsec / 1e6
+    imulq $1000, %r9, %r9
+    addq %r9, %rax
+    addq $24, %rsp
+    ret
+    .size __ayanami_time_unix_ms, .-__ayanami_time_unix_ms
+
 # int64_t __ayanami_time_sleep_ms(int64_t ms)   ms <= 0 直接返回 0
     .globl __ayanami_time_sleep_ms
     .type  __ayanami_time_sleep_ms, @function
@@ -89,5 +111,30 @@ __ayanami_time_sleep_ms:
 2:  xorl %eax, %eax
     ret
     .size __ayanami_time_sleep_ms, .-__ayanami_time_sleep_ms
+
+# int64_t __ayanami_time_sleep_us(int64_t us)
+    .globl __ayanami_time_sleep_us
+    .type  __ayanami_time_sleep_us, @function
+__ayanami_time_sleep_us:
+    testq %rdi, %rdi
+    jle 2f
+    subq $24, %rsp
+    movq %rdi, %rax
+    xorl %edx, %edx
+    movq $1000000, %rcx
+    divq %rcx                     # rax = 秒, rdx = 余微秒
+    movq %rax, (%rsp)
+    imulq $1000, %rdx, %rdx
+    movq %rdx, 8(%rsp)
+1:  movq $35, %rax                # nanosleep
+    movq %rsp, %rdi
+    xorl %esi, %esi
+    syscall
+    cmpq $-4, %rax                # EINTR → 继续
+    je 1b
+    addq $24, %rsp
+2:  xorl %eax, %eax
+    ret
+    .size __ayanami_time_sleep_us, .-__ayanami_time_sleep_us
 
     .section .note.GNU-stack,"",@progbits

@@ -93,8 +93,10 @@ __AYANAMI_OVF_DECL(mul_u128, unsigned __int128)
 int64_t __ayanami_random_u64(void);   // 系统熵源（getrandom / /dev/urandom）
 int64_t __ayanami_time_millis(void);  // 单调毫秒（计时用）
 int64_t __ayanami_time_micros(void);  // 单调微秒
-int64_t __ayanami_time_unix(void);    // Unix 秒
-int64_t __ayanami_time_sleep_ms(int64_t ms); // 睡眠毫秒（<= 0 直接返回）
+int64_t __ayanami_time_unix(void);
+int64_t __ayanami_time_unix_ms(void);       // Unix 毫秒（CLOCK_REALTIME）    // Unix 秒
+int64_t __ayanami_time_sleep_ms(int64_t ms);
+int64_t __ayanami_time_sleep_us(int64_t us); // 睡眠毫秒（<= 0 直接返回）
 
 // ── 线程（Job = 闭包两字 {env, vtable}，按值传入；运行时接管所有权） ──
 typedef struct {
