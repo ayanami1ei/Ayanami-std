@@ -392,8 +392,8 @@ src/core/option.aya:11: pub enum Result[T, E]
 src/core/option.aya:16: pub enum Option[T]
 src/core/option.aya:21: impl[T] Option[T]
 src/core/option.aya:22: fn unwrap_or(self, T default) -> T
-src/core/option.aya:28: fn is_some(self) -> bool
-src/core/option.aya:31: fn is_none(self) -> bool
+src/core/option.aya:28: fn is_some(ref self) -> bool
+src/core/option.aya:31: fn is_none(ref self) -> bool
 src/core/option.aya:35: fn or(self, Option[T] other) -> Option[T]
 src/core/option.aya:43: fn unwrap(self, int __line, int __col, String __file) -> T
 src/core/option.aya:52: fn expect(self, String msg, int __line, int __col, String __file) -> T
@@ -829,17 +829,6 @@ tests/golden/text_pipeline.aya:10: fn main() -> int
 tests/golden/text_stats.aya:8: fn main() -> int
 tests/golden/usize_print.aya:5: fn main() -> int
 tests/golden/word_count.aya:7: fn main() -> int
-tests/unit/.driver_readlines.aya:10: fn test_roundtrip()
-tests/unit/.driver_readlines.aya:18: fn test_missing()
-tests/unit/.driver_readlines.aya:24: fn test_read_lines()
-tests/unit/.driver_readlines.aya:36: fn test_append()
-tests/unit/.driver_readlines.aya:44: fn test_remove()
-tests/unit/.driver_readlines.aya:53: fn test_dir_ops()
-tests/unit/.driver_readlines.aya:68: fn test_fs_more()
-tests/unit/.driver_readlines.aya:84: fn test_copy_rename()
-tests/unit/.driver_readlines.aya:99: fn test_size_copy_tree()
-tests/unit/.driver_readlines.aya:126: fn test_error_model()
-tests/unit/.driver_readlines.aya:150: fn main() -> int
 tests/unit/alloc_test.aya:6: fn use_allocator[A: Allocator](ref A a, usize size) -> usize
 tests/unit/alloc_test.aya:11: struct WrapperAlloc
 tests/unit/alloc_test.aya:15: impl WrapperAlloc

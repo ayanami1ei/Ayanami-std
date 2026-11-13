@@ -25,10 +25,10 @@ impl[T] Option[T] {
         }
         return default;
     }
-    fn is_some(self) -> bool {
+    fn is_some(ref self) -> bool {
         return self._tag == 0;
     }
-    fn is_none(self) -> bool {
+    fn is_none(ref self) -> bool {
         return self._tag != 0;
     }
     /// 或：Some 返回自身，None 返回 other
