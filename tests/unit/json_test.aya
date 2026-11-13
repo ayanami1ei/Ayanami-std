@@ -100,3 +100,27 @@ fn test_json_parse_invalid() {
     #assert(parse(ref "\"\\u12\"").is_none());
     #assert(parse(ref "{a:1}").is_none())
 }
+
+#[test]
+fn test_json_accessors() {
+    v = parse(ref "{\"name\":\"aya\",\"n\":42,\"ok\":true,\"arr\":[1,\"x\",false]}").unwrap();
+    #assert_eq(v.get_str(ref "name").unwrap(), "aya");
+    #assert_eq(v.get_int(ref "n").unwrap(), 42);
+    #assert_eq(v.get_bool(ref "ok").unwrap(), true);
+    #assert(v.get_str(ref "n").is_none());
+    #assert_eq(v.get_tag(ref "arr"), 5);
+    #assert_eq(v.len(), 4);
+    #assert_eq(v.key_at(0usize).unwrap(), "name");
+    #assert_eq(v.get_int(ref "missing").is_none(), true);
+    arr = parse(ref "[1,2.5,true,\"s\"]").unwrap();
+    #assert_eq(arr.len(), 4);
+    #assert_eq(arr.at_int(0usize).unwrap(), 1);
+    #assert_eq(arr.at_float(1usize).unwrap(), 2.5);
+    #assert_eq(arr.at_bool(2usize).unwrap(), true);
+    #assert_eq(arr.at_str(3usize).unwrap(), "s");
+    #assert_eq(arr.at_tag(0usize), 2);
+    #assert(arr.at_int(9usize).is_none());
+    n = parse(ref "null").unwrap();
+    #assert(n.is_null());
+    #assert(!n.as_int().is_some())
+}

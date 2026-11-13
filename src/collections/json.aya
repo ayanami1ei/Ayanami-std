@@ -569,3 +569,196 @@ pub fn parse(ref String s) -> Option[Json] {
     }
     return Option::Some(p.value)
 }
+
+// ── 访问器（复制式：字符串返回副本，不暴露引用） ──
+
+impl Json {
+    /// 是否为 null
+    fn is_null(ref self) -> bool {
+        return self._tag == 0
+    }
+    /// 整数（非 Int → None）
+    fn as_int(ref self) -> Option[int] {
+        if self._tag == 2 {
+            return Option::Some(self._data_Int._0)
+        }
+        return Option::None()
+    }
+    /// 浮点（Float；Int 也会转换）
+    fn as_float(ref self) -> Option[float] {
+        if self._tag == 3 {
+            return Option::Some(self._data_Float._0)
+        }
+        if self._tag == 2 {
+            return Option::Some(self._data_Int._0 as float)
+        }
+        return Option::None()
+    }
+    /// 布尔
+    fn as_bool(ref self) -> Option[bool] {
+        if self._tag == 1 {
+            return Option::Some(self._data_Bool._0)
+        }
+        return Option::None()
+    }
+    /// 字符串（返回副本）
+    #[alloc]
+    #[state]
+    fn as_str(ref self) -> Option[String] {
+        if self._tag == 4 {
+            return Option::Some(self._data_Str._0.copy())
+        }
+        return Option::None()
+    }
+    /// 数组/对象长度（其他类型为 0）
+    fn len(ref self) -> usize {
+        if self._tag == 5 {
+            return self._data_Array._0.len()
+        }
+        if self._tag == 6 {
+            return self._data_Object._0.len()
+        }
+        return 0usize
+    }
+    /// 对象第 i 个键（返回副本）
+    #[alloc]
+    #[state]
+    fn key_at(ref self, usize i) -> Option[String] {
+        if self._tag != 6 {
+            return Option::None()
+        }
+        if i >= self._data_Object._0.len() {
+            return Option::None()
+        }
+        return Option::Some(self._data_Object._0.index_ref(i).key.copy())
+    }
+    /// 对象取值：整数
+    fn get_int(ref self, ref String key) -> Option[int] {
+        if self._tag != 6 {
+            return Option::None()
+        }
+        i = 0usize;
+        while i < self._data_Object._0.len() {
+            f = self._data_Object._0.index_ref(i);
+            if f.key == key {
+                return f.value.as_int()
+            }
+            i = i + 1
+        }
+        return Option::None()
+    }
+    /// 对象取值：浮点（Int 也转换）
+    fn get_float(ref self, ref String key) -> Option[float] {
+        if self._tag != 6 {
+            return Option::None()
+        }
+        i = 0usize;
+        while i < self._data_Object._0.len() {
+            f = self._data_Object._0.index_ref(i);
+            if f.key == key {
+                return f.value.as_float()
+            }
+            i = i + 1
+        }
+        return Option::None()
+    }
+    /// 对象取值：布尔
+    fn get_bool(ref self, ref String key) -> Option[bool] {
+        if self._tag != 6 {
+            return Option::None()
+        }
+        i = 0usize;
+        while i < self._data_Object._0.len() {
+            f = self._data_Object._0.index_ref(i);
+            if f.key == key {
+                return f.value.as_bool()
+            }
+            i = i + 1
+        }
+        return Option::None()
+    }
+    /// 对象取值：字符串（副本）
+    #[alloc]
+    #[state]
+    fn get_str(ref self, ref String key) -> Option[String] {
+        if self._tag != 6 {
+            return Option::None()
+        }
+        i = 0usize;
+        while i < self._data_Object._0.len() {
+            f = self._data_Object._0.index_ref(i);
+            if f.key == key {
+                return f.value.as_str()
+            }
+            i = i + 1
+        }
+        return Option::None()
+    }
+    /// 对象取值：目标变体的 tag（不存在 → -1；0=Null 1=Bool 2=Int 3=Float 4=Str 5=Array 6=Object）
+    fn get_tag(ref self, ref String key) -> int {
+        if self._tag != 6 {
+            return 0 - 1
+        }
+        i = 0usize;
+        while i < self._data_Object._0.len() {
+            f = self._data_Object._0.index_ref(i);
+            if f.key == key {
+                return f.value._tag
+            }
+            i = i + 1
+        }
+        return 0 - 1
+    }
+    /// 数组第 i 个元素的整数
+    fn at_int(ref self, usize i) -> Option[int] {
+        if self._tag != 5 {
+            return Option::None()
+        }
+        if i >= self._data_Array._0.len() {
+            return Option::None()
+        }
+        return self._data_Array._0.index_ref(i).as_int()
+    }
+    /// 数组第 i 个元素的浮点（Int 也转换）
+    fn at_float(ref self, usize i) -> Option[float] {
+        if self._tag != 5 {
+            return Option::None()
+        }
+        if i >= self._data_Array._0.len() {
+            return Option::None()
+        }
+        return self._data_Array._0.index_ref(i).as_float()
+    }
+    /// 数组第 i 个元素的布尔
+    fn at_bool(ref self, usize i) -> Option[bool] {
+        if self._tag != 5 {
+            return Option::None()
+        }
+        if i >= self._data_Array._0.len() {
+            return Option::None()
+        }
+        return self._data_Array._0.index_ref(i).as_bool()
+    }
+    /// 数组第 i 个元素的字符串（副本）
+    #[alloc]
+    #[state]
+    fn at_str(ref self, usize i) -> Option[String] {
+        if self._tag != 5 {
+            return Option::None()
+        }
+        if i >= self._data_Array._0.len() {
+            return Option::None()
+        }
+        return self._data_Array._0.index_ref(i).as_str()
+    }
+    /// 数组第 i 个元素的目标 tag（越界或非数组 → -1）
+    fn at_tag(ref self, usize i) -> int {
+        if self._tag != 5 {
+            return 0 - 1
+        }
+        if i >= self._data_Array._0.len() {
+            return 0 - 1
+        }
+        return self._data_Array._0.index_ref(i)._tag
+    }
+}

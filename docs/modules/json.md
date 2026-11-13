@@ -86,3 +86,24 @@ fn main() -> int {
 - 字符串支持 `\uXXXX` 与代理对，非法转义/控制字符 → `None()`；
 - 数字按是否含 `.` / 指数区分 `Json::Int` 与 `Json::Float`；
 - 对象保持输入顺序；空数组/空对象正常解析。
+
+## 访问器
+
+复制式访问（字符串返回副本；不暴露内部引用）：
+
+| 方法 | 说明 |
+|---|---|
+| `is_null()` | 是否 `null` |
+| `as_int()` / `as_float()` / `as_bool()` / `as_str()` | 标量取值（类型不符 → None；`as_float` 接受 Int） |
+| `len()` | 数组/对象元素数（其他类型 0） |
+| `key_at(i)` | 对象第 i 个键（副本） |
+| `get_int(key)` / `get_float(key)` / `get_bool(key)` / `get_str(key)` | 对象取值 |
+| `get_tag(key)` | 目标值的变体 tag（-1 表示不存在；0=Null 1=Bool 2=Int 3=Float 4=Str 5=Array 6=Object） |
+| `at_int(i)` / `at_float(i)` / `at_bool(i)` / `at_str(i)` | 数组元素取值 |
+| `at_tag(i)` | 数组元素的变体 tag（越界 → -1） |
+
+```ayanami
+v = parse("{\"name\":\"aya\",\"n\":42}").unwrap();
+println(v.get_str("name").unwrap());  // aya
+println(v.get_int("n").unwrap());     // 42
+```

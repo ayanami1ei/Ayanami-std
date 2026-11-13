@@ -221,6 +221,24 @@ src/collections/json.aya:453: fn parse_value(ref String s, usize i) -> Parsed
 src/collections/json.aya:487: fn parse_array(ref String s, usize i) -> Parsed
 src/collections/json.aya:517: fn parse_object(ref String s, usize i) -> Parsed
 src/collections/json.aya:561: pub fn parse(ref String s) -> Option[Json]
+src/collections/json.aya:575: impl Json
+src/collections/json.aya:577: fn is_null(ref self) -> bool
+src/collections/json.aya:581: fn as_int(ref self) -> Option[int]
+src/collections/json.aya:588: fn as_float(ref self) -> Option[float]
+src/collections/json.aya:598: fn as_bool(ref self) -> Option[bool]
+src/collections/json.aya:607: fn as_str(ref self) -> Option[String]
+src/collections/json.aya:614: fn len(ref self) -> usize
+src/collections/json.aya:626: fn key_at(ref self, usize i) -> Option[String]
+src/collections/json.aya:636: fn get_int(ref self, ref String key) -> Option[int]
+src/collections/json.aya:651: fn get_float(ref self, ref String key) -> Option[float]
+src/collections/json.aya:666: fn get_bool(ref self, ref String key) -> Option[bool]
+src/collections/json.aya:683: fn get_str(ref self, ref String key) -> Option[String]
+src/collections/json.aya:698: fn get_tag(ref self, ref String key) -> int
+src/collections/json.aya:713: fn at_int(ref self, usize i) -> Option[int]
+src/collections/json.aya:723: fn at_float(ref self, usize i) -> Option[float]
+src/collections/json.aya:733: fn at_bool(ref self, usize i) -> Option[bool]
+src/collections/json.aya:745: fn at_str(ref self, usize i) -> Option[String]
+src/collections/json.aya:755: fn at_tag(ref self, usize i) -> int
 src/collections/linkedlist.aya:13: pub struct LinkedList[T]
 src/collections/linkedlist.aya:19: pub namespace LinkedList
 src/collections/linkedlist.aya:20: pub fn new[T]() -> LinkedList[T]
@@ -1138,6 +1156,7 @@ tests/unit/json_test.aya:55: fn test_json_render_nested()
 tests/unit/json_test.aya:72: fn test_json_parse_scalars()
 tests/unit/json_test.aya:82: fn test_json_parse_containers()
 tests/unit/json_test.aya:93: fn test_json_parse_invalid()
+tests/unit/json_test.aya:105: fn test_json_accessors()
 tests/unit/linkedlist_test.aya:6: fn test_basic()
 tests/unit/linkedlist_test.aya:18: fn test_ll_eq_ops()
 tests/unit/linkedlist_test.aya:31: fn test_ll_mut_ops()
