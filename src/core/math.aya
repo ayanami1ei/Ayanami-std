@@ -462,12 +462,12 @@ pub fn is_prime(int n) -> bool {
 impl int {
     /// 是否偶数
     #[pure]
-    fn is_even(self) -> bool {
+    pub fn is_even(self) -> bool {
         return self % 2 == 0;
     }
     /// 是否奇数
     #[pure]
-    fn is_odd(self) -> bool {
+    pub fn is_odd(self) -> bool {
         return self % 2 != 0;
     }
 }
@@ -475,7 +475,7 @@ impl int {
 impl float {
     /// 是否 NaN（IEEE：与 0 的比较均无序）
     #[pure]
-    fn is_nan(self) -> bool {
+    pub fn is_nan(self) -> bool {
         if self >= 0.0 {
             return false;
         }
@@ -484,4 +484,86 @@ impl float {
         }
         return true;
     }
+}
+
+// ── 对数 / 反三角 / 双曲（纯 Ayanami） ──
+/// 以 2 为底的对数
+#[pure]
+pub fn log2(float x) -> float {
+    return ln(x) / 0.6931471805599453;
+}
+
+/// 以 `base` 为底的对数
+#[pure]
+pub fn log(float x, float base) -> float {
+    return ln(x) / ln(base);
+}
+
+/// 立方根
+#[pure]
+pub fn cbrt(float x) -> float {
+    if x == 0.0 {
+        return 0.0;
+    }
+    if x < 0.0 {
+        return 0.0 - exp(ln(0.0 - x) / 3.0);
+    }
+    return exp(ln(x) / 3.0);
+}
+
+/// 欧几里得范数 `sqrt(x² + y²)`
+#[pure]
+pub fn hypot(float x, float y) -> float {
+    return sqrt(x * x + y * y);
+}
+
+/// 反正切（单参数）
+#[pure]
+pub fn atan(float x) -> float {
+    return atan2(x, 1.0);
+}
+
+/// 反正弦（|x| > 1 → NaN）
+#[pure]
+pub fn asin(float x) -> float {
+    if x > 1.0 || x < 0.0 - 1.0 {
+        return sqrt(0.0 - 1.0);
+    }
+    return atan2(x, sqrt(1.0 - x * x));
+}
+
+/// 反余弦（|x| > 1 → NaN）
+#[pure]
+pub fn acos(float x) -> float {
+    if x > 1.0 || x < 0.0 - 1.0 {
+        return sqrt(0.0 - 1.0);
+    }
+    return half_pi() - asin(x);
+}
+
+/// 双曲正弦
+#[pure]
+pub fn sinh(float x) -> float {
+    e = exp(x);
+    return (e - 1.0 / e) / 2.0;
+}
+
+/// 双曲余弦
+#[pure]
+pub fn cosh(float x) -> float {
+    e = exp(x);
+    return (e + 1.0 / e) / 2.0;
+}
+
+/// 双曲正切（大 |x| 饱和到 ±1）
+#[pure]
+pub fn tanh(float x) -> float {
+    if x > 20.0 {
+        return 1.0;
+    }
+    if x < 0.0 - 20.0 {
+        return 0.0 - 1.0;
+    }
+    e = exp(2.0 * x);
+    return (e - 1.0) / (e + 1.0);
 }

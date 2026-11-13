@@ -466,10 +466,20 @@ src/core/math.aya:419: pub fn gcd(int a, int b) -> int
 src/core/math.aya:432: pub fn lcm(int a, int b) -> int
 src/core/math.aya:444: pub fn is_prime(int n) -> bool
 src/core/math.aya:462: impl int
-src/core/math.aya:465: fn is_even(self) -> bool
-src/core/math.aya:470: fn is_odd(self) -> bool
+src/core/math.aya:465: pub fn is_even(self) -> bool
+src/core/math.aya:470: pub fn is_odd(self) -> bool
 src/core/math.aya:475: impl float
-src/core/math.aya:478: fn is_nan(self) -> bool
+src/core/math.aya:478: pub fn is_nan(self) -> bool
+src/core/math.aya:492: pub fn log2(float x) -> float
+src/core/math.aya:498: pub fn log(float x, float base) -> float
+src/core/math.aya:504: pub fn cbrt(float x) -> float
+src/core/math.aya:516: pub fn hypot(float x, float y) -> float
+src/core/math.aya:522: pub fn atan(float x) -> float
+src/core/math.aya:528: pub fn asin(float x) -> float
+src/core/math.aya:537: pub fn acos(float x) -> float
+src/core/math.aya:546: pub fn sinh(float x) -> float
+src/core/math.aya:553: pub fn cosh(float x) -> float
+src/core/math.aya:560: pub fn tanh(float x) -> float
 src/core/num.aya:10: pub struct Overflowing
 src/core/num.aya:17: pub fn wrapping_add(int a, int b) -> int
 src/core/num.aya:23: pub fn wrapping_sub(int a, int b) -> int
@@ -1215,6 +1225,9 @@ tests/unit/math_test.aya:97: fn test_usize_minmax()
 tests/unit/math_test.aya:106: fn test_abs_min_panics()
 tests/unit/math_test.aya:113: fn test_neg_min_panics()
 tests/unit/math_test.aya:120: fn test_float_special()
+tests/unit/math_test.aya:133: fn test_math_log_exp_family()
+tests/unit/math_test.aya:142: fn test_math_inverse_trig()
+tests/unit/math_test.aya:152: fn test_math_hyperbolic()
 tests/unit/mem_test.aya:20: fn __ayanami_live_allocs() -> int;
 tests/unit/mem_test.aya:22: fn churn_list() -> int
 tests/unit/mem_test.aya:39: fn churn_dedup() -> int

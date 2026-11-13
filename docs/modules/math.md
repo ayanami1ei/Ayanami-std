@@ -30,6 +30,12 @@ import "math";
 | `pi() -> float` | 圆周率 |
 | `sin(x)` / `cos(x)` / `tan(x)` | 三角函数（弧度） |
 | `atan2(y, x)` | 方位角（`[-pi, pi]`） |
+| `atan(x)` | 反正切（单参数） |
+| `asin(x)` / `acos(x)` | 反正弦 / 反余弦（越界 → NaN） |
+| `log2(x)` / `log(x, base)` | 以 2 / 任意底的对数 |
+| `cbrt(x)` | 立方根 |
+| `hypot(x, y)` | `sqrt(x² + y²)` |
+| `sinh(x)` / `cosh(x)` / `tanh(x)` | 双曲函数（`tanh` 大值饱和到 ±1） |
 
 ## 示例（输出即注释）
 
