@@ -1,0 +1,43 @@
+import "json";
+
+import "arraylist";
+
+import "iter";
+
+import "test";
+
+#[test]
+fn test_json_escape() {
+    #assert_eq(escape(ref "hi"), "hi");
+    #assert_eq(escape(ref "a\"b"), "a\\\"b");
+    #assert_eq(escape(ref "a\\b"), "a\\\\b");
+    #assert_eq(escape(ref "a\nb"), "a\\nb");
+    #assert_eq(escape(ref "\t"), "\\t");
+    #assert_eq(quote(ref "hi"), "\"hi\"")
+}
+
+#[test]
+fn test_json_unescape() {
+    #assert_eq(unescape(ref "a\\nb").unwrap(), "a\nb");
+    #assert_eq(unescape(ref "\\u0041").unwrap(), "A");
+    #assert_eq(unescape(ref "\\u4f60\\u597d").unwrap(), "你好");
+    #assert_eq(unescape(ref "\\uD83D\\uDE00").unwrap(), "😀");
+    #assert(unescape(ref "\\q").is_none());
+    #assert(unescape(ref "\\u12").is_none());
+    #assert(unescape(ref "\\uD83D").is_none())
+}
+
+#[test]
+fn test_json_escape_roundtrip() {
+    cases = ArrayList::new[String]();
+    cases.push("");
+    cases.push("plain");
+    cases.push("a\"b\\c");
+    cases.push("line1\nline2\t!");
+    cases.push("你好，世界 😀");
+    for s in cases.into_iter() {
+        e = escape(ref s);
+        d = unescape(ref e).unwrap();
+        #assert_eq(d, s)
+    }
+}

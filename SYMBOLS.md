@@ -192,6 +192,13 @@ src/collections/iter.aya:272: pub fn zip[T, U, IA: Iterator[T], IB: Iterator[U]]
 src/collections/iter.aya:277: pub fn skip[T, I: Iterator[T]](I it, usize n) -> SkipIter[T, I]
 src/collections/iter.aya:282: pub fn chain[T, IA: Iterator[T], IB: Iterator[T]](IA a, IB b) -> ChainIter[T, IA, IB]
 src/collections/iter.aya:289: pub fn collect[T, I: Iterator[T]](I it) -> ArrayList[T]
+src/collections/json.aya:8: fn hex_val(int c) -> int
+src/collections/json.aya:21: fn hex_digit(int v) -> char
+src/collections/json.aya:31: pub fn escape(ref String s) -> String
+src/collections/json.aya:80: pub fn quote(ref String s) -> String
+src/collections/json.aya:84: fn push_utf8(String res, int cp) -> String
+src/collections/json.aya:103: fn parse_u4(ref String s, usize at) -> int
+src/collections/json.aya:123: pub fn unescape(ref String s) -> Option[String]
 src/collections/linkedlist.aya:13: pub struct LinkedList[T]
 src/collections/linkedlist.aya:19: pub namespace LinkedList
 src/collections/linkedlist.aya:20: pub fn new[T]() -> LinkedList[T]
@@ -1101,6 +1108,9 @@ tests/unit/iter_test.aya:195: fn test_method_chain_enumerate()
 tests/unit/iter_test.aya:207: fn test_method_chain_map_filter()
 tests/unit/iter_test.aya:224: fn test_method_chain_take_zip()
 tests/unit/iter_test.aya:240: fn test_skip_chain_collect()
+tests/unit/json_test.aya:10: fn test_json_escape()
+tests/unit/json_test.aya:20: fn test_json_unescape()
+tests/unit/json_test.aya:31: fn test_json_escape_roundtrip()
 tests/unit/linkedlist_test.aya:6: fn test_basic()
 tests/unit/linkedlist_test.aya:18: fn test_ll_eq_ops()
 tests/unit/linkedlist_test.aya:31: fn test_ll_mut_ops()
