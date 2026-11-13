@@ -794,6 +794,7 @@ src/system/env.aya:45: pub fn get_env(String name) -> Option[String]
 src/system/env.aya:61: pub fn args() -> ArrayList[String]
 src/system/env.aya:74: pub fn get_env_or(String name, String fallback) -> String
 src/system/env.aya:84: pub fn has_env(String name) -> bool
+src/system/env.aya:92: pub fn temp_dir() -> String
 src/system/fs.aya:13: fn __ayanami_fs_size(String path) -> int;
 src/system/fs.aya:16: fn __ayanami_fs_read(String path) -> [char];
 src/system/fs.aya:19: fn __ayanami_fs_write(String path, String data) -> int;
@@ -1135,6 +1136,7 @@ tests/unit/env_test.aya:6: fn test_args()
 tests/unit/env_test.aya:13: fn test_env()
 tests/unit/env_test.aya:20: fn test_env_or_args()
 tests/unit/env_test.aya:29: fn test_has_env()
+tests/unit/env_test.aya:35: fn test_env_temp_dir()
 tests/unit/fmt_test.aya:6: fn test_format_basic()
 tests/unit/fmt_test.aya:15: fn test_format_expressions_and_widths()
 tests/unit/fmt_test.aya:23: fn test_format_braces()

@@ -11,6 +11,7 @@ import "env";
 | `get_env(String name) -> Option[String]` | 环境变量；缺失 → `None` |
 | `get_env_or(String name, String fallback) -> String` | 缺失用 fallback |
 | `has_env(String name) -> bool` | 环境变量是否存在 |
+| `temp_dir() -> String` | 临时目录（`$TMPDIR`，未设置则 `/tmp`） |
 | `args() -> ArrayList[String]` | 全部命令行参数（含程序名） |
 
 ## 示例

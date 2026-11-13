@@ -30,3 +30,9 @@ fn test_has_env() {
     #assert(has_env("PATH"));
     #assert(!has_env("AYANAMI_NO_SUCH_ENV_XYZ"))
 }
+
+#[test]
+fn test_env_temp_dir() {
+    #assert(temp_dir().len() > 0);
+    #assert(temp_dir().starts_with("/"))
+}
