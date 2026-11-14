@@ -51,3 +51,26 @@ fn test_base64_invalid() {
     #assert(base64_decode("YQ==extra").is_none());
     #assert(base64_decode("YWJjZA==").unwrap().len() == 4)
 }
+
+#[test]
+fn test_base32_known_vectors() {
+    #assert_eq(base32_encode(""), "");
+    #assert_eq(base32_encode("f"), "MY======");
+    #assert_eq(base32_encode("fo"), "MZXQ====");
+    #assert_eq(base32_encode("foo"), "MZXW6===");
+    #assert_eq(base32_encode("foob"), "MZXW6YQ=");
+    #assert_eq(base32_encode("fooba"), "MZXW6YTB");
+    #assert_eq(base32_encode("foobar"), "MZXW6YTBOI======")
+}
+
+#[test]
+fn test_base32_roundtrip_and_invalid() {
+    #assert_eq(base32_decode("MY======").unwrap(), "f");
+    #assert_eq(base32_decode("MZXW6YTBOI======").unwrap(), "foobar");
+    bin = hex_decode("00ff10").unwrap();
+    #assert_eq(base32_decode(base32_encode(bin.copy())).unwrap(), bin);
+    #assert(base32_decode("MZXW6YT").is_none());
+    #assert(base32_decode("MZXW6YT!").is_none());
+    #assert(base32_decode("M=ZXW6YT").is_none());
+    #assert(base32_decode("MY=====").is_none())
+}

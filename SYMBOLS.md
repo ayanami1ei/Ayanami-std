@@ -422,6 +422,10 @@ src/core/encoding.aya:97: fn b64_val(int c) -> int
 src/core/encoding.aya:116: fn b64_char(int v) -> char
 src/core/encoding.aya:135: pub fn base64_encode(ref String s) -> String
 src/core/encoding.aya:175: pub fn base64_decode(ref String s) -> Option[String]
+src/core/encoding.aya:235: fn b32_char(int v) -> char
+src/core/encoding.aya:242: fn b32_val(int c) -> int
+src/core/encoding.aya:255: pub fn base32_encode(ref String s) -> String
+src/core/encoding.aya:287: pub fn base32_decode(ref String s) -> Option[String]
 src/core/eq.aya:7: interface Eq
 src/core/eq.aya:8: fn same(ref self, ref Self other) -> bool;
 src/core/eq.aya:11: impl int
@@ -1142,6 +1146,8 @@ tests/unit/encoding_test.aya:18: fn test_hex_invalid()
 tests/unit/encoding_test.aya:26: fn test_base64_known_vectors()
 tests/unit/encoding_test.aya:36: fn test_base64_roundtrip()
 tests/unit/encoding_test.aya:47: fn test_base64_invalid()
+tests/unit/encoding_test.aya:56: fn test_base32_known_vectors()
+tests/unit/encoding_test.aya:67: fn test_base32_roundtrip_and_invalid()
 tests/unit/env_test.aya:6: fn test_args()
 tests/unit/env_test.aya:13: fn test_env()
 tests/unit/env_test.aya:20: fn test_env_or_args()

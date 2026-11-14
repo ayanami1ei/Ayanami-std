@@ -13,6 +13,8 @@ import "encoding";
 | `hex_decode(ref String s) -> Option[String]` | 十六进制 → 字节串（大小写均可） |
 | `base64_encode(ref String s) -> String` | 字节串 → Base64（标准字母表，含 `=` 填充） |
 | `base64_decode(ref String s) -> Option[String]` | Base64 → 字节串（严格校验） |
+| `base32_encode(ref String s) -> String` | 字节串 → Base32（RFC 4648，含 `=` 填充） |
+| `base32_decode(ref String s) -> Option[String]` | Base32 → 字节串（严格校验） |
 
 示例：
 
@@ -21,6 +23,7 @@ import "encoding";
 
 println(hex_encode("Hi"));            // 4869
 println(base64_encode("hello"));      // aGVsbG8=
+println(base32_encode("foobar"));     // MZXW6YTBOI======
 println(hex_decode("deadBEEF").unwrap());  // 4 字节
 ```
 
@@ -36,3 +39,4 @@ println(hex_decode("deadBEEF").unwrap());  // 4 字节
 1. hex 解码逐字节查表（`0-9` / `a-f` / `A-F`），编码用 `[char; n*2]` 缓冲一次性填充；
 2. Base64 每 3 字节编码为 4 字符，末尾按剩余 1/2 字节补 `=`；
 3. 解码按 4 字符一组校验：`=` 只能出现在末组，且 `xx==` / `xxx=` 之外的形式报错。
+4. Base32 以 5 位为一组编码（5 字节 → 8 字符），解码校验长度、字符、填充位置与尾部零位。
