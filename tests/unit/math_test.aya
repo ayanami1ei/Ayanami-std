@@ -54,6 +54,8 @@ fn test_prime_even() {
 fn test_nan() {
     n = sqrt(0.0 - 1.0);
     #assert(n.is_nan());
+    #assert(n != n);
+    #assert(!(n == n));
     #assert(!1.5.is_nan())
 }
 

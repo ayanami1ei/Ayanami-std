@@ -116,17 +116,8 @@ pub struct DateTime {
 fn div_floor(int a, int b) -> int {
     q = a / b;
     r = a % b;
-    // 编译器 #219：布尔值之间 ==/!= 生成非法 IR；修复后改回 `r != 0 && ((a < 0) != (b < 0))`
-    if r != 0 {
-        if r < 0 {
-            if b > 0 {
-                q = q - 1;
-            }
-        } else {
-            if b < 0 {
-                q = q - 1;
-            }
-        }
+    if r != 0 && a < 0 != (b < 0) {
+        q = q - 1;
     }
     return q;
 }

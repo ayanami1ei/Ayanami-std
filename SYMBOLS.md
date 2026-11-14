@@ -378,40 +378,40 @@ src/core/bitops.aya:105: pub fn swap_bytes(int x) -> int
 src/core/bitops.aya:118: pub fn next_power_of_two(int n) -> int
 src/core/convert.aya:13: pub enum ParseError
 src/core/convert.aya:19: impl ParseError
-src/core/convert.aya:24: fn what(ref self) -> String
-src/core/convert.aya:35: pub fn digit_value(char c) -> int
-src/core/convert.aya:49: impl String
-src/core/convert.aya:52: fn try_parse_int(ref self) -> Option[int]
-src/core/convert.aya:104: fn try_parse_uint(ref self) -> Option[usize]
-src/core/convert.aya:117: fn try_parse_float(ref self) -> Option[float]
-src/core/convert.aya:177: fn try_parse_bool(ref self) -> Option[bool]
-src/core/convert.aya:190: fn try_parse_int_radix(ref self, int base) -> Option[int]
-src/core/convert.aya:241: fn parse_int_radix(ref self, int base) -> int
-src/core/convert.aya:246: fn is_float(ref self) -> bool
-src/core/convert.aya:251: fn parse_float(ref self) -> float
-src/core/convert.aya:259: pub fn parse_int_result(ref String s) -> Result[int, ParseError]
-src/core/convert.aya:276: pub fn parse_float_result(ref String s) -> Result[float, ParseError]
-src/core/convert.aya:290: pub fn parse_bool_result(ref String s) -> Result[bool, ParseError]
-src/core/convert.aya:304: pub fn parse_int_or(ref String s, int fallback) -> int
-src/core/convert.aya:310: pub fn parse_float_or(ref String s, float fallback) -> float
-src/core/convert.aya:317: pub fn parse_bool_or(ref String s, bool fallback) -> bool
-src/core/convert.aya:322: impl int
-src/core/convert.aya:324: fn to_float(self) -> float
-src/core/convert.aya:328: fn to_char(self) -> char
-src/core/convert.aya:333: impl float
-src/core/convert.aya:336: fn to_int(self) -> int
-src/core/convert.aya:341: impl char
-src/core/convert.aya:343: fn to_int(self) -> int
-src/core/convert.aya:348: impl bool
-src/core/convert.aya:350: fn to_int(self) -> int
-src/core/convert.aya:359: interface Into[T]
-src/core/convert.aya:360: fn into(self) -> T;
-src/core/convert.aya:363: impl int
-src/core/convert.aya:365: fn into(self) -> float
-src/core/convert.aya:370: impl char
-src/core/convert.aya:372: fn into(self) -> int
-src/core/convert.aya:377: impl bool
-src/core/convert.aya:379: fn into(self) -> int
+src/core/convert.aya:22: pub fn what(ref self) -> String
+src/core/convert.aya:33: pub fn digit_value(char c) -> int
+src/core/convert.aya:47: impl String
+src/core/convert.aya:50: pub fn try_parse_int(ref self) -> Option[int]
+src/core/convert.aya:102: pub fn try_parse_uint(ref self) -> Option[usize]
+src/core/convert.aya:115: pub fn try_parse_float(ref self) -> Option[float]
+src/core/convert.aya:175: pub fn try_parse_bool(ref self) -> Option[bool]
+src/core/convert.aya:188: pub fn try_parse_int_radix(ref self, int base) -> Option[int]
+src/core/convert.aya:239: pub fn parse_int_radix(ref self, int base) -> int
+src/core/convert.aya:244: pub fn is_float(ref self) -> bool
+src/core/convert.aya:249: pub fn parse_float(ref self) -> float
+src/core/convert.aya:257: pub fn parse_int_result(ref String s) -> Result[int, ParseError]
+src/core/convert.aya:274: pub fn parse_float_result(ref String s) -> Result[float, ParseError]
+src/core/convert.aya:288: pub fn parse_bool_result(ref String s) -> Result[bool, ParseError]
+src/core/convert.aya:302: pub fn parse_int_or(ref String s, int fallback) -> int
+src/core/convert.aya:308: pub fn parse_float_or(ref String s, float fallback) -> float
+src/core/convert.aya:315: pub fn parse_bool_or(ref String s, bool fallback) -> bool
+src/core/convert.aya:320: impl int
+src/core/convert.aya:322: pub fn to_float(self) -> float
+src/core/convert.aya:326: pub fn to_char(self) -> char
+src/core/convert.aya:331: impl float
+src/core/convert.aya:334: pub fn to_int(self) -> int
+src/core/convert.aya:339: impl char
+src/core/convert.aya:341: pub fn to_int(self) -> int
+src/core/convert.aya:346: impl bool
+src/core/convert.aya:348: pub fn to_int(self) -> int
+src/core/convert.aya:357: interface Into[T]
+src/core/convert.aya:358: fn into(self) -> T;
+src/core/convert.aya:361: impl int
+src/core/convert.aya:363: pub fn into(self) -> float
+src/core/convert.aya:368: impl char
+src/core/convert.aya:370: pub fn into(self) -> int
+src/core/convert.aya:375: impl bool
+src/core/convert.aya:377: pub fn into(self) -> int
 src/core/encoding.aya:12: fn hex_val(int c) -> int
 src/core/encoding.aya:25: fn hex_char_lower(int v) -> char
 src/core/encoding.aya:32: fn hex_char_upper(int v) -> char
@@ -1004,12 +1004,12 @@ src/system/time.aya:90: pub fn elapsed_ms(int start) -> int
 src/system/time.aya:97: pub fn sleep_ms(int ms)
 src/system/time.aya:106: pub struct DateTime
 src/system/time.aya:116: fn div_floor(int a, int b) -> int
-src/system/time.aya:134: pub namespace DateTime
-src/system/time.aya:136: pub fn from_unix(int unix) -> DateTime
-src/system/time.aya:162: impl DateTime
-src/system/time.aya:166: pub fn format(ref self) -> String
-src/system/time.aya:180: pub fn format_unix(int unix) -> String
-src/system/time.aya:187: pub fn format_date(int unix) -> String
+src/system/time.aya:125: pub namespace DateTime
+src/system/time.aya:127: pub fn from_unix(int unix) -> DateTime
+src/system/time.aya:153: impl DateTime
+src/system/time.aya:157: pub fn format(ref self) -> String
+src/system/time.aya:171: pub fn format_unix(int unix) -> String
+src/system/time.aya:178: pub fn format_date(int unix) -> String
 tests/bench/iter_chain.aya:26: fn build(int n, int seed) -> ArrayList[int]
 tests/bench/iter_chain.aya:37: fn sum_index(ref ArrayList[int] a) -> int
 tests/bench/iter_chain.aya:51: fn sum_iter(ArrayList[int] a) -> int
@@ -1128,6 +1128,7 @@ tests/unit/convert_test.aya:72: fn test_result_parse()
 tests/unit/convert_test.aya:84: fn test_radix_parse()
 tests/unit/convert_test.aya:104: fn test_is_float()
 tests/unit/convert_test.aya:112: fn test_parse_uint()
+tests/unit/convert_test.aya:120: fn test_parse_error_what()
 tests/unit/csv_test.aya:6: fn test_csv_parse_basic()
 tests/unit/csv_test.aya:16: fn test_csv_parse_quoted()
 tests/unit/csv_test.aya:24: fn test_csv_parse_crlf_and_empty()
@@ -1253,17 +1254,17 @@ tests/unit/math_test.aya:17: fn test_float_ops()
 tests/unit/math_test.aya:29: fn test_gcd_lcm()
 tests/unit/math_test.aya:40: fn test_prime_even()
 tests/unit/math_test.aya:54: fn test_nan()
-tests/unit/math_test.aya:61: fn test_exp_log_round()
-tests/unit/math_test.aya:73: fn test_trig()
-tests/unit/math_test.aya:83: fn test_sign()
-tests/unit/math_test.aya:90: fn test_pow_negative()
-tests/unit/math_test.aya:97: fn test_usize_minmax()
-tests/unit/math_test.aya:106: fn test_abs_min_panics()
-tests/unit/math_test.aya:113: fn test_neg_min_panics()
-tests/unit/math_test.aya:120: fn test_float_special()
-tests/unit/math_test.aya:133: fn test_math_log_exp_family()
-tests/unit/math_test.aya:142: fn test_math_inverse_trig()
-tests/unit/math_test.aya:152: fn test_math_hyperbolic()
+tests/unit/math_test.aya:63: fn test_exp_log_round()
+tests/unit/math_test.aya:75: fn test_trig()
+tests/unit/math_test.aya:85: fn test_sign()
+tests/unit/math_test.aya:92: fn test_pow_negative()
+tests/unit/math_test.aya:99: fn test_usize_minmax()
+tests/unit/math_test.aya:108: fn test_abs_min_panics()
+tests/unit/math_test.aya:115: fn test_neg_min_panics()
+tests/unit/math_test.aya:122: fn test_float_special()
+tests/unit/math_test.aya:135: fn test_math_log_exp_family()
+tests/unit/math_test.aya:144: fn test_math_inverse_trig()
+tests/unit/math_test.aya:154: fn test_math_hyperbolic()
 tests/unit/mem_test.aya:20: fn __ayanami_live_allocs() -> int;
 tests/unit/mem_test.aya:22: fn churn_list() -> int
 tests/unit/mem_test.aya:39: fn churn_dedup() -> int

@@ -115,3 +115,10 @@ fn test_parse_uint() {
     #assert("-1".try_parse_uint().is_none());
     #assert("abc".try_parse_uint().is_none())
 }
+
+#[test]
+fn test_parse_error_what() {
+    #assert_eq(ParseError::Empty.what(), "empty input");
+    #assert_eq(ParseError::Invalid.what(), "invalid character");
+    #assert_eq(ParseError::Overflow.what(), "number out of range")
+}

@@ -3,7 +3,7 @@
 // 说明：
 // - 严格解析（try_parse_*）要求整串合法、不允许首尾空白；宽松版（parse_float）失败返回 0.0。
 // - `Into[T]` 接口按“自然转换”提供（每个类型至多一个目标）；显式目标用 `to_*` 方法。
-// - 泛型约束 `[U: Into[float]]` 暂不支持（编译器限制），接口先供动态分发与文档使用。
+// - 泛型约束 `[U: Into[float]]` 已支持（接口 bound），可按需用于静态分发。
 // - `Result` 版解析（parse_int_result 等）已提供；`ParseError` 实现 `Error` 接口（what() 消息）。
 import "string";
 
@@ -18,14 +18,12 @@ pub enum ParseError {
 
 impl ParseError {
     /// 错误消息（`Error` 接口：what()）
-    ///
-    /// 注：`match self` + 字面量臂当前触发编译器 #187（悬垂 + double free），修复前勿调用
     #[alloc]
-    fn what(ref self) -> String {
+    pub fn what(ref self) -> String {
         match self {
-            ParseError::Empty => "empty input",
-            ParseError::Invalid => "invalid character",
-            ParseError::Overflow => "number out of range",
+            ParseError.Empty => "empty input",
+            ParseError.Invalid => "invalid character",
+            ParseError.Overflow => "number out of range",
         }
     }
 }
@@ -49,7 +47,7 @@ pub fn digit_value(char c) -> int {
 impl String {
     /// 严格解析整数：可选 +/-，全部为数字；空白、非法字符、溢出返回 None
     #[pure]
-    fn try_parse_int(ref self) -> Option[int] {
+    pub fn try_parse_int(ref self) -> Option[int] {
         n = self.len;
         if n == 0 {
             return Option::None();
@@ -101,7 +99,7 @@ impl String {
     }
     /// 严格解析 usize（负数/非法返回 None）
     #[pure]
-    fn try_parse_uint(ref self) -> Option[usize] {
+    pub fn try_parse_uint(ref self) -> Option[usize] {
         v = self.try_parse_int();
         if v._tag != 0 {
             return Option::None();
@@ -114,7 +112,7 @@ impl String {
     }
     /// 严格解析浮点：可选 +/-，digits [. digits]（无指数）；非法输入返回 None
     #[pure]
-    fn try_parse_float(ref self) -> Option[float] {
+    pub fn try_parse_float(ref self) -> Option[float] {
         n = self.len;
         if n == 0 {
             return Option::None();
@@ -174,7 +172,7 @@ impl String {
     /// 严格解析布尔：仅 "true" / "false"（内部有字符串字面量分配）
     #[alloc]
     #[state]
-    fn try_parse_bool(ref self) -> Option[bool] {
+    pub fn try_parse_bool(ref self) -> Option[bool] {
         t = "true";
         f = "false";
         if self.eq(t) {
@@ -187,7 +185,7 @@ impl String {
     }
     /// 严格按进制解析（base ∈ [2, 36]；允许 +/-，不允许空白/前缀）
     #[pure]
-    fn try_parse_int_radix(ref self, int base) -> Option[int] {
+    pub fn try_parse_int_radix(ref self, int base) -> Option[int] {
         if base < 2 {
             return Option::None();
         }
@@ -238,17 +236,17 @@ impl String {
     }
     /// 宽松按进制解析：失败返回 0
     #[pure]
-    fn parse_int_radix(ref self, int base) -> int {
+    pub fn parse_int_radix(ref self, int base) -> int {
         return self.try_parse_int_radix(base).unwrap_or(0);
     }
     /// 整个串是否为合法浮点
     #[pure]
-    fn is_float(ref self) -> bool {
+    pub fn is_float(ref self) -> bool {
         return self.try_parse_float().is_some();
     }
     /// 宽松浮点解析：失败返回 0.0（对齐 parse_int）
     #[pure]
-    fn parse_float(ref self) -> float {
+    pub fn parse_float(ref self) -> float {
         return self.try_parse_float().unwrap_or(0.0);
     }
 }
@@ -321,11 +319,11 @@ pub fn parse_bool_or(ref String s, bool fallback) -> bool {
 // ── 显式目标转换（to_*） ──
 impl int {
     #[pure]
-    fn to_float(self) -> float {
+    pub fn to_float(self) -> float {
         return self as float;
     }
     #[pure]
-    fn to_char(self) -> char {
+    pub fn to_char(self) -> char {
         return self as char;
     }
 }
@@ -333,21 +331,21 @@ impl int {
 impl float {
     /// 截断取整（向零）
     #[pure]
-    fn to_int(self) -> int {
+    pub fn to_int(self) -> int {
         return self as int;
     }
 }
 
 impl char {
     #[pure]
-    fn to_int(self) -> int {
+    pub fn to_int(self) -> int {
         return self as int;
     }
 }
 
 impl bool {
     #[pure]
-    fn to_int(self) -> int {
+    pub fn to_int(self) -> int {
         if self {
             return 1;
         }
@@ -362,21 +360,21 @@ interface Into[T] {
 
 impl int {
     #[pure]
-    fn into(self) -> float {
+    pub fn into(self) -> float {
         return self as float;
     }
 }
 
 impl char {
     #[pure]
-    fn into(self) -> int {
+    pub fn into(self) -> int {
         return self as int;
     }
 }
 
 impl bool {
     #[pure]
-    fn into(self) -> int {
+    pub fn into(self) -> int {
         if self {
             return 1;
         }
