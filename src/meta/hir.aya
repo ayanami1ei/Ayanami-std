@@ -1,0 +1,269 @@
+// hir — 第三方 #[transform] 的 HIR JSON helper
+//
+// 底层仍使用 collections/json 的 Json 值；这里只提供 transform 最常用的
+// 程序/函数/body 访问，以及构造 return/常量节点的小工具。
+
+import "json";
+import "arraylist";
+import "option";
+import "string";
+
+#[alloc]
+#[state]
+fn copy_json(ref Json v) -> Json {
+    tag = v._tag;
+    if tag == 0 {
+        return Json::Null;
+    }
+    if tag == 1 {
+        return Json::Bool(v._data_Bool._0);
+    }
+    if tag == 2 {
+        return Json::Int(v._data_Int._0);
+    }
+    if tag == 3 {
+        return Json::Float(v._data_Float._0);
+    }
+    if tag == 4 {
+        return Json::Str(v._data_Str._0.copy());
+    }
+    if tag == 5 {
+        items = ArrayList::new[Json]();
+        i = 0usize;
+        while i < v._data_Array._0.len() {
+            items.push(copy_json(v._data_Array._0.index_ref(i)));
+            i = i + 1;
+        }
+        return Json::Array(items);
+    }
+    fields = ArrayList::new[JsonField]();
+    i = 0usize;
+    while i < v._data_Object._0.len() {
+        f = v._data_Object._0.index_ref(i);
+        fields.push(JsonField::new(f.key.copy(), copy_json(f.value)));
+        i = i + 1;
+    }
+    return Json::Object(fields);
+}
+
+#[alloc]
+#[state]
+fn get_field(ref Json obj, ref String key) -> Option[Json] {
+    if obj._tag != 6 {
+        return Option::None();
+    }
+    i = 0usize;
+    while i < obj._data_Object._0.len() {
+        f = obj._data_Object._0.index_ref(i);
+        if f.key == key {
+            return Option::Some(copy_json(f.value));
+        }
+        i = i + 1;
+    }
+    return Option::None();
+}
+
+#[alloc]
+#[state]
+fn set_field(ref Json obj, ref String key, Json value) -> Json {
+    fields = ArrayList::new[JsonField]();
+    if obj._tag == 6 {
+        i = 0usize;
+        while i < obj._data_Object._0.len() {
+            f = obj._data_Object._0.index_ref(i);
+            if f.key == key {
+                fields.push(JsonField::new(f.key.copy(), copy_json(ref value)));
+            } else {
+                fields.push(JsonField::new(f.key.copy(), copy_json(f.value)));
+            }
+            i = i + 1;
+        }
+    }
+    return Json::Object(fields);
+}
+
+#[alloc]
+#[state]
+fn make_object(ArrayList[JsonField] fields) -> Json {
+    return Json::Object(fields);
+}
+
+#[alloc]
+#[state]
+fn zero_span() -> Json {
+    fields = ArrayList::new[JsonField]();
+    fields.push(JsonField::new("start_line", Json::Int(0)));
+    fields.push(JsonField::new("start_col", Json::Int(0)));
+    fields.push(JsonField::new("end_line", Json::Int(0)));
+    fields.push(JsonField::new("end_col", Json::Int(0)));
+    fields.push(JsonField::new("start_byte", Json::Int(0)));
+    fields.push(JsonField::new("end_byte", Json::Int(0)));
+    return make_object(fields);
+}
+
+#[alloc]
+#[state]
+fn copy_array(ArrayList[Json] values) -> ArrayList[Json] {
+    result = ArrayList::new[Json]();
+    i = 0usize;
+    while i < values.len() {
+        result.push(copy_json(values.index_ref(i)));
+        i = i + 1;
+    }
+    return result;
+}
+
+/// 解析 transform 输入/输出的 HIR JSON。
+#[alloc]
+#[state]
+pub fn parse_hir(ref String input) -> Option[Json] {
+    return parse(ref input);
+}
+
+/// 任意 JSON 值序列化（HIR 输出必须保留 schema 版本）。
+#[alloc]
+#[state]
+pub fn render_hir(ref Json value) -> String {
+    return value.render();
+}
+
+#[alloc]
+#[state]
+pub fn copy(ref Json value) -> Json {
+    return copy_json(ref value);
+}
+
+/// 程序 items 数组（HIR schema 的 `items`）。
+#[alloc]
+#[state]
+pub fn items(ref Json program) -> Option[Json] {
+    return get_field(ref program, "items");
+}
+
+/// 读取任意对象字段（transform 调试/扩展用）。
+#[alloc]
+#[state]
+pub fn field(ref Json value, ref String key) -> Option[Json] {
+    return get_field(ref value, key);
+}
+
+/// 查找顶层/命名空间内第一个同名函数 item，返回其 JSON。
+#[alloc]
+#[state]
+pub fn find_function(ref Json program, ref String name) -> Option[Json] {
+    items_json = get_field(ref program, "items").unwrap_or(Json::Null);
+    if items_json._tag != 5 {
+        return Option::None();
+    }
+    i = 0usize;
+    while i < items_json._data_Array._0.len() {
+        item = items_json._data_Array._0.index_ref(i);
+        kind = get_field(item, "kind").unwrap_or(Json::Null);
+        if kind._tag == 4 && kind._data_Str._0 == "fn" {
+            value = get_field(item, "value").unwrap_or(Json::Null);
+            value_name = get_field(value, "name").unwrap_or(Json::Null);
+            if value_name._tag == 4 && value_name._data_Str._0 == name {
+                return Option::Some(copy_json(item));
+            }
+        }
+        i = i + 1;
+    }
+    return Option::None();
+}
+
+/// 替换同名函数的 `body` 语句数组；未找到返回 None。
+#[alloc]
+#[state]
+pub fn replace_function_body(ref Json program, ref String name, ArrayList[Json] body) -> Option[Json] {
+    items_json = get_field(ref program, "items").unwrap_or(Json::Null);
+    if items_json._tag != 5 {
+        return Option::None();
+    }
+    new_items = ArrayList::new[Json]();
+    matched = false;
+    i = 0usize;
+    while i < items_json._data_Array._0.len() {
+        item = items_json._data_Array._0.index_ref(i);
+        kind = get_field(item, "kind").unwrap_or(Json::Null);
+        value = get_field(item, "value").unwrap_or(Json::Null);
+        value_name = get_field(value, "name").unwrap_or(Json::Null);
+        is_match = kind._tag == 4 && kind._data_Str._0 == "fn"
+            && value_name._tag == 4 && value_name._data_Str._0 == name;
+        if is_match {
+            new_value = set_field(value, "body", Json::Array(copy_array(body)));
+            new_item = set_field(item, "value", new_value);
+            new_items.push(new_item);
+            matched = true;
+        } else {
+            new_items.push(copy_json(item));
+        }
+        i = i + 1;
+    }
+    if !matched {
+        return Option::None();
+    }
+    return Option::Some(set_field(program, "items", Json::Array(new_items)));
+}
+
+/// 在 items 末尾追加一个函数/结构体 item。
+#[alloc]
+#[state]
+pub fn append_item(ref Json program, Json item) -> Json {
+    items_json = get_field(ref program, "items").unwrap_or(Json::Null);
+    new_items = ArrayList::new[Json]();
+    if items_json._tag == 5 {
+        i = 0usize;
+        while i < items_json._data_Array._0.len() {
+            new_items.push(copy_json(items_json._data_Array._0.index_ref(i)));
+            i = i + 1;
+        }
+    }
+    new_items.push(item);
+    return set_field(program, "items", Json::Array(new_items));
+}
+
+/// 克隆函数 item，替换名字和 FnId。
+#[alloc]
+#[state]
+pub fn clone_function(ref Json item, ref String new_name, int new_fn_id) -> Option[Json] {
+    value = get_field(ref item, "value").unwrap_or(Json::Null);
+    new_value = set_field(value, "name", Json::Str(new_name.copy()));
+    new_value = set_field(new_value, "fn_id", Json::Int(new_fn_id));
+    return Option::Some(set_field(item, "value", new_value));
+}
+
+/// HIR 常量节点（int）。
+#[alloc]
+#[state]
+pub fn make_int(int value) -> Json {
+    val_fields = ArrayList::new[JsonField]();
+    val_fields.push(JsonField::new("kind", Json::Str("int")));
+    val_fields.push(JsonField::new("value", Json::Int(value)));
+    const_fields = ArrayList::new[JsonField]();
+    const_fields.push(JsonField::new("kind", Json::Str("const")));
+    const_fields.push(JsonField::new("val", make_object(val_fields)));
+    ty_fields = ArrayList::new[JsonField]();
+    ty_fields.push(JsonField::new("kind", Json::Str("int")));
+    const_fields.push(JsonField::new("ty", make_object(ty_fields)));
+    return make_object(const_fields);
+}
+
+/// HIR return 语句节点（零 span）。
+#[alloc]
+#[state]
+pub fn make_return(Json value) -> Json {
+    fields = ArrayList::new[JsonField]();
+    fields.push(JsonField::new("kind", Json::Str("return")));
+    fields.push(JsonField::new("value", value));
+    fields.push(JsonField::new("span", zero_span()));
+    return make_object(fields);
+}
+
+/// 单语句 body（方便替换函数体）。
+#[alloc]
+#[state]
+pub fn single_body(Json stmt) -> ArrayList[Json] {
+    body = ArrayList::new[Json]();
+    body.push(stmt);
+    return body;
+}

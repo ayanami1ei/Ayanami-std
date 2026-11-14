@@ -26,7 +26,7 @@ MODULES=(
     collections/list collections/arraylist collections/linkedlist collections/iter collections/text collections/sort collections/csv collections/url collections/json collections/ini collections/hash collections/hashmap collections/hashset
     core/convert core/encoding core/sha256 core/checksum meta/macros dev/test
     system/alloc system/io system/path system/fs system/env system/process system/time system/rand system/uuid system/sync system/thread system/channel
-    meta/fmt meta/mir
+    meta/fmt meta/mir meta/hir
     std
 )
 

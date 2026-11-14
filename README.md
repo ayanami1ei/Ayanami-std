@@ -192,3 +192,34 @@ AYANAMI_BIN=<主仓>/target/debug/ayanami ./packaging/build.sh --install <主仓
 
 之后运行任意 `import` 标准库的程序即可看到改动；`./packaging/build.sh` 不带 `--install`
 只生成 `src/*.lcl`。发布时主仓 `./scripts/package_release.sh` 会逐模块构建并组装 `install/std/`。
+
+## hir — HIR transform helper
+
+文件：`std/hir.lcl`（源码 `src/meta/hir.aya`）
+
+```ayanami
+import "hir"
+
+#[transform]
+#[alloc]
+#[state]
+pub fn bump(String input) -> String {
+    doc = parse_hir(ref input).unwrap()
+    body = single_body(make_return(make_int(8)))
+    result = replace_function_body(ref doc, ref "main", body).unwrap()
+    return render_hir(ref result)
+}
+```
+
+| 函数 | 说明 |
+|---|---|
+| `parse_hir(ref String) -> Option[Json]` | 解析 HIR JSON |
+| `render_hir(ref Json) -> String` | 序列化 HIR JSON |
+| `items(ref Json) -> Option[Json]` | 程序 items |
+| `field(ref Json, ref String) -> Option[Json]` | 读取对象字段 |
+| `find_function(ref Json, ref String) -> Option[Json]` | 查找函数 item |
+| `replace_function_body(ref Json, ref String, ArrayList[Json]) -> Option[Json]` | 替换函数 body |
+| `append_item(ref Json, Json) -> Json` | 追加 item |
+| `clone_function(ref Json, ref String, int) -> Option[Json]` | 克隆函数并改名字/FnId |
+| `make_int(int) -> Json` / `make_return(Json) -> Json` | 构造常用 HIR 节点 |
+| `single_body(Json) -> ArrayList[Json]` | 单语句 body |
