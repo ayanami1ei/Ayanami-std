@@ -1,0 +1,48 @@
+// checksum — CRC-32（IEEE 802.3，反射多项式 0xedb88320）
+//
+// 输入按字节处理（`char` 即 1 字节）；标准测试向量：
+// crc32("") = 0，crc32("123456789") = 0xcbf43926。
+import "string";
+
+fn hex_char(int v) -> char {
+    if v < 10 {
+        return (48 + v) as char;
+    }
+    return (87 + v) as char;
+}
+
+/// CRC-32（返回 0..2^32-1）
+#[pure]
+pub fn crc32(ref String data) -> int {
+    crc = 4294967295;
+    n = data.len as int;
+    i = 0;
+    while i < n {
+        crc = crc ^ data.data[i as usize] as int;
+        j = 0;
+        while j < 8 {
+            if crc & 1 != 0 {
+                crc = crc >> 1 ^ 3988292384;
+            } else {
+                crc = crc >> 1;
+            }
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    return (crc ^ 4294967295) & 4294967295;
+}
+
+/// CRC-32 的 8 位小写十六进制
+#[alloc]
+#[state]
+pub fn crc32_hex(ref String data) -> String {
+    v = crc32(ref data);
+    res = "";
+    shift = 28;
+    while shift >= 0 {
+        res = res + hex_char(v >> shift & 15).to_string();
+        shift = shift - 4;
+    }
+    return res;
+}

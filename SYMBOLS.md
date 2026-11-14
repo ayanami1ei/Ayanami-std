@@ -376,6 +376,9 @@ src/core/bitops.aya:84: pub fn bit_length(int x) -> int
 src/core/bitops.aya:92: pub fn reverse_bits(int x) -> int
 src/core/bitops.aya:105: pub fn swap_bytes(int x) -> int
 src/core/bitops.aya:118: pub fn next_power_of_two(int n) -> int
+src/core/checksum.aya:7: fn hex_char(int v) -> char
+src/core/checksum.aya:16: pub fn crc32(ref String data) -> int
+src/core/checksum.aya:39: pub fn crc32_hex(ref String data) -> String
 src/core/convert.aya:13: pub enum ParseError
 src/core/convert.aya:19: impl ParseError
 src/core/convert.aya:22: pub fn what(ref self) -> String
@@ -1125,6 +1128,8 @@ tests/unit/channel_test.aya:143: fn bounded_backpressure_run() -> int
 tests/unit/channel_test.aya:170: fn test_channel_bounded_backpressure()
 tests/unit/char_test.aya:4: fn test_classify()
 tests/unit/char_test.aya:17: fn test_convert()
+tests/unit/checksum_test.aya:6: fn test_crc32_vectors()
+tests/unit/checksum_test.aya:14: fn test_crc32_hex()
 tests/unit/condvar_test.aya:11: fn condvar_handoff_run() -> int
 tests/unit/condvar_test.aya:53: fn test_condvar_handoff()
 tests/unit/condvar_test.aya:57: fn condvar_many_run() -> int
