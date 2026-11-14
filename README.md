@@ -221,5 +221,6 @@ pub fn bump(String input) -> String {
 | `replace_function_body(ref Json, ref String, ArrayList[Json]) -> Option[Json]` | 替换函数 body |
 | `append_item(ref Json, Json) -> Json` | 追加 item |
 | `clone_function(ref Json, ref String, int) -> Option[Json]` | 克隆函数并改名字/FnId |
+| `max_fn_id(ref Json) -> int` | 当前程序最大 FnId |
 | `make_int(int) -> Json` / `make_return(Json) -> Json` | 构造常用 HIR 节点 |
 | `single_body(Json) -> ArrayList[Json]` | 单语句 body |

@@ -267,3 +267,39 @@ pub fn single_body(Json stmt) -> ArrayList[Json] {
     body.push(stmt);
     return body;
 }
+
+/// 当前 program 中最大 FnId（含 items / imported_fns；无则 -1）。
+#[alloc]
+#[state]
+pub fn max_fn_id(ref Json program) -> int {
+    result = -1;
+    items_json = get_field(ref program, "items").unwrap_or(Json::Null);
+    if items_json._tag == 5 {
+        i = 0usize;
+        while i < items_json._data_Array._0.len() {
+            item = items_json._data_Array._0.index_ref(i);
+            kind = get_field(item, "kind").unwrap_or(Json::Null);
+            if kind._tag == 4 && kind._data_Str._0 == "fn" {
+                value = get_field(item, "value").unwrap_or(Json::Null);
+                id = get_field(value, "fn_id").unwrap_or(Json::Null);
+                if id._tag == 2 && id._data_Int._0 > result {
+                    result = id._data_Int._0;
+                }
+            }
+            i = i + 1;
+        }
+    }
+    imported = get_field(ref program, "imported_fns").unwrap_or(Json::Null);
+    if imported._tag == 5 {
+        i = 0usize;
+        while i < imported._data_Array._0.len() {
+            item = imported._data_Array._0.index_ref(i);
+            id = get_field(item, "fn_id").unwrap_or(Json::Null);
+            if id._tag == 2 && id._data_Int._0 > result {
+                result = id._data_Int._0;
+            }
+            i = i + 1;
+        }
+    }
+    return result;
+}
