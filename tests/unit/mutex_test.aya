@@ -2,6 +2,10 @@ import "sync";
 
 import "thread";
 
+import "arraylist";
+
+import "iter";
+
 import "test";
 
 #[test]
@@ -50,24 +54,22 @@ fn test_mutex_string_payload() {
 fn test_mutex_contention() {
     // 8 线程并发争用（futex 等待/唤醒路径）
     m = Mutex::new[int](0);
-    done = AtomicInt::new(0);
+    ts = ArrayList::new[Thread]();
     n = 8;
     unsafe {
         pm = ref m as *Mutex[int]
-        pd = ref done as *AtomicInt
         i = 0;
         while i < n {
-            Thread::spawn(() -> void {
+            ts.push(Thread::spawn(() -> void {
                 unsafe {
                     (*pm).with_lock((ref mut int v) -> void { *v = *v + 1 });
-                    (*pd).fetch_add(1)
                 }
-            })
+            }))
             i = i + 1
         }
-        while done.load() < n {
-            cpu_relax()
-        }
+    }
+    for t in ts.into_iter() {
+        t.join()
     }
     total = m.with_lock((ref mut int v) -> int { *v });
     #assert_eq(total, n)

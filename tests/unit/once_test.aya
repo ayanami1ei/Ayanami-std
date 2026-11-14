@@ -2,29 +2,31 @@ import "sync";
 
 import "thread";
 
+import "arraylist";
+
+import "iter";
+
 import "test";
 
 fn once_run() -> int {
     o = Once::new();
     count = AtomicInt::new(0);
-    done = AtomicInt::new(0);
+    ts = ArrayList::new[Thread]();
     unsafe {
         po = ref o as *Once
         pc = ref count as *AtomicInt
-        pd = ref done as *AtomicInt
         i = 0;
         while i < 8 {
-            Thread::spawn(() -> void {
+            ts.push(Thread::spawn(() -> void {
                 unsafe {
-                    (*po).call_once(() -> void { (*pc).fetch_add(1) });
-                    (*pd).fetch_add(1)
+                    (*po).call_once(() -> void { (*pc).fetch_add(1) })
                 }
-            })
+            }))
             i = i + 1
         }
-        while done.load() < 8 {
-            cpu_relax()
-        }
+    }
+    for t in ts.into_iter() {
+        t.join()
     }
     return count.load()
 }

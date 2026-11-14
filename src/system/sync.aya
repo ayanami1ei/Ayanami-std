@@ -8,7 +8,6 @@ import "arch_x86_64";
 // - 内存序模型：x86-64 TSO，lock 前缀操作 = 全栅栏。
 //
 // 注意：AtomicInt 操作均需 ref self（可取地址的值），共享时经 ref 传递。
-
 pub struct AtomicInt {
     int value
 }
@@ -26,66 +25,58 @@ impl AtomicInt {
     pub fn load(ref self) -> int {
         return ArchX86_64::atomic_load(ref self.value);
     }
-
     /// 原子存储（顺序一致）
     #[state]
     pub fn store(ref self, int v) {
         ArchX86_64::atomic_store(ref self.value, v);
     }
-
     /// 原子交换（返回旧值）
     #[state]
     pub fn swap(ref self, int v) -> int {
         return ArchX86_64::atomic_swap(ref self.value, v);
     }
-
     /// 原子加（返回旧值）
     #[state]
     pub fn fetch_add(ref self, int v) -> int {
         return ArchX86_64::atomic_fetch_add(ref self.value, v);
     }
-
     /// 原子减（返回旧值）
     #[state]
     pub fn fetch_sub(ref self, int v) -> int {
         return ArchX86_64::atomic_fetch_sub(ref self.value, v);
     }
-
     /// 原子比较交换（返回旧值；`old == expected` 表示成功）
     #[state]
     pub fn compare_exchange(ref self, int expected, int new) -> int {
         return ArchX86_64::atomic_compare_exchange(ref self.value, expected, new);
     }
-
     /// 原子按位与（返回旧值；CAS 循环）
     #[state]
     pub fn fetch_and(ref self, int v) -> int {
         while true {
             old = ArchX86_64::atomic_load(ref self.value);
             if ArchX86_64::atomic_compare_exchange(ref self.value, old, old & v) == old {
-                return old
+                return old;
             }
         }
     }
-
     /// 原子按位或（返回旧值；CAS 循环）
     #[state]
     pub fn fetch_or(ref self, int v) -> int {
         while true {
             old = ArchX86_64::atomic_load(ref self.value);
             if ArchX86_64::atomic_compare_exchange(ref self.value, old, old | v) == old {
-                return old
+                return old;
             }
         }
     }
-
     /// 原子按位异或（返回旧值；CAS 循环）
     #[state]
     pub fn fetch_xor(ref self, int v) -> int {
         while true {
             old = ArchX86_64::atomic_load(ref self.value);
             if ArchX86_64::atomic_compare_exchange(ref self.value, old, old ^ v) == old {
-                return old
+                return old;
             }
         }
     }
@@ -127,31 +118,29 @@ impl[T] Mutex[T] {
     /// 加锁 → 以 `ref mut` 传入载荷 → 解锁；返回回调结果（void 回调可作语句）
     #[io]
     #[state]
-    pub fn with_lock[U](ref mut self, Fn(ref mut T) -> U f) -> U {
+    pub fn with_lock[U](ref mut self, Fn(ref mut T)->U f) -> U {
         self.lock();
         r = f(ref mut self.payload);
         self.unlock();
         return r;
     }
-
     /// 尝试加锁并执行回调；已被占用 → None（不阻塞）
     #[io]
     #[state]
-    pub fn try_with_lock[U](ref mut self, Fn(ref mut T) -> U f) -> Option[U] {
+    pub fn try_with_lock[U](ref mut self, Fn(ref mut T)->U f) -> Option[U] {
         if ArchX86_64::atomic_compare_exchange(ref self.state, 0, 1) != 0 {
-            return Option::None()
+            return Option::None();
         }
         r = f(ref mut self.payload);
         self.unlock();
-        return Option::Some(r)
+        return Option::Some(r);
     }
-
     /// 显式加锁（必须配对 unlock）
     #[io]
     #[state]
     pub fn lock(ref self) -> void {
         if ArchX86_64::atomic_compare_exchange(ref self.state, 0, 1) == 0 {
-            return
+            return;
         }
         while true {
             if ArchX86_64::atomic_load(ref self.state) == 1 {
@@ -161,11 +150,10 @@ impl[T] Mutex[T] {
                 __ayanami_futex_wait(ref self.state as *int, 2)
             }
             if ArchX86_64::atomic_compare_exchange(ref self.state, 0, 2) == 0 {
-                return
+                return;
             }
         }
     }
-
     /// 解锁；若有等待者则唤醒一个
     #[io]
     #[state]
@@ -176,10 +164,9 @@ impl[T] Mutex[T] {
             }
         }
     }
-
     /// 载荷（仅在持锁期间使用；文档约定）
     pub fn data(ref mut self) -> ref mut T {
-        return ref mut self.payload
+        return ref mut self.payload;
     }
 }
 
@@ -202,128 +189,124 @@ impl[T] RwLock[T] {
     /// 读锁 → 回调（`ref T`）；返回回调结果
     #[io]
     #[state]
-    pub fn with_read[U](ref self, Fn(ref T) -> U f) -> U {
+    pub fn with_read[U](ref self, Fn(ref T)->U f) -> U {
         self.acquire_read();
         r = f(ref self.payload);
         self.release_read();
-        return r
+        return r;
     }
-
     /// 写锁 → 回调（`ref mut T`）；返回回调结果
     #[io]
     #[state]
-    pub fn with_write[U](ref mut self, Fn(ref mut T) -> U f) -> U {
+    pub fn with_write[U](ref mut self, Fn(ref mut T)->U f) -> U {
         self.acquire_write();
         r = f(ref mut self.payload);
         self.release_write();
-        return r
+        return r;
     }
-
     /// 显式读锁（必须配对 read_unlock）
     #[io]
     #[state]
     pub fn read_lock(ref self) -> void {
         self.acquire_read();
     }
-
     /// 显式读锁解锁
     #[io]
     #[state]
     pub fn read_unlock(ref self) -> void {
         self.release_read();
     }
-
     /// 显式写锁（必须配对 write_unlock）
     #[io]
     #[state]
     pub fn write_lock(ref self) -> void {
         self.acquire_write();
     }
-
     /// 显式写锁解锁
     #[io]
     #[state]
     pub fn write_unlock(ref self) -> void {
         self.release_write();
     }
-
     /// 尝试读锁并执行回调；有写者 → None（不阻塞）
     #[io]
     #[state]
-    pub fn try_with_read[U](ref self, Fn(ref T) -> U f) -> Option[U] {
+    pub fn try_with_read[U](ref self, Fn(ref T)->U f) -> Option[U] {
         s = ArchX86_64::atomic_load(ref self.state);
         if s < 0 || ArchX86_64::atomic_load(ref self.writers) > 0 {
-            return Option::None()
+            return Option::None();
         }
         if ArchX86_64::atomic_compare_exchange(ref self.state, s, s + 1) != s {
-            return Option::None()
+            return Option::None();
         }
         r = f(ref self.payload);
         self.release_read();
-        return Option::Some(r)
+        return Option::Some(r);
     }
-
     /// 尝试写锁并执行回调；非空闲 → None（不阻塞）
     #[io]
     #[state]
-    pub fn try_with_write[U](ref mut self, Fn(ref mut T) -> U f) -> Option[U] {
+    pub fn try_with_write[U](ref mut self, Fn(ref mut T)->U f) -> Option[U] {
         if ArchX86_64::atomic_compare_exchange(ref self.state, 0, -1) != 0 {
-            return Option::None()
+            return Option::None();
         }
         r = f(ref mut self.payload);
         self.release_write();
-        return Option::Some(r)
+        return Option::Some(r);
     }
-
     #[io]
     #[state]
-    fn acquire_read(ref self) -> void {
+    pub fn acquire_read(ref self) -> void {
         while true {
             s = ArchX86_64::atomic_load(ref self.state);
             if s >= 0 && ArchX86_64::atomic_load(ref self.writers) == 0 {
                 if ArchX86_64::atomic_compare_exchange(ref self.state, s, s + 1) == s {
-                    return
+                    return;
                 }
-            }
-            unsafe {
-                __ayanami_futex_wait(ref self.state as *int, s)
+            } else {
+                // 期望值为 0（空闲）时不能等待：唤醒可能已在 futex_wait 之前丢失
+                if s != 0 {
+                    unsafe {
+                        __ayanami_futex_wait(ref self.state as *int, s)
+                    }
+                }
             }
         }
     }
-
     #[io]
     #[state]
-    fn release_read(ref self) -> void {
+    pub fn release_read(ref self) -> void {
         if ArchX86_64::atomic_fetch_sub(ref self.state, 1) == 1 {
-            n = 1
+            n = 1;
             if ArchX86_64::atomic_load(ref self.writers) > 0 {
-                n = 2147483647
+                n = 2147483647;
             }
             unsafe {
                 __ayanami_futex_wake(ref self.state as *int, n)
             }
         }
     }
-
     #[io]
     #[state]
-    fn acquire_write(ref self) -> void {
+    pub fn acquire_write(ref self) -> void {
         ArchX86_64::atomic_fetch_add(ref self.writers, 1);
         while true {
             if ArchX86_64::atomic_compare_exchange(ref self.state, 0, -1) == 0 {
                 ArchX86_64::atomic_fetch_sub(ref self.writers, 1);
-                return
+                return;
             }
             s = ArchX86_64::atomic_load(ref self.state);
-            unsafe {
-                __ayanami_futex_wait(ref self.state as *int, s)
+            // 期望值为 0（空闲）时不能等待：唤醒可能已在 futex_wait 之前丢失
+            if s != 0 {
+                unsafe {
+                    __ayanami_futex_wait(ref self.state as *int, s)
+                }
             }
         }
     }
-
     #[io]
     #[state]
-    fn release_write(ref self) -> void {
+    pub fn release_write(ref self) -> void {
         ArchX86_64::atomic_store(ref self.state, 0);
         unsafe {
             __ayanami_futex_wake(ref self.state as *int, 2147483647)
@@ -353,14 +336,7 @@ pub struct Barrier {
 pub namespace Barrier {
     /// 新建（participants 个线程会合）
     pub fn new(int participants) -> Barrier {
-        return Barrier {
-            seq = 0,
-            state = Mutex::new[BarrierState](BarrierState {
-                total = participants,
-                arrived = 0,
-                generation = 0
-            })
-        };
+        return Barrier { seq = 0, state = Mutex::new[BarrierState](BarrierState { total = participants, arrived = 0, generation = 0 }) };
     }
 }
 
@@ -372,26 +348,30 @@ impl Barrier {
         // 闭包按值捕获，结果经返回值带出（票据：本轮代数 + 是否最后到达）
         t = self.state.with_lock((ref mut BarrierState s) -> BarrierTicket {
             g = s.generation;
+
             done = 0;
+
             s.arrived = s.arrived + 1;
+
             if s.arrived == s.total {
                 s.arrived = 0;
                 s.generation = s.generation + 1;
                 done = 1;
             }
-            return BarrierTicket { generation = g, last = done }
+
+            return BarrierTicket { generation = g, last = done };
         });
         if t.last == 1 {
             ArchX86_64::atomic_fetch_add(ref self.seq, 1);
             unsafe {
                 __ayanami_futex_wake(ref self.seq as *int, 2147483647)
             }
-            return
+            return;
         }
         while true {
             cur = ArchX86_64::atomic_load(ref self.seq);
             if cur > t.generation {
-                return
+                return;
             }
             unsafe {
                 __ayanami_futex_wait(ref self.seq as *int, cur)
@@ -409,21 +389,21 @@ pub struct Once {
 
 pub namespace Once {
     pub fn new() -> Once {
-        return Once { state = 0 }
+        return Once { state = 0 };
     }
 }
 
 impl Once {
     #[io]
     #[state]
-    pub fn call_once(ref self, Fn() -> void f) -> void {
+    pub fn call_once(ref self, Fn()->void f) -> void {
         if ArchX86_64::atomic_compare_exchange(ref self.state, 0, 1) == 0 {
             f();
             ArchX86_64::atomic_store(ref self.state, 2);
             unsafe {
                 __ayanami_futex_wake(ref self.state as *int, 2147483647)
             }
-            return
+            return;
         }
         while ArchX86_64::atomic_load(ref self.state) != 2 {
             unsafe {
@@ -444,7 +424,7 @@ pub struct Condvar {
 
 pub namespace Condvar {
     pub fn new() -> Condvar {
-        return Condvar { seq = 0 }
+        return Condvar { seq = 0 };
     }
 }
 
@@ -460,7 +440,6 @@ impl Condvar {
             (*m).lock()
         }
     }
-
     /// 唤醒一个等待者
     #[io]
     #[state]
@@ -470,7 +449,6 @@ impl Condvar {
             __ayanami_futex_wake(ref self.seq as *int, 1)
         }
     }
-
     /// 唤醒全部等待者
     #[io]
     #[state]

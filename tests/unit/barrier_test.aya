@@ -2,6 +2,10 @@ import "sync";
 
 import "thread";
 
+import "arraylist";
+
+import "iter";
+
 import "test";
 
 // N 线程各自自增后到屏障等待，全部到达后才检查总数
@@ -9,13 +13,14 @@ fn barrier_run() -> int {
     b = Barrier::new(4);
     count = AtomicInt::new(0);
     ok = AtomicInt::new(0);
+    ts = ArrayList::new[Thread]();
     unsafe {
         pb = ref b as *Barrier
         pc = ref count as *AtomicInt
         po = ref ok as *AtomicInt
         i = 0;
         while i < 4 {
-            Thread::spawn(() -> void {
+            ts.push(Thread::spawn(() -> void {
                 unsafe {
                     (*pc).fetch_add(1);
                     (*pb).wait();
@@ -23,12 +28,12 @@ fn barrier_run() -> int {
                         (*po).fetch_add(1)
                     }
                 }
-            })
+            }))
             i = i + 1
         }
-        while ok.load() < 4 {
-            cpu_relax()
-        }
+    }
+    for t in ts.into_iter() {
+        t.join()
     }
     return ok.load()
 }
@@ -43,13 +48,14 @@ fn barrier_two_rounds_run() -> int {
     b = Barrier::new(3);
     phase = AtomicInt::new(0);
     ok = AtomicInt::new(0);
+    ts = ArrayList::new[Thread]();
     unsafe {
         pb = ref b as *Barrier
         pp = ref phase as *AtomicInt
         po = ref ok as *AtomicInt
         i = 0;
         while i < 3 {
-            Thread::spawn(() -> void {
+            ts.push(Thread::spawn(() -> void {
                 unsafe {
                     (*pb).wait();
                     (*pp).fetch_add(1);
@@ -58,12 +64,12 @@ fn barrier_two_rounds_run() -> int {
                         (*po).fetch_add(1)
                     }
                 }
-            })
+            }))
             i = i + 1
         }
-        while ok.load() < 3 {
-            cpu_relax()
-        }
+    }
+    for t in ts.into_iter() {
+        t.join()
     }
     return ok.load()
 }

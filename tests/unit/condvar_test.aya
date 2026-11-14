@@ -2,6 +2,10 @@ import "sync";
 
 import "thread";
 
+import "arraylist";
+
+import "iter";
+
 import "test";
 
 fn condvar_handoff_run() -> int {
@@ -12,7 +16,7 @@ fn condvar_handoff_run() -> int {
         pm = ref m as *Mutex[int]
         pc = ref cv as *Condvar
         pg = ref got as *AtomicInt
-        Thread::spawn(() -> void {
+        t = Thread::spawn(() -> void {
             unsafe {
                 lm = pm;
                 lc = pc;
@@ -40,9 +44,7 @@ fn condvar_handoff_run() -> int {
         *d2 = 1;
         (*pc).notify_one();
         (*pm).unlock();
-        while got.load() == 0 {
-            cpu_relax()
-        }
+        t.join();
     }
     return got.load()
 }
@@ -57,13 +59,14 @@ fn condvar_many_run() -> int {
     m = Mutex::new[int](0);
     cv = Condvar::new();
     woke = AtomicInt::new(0);
+    ts = ArrayList::new[Thread]();
     unsafe {
         pm = ref m as *Mutex[int]
         pc = ref cv as *Condvar
         pw = ref woke as *AtomicInt
         i = 0;
         while i < 4 {
-            Thread::spawn(() -> void {
+            ts.push(Thread::spawn(() -> void {
                 unsafe {
                     lm = pm;
                     lc = pc;
@@ -84,7 +87,7 @@ fn condvar_many_run() -> int {
                     (*lm).unlock();
                     (*lw).fetch_add(1)
                 }
-            })
+            }))
             i = i + 1
         }
         (*pm).lock();
@@ -92,9 +95,9 @@ fn condvar_many_run() -> int {
         *d2 = 1;
         (*pc).notify_all();
         (*pm).unlock();
-        while woke.load() < 4 {
-            cpu_relax()
-        }
+    }
+    for t in ts.into_iter() {
+        t.join()
     }
     return woke.load()
 }

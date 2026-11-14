@@ -127,6 +127,10 @@ int64_t __ayanami_futex_wake(int32_t *addr, int32_t n);         // FUTEX_WAKE；
 
 - C 后端：`syscall(SYS_futex, ...)`；汇编后端：raw syscall（202）。EINTR 返回 0（调用方自旋重查）。
 - std 侧封装：`wait(state, expected)` / `wake(n)`（`ref int` → 地址经 `*T`/`reinterpret`）。
+- **等待规则（重要）**：`futex_wait` 的 `expected` 不能取锁的“空闲值”（通常 `0`）。
+  否则“释放 → 唤醒 → 等待者才进入 wait”的交错会让 `wait` 看到值仍等于 expected
+  而睡眠，但唤醒已丢失 → 永久挂起。`RwLock` 的读写等待均先排除 `s == 0` 再等待；
+  若状态为 0 直接重试 CAS/获取路径。
 
 ### 4.3 线程（pthread；闭包 Job 按值转移所有权）
 

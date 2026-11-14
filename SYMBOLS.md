@@ -917,67 +917,67 @@ src/system/rand.aya:53: fn next_bool(ref mut self) -> bool
 src/system/rand.aya:59: pub fn next_byte(ref mut self) -> int
 src/system/rand.aya:64: fn next_float01(ref mut self) -> float
 src/system/rand.aya:73: pub fn shuffle[T](ref mut ArrayList[T] a, ref mut Rng r)
-src/system/sync.aya:12: pub struct AtomicInt
-src/system/sync.aya:16: pub namespace AtomicInt
-src/system/sync.aya:18: pub fn new(int v) -> AtomicInt
-src/system/sync.aya:23: impl AtomicInt
-src/system/sync.aya:26: pub fn load(ref self) -> int
-src/system/sync.aya:32: pub fn store(ref self, int v)
-src/system/sync.aya:38: pub fn swap(ref self, int v) -> int
-src/system/sync.aya:44: pub fn fetch_add(ref self, int v) -> int
-src/system/sync.aya:50: pub fn fetch_sub(ref self, int v) -> int
-src/system/sync.aya:56: pub fn compare_exchange(ref self, int expected, int new) -> int
-src/system/sync.aya:62: pub fn fetch_and(ref self, int v) -> int
-src/system/sync.aya:73: pub fn fetch_or(ref self, int v) -> int
-src/system/sync.aya:84: pub fn fetch_xor(ref self, int v) -> int
-src/system/sync.aya:96: pub fn fence()
-src/system/sync.aya:102: pub fn cpu_relax()
-src/system/sync.aya:107: fn __ayanami_futex_wait(*int addr, int expected) -> int;
-src/system/sync.aya:110: fn __ayanami_futex_wake(*int addr, int n) -> int;
-src/system/sync.aya:115: pub struct Mutex[T]
-src/system/sync.aya:120: pub namespace Mutex
-src/system/sync.aya:121: pub fn new[T](T v) -> Mutex[T]
-src/system/sync.aya:126: impl[T] Mutex[T]
-src/system/sync.aya:130: pub fn with_lock[U](ref mut self, Fn(ref mut T) -> U f) -> U
-src/system/sync.aya:140: pub fn try_with_lock[U](ref mut self, Fn(ref mut T) -> U f) -> Option[U]
-src/system/sync.aya:152: pub fn lock(ref self) -> void
-src/system/sync.aya:172: pub fn unlock(ref self) -> void
-src/system/sync.aya:181: pub fn data(ref mut self) -> ref mut T
-src/system/sync.aya:189: pub struct RwLock[T]
-src/system/sync.aya:195: pub namespace RwLock
-src/system/sync.aya:196: pub fn new[T](T v) -> RwLock[T]
-src/system/sync.aya:201: impl[T] RwLock[T]
-src/system/sync.aya:205: pub fn with_read[U](ref self, Fn(ref T) -> U f) -> U
-src/system/sync.aya:215: pub fn with_write[U](ref mut self, Fn(ref mut T) -> U f) -> U
-src/system/sync.aya:225: pub fn read_lock(ref self) -> void
-src/system/sync.aya:232: pub fn read_unlock(ref self) -> void
-src/system/sync.aya:239: pub fn write_lock(ref self) -> void
-src/system/sync.aya:246: pub fn write_unlock(ref self) -> void
-src/system/sync.aya:253: pub fn try_with_read[U](ref self, Fn(ref T) -> U f) -> Option[U]
-src/system/sync.aya:269: pub fn try_with_write[U](ref mut self, Fn(ref mut T) -> U f) -> Option[U]
-src/system/sync.aya:280: fn acquire_read(ref self) -> void
-src/system/sync.aya:296: fn release_read(ref self) -> void
-src/system/sync.aya:310: fn acquire_write(ref self) -> void
-src/system/sync.aya:326: fn release_write(ref self) -> void
-src/system/sync.aya:334: struct BarrierTicket
-src/system/sync.aya:342: struct BarrierState
-src/system/sync.aya:348: pub struct Barrier
-src/system/sync.aya:353: pub namespace Barrier
-src/system/sync.aya:355: pub fn new(int participants) -> Barrier
-src/system/sync.aya:367: impl Barrier
-src/system/sync.aya:371: pub fn wait(ref self) -> void
-src/system/sync.aya:406: pub struct Once
-src/system/sync.aya:410: pub namespace Once
-src/system/sync.aya:411: pub fn new() -> Once
-src/system/sync.aya:416: impl Once
-src/system/sync.aya:419: pub fn call_once(ref self, Fn() -> void f) -> void
-src/system/sync.aya:441: pub struct Condvar
-src/system/sync.aya:445: pub namespace Condvar
-src/system/sync.aya:446: pub fn new() -> Condvar
-src/system/sync.aya:451: impl Condvar
-src/system/sync.aya:455: pub fn wait[T](ref self, *Mutex[T] m) -> void
-src/system/sync.aya:467: pub fn notify_one(ref self) -> void
-src/system/sync.aya:477: pub fn notify_all(ref self) -> void
+src/system/sync.aya:11: pub struct AtomicInt
+src/system/sync.aya:15: pub namespace AtomicInt
+src/system/sync.aya:17: pub fn new(int v) -> AtomicInt
+src/system/sync.aya:22: impl AtomicInt
+src/system/sync.aya:25: pub fn load(ref self) -> int
+src/system/sync.aya:30: pub fn store(ref self, int v)
+src/system/sync.aya:35: pub fn swap(ref self, int v) -> int
+src/system/sync.aya:40: pub fn fetch_add(ref self, int v) -> int
+src/system/sync.aya:45: pub fn fetch_sub(ref self, int v) -> int
+src/system/sync.aya:50: pub fn compare_exchange(ref self, int expected, int new) -> int
+src/system/sync.aya:55: pub fn fetch_and(ref self, int v) -> int
+src/system/sync.aya:65: pub fn fetch_or(ref self, int v) -> int
+src/system/sync.aya:75: pub fn fetch_xor(ref self, int v) -> int
+src/system/sync.aya:87: pub fn fence()
+src/system/sync.aya:93: pub fn cpu_relax()
+src/system/sync.aya:98: fn __ayanami_futex_wait(*int addr, int expected) -> int;
+src/system/sync.aya:101: fn __ayanami_futex_wake(*int addr, int n) -> int;
+src/system/sync.aya:106: pub struct Mutex[T]
+src/system/sync.aya:111: pub namespace Mutex
+src/system/sync.aya:112: pub fn new[T](T v) -> Mutex[T]
+src/system/sync.aya:117: impl[T] Mutex[T]
+src/system/sync.aya:121: pub fn with_lock[U](ref mut self, Fn(ref mut T)->U f) -> U
+src/system/sync.aya:130: pub fn try_with_lock[U](ref mut self, Fn(ref mut T)->U f) -> Option[U]
+src/system/sync.aya:141: pub fn lock(ref self) -> void
+src/system/sync.aya:160: pub fn unlock(ref self) -> void
+src/system/sync.aya:168: pub fn data(ref mut self) -> ref mut T
+src/system/sync.aya:176: pub struct RwLock[T]
+src/system/sync.aya:182: pub namespace RwLock
+src/system/sync.aya:183: pub fn new[T](T v) -> RwLock[T]
+src/system/sync.aya:188: impl[T] RwLock[T]
+src/system/sync.aya:192: pub fn with_read[U](ref self, Fn(ref T)->U f) -> U
+src/system/sync.aya:201: pub fn with_write[U](ref mut self, Fn(ref mut T)->U f) -> U
+src/system/sync.aya:210: pub fn read_lock(ref self) -> void
+src/system/sync.aya:216: pub fn read_unlock(ref self) -> void
+src/system/sync.aya:222: pub fn write_lock(ref self) -> void
+src/system/sync.aya:228: pub fn write_unlock(ref self) -> void
+src/system/sync.aya:234: pub fn try_with_read[U](ref self, Fn(ref T)->U f) -> Option[U]
+src/system/sync.aya:249: pub fn try_with_write[U](ref mut self, Fn(ref mut T)->U f) -> Option[U]
+src/system/sync.aya:259: pub fn acquire_read(ref self) -> void
+src/system/sync.aya:278: pub fn release_read(ref self) -> void
+src/system/sync.aya:291: pub fn acquire_write(ref self) -> void
+src/system/sync.aya:309: pub fn release_write(ref self) -> void
+src/system/sync.aya:317: struct BarrierTicket
+src/system/sync.aya:325: struct BarrierState
+src/system/sync.aya:331: pub struct Barrier
+src/system/sync.aya:336: pub namespace Barrier
+src/system/sync.aya:338: pub fn new(int participants) -> Barrier
+src/system/sync.aya:343: impl Barrier
+src/system/sync.aya:347: pub fn wait(ref self) -> void
+src/system/sync.aya:386: pub struct Once
+src/system/sync.aya:390: pub namespace Once
+src/system/sync.aya:391: pub fn new() -> Once
+src/system/sync.aya:396: impl Once
+src/system/sync.aya:399: pub fn call_once(ref self, Fn()->void f) -> void
+src/system/sync.aya:421: pub struct Condvar
+src/system/sync.aya:425: pub namespace Condvar
+src/system/sync.aya:426: pub fn new() -> Condvar
+src/system/sync.aya:431: impl Condvar
+src/system/sync.aya:435: pub fn wait[T](ref self, *Mutex[T] m) -> void
+src/system/sync.aya:446: pub fn notify_one(ref self) -> void
+src/system/sync.aya:455: pub fn notify_all(ref self) -> void
 src/system/thread.aya:11: fn __ayanami_thread_spawn(Job job) -> usize;
 src/system/thread.aya:14: fn __ayanami_thread_join(usize handle) -> int;
 src/system/thread.aya:17: fn __ayanami_thread_id() -> int;
@@ -1097,10 +1097,10 @@ tests/unit/assert_test.aya:5: fn some3() -> Option[int]
 tests/unit/assert_test.aya:9: fn none_opt() -> Option[int]
 tests/unit/assert_test.aya:14: fn test_compare_asserts()
 tests/unit/assert_test.aya:22: fn test_other_asserts()
-tests/unit/barrier_test.aya:8: fn barrier_run() -> int
-tests/unit/barrier_test.aya:37: fn test_barrier_rendezvous()
-tests/unit/barrier_test.aya:42: fn barrier_two_rounds_run() -> int
-tests/unit/barrier_test.aya:72: fn test_barrier_reusable()
+tests/unit/barrier_test.aya:12: fn barrier_run() -> int
+tests/unit/barrier_test.aya:42: fn test_barrier_rendezvous()
+tests/unit/barrier_test.aya:47: fn barrier_two_rounds_run() -> int
+tests/unit/barrier_test.aya:78: fn test_barrier_reusable()
 tests/unit/bitops_test.aya:6: fn test_popcount()
 tests/unit/bitops_test.aya:14: fn test_zeros()
 tests/unit/bitops_test.aya:24: fn test_power_of_two()
@@ -1119,10 +1119,10 @@ tests/unit/channel_test.aya:143: fn bounded_backpressure_run() -> int
 tests/unit/channel_test.aya:170: fn test_channel_bounded_backpressure()
 tests/unit/char_test.aya:4: fn test_classify()
 tests/unit/char_test.aya:17: fn test_convert()
-tests/unit/condvar_test.aya:7: fn condvar_handoff_run() -> int
-tests/unit/condvar_test.aya:51: fn test_condvar_handoff()
-tests/unit/condvar_test.aya:55: fn condvar_many_run() -> int
-tests/unit/condvar_test.aya:103: fn test_condvar_notify_all()
+tests/unit/condvar_test.aya:11: fn condvar_handoff_run() -> int
+tests/unit/condvar_test.aya:53: fn test_condvar_handoff()
+tests/unit/condvar_test.aya:57: fn condvar_many_run() -> int
+tests/unit/condvar_test.aya:106: fn test_condvar_notify_all()
 tests/unit/convert_test.aya:7: fn as_float[U: Into[float]](U x) -> float
 tests/unit/convert_test.aya:12: fn test_parse_int()
 tests/unit/convert_test.aya:32: fn test_parse_float()
@@ -1287,19 +1287,19 @@ tests/unit/mir_test.aya:37: fn test_scan_effects()
 tests/unit/mir_test.aya:59: fn test_subtree_sizes()
 tests/unit/mir_test.aya:71: fn test_edit_helpers()
 tests/unit/mir_test.aya:98: fn test_stmt_op_predicates()
-tests/unit/mutex_test.aya:8: fn test_mutex_single_thread()
-tests/unit/mutex_test.aya:16: fn test_mutex_explicit_lock_unlock()
-tests/unit/mutex_test.aya:25: fn test_mutex_try_lock()
-tests/unit/mutex_test.aya:41: fn test_mutex_string_payload()
-tests/unit/mutex_test.aya:50: fn test_mutex_contention()
+tests/unit/mutex_test.aya:12: fn test_mutex_single_thread()
+tests/unit/mutex_test.aya:20: fn test_mutex_explicit_lock_unlock()
+tests/unit/mutex_test.aya:29: fn test_mutex_try_lock()
+tests/unit/mutex_test.aya:45: fn test_mutex_string_payload()
+tests/unit/mutex_test.aya:54: fn test_mutex_contention()
 tests/unit/num_test.aya:6: fn test_wrapping()
 tests/unit/num_test.aya:17: fn test_overflow_flags()
 tests/unit/num_test.aya:29: fn test_saturating()
 tests/unit/num_test.aya:42: fn test_checked_overflowing()
 tests/unit/num_test.aya:58: fn test_neg_family()
-tests/unit/once_test.aya:7: fn once_run() -> int
-tests/unit/once_test.aya:33: fn test_once_runs_single_time()
-tests/unit/once_test.aya:38: fn test_once_waits_for_completion()
+tests/unit/once_test.aya:11: fn once_run() -> int
+tests/unit/once_test.aya:35: fn test_once_runs_single_time()
+tests/unit/once_test.aya:40: fn test_once_waits_for_completion()
 tests/unit/option_test.aya:5: fn some_int(int v) -> Option[int]
 tests/unit/option_test.aya:9: fn none_int() -> Option[int]
 tests/unit/option_test.aya:13: fn seven() -> int
