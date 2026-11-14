@@ -303,3 +303,81 @@ pub fn max_fn_id(ref Json program) -> int {
     }
     return result;
 }
+
+fn find_fn_id_in_items(ref Json items_json, ref String name) -> Option[int] {
+    if items_json._tag != 5 {
+        return Option::None();
+    }
+    i = 0usize;
+    while i < items_json._data_Array._0.len() {
+        item = items_json._data_Array._0.index_ref(i);
+        kind = get_field(item, "kind").unwrap_or(Json::Null);
+        if kind._tag == 4 && kind._data_Str._0 == "fn" {
+            value = get_field(item, "value").unwrap_or(Json::Null);
+            value_name = get_field(value, "name").unwrap_or(Json::Null);
+            if value_name._tag == 4 && value_name._data_Str._0 == name {
+                id = get_field(value, "fn_id").unwrap_or(Json::Null);
+                if id._tag == 2 {
+                    return Option::Some(id._data_Int._0);
+                }
+            }
+        } else {
+            if kind._tag == 4 && kind._data_Str._0 == "namespace" {
+                nested = get_field(item, "items").unwrap_or(Json::Null);
+                found = find_fn_id_in_items(ref nested, ref name);
+                if found.is_some() {
+                    return found;
+                }
+            }
+        }
+        i = i + 1;
+    }
+    return Option::None();
+}
+
+/// 按函数名查 FnId（含顶层 namespace）。
+#[alloc]
+#[state]
+pub fn function_id(ref Json program, ref String name) -> Option[int] {
+    items_json = get_field(ref program, "items").unwrap_or(Json::Null);
+    return find_fn_id_in_items(ref items_json, ref name);
+}
+
+fn map_calls(ref Json value, int from, int to) -> Json {
+    tag = value._tag;
+    if tag == 5 {
+        items = ArrayList::new[Json]();
+        i = 0usize;
+        while i < value._data_Array._0.len() {
+            items.push(map_calls(value._data_Array._0.index_ref(i), from, to));
+            i = i + 1;
+        }
+        return Json::Array(items);
+    }
+    if tag == 6 {
+        fields = ArrayList::new[JsonField]();
+        i = 0usize;
+        while i < value._data_Object._0.len() {
+            f = value._data_Object._0.index_ref(i);
+            fields.push(JsonField::new(f.key.copy(), map_calls(f.value, from, to)));
+            i = i + 1;
+        }
+        result = Json::Object(fields);
+        kind = get_field(ref result, "kind").unwrap_or(Json::Null);
+        if kind._tag == 4 && kind._data_Str._0 == "call" {
+            id = get_field(ref result, "fn_id").unwrap_or(Json::Null);
+            if id._tag == 2 && id._data_Int._0 == from {
+                return set_field(ref result, "fn_id", Json::Int(to));
+            }
+        }
+        return result;
+    }
+    return copy_json(ref value);
+}
+
+/// 递归替换所有 `call` 节点的 FnId（不处理 vtable/函数指针）。
+#[alloc]
+#[state]
+pub fn replace_call_targets(ref Json program, int from, int to) -> Json {
+    return map_calls(ref program, from, to);
+}
