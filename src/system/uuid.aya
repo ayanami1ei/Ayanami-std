@@ -1,0 +1,41 @@
+// uuid — UUID v4（随机标识符）
+//
+// 版本位/变体位按 RFC 4122：第 7 字节高 4 位 = 0100，第 9 字节高 2 位 = 10。
+import "rand";
+
+import "string";
+
+fn hex_char(int v) -> char {
+    if v < 10 {
+        return (48 + v) as char;
+    }
+    return (87 + v) as char;
+}
+
+/// 生成 UUID v4（小写带连字符，如 `f47ac10b-58cc-4372-a567-0e02b2c3d479`）
+#[io]
+#[alloc]
+#[state]
+pub fn v4() -> String {
+    r = Rng::from_entropy();
+    b = [char; 16];
+    i = 0;
+    while i < 16 {
+        b[i] = r.next_byte() as char;
+        i = i + 1;
+    }
+    b[6] = (b[6] as int & 15 | 64) as char;
+    b[8] = (b[8] as int & 63 | 128) as char;
+    res = "";
+    i = 0;
+    while i < 16 {
+        if i == 4 || i == 6 || i == 8 || i == 10 {
+            res = res + "-";
+        }
+        v = b[i] as int;
+        res = res + hex_char(v >> 4).to_string();
+        res = res + hex_char(v & 15).to_string();
+        i = i + 1;
+    }
+    return res;
+}

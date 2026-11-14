@@ -17,6 +17,7 @@
 | [encoding.md](modules/encoding.md) | 编码：`hex_encode` / `hex_decode`、`base64_encode` / `base64_decode` |
 | [sha256.md](modules/sha256.md) | SHA-256 摘要：`sha256_bytes` / `sha256_hex`（纯 Ayanami） |
 | [rand.md](modules/rand.md) | 伪随机数：`Rng`（LCG，确定性） |
+| [uuid.md](modules/uuid.md) | UUID v4：`v4()`（随机，RFC 4122） |
 | [time.md](modules/time.md) | 时间：`now_millis`（单调）/ `now_unix` |
 | [sync.md](modules/sync.md) | 并发原语：`AtomicInt`（顺序一致）、`fence` / `cpu_relax`（S1） |
 | [thread.md](modules/thread.md) | 线程：`Thread::spawn` / `join`、`current_id`、`yield_now`（S2） |

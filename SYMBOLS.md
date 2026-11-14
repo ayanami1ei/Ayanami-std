@@ -897,6 +897,7 @@ src/system/path.aya:101: pub fn extension(String path) -> String
 src/system/path.aya:116: pub fn is_absolute(String path) -> bool
 src/system/path.aya:123: pub fn file_stem(String path) -> String
 src/system/path.aya:135: pub fn with_extension(String path, String ext) -> String
+src/system/path.aya:162: pub fn glob_match(ref String pat, ref String text) -> bool
 src/system/process.aya:3: fn __ayanami_exit(int code) -> void;
 src/system/process.aya:6: fn __ayanami_process_id() -> int;
 src/system/process.aya:9: fn __ayanami_parent_process_id() -> int;
@@ -913,8 +914,9 @@ src/system/rand.aya:34: impl Rng
 src/system/rand.aya:37: fn next_int(ref mut self) -> int
 src/system/rand.aya:43: fn next_range(ref mut self, int lo, int hi) -> int
 src/system/rand.aya:53: fn next_bool(ref mut self) -> bool
-src/system/rand.aya:59: fn next_float01(ref mut self) -> float
-src/system/rand.aya:68: pub fn shuffle[T](ref mut ArrayList[T] a, ref mut Rng r)
+src/system/rand.aya:59: pub fn next_byte(ref mut self) -> int
+src/system/rand.aya:64: fn next_float01(ref mut self) -> float
+src/system/rand.aya:73: pub fn shuffle[T](ref mut ArrayList[T] a, ref mut Rng r)
 src/system/sync.aya:12: pub struct AtomicInt
 src/system/sync.aya:16: pub namespace AtomicInt
 src/system/sync.aya:18: pub fn new(int v) -> AtomicInt
@@ -1010,6 +1012,8 @@ src/system/time.aya:153: impl DateTime
 src/system/time.aya:157: pub fn format(ref self) -> String
 src/system/time.aya:171: pub fn format_unix(int unix) -> String
 src/system/time.aya:178: pub fn format_date(int unix) -> String
+src/system/uuid.aya:8: fn hex_char(int v) -> char
+src/system/uuid.aya:19: pub fn v4() -> String
 tests/bench/iter_chain.aya:26: fn build(int n, int seed) -> ArrayList[int]
 tests/bench/iter_chain.aya:37: fn sum_index(ref ArrayList[int] a) -> int
 tests/bench/iter_chain.aya:51: fn sum_iter(ArrayList[int] a) -> int
@@ -1321,6 +1325,7 @@ tests/unit/path_test.aya:15: fn test_path_join()
 tests/unit/path_test.aya:26: fn test_path_basename_dirname()
 tests/unit/path_test.aya:37: fn test_path_extension()
 tests/unit/path_test.aya:45: fn test_path_absolute_stem_extension()
+tests/unit/path_test.aya:61: fn test_path_glob_match()
 tests/unit/process_test.aya:6: fn test_process_id()
 tests/unit/rand_test.aya:10: fn test_range()
 tests/unit/rand_test.aya:23: fn test_deterministic()
@@ -1418,3 +1423,6 @@ tests/unit/url_test.aya:6: fn test_percent_encode()
 tests/unit/url_test.aya:14: fn test_percent_decode()
 tests/unit/url_test.aya:23: fn test_form_decode()
 tests/unit/url_test.aya:29: fn test_query_get()
+tests/unit/uuid_test.aya:5: fn is_lower_hex(char c) -> bool
+tests/unit/uuid_test.aya:10: fn test_uuid_v4_format()
+tests/unit/uuid_test.aya:31: fn test_uuid_v4_unique()

@@ -56,3 +56,18 @@ fn test_path_absolute_stem_extension() {
     #assert_eq(with_extension("/c", "md"), "/c.md");
     #assert_eq(with_extension(".bashrc", "md"), ".bashrc.md")
 }
+
+#[test]
+fn test_path_glob_match() {
+    #assert(glob_match("*.txt", "a.txt"));
+    #assert(!glob_match("*.txt", "a.txt.bak"));
+    #assert(glob_match("a?c", "abc"));
+    #assert(!glob_match("a?c", "ac"));
+    #assert(glob_match("a*b*c", "aXXbYYc"));
+    #assert(glob_match("*", ""));
+    #assert(glob_match("*", "anything"));
+    #assert(glob_match("plain", "plain"));
+    #assert(!glob_match("plain", "plai"));
+    #assert(glob_match("src/*/main.aya", "src/std/main.aya"));
+    #assert(!glob_match("src/*/main.aya", "src/std/lib.aya"))
+}

@@ -54,6 +54,11 @@ impl Rng {
         v = self.next_int();
         return v % 2 == 0;
     }
+    /// 返回 [0, 256) 的随机字节
+    #[state]
+    pub fn next_byte(ref mut self) -> int {
+        return self.next_int() % 256
+    }
     /// [0.0, 1.0) 内的浮点
     #[state]
     fn next_float01(ref mut self) -> float {

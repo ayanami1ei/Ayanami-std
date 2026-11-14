@@ -1,0 +1,35 @@
+import "uuid";
+
+import "test";
+
+fn is_lower_hex(char c) -> bool {
+    return c >= '0' && c <= '9' || c >= 'a' && c <= 'f';
+}
+
+#[test]
+fn test_uuid_v4_format() {
+    u = v4();
+    #assert_eq(u.len(), 36usize);
+    #assert_eq(u.index(8), '-');
+    #assert_eq(u.index(13), '-');
+    #assert_eq(u.index(18), '-');
+    #assert_eq(u.index(23), '-');
+    #assert_eq(u.index(14), '4');
+    v = u.index(19);
+    #assert(v == '8' || v == '9' || v == 'a' || v == 'b');
+    i = 0usize;
+    while i < u.len {
+        c = u.index(i);
+        if c != '-' {
+            #assert(is_lower_hex(c))
+        }
+        i = i + 1;
+    }
+}
+
+#[test]
+fn test_uuid_v4_unique() {
+    a = v4();
+    b = v4();
+    #assert(a != b)
+}
