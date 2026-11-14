@@ -1,5 +1,7 @@
 import "process";
 
+import "fs";
+
 import "test";
 
 #[test]
@@ -8,4 +10,16 @@ fn test_process_id() {
     #assert(p > 0);
     #assert(parent_id() > 0);
     #assert(parent_id() != p)
+}
+
+#[test]
+fn test_process_run() {
+    #assert_eq(run("exit 0"), 0);
+    #assert_eq(run("exit 7"), 7);
+    #assert_eq(run("true"), 0);
+    #assert_eq(run("false"), 1);
+    #assert_eq(run("echo hi > /tmp/ayanami_run_test.txt"), 0);
+    #assert_eq(read_file("/tmp/ayanami_run_test.txt").unwrap(), "hi\n");
+    remove_file("/tmp/ayanami_run_test.txt");
+    #assert_eq(run("kill -TERM $$"), 143)
 }

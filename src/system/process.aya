@@ -8,6 +8,9 @@ fn __ayanami_process_id() -> int;
 #[extern]
 fn __ayanami_parent_process_id() -> int;
 
+#[extern]
+fn __ayanami_process_run(String command) -> int;
+
 /// 立即退出进程（code 作为退出码；不返回）
 #[io]
 #[state]
@@ -34,4 +37,12 @@ pub fn id() -> int {
 #[io]
 pub fn parent_id() -> int {
     return __ayanami_parent_process_id();
+}
+
+/// 通过 `/bin/sh -c` 执行命令并等待结束
+///
+/// 返回退出码；被信号终止返回 `128 + signal`；无法启动返回 -1。
+#[io]
+pub fn run(String command) -> int {
+    return __ayanami_process_run(command);
 }

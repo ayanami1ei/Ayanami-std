@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <dirent.h>
 #if defined(__linux__)
 #include <sys/random.h>
@@ -236,6 +237,16 @@ int64_t __ayanami_process_id(void) {
 
 int64_t __ayanami_parent_process_id(void) {
     return (int64_t)getppid();
+}
+
+int64_t __ayanami_process_run(__ayanami_str_view command) {
+    char c[4096];
+    if (!path_cstr(command, c, sizeof c)) return -1;
+    int st = system(c);
+    if (st == -1) return -1;
+    if (WIFEXITED(st)) return (int64_t)WEXITSTATUS(st);
+    if (WIFSIGNALED(st)) return (int64_t)(128 + WTERMSIG(st));
+    return -1;
 }
 #endif // AYANAMI_ASM_PORT（进程退出由汇编后端提供）
 

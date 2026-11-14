@@ -905,10 +905,12 @@ src/system/path.aya:162: pub fn glob_match(ref String pat, ref String text) -> b
 src/system/process.aya:3: fn __ayanami_exit(int code) -> void;
 src/system/process.aya:6: fn __ayanami_process_id() -> int;
 src/system/process.aya:9: fn __ayanami_parent_process_id() -> int;
-src/system/process.aya:14: pub fn exit(int code) -> !
-src/system/process.aya:22: pub fn exit_ok() -> !
-src/system/process.aya:29: pub fn id() -> int
-src/system/process.aya:35: pub fn parent_id() -> int
+src/system/process.aya:12: fn __ayanami_process_run(String command) -> int;
+src/system/process.aya:17: pub fn exit(int code) -> !
+src/system/process.aya:25: pub fn exit_ok() -> !
+src/system/process.aya:32: pub fn id() -> int
+src/system/process.aya:38: pub fn parent_id() -> int
+src/system/process.aya:46: pub fn run(String command) -> int
 src/system/rand.aya:9: fn __ayanami_random_u64() -> int;
 src/system/rand.aya:11: pub struct Rng
 src/system/rand.aya:15: pub namespace Rng
@@ -1332,7 +1334,8 @@ tests/unit/path_test.aya:26: fn test_path_basename_dirname()
 tests/unit/path_test.aya:37: fn test_path_extension()
 tests/unit/path_test.aya:45: fn test_path_absolute_stem_extension()
 tests/unit/path_test.aya:61: fn test_path_glob_match()
-tests/unit/process_test.aya:6: fn test_process_id()
+tests/unit/process_test.aya:8: fn test_process_id()
+tests/unit/process_test.aya:16: fn test_process_run()
 tests/unit/rand_test.aya:10: fn test_range()
 tests/unit/rand_test.aya:23: fn test_deterministic()
 tests/unit/rand_test.aya:32: fn test_seed_variation()
