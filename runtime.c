@@ -127,6 +127,64 @@ static int counted_take(void *p) {
     return 0;
 }
 
+// 自举 tracked allocator：登记自举发射器的普通分配，供 D2 drop 安全释放。
+// 不进入 live_allocs 计数（与计数分配区分）。
+#define AYANAMI_TRACKED_CAP (1u << 22)
+static void *tracked_slots[AYANAMI_TRACKED_CAP];
+static void *const tracked_tomb = (void *)(uintptr_t)-1;
+static int tracked_full = 0;
+
+static size_t tracked_hash(void *p) {
+    uintptr_t x = (uintptr_t)p >> 4;
+    x ^= x >> 17;
+    x *= (uintptr_t)0x9e3779b1U;
+    x ^= x >> 11;
+    return (size_t)(x & (AYANAMI_TRACKED_CAP - 1));
+}
+
+static void tracked_add(void *p) {
+    if (!p || tracked_full) return;
+    size_t i = tracked_hash(p);
+    size_t tomb = (size_t)-1;
+    size_t n = 0;
+    while (n < AYANAMI_TRACKED_CAP) {
+        void *slot = tracked_slots[i];
+        if (slot == p) return;
+        if (slot == NULL) {
+            if (tomb != (size_t)-1) i = tomb;
+            tracked_slots[i] = p;
+            return;
+        }
+        if (slot == tracked_tomb && tomb == (size_t)-1) tomb = i;
+        i = (i + 1) & (AYANAMI_TRACKED_CAP - 1);
+        n++;
+    }
+    tracked_full = 1;
+}
+
+static int tracked_take(void *p) {
+    if (!p) return 0;
+    size_t i = tracked_hash(p);
+    size_t n = 0;
+    while (n < AYANAMI_TRACKED_CAP) {
+        void *slot = tracked_slots[i];
+        if (slot == NULL) return 0;
+        if (slot == p) {
+            tracked_slots[i] = tracked_tomb;
+            return 1;
+        }
+        i = (i + 1) & (AYANAMI_TRACKED_CAP - 1);
+        n++;
+    }
+    return 0;
+}
+
+void *__ayanami_selfhost_alloc(size_t size) {
+    void *p = __ayanami_default_alloc(size);
+    if (p) tracked_add(p);
+    return p;
+}
+
 // 计数分配（弱符号：用户程序可导出同名强定义覆盖，见 std/src/system/alloc.aya）
 __attribute__((weak)) void *__ayanami_unique_alloc(size_t size) {
     void *p = __ayanami_default_alloc(size);
@@ -156,8 +214,12 @@ void __ayanami_release_chars(void *ptr) { __ayanami_unique_free(ptr); }
 // 调用方必须保证 ptr 是该缓冲的最后所有者。
 void __ayanami_release_owned(void *ptr) {
     if (!ptr) return;
-    // D1 只释放已登记（计数）缓冲；未登记指针可能是字符串字面量/全局/借用视图，
-    // 不做 free。D2 引入 tracked allocator 后再覆盖自举普通 @malloc 缓冲。
+    // 自举普通分配走 tracked；计数分配走 counted（递减 live_allocs）；
+    // 未登记指针可能是字符串字面量/全局/借用视图，不 free。
+    if (tracked_take(ptr)) {
+        __ayanami_default_free(ptr);
+        return;
+    }
     if (counted_take(ptr)) {
         live_allocs--;
         __ayanami_default_free(ptr);
