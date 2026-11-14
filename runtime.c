@@ -152,6 +152,18 @@ void __ayanami_counted_free(void *ptr) { __ayanami_unique_free(ptr); }
 // 显式释放拥有型 [char] 缓冲（fs.read_lines 在 lines() 复制完成后调用）
 void __ayanami_release_chars(void *ptr) { __ayanami_unique_free(ptr); }
 
+// 释放拥有型缓冲（自举 drop 首片）：计数指针走幂等路径，非计数指针走默认 free。
+// 调用方必须保证 ptr 是该缓冲的最后所有者。
+void __ayanami_release_owned(void *ptr) {
+    if (!ptr) return;
+    // D1 只释放已登记（计数）缓冲；未登记指针可能是字符串字面量/全局/借用视图，
+    // 不做 free。D2 引入 tracked allocator 后再覆盖自举普通 @malloc 缓冲。
+    if (counted_take(ptr)) {
+        live_allocs--;
+        __ayanami_default_free(ptr);
+    }
+}
+
 int64_t __ayanami_live_allocs(void) {
     return live_allocs;
 }
