@@ -49,6 +49,8 @@
 
 - `runtime.c`：**聚合入口**（编译器链接此文件）；`runtime/abi.h`：ABI 唯一真源；
   `runtime/sys.c`：系统扩展（熵源 / 时间）；`runtime/build.sh`：构建 `libruntime.a` 与 C 自检。
+- ABI 一致性门禁：`./scripts/check_abi_parity.sh` 构建 C 与 asm-x86_64 两个归档，
+  校验 `abi.h` 中声明的全部符号都被实现（缺失即失败）。
 - 替换：把实现同名 ABI 的 `runtime.c` 放到**可执行文件同目录**（编译器查找优先级最高）；
   用 `__ayanami_runtime_abi()` 校验版本（当前 `1`）。
 - 系统扩展：`__ayanami_random_u64()`、`__ayanami_time_millis()`、`__ayanami_time_unix()`；

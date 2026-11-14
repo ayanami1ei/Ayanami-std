@@ -47,9 +47,7 @@ void __ayanami_print_str(const char *s, int64_t len);
 void __ayanami_eprint_str(const char *s, int64_t len);
 void __ayanami_eprint_ln(void);
 void __ayanami_print_ln(void);
-char *__ayanami_float_str(double n, int64_t out_len);
-char *__ayanami_float_fixed_str(double n, int64_t digits, int64_t out_len);
-char *__ayanami_float_sci_str(double n, int64_t digits, int64_t out_len);
+// 浮点格式化已迁移为纯 Ayanami（std/src/core/string.aya），运行时不再提供。
 
 // ── 数学 ──
 
