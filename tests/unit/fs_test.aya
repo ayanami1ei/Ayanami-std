@@ -275,3 +275,24 @@ fn test_fs_create_and_remove_dir_all() {
     rmdir(outside.copy());
     #assert(!remove_dir_all("/tmp/ayanami_not_exist_xyz"))
 }
+
+#[test]
+fn test_fs_walk_glob() {
+    root = "/tmp/ayanami_walk_glob_test";
+    sub = join(root.copy(), "sub");
+    remove_dir_all(root.copy());
+    mkdir(root.copy());
+    mkdir(sub.copy());
+    write_file(join(root.copy(), "a.txt"), "a");
+    write_file(join(root.copy(), "b.log"), "b");
+    write_file(join(sub.copy(), "c.txt"), "c");
+    write_file(join(sub.copy(), "d.txt.bak"), "d");
+    txt = walk_glob(root.copy(), "*.txt");
+    #assert_eq(txt.len(), 2);
+    #assert(txt.contains(join(root.copy(), "a.txt")));
+    #assert(txt.contains(join(sub.copy(), "c.txt")));
+    logs = walk_glob(root.copy(), "*.log");
+    #assert_eq(logs.len(), 1);
+    #assert(remove_dir_all(root.copy()));
+    #assert(!exists(root.copy()))
+}

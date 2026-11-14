@@ -537,6 +537,21 @@ pub fn walk_filtered(String root, Fn(ref String)->bool keep) -> ArrayList[String
     return res;
 }
 
+/// 递归列出文件名匹配通配符的文件（`*` / `?`，见 `path::glob_match`）
+#[alloc]
+#[state]
+pub fn walk_glob(String root, String pattern) -> ArrayList[String] {
+    res = ArrayList::new[String]();
+    all = walk(root);
+    for p in all.into_iter() {
+        b = basename(p.copy());
+        if glob_match(ref pattern, ref b) {
+            res.push(p)
+        }
+    }
+    return res;
+}
+
 /// 递归列出指定后缀的文件（`ext` 含点，如 `".txt"`）
 #[alloc]
 #[state]

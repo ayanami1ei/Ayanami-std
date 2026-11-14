@@ -862,7 +862,8 @@ src/system/fs.aya:467: pub fn read_file_result(String path) -> Result[String, Io
 src/system/fs.aya:484: pub fn walk(String root) -> ArrayList[String]
 src/system/fs.aya:492: fn walk_into(String dir, ref mut ArrayList[String] dst)
 src/system/fs.aya:514: pub fn walk_filtered(String root, Fn(ref String)->bool keep) -> ArrayList[String]
-src/system/fs.aya:543: pub fn walk_ext(String root, String ext) -> ArrayList[String]
+src/system/fs.aya:543: pub fn walk_glob(String root, String pattern) -> ArrayList[String]
+src/system/fs.aya:558: pub fn walk_ext(String root, String ext) -> ArrayList[String]
 src/system/io.aya:9: fn __ayanami_getchar() -> int;
 src/system/io.aya:13: fn __ayanami_putchar(int c);
 src/system/io.aya:17: fn __ayanami_print_str([char] s, int len);
@@ -1184,6 +1185,7 @@ tests/unit/fs_test.aya:193: fn test_fs_current_dir()
 tests/unit/fs_test.aya:201: fn test_fs_read_link_and_canonicalize()
 tests/unit/fs_test.aya:241: fn test_fs_set_current_dir()
 tests/unit/fs_test.aya:259: fn test_fs_create_and_remove_dir_all()
+tests/unit/fs_test.aya:280: fn test_fs_walk_glob()
 tests/unit/hash_test.aya:6: fn test_hash()
 tests/unit/hashmap_test.aya:6: fn test_map_basic()
 tests/unit/hashmap_test.aya:20: fn test_map_grow()

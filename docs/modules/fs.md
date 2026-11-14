@@ -15,6 +15,7 @@ import "fs";
 | `walk(String root) -> ArrayList[String]` | 递归列出目录下所有文件路径（深度优先；目录不可读时跳过） |
 | `walk_filtered(String root, Fn(ref String) -> bool keep) -> ArrayList[String]` | 递归遍历并只保留谓词为真的文件路径 |
 | `walk_ext(String root, String ext) -> ArrayList[String]` | 递归列出指定后缀的文件（`ext` 含点，如 `".txt"`） |
+| `walk_glob(String root, String pattern) -> ArrayList[String]` | 递归列出文件名匹配通配符的文件（`*` / `?`） |
 | `read_file(String path) -> Option[String]` | 读取整个文件（失败 `None`） |
 | `write_file(String path, String data) -> bool` | 覆盖写入（成功 `true`） |
 | `read_lines(String path) -> Option[ArrayList[String]]` | 按行拆分（`\r\n` 兼容；失败 `None`） |
