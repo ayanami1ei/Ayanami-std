@@ -19,7 +19,7 @@ import "thread";
   `trampoline(env)` 后调用 `drop(env)` 回收捕获值。std 不做 cell 分配，无悬垂风险。
 - **join**：等待线程退出（`pthread_join`）。未 join 直接丢弃 `Thread` 只泄漏 pthread
   可连接状态，线程本身仍会完成并清理。
-- **失败**：`spawn` 内部创建失败时 handle 为 0；`join(0)` 返回 -1。
+- **失败**：`spawn` 创建失败（资源不足）直接 panic（避免调用方无限等待）；`join(0)` 返回 -1。
 
 ## 示例
 

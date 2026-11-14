@@ -5,6 +5,7 @@
 // - 未 join 直接丢弃 Thread 只泄漏 pthread 可连接状态（线程自身仍会完成并清理），
 //   不会 use-after-free。
 // - 运行时：C 后端与汇编后端均为 pthread（asm 后端另用 raw syscall 取 tid/yield）。
+import "panic";
 
 #[extern]
 fn __ayanami_thread_spawn(Job job) -> usize;
@@ -20,7 +21,7 @@ fn __ayanami_thread_yield() -> int;
 
 /// 线程任务（单字段闭包；布局与运行时约定一致：{env, vtable}）
 struct Job {
-    Fn() -> void f
+    Fn()->void f
 }
 
 pub struct Thread {
@@ -29,9 +30,17 @@ pub struct Thread {
 
 pub namespace Thread {
     /// 创建并启动线程（闭包按值搬入运行时）。建议 join。
+    ///
+    /// 创建失败（资源不足）触发 panic，避免调用方永久等待。
     #[io]
-    pub fn spawn(Fn() -> void f) -> Thread {
-        return Thread { handle = __ayanami_thread_spawn(Job { f = f }) };
+    #[alloc]
+    #[state]
+    pub fn spawn(Fn()->void f, int __line, int __col, String __file) -> Thread {
+        h = __ayanami_thread_spawn(Job { f = f });
+        if h == 0 {
+            panic_at(__line, __col, __file, "thread spawn failed")
+        }
+        return Thread { handle = h };
     }
 }
 

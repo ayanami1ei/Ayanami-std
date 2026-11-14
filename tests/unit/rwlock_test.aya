@@ -2,59 +2,78 @@ import "sync";
 
 import "thread";
 
+import "arraylist";
+
+import "iter";
+
 import "test";
 
 #[test]
 fn test_rwlock_single_thread() {
     l = RwLock::new[int](5);
-    v = l.with_read((ref int x) -> int { *x });
+    v = l.with_read((ref int x) -> int {
+        *x
+    });
     #assert_eq(v, 5);
-    l.with_write((ref mut int x) -> void { *x = *x + 1 });
-    v2 = l.with_read((ref int x) -> int { *x });
+    l.with_write((ref mut int x) -> void {
+        *x = *x + 1;
+    });
+    v2 = l.with_read((ref int x) -> int {
+        *x
+    });
     #assert_eq(v2, 6)
 }
 
 #[test]
 fn test_rwlock_try() {
     l = RwLock::new[int](3);
-    r = l.try_with_read((ref int x) -> int { *x });
+    r = l.try_with_read((ref int x) -> int {
+        *x
+    });
     #assert_eq(r.unwrap(), 3);
     w = l.try_with_write((ref mut int x) -> int {
         *x = 4;
-        return *x
+
+        return *x;
     });
     #assert_eq(w.unwrap(), 4);
     // 读锁持有时写锁失败（单线程下通过显式加锁模拟）
     l.read_lock();
-    failed = l.try_with_write((ref mut int x) -> int { *x });
+    failed = l.try_with_write((ref mut int x) -> int {
+        *x
+    });
     #assert(failed.is_none());
     l.read_unlock();
-    ok = l.try_with_write((ref mut int x) -> int { *x });
+    ok = l.try_with_write((ref mut int x) -> int {
+        *x
+    });
     #assert_eq(ok.unwrap(), 4)
 }
 
-// 并发体放在普通函数（多线程 + 自旋等待）
+// 并发体放在普通函数（多线程 + join）
 fn rw_write_run() -> int {
     l = RwLock::new[int](0);
-    done = AtomicInt::new(0);
+    ts = ArrayList::new[Thread]();
     unsafe {
-        pl = ref l as *RwLock[int]
-        pd = ref done as *AtomicInt
+        pl = ref l as *RwLock[int];
         i = 0;
         while i < 4 {
-            Thread::spawn(() -> void {
+            ts.push(Thread::spawn(() -> void {
                 unsafe {
-                    (*pl).with_write((ref mut int v) -> void { *v = *v + 10 });
-                    (*pd).fetch_add(1)
+                    (*pl).with_write((ref mut int v) -> void {
+                        *v = *v + 10;
+                    });
                 }
-            })
-            i = i + 1
-        }
-        while done.load() < 4 {
-            cpu_relax()
+            }));
+            i = i + 1;
         }
     }
-    return l.with_read((ref int v) -> int { *v })
+    for t in ts.into_iter() {
+        t.join()
+    }
+    return l.with_read((ref int v) -> int {
+        *v
+    });
 }
 
 #[test]
@@ -64,27 +83,30 @@ fn test_rwlock_concurrent_writers() {
 
 fn rw_read_run() -> int {
     l = RwLock::new[int](7);
-    done = AtomicInt::new(0);
+    hits = AtomicInt::new(0);
+    ts = ArrayList::new[Thread]();
     unsafe {
-        pl = ref l as *RwLock[int]
-        pd = ref done as *AtomicInt
+        pl = ref l as *RwLock[int];
+        ph = ref hits as *AtomicInt;
         i = 0;
         while i < 4 {
-            Thread::spawn(() -> void {
+            ts.push(Thread::spawn(() -> void {
                 unsafe {
-                    v = (*pl).with_read((ref int x) -> int { *x });
+                    v = (*pl).with_read((ref int x) -> int {
+                        *x
+                    });
                     if v == 7 {
-                        (*pd).fetch_add(1)
+                        (*ph).fetch_add(1)
                     }
                 }
-            })
-            i = i + 1
-        }
-        while done.load() < 4 {
-            cpu_relax()
+            }));
+            i = i + 1;
         }
     }
-    return done.load()
+    for t in ts.into_iter() {
+        t.join()
+    }
+    return hits.load();
 }
 
 #[test]
@@ -94,39 +116,47 @@ fn test_rwlock_concurrent_readers() {
 
 fn rw_mixed_run() -> int {
     l = RwLock::new[int](0);
-    done = AtomicInt::new(0);
+    ts = ArrayList::new[Thread]();
     unsafe {
-        pl = ref l as *RwLock[int]
-        pd = ref done as *AtomicInt
+        pl = ref l as *RwLock[int];
         i = 0;
         while i < 2 {
-            Thread::spawn(() -> void {
+            ts.push(Thread::spawn(() -> void {
                 j = 0;
+
                 while j < 10 {
-                    unsafe { (*pl).with_write((ref mut int v) -> void { *v = *v + 2 }) }
-                    j = j + 1
+                    unsafe {
+                        (*pl).with_write((ref mut int v) -> void {
+                            *v = *v + 2;
+                        })
+                    }
+                    j = j + 1;
                 }
-                unsafe { (*pd).fetch_add(1) }
-            })
-            i = i + 1
+            }));
+            i = i + 1;
         }
         i = 0;
         while i < 4 {
-            Thread::spawn(() -> void {
+            ts.push(Thread::spawn(() -> void {
                 j = 0;
+
                 while j < 10 {
-                    unsafe { (*pl).with_read((ref int v) -> void { }) }
-                    j = j + 1
+                    unsafe {
+                        (*pl).with_read((ref int v) -> void {
+                        })
+                    }
+                    j = j + 1;
                 }
-                unsafe { (*pd).fetch_add(1) }
-            })
-            i = i + 1
-        }
-        while done.load() < 6 {
-            cpu_relax()
+            }));
+            i = i + 1;
         }
     }
-    return l.with_read((ref int v) -> int { *v })
+    for t in ts.into_iter() {
+        t.join()
+    }
+    return l.with_read((ref int v) -> int {
+        *v
+    });
 }
 
 #[test]

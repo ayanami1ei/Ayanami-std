@@ -978,18 +978,18 @@ src/system/sync.aya:451: impl Condvar
 src/system/sync.aya:455: pub fn wait[T](ref self, *Mutex[T] m) -> void
 src/system/sync.aya:467: pub fn notify_one(ref self) -> void
 src/system/sync.aya:477: pub fn notify_all(ref self) -> void
-src/system/thread.aya:10: fn __ayanami_thread_spawn(Job job) -> usize;
-src/system/thread.aya:13: fn __ayanami_thread_join(usize handle) -> int;
-src/system/thread.aya:16: fn __ayanami_thread_id() -> int;
-src/system/thread.aya:19: fn __ayanami_thread_yield() -> int;
-src/system/thread.aya:22: struct Job
-src/system/thread.aya:26: pub struct Thread
-src/system/thread.aya:30: pub namespace Thread
-src/system/thread.aya:33: pub fn spawn(Fn() -> void f) -> Thread
-src/system/thread.aya:38: impl Thread
-src/system/thread.aya:41: pub fn join(self) -> void
-src/system/thread.aya:48: pub fn current_id() -> int
-src/system/thread.aya:54: pub fn yield_now() -> int
+src/system/thread.aya:11: fn __ayanami_thread_spawn(Job job) -> usize;
+src/system/thread.aya:14: fn __ayanami_thread_join(usize handle) -> int;
+src/system/thread.aya:17: fn __ayanami_thread_id() -> int;
+src/system/thread.aya:20: fn __ayanami_thread_yield() -> int;
+src/system/thread.aya:23: struct Job
+src/system/thread.aya:27: pub struct Thread
+src/system/thread.aya:31: pub namespace Thread
+src/system/thread.aya:38: pub fn spawn(Fn()->void f, int __line, int __col, String __file) -> Thread
+src/system/thread.aya:47: impl Thread
+src/system/thread.aya:50: pub fn join(self) -> void
+src/system/thread.aya:57: pub fn current_id() -> int
+src/system/thread.aya:63: pub fn yield_now() -> int
 src/system/time.aya:12: fn __ayanami_time_millis() -> int;
 src/system/time.aya:15: fn __ayanami_time_micros() -> int;
 src/system/time.aya:18: fn __ayanami_time_unix() -> int;
@@ -1334,14 +1334,14 @@ tests/unit/rand_test.aya:39: fn test_negative_seed()
 tests/unit/rand_test.aya:46: fn test_entropy()
 tests/unit/rand_test.aya:54: fn test_next_bool_float()
 tests/unit/rand_test.aya:72: fn test_shuffle()
-tests/unit/rwlock_test.aya:8: fn test_rwlock_single_thread()
-tests/unit/rwlock_test.aya:18: fn test_rwlock_try()
-tests/unit/rwlock_test.aya:37: fn rw_write_run() -> int
-tests/unit/rwlock_test.aya:61: fn test_rwlock_concurrent_writers()
-tests/unit/rwlock_test.aya:65: fn rw_read_run() -> int
-tests/unit/rwlock_test.aya:91: fn test_rwlock_concurrent_readers()
-tests/unit/rwlock_test.aya:95: fn rw_mixed_run() -> int
-tests/unit/rwlock_test.aya:133: fn test_rwlock_mixed_read_write()
+tests/unit/rwlock_test.aya:12: fn test_rwlock_single_thread()
+tests/unit/rwlock_test.aya:28: fn test_rwlock_try()
+tests/unit/rwlock_test.aya:54: fn rw_write_run() -> int
+tests/unit/rwlock_test.aya:80: fn test_rwlock_concurrent_writers()
+tests/unit/rwlock_test.aya:84: fn rw_read_run() -> int
+tests/unit/rwlock_test.aya:113: fn test_rwlock_concurrent_readers()
+tests/unit/rwlock_test.aya:117: fn rw_mixed_run() -> int
+tests/unit/rwlock_test.aya:163: fn test_rwlock_mixed_read_write()
 tests/unit/sha256_test.aya:6: fn test_sha256_known_vectors()
 tests/unit/sha256_test.aya:14: fn test_sha256_two_block_message()
 tests/unit/sort_test.aya:6: fn test_sort_int()
