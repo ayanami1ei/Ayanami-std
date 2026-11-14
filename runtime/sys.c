@@ -11,6 +11,7 @@
 #include <sys/syscall.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <stdio.h>
 #include <dirent.h>
 #if defined(__linux__)
 #include <sys/random.h>
@@ -247,6 +248,34 @@ int64_t __ayanami_process_run(__ayanami_str_view command) {
     if (WIFEXITED(st)) return (int64_t)WEXITSTATUS(st);
     if (WIFSIGNALED(st)) return (int64_t)(128 + WTERMSIG(st));
     return -1;
+}
+
+char *__ayanami_process_output(__ayanami_str_view command) {
+    char c[4096];
+    if (!path_cstr(command, c, sizeof c)) return NULL;
+    FILE *p = popen(c, "r");
+    if (!p) return NULL;
+    size_t cap = 256, off = 0;
+    char *buf = (char *)__ayanami_unique_alloc(cap);
+    if (!buf) { pclose(p); return NULL; }
+    for (;;) {
+        if (cap - off < 4097) {
+            size_t ncap = cap * 2;
+            while (ncap - off < 4097) ncap *= 2;
+            char *nb = (char *)__ayanami_unique_alloc(ncap);
+            if (!nb) { __ayanami_unique_free(buf); pclose(p); return NULL; }
+            memcpy(nb, buf, off);
+            __ayanami_unique_free(buf);
+            buf = nb;
+            cap = ncap;
+        }
+        size_t n = fread(buf + off, 1, cap - off - 1, p);
+        off += n;
+        if (n == 0 || feof(p)) break;
+    }
+    pclose(p);
+    buf[off] = 0;
+    return buf;
 }
 #endif // AYANAMI_ASM_PORT（进程退出由汇编后端提供）
 

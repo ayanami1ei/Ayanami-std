@@ -23,3 +23,12 @@ fn test_process_run() {
     remove_file("/tmp/ayanami_run_test.txt");
     #assert_eq(run("kill -TERM $$"), 143)
 }
+
+#[test]
+fn test_process_output() {
+    #assert_eq(output("echo hi").unwrap(), "hi\n");
+    #assert_eq(output("printf abc").unwrap(), "abc");
+    big = output("yes a | head -n 5000").unwrap();
+    #assert_eq(big.len(), 10000usize);
+    #assert_eq(output("exit 3").unwrap(), "")
+}

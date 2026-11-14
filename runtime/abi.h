@@ -145,6 +145,7 @@ int64_t __ayanami_fs_symlink(__ayanami_str_view target, __ayanami_str_view link)
 int64_t __ayanami_process_id(void);          // getpid
 int64_t __ayanami_parent_process_id(void);   // getppid
 int64_t __ayanami_process_run(__ayanami_str_view command); // /bin/sh -c；退出码 / 128+sig / -1
+char *__ayanami_process_output(__ayanami_str_view command); // /bin/sh -c；stdout（unique_alloc，NUL 结尾）；NULL 失败
 
 // ── 命令行参数 / 环境变量（返回值为 unique_alloc 拷贝） ──
 int64_t __ayanami_arg_count(void);                    // argc（含程序名）

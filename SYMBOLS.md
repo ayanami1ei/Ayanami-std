@@ -905,15 +905,18 @@ src/system/path.aya:116: pub fn is_absolute(String path) -> bool
 src/system/path.aya:123: pub fn file_stem(String path) -> String
 src/system/path.aya:135: pub fn with_extension(String path, String ext) -> String
 src/system/path.aya:162: pub fn glob_match(ref String pat, ref String text) -> bool
-src/system/process.aya:3: fn __ayanami_exit(int code) -> void;
-src/system/process.aya:6: fn __ayanami_process_id() -> int;
-src/system/process.aya:9: fn __ayanami_parent_process_id() -> int;
-src/system/process.aya:12: fn __ayanami_process_run(String command) -> int;
-src/system/process.aya:17: pub fn exit(int code) -> !
-src/system/process.aya:25: pub fn exit_ok() -> !
-src/system/process.aya:32: pub fn id() -> int
-src/system/process.aya:38: pub fn parent_id() -> int
-src/system/process.aya:46: pub fn run(String command) -> int
+src/system/process.aya:7: fn __ayanami_exit(int code) -> void;
+src/system/process.aya:10: fn __ayanami_process_id() -> int;
+src/system/process.aya:13: fn __ayanami_parent_process_id() -> int;
+src/system/process.aya:16: fn __ayanami_process_run(String command) -> int;
+src/system/process.aya:19: fn __ayanami_process_output(String command) -> [char];
+src/system/process.aya:22: fn __ayanami_cstr_len([char] s) -> int;
+src/system/process.aya:27: pub fn exit(int code) -> !
+src/system/process.aya:35: pub fn exit_ok() -> !
+src/system/process.aya:42: pub fn id() -> int
+src/system/process.aya:48: pub fn parent_id() -> int
+src/system/process.aya:56: pub fn run(String command) -> int
+src/system/process.aya:64: pub fn output(String command) -> Option[String]
 src/system/rand.aya:9: fn __ayanami_random_u64() -> int;
 src/system/rand.aya:11: pub struct Rng
 src/system/rand.aya:15: pub namespace Rng
@@ -1341,6 +1344,7 @@ tests/unit/path_test.aya:45: fn test_path_absolute_stem_extension()
 tests/unit/path_test.aya:61: fn test_path_glob_match()
 tests/unit/process_test.aya:8: fn test_process_id()
 tests/unit/process_test.aya:16: fn test_process_run()
+tests/unit/process_test.aya:28: fn test_process_output()
 tests/unit/rand_test.aya:10: fn test_range()
 tests/unit/rand_test.aya:23: fn test_deterministic()
 tests/unit/rand_test.aya:32: fn test_seed_variation()

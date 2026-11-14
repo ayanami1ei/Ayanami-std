@@ -1,4 +1,8 @@
-// process — 进程控制（当前：退出；参数见 system/env）
+// process — 进程控制（退出 / 进程 ID / 执行命令）
+import "string";
+
+import "option";
+
 #[extern]
 fn __ayanami_exit(int code) -> void;
 
@@ -10,6 +14,12 @@ fn __ayanami_parent_process_id() -> int;
 
 #[extern]
 fn __ayanami_process_run(String command) -> int;
+
+#[extern]
+fn __ayanami_process_output(String command) -> [char];
+
+#[extern]
+fn __ayanami_cstr_len([char] s) -> int;
 
 /// 立即退出进程（code 作为退出码；不返回）
 #[io]
@@ -45,4 +55,17 @@ pub fn parent_id() -> int {
 #[io]
 pub fn run(String command) -> int {
     return __ayanami_process_run(command);
+}
+
+/// 执行命令并捕获 stdout（`/bin/sh -c`；失败 → None）
+#[io]
+#[alloc]
+#[state]
+pub fn output(String command) -> Option[String] {
+    data = __ayanami_process_output(command);
+    if data == null {
+        return Option::None();
+    }
+    n = __ayanami_cstr_len(data);
+    return Option::Some(String::new(data, n as usize));
 }
